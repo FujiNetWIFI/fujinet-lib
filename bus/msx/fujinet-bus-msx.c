@@ -6,7 +6,7 @@
 
 #define TIMEOUT         milliseconds_to_jiffy(100)
 #define TIMEOUT_SLOW	milliseconds_to_jiffy(15 * 1000)
-#define MAX_RETRIES	5
+#define MAX_RETRIES	1
 
 enum {
   PACKET_ACK = 'A',
@@ -110,18 +110,20 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
     if (ck1 != ck2)
       return false;
   }
-  else if (data) {
-    /* Write the payload */
-    port_putbuf(data, data_length);
+  else {
+    if (data) {
+      /* Write the payload */
+      port_putbuf(data, data_length);
 
-    /* Write the checksum */
-    ck1 = fujicom_cksum(data, data_length);
-    port_putc(ck1);
+      /* Write the checksum */
+      ck1 = fujicom_cksum(data, data_length);
+      port_putc(ck1);
 
-    /* Wait for ACK/NACK */
-    code = port_getc_timeout(TIMEOUT_SLOW);
-    if (code != PACKET_ACK)
-      return false;
+      /* Wait for ACK/NACK */
+      code = port_getc_timeout(TIMEOUT_SLOW);
+      if (code != PACKET_ACK)
+        return false;
+    }
 
     /* Wait for COMPLETE/ERROR */
     code = port_getc_timeout(TIMEOUT_SLOW);
