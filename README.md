@@ -17,7 +17,7 @@ Top level folder contains the .h API, one subfolder for each platform.
 - [ ] network_read()
 - [ ] network_write()
 - [ ] network_status()
-- [ ] network_xio()
+- [ ] network_ioctl()
 
 ### target: atari
 
@@ -26,7 +26,7 @@ Top level folder contains the .h API, one subfolder for each platform.
 - [ ] network_read()
 - [ ] network_write()
 - [ ] network_status()
-- [ ] network_xio()
+- [ ] network_ioctl()
 
 ### target: apple2
 
@@ -35,7 +35,7 @@ Top level folder contains the .h API, one subfolder for each platform.
 - [ ] network_read()
 - [ ] network_write()
 - [ ] network_status()
-- [ ] network_xio()
+- [ ] network_ioctl()
 
 ### target: adam
 
@@ -44,7 +44,7 @@ Top level folder contains the .h API, one subfolder for each platform.
 - [ ] network_read()
 - [ ] network_write()
 - [ ] network_status()
-- [ ] network_xio()
+- [ ] network_ioctl()
 
 ### target: commodore
 
@@ -53,7 +53,7 @@ Top level folder contains the .h API, one subfolder for each platform.
 - [ ] network_read()
 - [ ] network_write()
 - [ ] network_status()
-- [ ] network_xio()
+- [ ] network_ioctl()
 
 ### target: coco
 
@@ -62,7 +62,7 @@ Top level folder contains the .h API, one subfolder for each platform.
 - [ ] network_read()
 - [ ] network_write()
 - [ ] network_status()
-- [ ] network_xio()
+- [ ] network_ioctl()
 
 ### target: rc2014
 
@@ -71,4 +71,4 @@ Top level folder contains the .h API, one subfolder for each platform.
 - [ ] network_read()
 - [ ] network_write()
 - [ ] network_status()
-- [ ] network_xio()
+- [ ] network_ioctl()
