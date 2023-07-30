@@ -12,6 +12,18 @@ Top level folder contains the .h API, one subfolder for each platform.
 
 ### define API (we are here)
 
+|System | network_open() | network_close() | network_read() | network_write() | network_status() | network_xio() |
+|-------|----------------|-----------------|----------------|-----------------|------------------|---------------|
+| Atari | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`         |
+| Apple2| `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`         |
+| ADAM  | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`         |
+| CBM   | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`         |
+| Coco  | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`         |
+| rc2014| `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`         |
+
+
+Listed:
+
 - [ ] network_open()
 - [ ] network_close()
 - [ ] network_read()
