@@ -4,6 +4,22 @@ Routines to use the FujiNet Network Adapter sub-device
 
 Top level folder contains the .h API, one subfolder for each platform.
 
+## Building
+
+If required, specify `TARGETS` list. The default is to clean, build and create release for all known platforms.
+
+```shell
+$ make
+```
+
+## Release
+
+Use the make target `dist` which will zip the library, headers, and Changelog into version specific file at `dist/fujinet-network_VERSION.zip`.
+
+## Testing
+
+Testing is done with BDD features. See [Testing README](testing/bdd-testing/README.md)
+
 ## TODO
 
 ### global
@@ -15,7 +31,7 @@ Top level folder contains the .h API, one subfolder for each platform.
 
 |System | network_open() | network_close() | network_read() | network_write() | network_status() | network_ioctl() |
 |-------|----------------|-----------------|----------------|-----------------|------------------|-----------------|
-| Atari | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           |
+| Atari | `[x]`          |  `[x]`          | `[x]`          | `[x]`           | `[x]`            | `[x]`           |
 | Apple2| `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           |
 | ADAM  | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           |
 | CBM   | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           |
@@ -39,7 +55,7 @@ Listed:
 - [x] network_read()
 - [x] network_write()
 - [x] network_status()
-- [ ] network_ioctl()
+- [x] network_ioctl()
 
 ### target: apple2
 
@@ -85,19 +101,3 @@ Listed:
 - [ ] network_write()
 - [ ] network_status()
 - [ ] network_ioctl()
-
-## Building
-
-If required, specify `TARGETS` list. The default is to clean, build and create release for all known platforms.
-
-```shell
-$ make
-```
-
-## Release
-
-Use the make target `dist` which will zip the library, headers, and Changelog into version specific file at `dist/fujinet-network_VERSION.zip`.
-
-## Testing
-
-Testing is done with BDD features. See [Testing README](testing/bdd-testing/README.md)

@@ -9,7 +9,7 @@
 - This changelog to instil a process of clean version documentation for the library.
 - Common Makefile
 - Initial implementations of atari functions:
-  - network_close, network_open, network_read, network_write, network_status
+  - network_close, network_open, network_read, network_write, network_status, network_ioctl
 - cross platform BDD testing framework, atari implementation done, c64 skeleton created
 
 ## Notes
