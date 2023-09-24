@@ -1,0 +1,16 @@
+Given common c64-fn-nw test setup
+  Given I have a simple overclocked 6502 system
+    And I enable trace with indent
+    And I create or clear directory "build/tests"
+    And I load labels "features/c64/inc/test_constants.inc"
+
+# Simple test that does no init, sets up minimal app for loading and testing
+# feature calls function directly
+Given c64-fn-nw simple test setup
+  Given common c64-fn-nw test setup
+    And I start compiling for none in "build/tests" with config "features/test-setup/inc/fn-nw-direct.cfg"
+    # These must come after the "start compiling"
+    And I add compiler option "--asm-include-dir features/c64/inc"
+    And I add compiler option "--asm-include-dir ../../c64/inc"
+    And I add compiler option "--include-dir features/c64/inc"
+    And I add compiler option "--include-dir ../../c64/inc"

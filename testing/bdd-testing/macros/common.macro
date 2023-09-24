@@ -1,0 +1,5 @@
+Given I add * src file "*"
+  And I add file for compiling "../../$1/$2"
+
+Given I add * test-setup file "*"
+  And I add file for compiling "features/$1/$2"

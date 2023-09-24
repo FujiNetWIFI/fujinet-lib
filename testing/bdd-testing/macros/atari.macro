@@ -1,0 +1,32 @@
+Given common atari-fn-nw test setup
+  Given I have a simple overclocked 6502 system
+    And I enable trace with indent
+    And I create or clear directory "build/tests"
+    And I load labels "features/atari/inc/test_constants.inc"
+
+# More complex test that sets up a full application to run, establishing Stack Pointer (SP) etc
+# test asm must have _main, and test feature calls _init to run
+Given atari-fn-nw application test setup
+  Given common atari-fn-nw test setup
+    # we do need some compiler target here, going to try none over atari
+    And I start compiling for none in "build/tests" with config "features/test-setup/inc/fn-nw-app.cfg"
+    # These must come after the "start compiling"
+    And I add compiler option "--asm-include-dir features/atari/inc"
+    And I add compiler option "--asm-include-dir ../../atari/inc"
+    And I add compiler option "--asm-include-dir ../../common/inc"
+
+# Simple test that does no init, sets up minimal xex for loading and testing
+# feature calls function directly
+Given atari-fn-nw simple test setup
+  Given common atari-fn-nw test setup
+    And I start compiling for none in "build/tests" with config "features/test-setup/inc/fn-nw-direct.cfg"
+    # These must come after the "start compiling"
+    And I add compiler option "--asm-include-dir features/atari/inc"
+    And I add compiler option "--asm-include-dir ../../atari/inc"
+    And I add compiler option "--asm-include-dir ../../common/inc"
+
+Given I add common atari-io files
+  # The test implementation of BUS
+  And I add atari/stubs test-setup file "bus.s"
+  # Others for compiling
+  And I add atari src file "copy_cmd_data.s"
