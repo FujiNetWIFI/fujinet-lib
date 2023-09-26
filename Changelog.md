@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Moved BDD src to separate project as it shared over multiple projects now
+- Added apple-single testing feature
+
 ## [1.0.0] - 2023-09-24
 
 ### Added

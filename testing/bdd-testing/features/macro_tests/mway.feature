@@ -5,7 +5,7 @@ Feature: MACRO tests - mwa
   Scenario: mwa moves word via the a register to targets
     Given atari-fn-nw simple test setup
       And I add file for compiling "features/macro_tests/test_mway.s"
-      And I create and load simple application
+      And I create and load simple atari application
 
      When I execute the procedure at test_mway for no more than 200 instructions
      

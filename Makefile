@@ -199,6 +199,7 @@ SOURCES := $(strip $(SOURCES))
 # convert from src/your/long/path/foo.[c|s] to obj/your/long/path/foo.o
 OBJ1 := $(SOURCES:.c=.o)
 OBJECTS := $(OBJ1:.s=.o)
+# change from atari/src/ -> obj/atari/
 OBJECTS := $(OBJECTS:$(TARGETLIST)/$(SRCDIR)/%=$(OBJDIR)/$(TARGETLIST)/%)
 
 # Set DEPENDS to something like 'obj/c64/foo.d obj/c64/bar.d'.

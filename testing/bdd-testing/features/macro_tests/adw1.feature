@@ -6,7 +6,7 @@ Feature: MACRO tests - adw1
   Scenario: adw1 adds words
     Given atari-fn-nw simple test setup
       And I add file for compiling "features/macro_tests/test_adw1.s"
-      And I create and load simple application
+      And I create and load simple atari application
 
      ########################################################
      # WORD, #WORD

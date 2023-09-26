@@ -5,7 +5,7 @@ Feature: MACRO tests - mva
   Scenario: mva moves single bytes via the a register to targets
     Given atari-fn-nw simple test setup
       And I add file for compiling "features/macro_tests/test_mva.s"
-      And I create and load simple application
+      And I create and load simple atari application
 
      When I execute the procedure at test_mva for no more than 200 instructions
      

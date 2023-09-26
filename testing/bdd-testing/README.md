@@ -30,6 +30,7 @@ cd bdd
 git clone https://github.com/martinpiper/ACEServer.git
 git clone https://github.com/martinpiper/BDD6502.git
 git clone https://github.com/martinpiper/CukesPlus.git
+git clone https://github.com/markjfisher/fujinet-bdd.git
 
 cd ACEServer
 mvn install
@@ -39,6 +40,9 @@ mvn install
 
 cd ../BDD6502
 mvn install -DskipTests
+
+cd ../fujinet-bdd.git
+./gradlew publishToMavenLocal
 ```
 
 You will now have the required libraries installed locally to be able to run this project.

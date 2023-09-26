@@ -7,9 +7,9 @@ Feature: library test - network_status and io_status
       And I add common atari-io files
       And I add atari src file "network_status.s"
       And I add atari src file "network_unit.s"
-      And I add file for compiling "features/atari/test-apps/test_w.s"
+      And I add file for compiling "features/test-setup/test-apps/test_w.s"
       And I add file for compiling "features/atari/stubs/bus_simple.s"
-      And I create and load application
+      And I create and load atari application
       And I write string "<devspec>" as ascii to memory address $a000
       And I write word at t_w1 with hex $a000
       And I write memory at $02ED with <ERR_RET>
@@ -46,9 +46,9 @@ Feature: library test - network_status and io_status
       And I add common atari-io files
       And I add atari src file "network_status.s"
       And I add atari src file "network_unit.s"
-      And I add file for compiling "features/atari/test-apps/test_b.s"
+      And I add file for compiling "features/test-setup/test-apps/test_b.s"
       And I add file for compiling "features/atari/stubs/bus_simple.s"
-      And I create and load application
+      And I create and load atari application
       And I write memory at t_b1 with <unit>
       And I write memory at $02ED with <ERR_RET>
       And I write word at t_fn with address _network_status_unit
@@ -85,9 +85,9 @@ Feature: library test - network_status and io_status
       And I add atari src file "io_status.s"
       And I add atari src file "network_status.s"
       And I add atari src file "network_unit.s"
-      And I add file for compiling "features/atari/test-apps/test_b.s"
+      And I add file for compiling "features/test-setup/test-apps/test_b.s"
       And I add file for compiling "features/atari/stubs/bus_simple.s"
-      And I create and load application
+      And I create and load atari application
       And I write memory at t_b1 with 1
       # Set DSTATS to 144 (extended)
       And I write memory at $1003 with 144
@@ -120,9 +120,9 @@ Feature: library test - network_status and io_status
       And I add atari src file "io_status.s"
       And I add atari src file "network_status.s"
       And I add atari src file "network_unit.s"
-      And I add file for compiling "features/atari/test-apps/test_b.s"
+      And I add file for compiling "features/test-setup/test-apps/test_b.s"
       And I add file for compiling "features/atari/stubs/bus_simple.s"
-      And I create and load application
+      And I create and load atari application
       And I write memory at DDEVIC with $ff
       And I write memory at DSTATS with 2
       And I write memory at t_b1 with 1

@@ -1,0 +1,19 @@
+Given common apple2-fn-nw test setup
+  Given I have a simple overclocked 6502 system
+    And I enable trace with indent
+    And I create or clear directory "build/tests"
+    And I load labels "features/apple2/inc/test_constants.inc"
+
+Given apple2-fn-nw application test setup
+  Given common apple2-fn-nw test setup
+    And I start compiling for apple2 in "build/tests" with config "features/test-setup/inc/fn-nw-apple2.cfg"
+    # These must come after the "start compiling"
+    And I add compiler option "--asm-include-dir features/apple2/inc"
+    And I add compiler option "--asm-include-dir ../../apple2/src/inc"
+    And I add compiler option "--asm-include-dir ../../common/inc"
+    And I add compiler option "--include-dir ../../"
+    And I add compiler option "--include-dir features/apple2/inc"
+    And I add compiler option "--include-dir ../../apple2/src/inc"
+    And I add compiler option "--include-dir ../../common/inc"
+
+Given I add common apple2-io files

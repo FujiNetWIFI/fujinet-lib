@@ -18,8 +18,9 @@ $ grep '^ *@.*"' Glue.java | cut -d\" -f2- | sed 's/")$//' | sort
 ^I add file for compiling \"([^\"]*)\"$
 ^I convert registers (.*) to address$
 ^I convert vice-labels file \"([^\"]*)\" to acme labels file \"([^\"]*)\"$
-^I create and load application$
-^I create and load simple application$
+^I create and load apple-single application$
+^I create and load atari application$
+^I create and load simple atari application$
 ^I create or clear directory \"([^\"]*)\"$
 ^I expect register state (.*)$
 ^I fill memory from (.*) to (.*) with (.*)$
