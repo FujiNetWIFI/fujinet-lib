@@ -12,7 +12,7 @@
 
 ; uint8_t close_fnd0(void *cmdList)
 ;
-; Handle fujinet sp_close calls, reacting to the parameters given in the cmdList for testing
+; Handle fujinet sp_close calls
 .proc close_fnd0
         axinto  ptr1
 
@@ -21,7 +21,7 @@
 
 ; uint8_t close_printer(void *cmdList)
 ;
-; Handle printer sp_close calls, reacting to the parameters given in the cmdList for testing
+; Handle printer sp_close calls
 .proc close_printer
         axinto  ptr1
 
@@ -30,7 +30,7 @@
 
 ; uint8_t close_network(void *cmdList)
 ;
-; Handle network sp_close calls, reacting to the parameters given in the cmdList for testing
+; Handle network sp_close calls
 .proc close_network
         axinto  ptr1
 
@@ -39,7 +39,7 @@
 
 ; uint8_t close_clock(void *cmdList)
 ;
-; Handle clock sp_close calls, reacting to the parameters given in the cmdList for testing
+; Handle clock sp_close calls
 .proc close_clock
         axinto  ptr1
 
@@ -48,7 +48,7 @@
 
 ; uint8_t close_modem(void *cmdList)
 ;
-; Handle modem sp_close calls, reacting to the parameters given in the cmdList for testing
+; Handle modem sp_close calls
 .proc close_modem
         axinto  ptr1
 
@@ -57,7 +57,7 @@
 
 ; uint8_t close_cpm(void *cmdList)
 ;
-; Handle cpm sp_close calls, reacting to the parameters given in the cmdList for testing
+; Handle cpm sp_close calls
 .proc close_cpm
         axinto  ptr1
 

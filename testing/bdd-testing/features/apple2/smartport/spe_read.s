@@ -12,7 +12,7 @@
 
 ; uint8_t read_fnd0(void *cmdList)
 ;
-; Handle fujinet sp_read calls, reacting to the parameters given in the cmdList for testing
+; Handle fujinet sp_read calls
 .proc read_fnd0
         axinto  ptr1
 
@@ -21,7 +21,7 @@
 
 ; uint8_t read_printer(void *cmdList)
 ;
-; Handle printer sp_read calls, reacting to the parameters given in the cmdList for testing
+; Handle printer sp_read calls
 .proc read_printer
         axinto  ptr1
 
@@ -30,7 +30,7 @@
 
 ; uint8_t read_network(void *cmdList)
 ;
-; Handle network sp_read calls, reacting to the parameters given in the cmdList for testing
+; Handle network sp_read calls
 .proc read_network
         axinto  ptr1
 
@@ -39,7 +39,7 @@
 
 ; uint8_t read_clock(void *cmdList)
 ;
-; Handle clock sp_read calls, reacting to the parameters given in the cmdList for testing
+; Handle clock sp_read calls
 .proc read_clock
         axinto  ptr1
 
@@ -48,7 +48,7 @@
 
 ; uint8_t read_modem(void *cmdList)
 ;
-; Handle modem sp_read calls, reacting to the parameters given in the cmdList for testing
+; Handle modem sp_read calls
 .proc read_modem
         axinto  ptr1
 
@@ -57,7 +57,7 @@
 
 ; uint8_t read_cpm(void *cmdList)
 ;
-; Handle cpm sp_read calls, reacting to the parameters given in the cmdList for testing
+; Handle cpm sp_read calls
 .proc read_cpm
         axinto  ptr1
 

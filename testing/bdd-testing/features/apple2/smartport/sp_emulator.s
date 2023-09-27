@@ -308,6 +308,6 @@ WriteFunctionsHi:     .hibytes WriteFunctions
 m_fn_d0:        .byte "FUJINET_DISK_0", 0
 m_printer:      .byte "PRINTER", 0
 m_network:      .byte "NETWORK", 0
-m_clock:        .byte "CLOCK", 0
+m_clock:        .byte "FN_CLOCK", 0
 m_modem:        .byte "MODEM", 0
 m_cpm:          .byte "CPM", 0
