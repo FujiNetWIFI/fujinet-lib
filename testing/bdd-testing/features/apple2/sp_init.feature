@@ -4,9 +4,8 @@ Feature: library test - apple2 sp_init
 
   Scenario: execute sp.c
     Given apple2-fn-nw application test setup
-      # And I add common apple2-io files
+      And I add common apple2-sp files
       And I add apple2 src file "sp.c"
-      And I add file for compiling "features/apple2/stubs/sp_emulator.s"
       And I add file for compiling "features/apple2/invokers/test_sp_init.s"
       And I create and load apple-single application
      When I execute the procedure at _init for no more than 4350 instructions
