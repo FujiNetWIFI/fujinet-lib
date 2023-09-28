@@ -8,7 +8,7 @@ Feature: library test - apple2 spn_find_network
       And I add file for compiling "features/apple2/invokers/test_sp_find_network.s"
       And I add file for compiling "../../apple2/src/spn_find_network.s"
       And I create and load apple-single application
-     When I execute the procedure at _init for no more than 1000 instructions
+     When I execute the procedure at _init for no more than 930 instructions
 
     # offset 5 contains the device name
     Then string at _spn_payload+5 contains

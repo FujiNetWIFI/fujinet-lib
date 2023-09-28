@@ -1,32 +1,31 @@
-        .export     _spn_control
+        .export     _spn_write
 
-        .import     _spn_cmdlist
         .import     _spn_error
-        .import     dispatch
         .import     popa
         .import     pusha
+        .import     spn_setup
 
         .include    "sp.inc"
         .include    "macros.inc"
 
-; int8_t _spn_control(uint8_t dest, uint8_t ctrlcode)
+; int8_t _spn_write(uint8_t dest, uint16_t len)
 ;
-; Issues a control to the specified device.
+; Close smartport device
 ; this changes _spn_payload
 ; returns any error code from dispatch call
-.proc _spn_control
-        sta     _spn_cmdlist+4          ; ctrlcode
-
-        lda     #SP_STATUS_PARAM_COUNT
+.proc _spn_write
+        sta     _spn_cmdlist+4          ; len (low)
+        stx     _spn_cmdlist+5          ; len (high)
+        jsr     popa
+        sta     _spn_cmdlist+1          ; dest
+        lda     #SP_READ_PARAM_COUNT
         sta     _spn_cmdlist
-        jsr     popa                    ; dest
-        sta     _spn_cmdlist+1
         lda     #<_spn_payload
         sta     _spn_cmdlist+2
         lda     #>_spn_payload
         sta     _spn_cmdlist+3
 
-        pusha   #SP_CMD_CONTROL
+        pusha   #SP_CMD_READ
         setax   #_spn_cmdlist
         jsr     dispatch
 

@@ -5,7 +5,7 @@
 
 ; int8_t dispatch(uint8_t cmd, void *cmdlist)
 .proc dispatch
-        sta     dispatch_data+1         ; cmdlist Low
+        sta     dispatch_data+1         ; cmdlist low
         stx     dispatch_data+2         ; cmdlist high
 
         jsr     popa                    ; cmd

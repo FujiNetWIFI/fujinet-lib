@@ -17,11 +17,10 @@
 ; 0 = no errors, but no device found
 ; n = slot of given named device
 .proc _spn_find_device
-        axinto  tmp9                ; the device name we're looking for
+        axinto  tmp9            ; the device name we're looking for
 
         ; find the device count - do we need to keep doing this?
-        pusha   #$00
-        ; lda    #$00    ; already 0
+        pusha   #$00            ; doubles up as both parameters
         jsr     _spn_status
         beq     :+
         
@@ -31,31 +30,28 @@
         adc     #$01
         rts
 
-:       mwa     #_spn_payload, ptr1
-        ldy     #$00
-        lda     (ptr1), y       ; number of devices in payload[0], 1 based
+:       lda     _spn_payload    ; number of devices in payload[0], 1 based
         sta     tmp8            ; device index, set to max (e.g. 6) initially
 
-        mva     #$01, tmp5      ; this will be our device index to check. saves time in emulator as fuji is device 1
+        mva     #$01, tmp7      ; this will be our device index to check. saves time in emulator as fuji disk is device 1
 
         ; get DIB for each device in turn looking for name
-:       pusha   tmp5
+:       pusha   tmp7
         lda     #$03
-        jsr     _spn_status         ; trashes x! calls dispatch function, but tmpX shouldn't be touched
-
+        jsr     _spn_status
         bne     skip_next
 
         jsr     check_name
         beq     skip_next
 
-        ; we found the device in slot tmp5
+        ; we found the device in slot tmp7
         ldx     #$00
-        lda     tmp5
+        lda     tmp7
         rts
 
 skip_next:
-        ; keep looping until tmp5 (device index) is greater than device count
-        inc     tmp5
+        ; keep looping until tmp7 (device index) is greater than device count
+        inc     tmp7
         cmp     tmp8
         bcc     :-
         beq     :-
@@ -65,17 +61,14 @@ skip_next:
 
 .endproc
 
+; tmp9/10 is pointer to device name we are comparing to.
 .proc check_name
-        ; align ptr to string to y index of payload for the device name just fetched
-        mwa     #_spn_payload, ptr1
-        mwa     tmp9, tmp6      ; use tmp6/7 as the pointer to string looking for with Y adjustment so we don't change tmp9/10
-        sbw1    tmp6, #$05
-        ldx     #$00            ; count of matching chars, and string length in match
-        ldy     #$05
+        ldx     #$00                    ; count of matching chars, and string length in match
+        ldy     #$00
 
-:       lda     (tmp6), y       ; device name searching for
+:       lda     (tmp9), y               ; device name searching for
         beq     end_string
-        cmp     (ptr1), y       ; payload[5+i]th character
+        cmp     _spn_payload+5, y       ; payload[5+i]th character
         bne     not_found
         inx
         iny

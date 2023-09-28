@@ -8,7 +8,7 @@ Feature: library test - apple2 spn_find_printer
       And I add file for compiling "features/apple2/invokers/test_sp_find_printer.s"
       And I add file for compiling "../../apple2/src/spn_find_printer.s"
       And I create and load apple-single application
-     When I execute the procedure at _init for no more than 800 instructions
+     When I execute the procedure at _init for no more than 720 instructions
 
     # offset 5 contains the device name
     Then string at _spn_payload+5 contains
