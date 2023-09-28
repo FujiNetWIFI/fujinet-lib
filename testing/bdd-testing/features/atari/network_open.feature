@@ -6,7 +6,7 @@ Feature: library test - network_open
     Given atari-fn-nw application test setup
       And I add common atari-io files
       And I add atari src file "network_open.s"
-      And I add atari src file "network_unit.s"
+      And I add common src file "network_unit.s"
       And I add atari src file "network_status.s"
       And I add atari src file "io_status.s"
       And I add file for compiling "features/test-setup/test-apps/test_wb.s"

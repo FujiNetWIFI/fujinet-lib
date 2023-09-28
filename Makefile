@@ -191,6 +191,8 @@ override PROGRAM := $(PROGRAM).$(TARGETLIST)
 # Recursive files
 SOURCES += $(call rwildcard,$(TARGETLIST)/$(SRCDIR)/,*.s)
 SOURCES += $(call rwildcard,$(TARGETLIST)/$(SRCDIR)/,*.c)
+SOURCES += $(call rwildcard,common/$(SRCDIR)/,*.s)
+SOURCES += $(call rwildcard,common/$(SRCDIR)/,*.c)
 
 # remove trailing and leading spaces.
 SOURCES := $(strip $(SOURCES))
@@ -201,6 +203,7 @@ OBJ1 := $(SOURCES:.c=.o)
 OBJECTS := $(OBJ1:.s=.o)
 # change from atari/src/ -> obj/atari/
 OBJECTS := $(OBJECTS:$(TARGETLIST)/$(SRCDIR)/%=$(OBJDIR)/$(TARGETLIST)/%)
+OBJECTS := $(OBJECTS:common/$(SRCDIR)/%=$(OBJDIR)/common/%)
 
 # Set DEPENDS to something like 'obj/c64/foo.d obj/c64/bar.d'.
 DEPENDS := $(OBJECTS:.o=.d)
@@ -264,7 +267,8 @@ $(BUILD_DIR):
 	$(call MKDIR,$@)
 
 SRC_INC_DIRS := \
-  $(sort $(dir $(wildcard $(TARGETLIST)/$(SRCDIR)/*)))
+	$(sort $(dir $(wildcard $(TARGETLIST)/$(SRCDIR)/*))) \
+	$(sort $(dir $(wildcard common/$(SRCDIR)/*)))
 
 # $(info $$SOURCES = ${SOURCES})
 # $(info $$OBJECTS = ${OBJECTS})
@@ -275,11 +279,19 @@ SRC_INC_DIRS := \
 
 vpath %.c $(SRC_INC_DIRS)
 
+obj/common/%.o: %.c | $(TARGETOBJDIR)
+	@$(call MKDIR,$(dir $@))
+	$(CC) -t $(TARGETLIST) -c --create-dep $(@:.o=.d) $(CFLAGS) -o $@ $<
+
 $(TARGETOBJDIR)/%.o: %.c | $(TARGETOBJDIR)
 	@$(call MKDIR,$(dir $@))
 	$(CC) -t $(TARGETLIST) -c --create-dep $(@:.o=.d) $(CFLAGS) -o $@ $<
 
 vpath %.s $(SRC_INC_DIRS)
+
+obj/common/%.o: %.s | $(TARGETOBJDIR)
+	@$(call MKDIR,$(dir $@))
+	$(CC) -t $(TARGETLIST) -c --create-dep $(@:.o=.d) $(ASFLAGS) -o $@ $<
 
 $(TARGETOBJDIR)/%.o: %.s | $(TARGETOBJDIR)
 	@$(call MKDIR,$(dir $@))

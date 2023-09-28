@@ -2,9 +2,7 @@
 
         .import     return1
 
-        .include    "device.inc"
         .include    "zp.inc"
-        .include    "macros.inc"
 
 ; uint8_t network_unit(char *devicespec)
 ;
@@ -14,9 +12,10 @@
 ; see testing/bdd-testing/features/atari/network_unit.feature
 
 .proc _network_unit
-        axinto  tmp9                ; devicespec
-        ldy     #$01
+        sta     tmp9            ; devicespec
+        stx     tmp10
 
+        ldy     #$01
         lda     (tmp9), y
         cmp     #':'
         bne     :+

@@ -4,7 +4,7 @@ Feature: library test - network_unit
 
   Scenario Outline: execute _network_unit
     Given atari-fn-nw application test setup
-      And I add atari src file "network_unit.s"
+      And I add common src file "network_unit.s"
       And I add file for compiling "features/test-setup/test-apps/test_w.s"
       And I create and load atari application
       And I write string "<device_spec>" as ascii to memory address $a000

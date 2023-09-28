@@ -6,7 +6,7 @@ Feature: library test - network_status and io_status
     Given atari-fn-nw application test setup
       And I add common atari-io files
       And I add atari src file "network_status.s"
-      And I add atari src file "network_unit.s"
+      And I add common src file "network_unit.s"
       And I add file for compiling "features/test-setup/test-apps/test_w.s"
       And I add file for compiling "features/atari/stubs/bus_simple.s"
       And I create and load atari application
@@ -45,7 +45,7 @@ Feature: library test - network_status and io_status
     Given atari-fn-nw application test setup
       And I add common atari-io files
       And I add atari src file "network_status.s"
-      And I add atari src file "network_unit.s"
+      And I add common src file "network_unit.s"
       And I add file for compiling "features/test-setup/test-apps/test_b.s"
       And I add file for compiling "features/atari/stubs/bus_simple.s"
       And I create and load atari application
@@ -84,7 +84,7 @@ Feature: library test - network_status and io_status
       And I add common atari-io files
       And I add atari src file "io_status.s"
       And I add atari src file "network_status.s"
-      And I add atari src file "network_unit.s"
+      And I add common src file "network_unit.s"
       And I add file for compiling "features/test-setup/test-apps/test_b.s"
       And I add file for compiling "features/atari/stubs/bus_simple.s"
       And I create and load atari application
@@ -119,7 +119,7 @@ Feature: library test - network_status and io_status
       And I add common atari-io files
       And I add atari src file "io_status.s"
       And I add atari src file "network_status.s"
-      And I add atari src file "network_unit.s"
+      And I add common src file "network_unit.s"
       And I add file for compiling "features/test-setup/test-apps/test_b.s"
       And I add file for compiling "features/atari/stubs/bus_simple.s"
       And I create and load atari application

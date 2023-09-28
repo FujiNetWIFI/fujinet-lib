@@ -1,9 +1,11 @@
         .export     _spn_write
 
+        .import     _spn_cmdlist
         .import     _spn_error
+        .import     _spn_payload
+        .import     dispatch        
         .import     popa
         .import     pusha
-        .import     spn_setup
 
         .include    "sp.inc"
         .include    "macros.inc"

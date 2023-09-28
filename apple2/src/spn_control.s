@@ -2,6 +2,7 @@
 
         .import     _spn_cmdlist
         .import     _spn_error
+        .import     _spn_payload
         .import     dispatch
         .import     popa
         .import     pusha
