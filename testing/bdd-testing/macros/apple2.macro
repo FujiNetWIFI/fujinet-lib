@@ -22,3 +22,4 @@ Given I add common apple2-sp files
     And I add file for compiling "../../apple2/src/spn_find_device.s"
     And I add file for compiling "../../apple2/src/spn_init.s"
     And I add file for compiling "../../apple2/src/spn_status.s"
+    And I add file for compiling "../../apple2/src/spn_common.s"
