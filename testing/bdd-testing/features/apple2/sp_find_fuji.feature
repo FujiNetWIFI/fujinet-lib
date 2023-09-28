@@ -8,7 +8,7 @@ Feature: library test - apple2 spn_find_fuji
       And I add file for compiling "features/apple2/invokers/test_sp_find_fuji.s"
       And I add file for compiling "../../apple2/src/spn_find_fuji.s"
       And I create and load apple-single application
-     When I execute the procedure at _init for no more than 650 instructions
+     When I execute the procedure at _init for no more than 600 instructions
      # And I print ascii from _spn_payload+5 to _spn_payload+$20
 
     # offset 5 contains the device name
