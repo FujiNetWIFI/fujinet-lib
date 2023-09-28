@@ -18,8 +18,3 @@ Given apple2-fn-nw application test setup
 
 Given I add common apple2-sp files
     And I add file for compiling "features/apple2/smartport/sp_emulator.s"
-    And I add file for compiling "features/apple2/smartport/spe_control.s"
-    And I add file for compiling "features/apple2/smartport/spe_open.s"
-    And I add file for compiling "features/apple2/smartport/spe_close.s"
-    And I add file for compiling "features/apple2/smartport/spe_read.s"
-    And I add file for compiling "features/apple2/smartport/spe_write.s"

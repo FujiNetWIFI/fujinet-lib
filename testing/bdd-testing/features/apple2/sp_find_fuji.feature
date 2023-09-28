@@ -8,7 +8,7 @@ Feature: library test - apple2 sp_find_fuji
       And I add apple2 src file "sp.c"
       And I add file for compiling "features/apple2/invokers/test_sp_find_fuji.s"
       And I create and load apple-single application
-     When I execute the procedure at _init for no more than 7500 instructions
+     When I execute the procedure at _init for no more than 7800 instructions
 
     # offset 5 contains the device name
     Then string at _sp_payload+5 contains

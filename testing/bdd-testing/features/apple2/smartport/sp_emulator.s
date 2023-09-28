@@ -1,48 +1,25 @@
         .export     _setup_sp
         .export     sp_emulator
+        .export     spe_cmd
+        .export     spe_dest
+        .export     spe_cmdlist
+        .export     spe_payload
 
         .import     popa
-
-        .import     close_fnd0
-        .import     close_printer
-        .import     close_network
-        .import     close_clock
-        .import     close_modem
-        .import     close_cpm
-        .import     control_fnd0
-        .import     control_printer
-        .import     control_network
-        .import     control_clock
-        .import     control_modem
-        .import     control_cpm
-        .import     open_fnd0
-        .import     open_printer
-        .import     open_network
-        .import     open_clock
-        .import     open_modem
-        .import     open_cpm
-        .import     read_fnd0
-        .import     read_printer
-        .import     read_network
-        .import     read_clock
-        .import     read_modem
-        .import     read_cpm
-        .import     write_fnd0
-        .import     write_printer
-        .import     write_network
-        .import     write_clock
-        .import     write_modem
-        .import     write_cpm
 
         .include    "macros.inc"
         .include    "zp.inc"
 
-; void setup_sp()
+; void setup_sp(void *callback)
 ;
 ; creates fake Smart Port at slot 1
 ; with a dispatcher to emulate devices it supports.
+;
+; The callback function is run when a non DIB command is made
+; which can read the variables spe_cmd, spe_dest, spe_cmdlist, spe_payload
 
 _setup_sp:
+        axinto  spe_cb
         mwa     #$c100, ptr1
 
         ; SP detection needs:
@@ -77,7 +54,7 @@ _setup_sp:
         rts
 
 ; -------------------------------------------------------------
-; Dispatch routine for our fake SmartPort
+; Dispatch routine for our SmartPort emulator
 ; which knows about 6 devices, detailed below.
 sp_emulator:
         ; The caller invokes dispatcher with:
@@ -102,27 +79,33 @@ sp_emulator:
         ;               FN_CLOCK -> unit = 4, pl[4] = 8,  pl[5..12] = name
         ;                  MODEM -> unit = 5, pl[4] = 5,  pl[5..9]  = name
         ;                    CPM -> unit = 6, pl[4] = 3,  pl[5..7]  = name
+        ; 4 = CONTROL
+        ; 6 = OPEN
+        ; 7 = CLOSE
+        ; 8 = READ
+        ; 9 = WRITE
+        ;     All the above are passed to Callback routine established in _setup_sp
+        ;     which can access the command/dest/cmdlist/payload via exported spe_* variables
         ;
-        ; statcode = FN command code, e.g. 0xFA = Get Wifi Status.
-        ; thus we can detect a request for FN command via sp_status(1, 0xFA), etc.
 
-        pla                     ; low byte of return-1
+        pla                     ; low byte of return-1 (jsr pushes the address of the last byte of jsr command, not the 1 after)
         sta     tmp9
         pla                     ; high byte of return-1
         sta     tmp10
 
-        ; COMMAND -> tmp1
+        ; COMMAND -> spe_cmd
         ldy     #$01
         lda     (tmp9), y
-        sta     tmp1
+        sta     spe_cmd
 
-        ; cmdlist -> ptr1
+        ; cmdlist -> ptr1 & spe_cmdlist
         iny
         lda     (tmp9), y       ; cmdlist low
         sta     ptr1
         iny
         lda     (tmp9), y       ; cmdlist high
         sta     ptr1+1
+        mwa     ptr1, spe_cmdlist
 
         ; fix the stack to point to correct return address
         adw1    tmp9, #$03
@@ -133,36 +116,29 @@ sp_emulator:
         lda     tmp9
         pha
 
-        ; dest -> tmp2
+        ; dest -> spe_dest
         ldy     #$01
-        mva     {(ptr1), y}, tmp2
+        mva     {(ptr1), y}, spe_dest
 
-        ; payload -> ptr2
+        ; payload -> ptr2 & spe_payload
         iny
         lda     (ptr1), y
         sta     ptr2
         iny
         lda     (ptr1), y
         sta     ptr2+1
+        mwa     ptr2, spe_payload
 
-        ; decide what to do with the callers args
 
-        ; set y to the device 0-5
-        lda     tmp2
-        tay
-        dey
-
-        lda     tmp1
-;--------------------------------------------------------------------------
-; COMMAND SWITCH
-;--------------------------------------------------------------------------
+        ; decide what to do with the command
+        lda     spe_cmd
 
 ; --------------------------------------------------
 ; 0 = STATUS
         cmp     #$00
         bne     not_status
 
-        lda     tmp2
+        lda     spe_dest
         ; is this the DIB request?
         cmp     #$00
         bne     not_DIB
@@ -173,67 +149,26 @@ sp_emulator:
         jmp     end_emulator_ok
 
 not_DIB:
+        ; set y to the device 0-5, so we can read from table
+        lda     spe_dest
+        tay
+        dey
+
         lda     DeviceNamesLo, y
         ldx     DeviceNamesHi, y
-        
         jsr     set_payload
         jmp     end_emulator_ok
 
 not_status:
 ; --------------------------------------------------
-; 4 = CONTROL
-        cmp     #$04
-        bne     not_control
+; ALL OTHER COMMANDS TO CALLBACK
+; (CONTROL, OPEN, CLOSE, READ, WRITE)
 
-        ; this is typically the FN command to issue, and get a response from
-        lda     ControlFunctionsLo, y
-        ldx     ControlFunctionsHi, y
-        jmp     redirect
-
-not_control:
-; --------------------------------------------------
-; 6 = OPEN
-        cmp     #$06
-        bne     not_open
-
-        lda     OpenFunctionsLo, y
-        ldx     OpenFunctionsHi, y
-        jmp     redirect
-
-not_open:
-; --------------------------------------------------
-; 7 = CLOSE
-        cmp     #$07
-        bne     not_close
-
-        lda     CloseFunctionsLo, y
-        ldx     CloseFunctionsHi, y
-        jmp     redirect
-
-not_close:
-; --------------------------------------------------
-; 8 = READ
-        cmp     #$08
-        bne     not_read
-
-        lda     ReadFunctionsLo, y
-        ldx     ReadFunctionsHi, y
-        jmp     redirect
-
-not_read:
-; --------------------------------------------------
-; 9 = WRITE
-        cmp     #$09
-        bne     not_write
-
-        lda     WriteFunctionsLo, y
-        ldx     WriteFunctionsHi, y
-        jmp     redirect
-
-not_write:
-; ... any more commands should be implemented here.
-
+        ; call a generic call back routine the test can supply, it can read values from spe_* vars
+        ; it must return 0 for success, 1 for error
+        jsr     do_cb
         bne     end_emulator_not_ok
+        ; fall through to ok case
 
 end_emulator_ok:
         lda     #$00
@@ -245,16 +180,6 @@ end_emulator_not_ok:
         ldy     #$00
         ; this will return the caller to 3 bytes after the initial call to dispatcher
         rts
-
-; A/X hold function address to redirect to
-redirect:
-        axinto  ptr2                    ; function to call
-        setax   ptr1                    ; pass cmdlist to control function, it can read everything from it
-        jsr     run_fn                  ; can't do jsr (ptr2), so have to do it via run_fn
-
-        beq     end_emulator_ok
-        bne     end_emulator_not_ok
-
 
 ; A/X point to string to setup, put it into payload, and save its length in there too
 set_payload:
@@ -277,32 +202,26 @@ set_payload:
         sta     (ptr2), y       ; payload[4] = string length
         rts
 
-run_fn:
-        jmp     (ptr2)
+do_cb:
+        jmp     (spe_cb)
+
+; --------------------------------------------------
+; BSS
+.bss
+
+spe_cmd:        .res 1
+spe_dest:       .res 1
+spe_cmdlist:    .res 2
+spe_payload:    .res 2
+spe_cb:         .res 2
+
+; --------------------------------------------------
+; DATA
+.data
 
 .define DeviceNames m_fn_d0, m_printer, m_network, m_clock, m_modem, m_cpm
 DeviceNamesLo:          .lobytes DeviceNames
 DeviceNamesHi:          .hibytes DeviceNames
-
-.define ControlFunctions control_fnd0, control_printer, control_network, control_clock, control_modem, control_cpm
-ControlFunctionsLo:     .lobytes ControlFunctions
-ControlFunctionsHi:     .hibytes ControlFunctions
-
-.define OpenFunctions open_fnd0, open_printer, open_network, open_clock, open_modem, open_cpm
-OpenFunctionsLo:     .lobytes OpenFunctions
-OpenFunctionsHi:     .hibytes OpenFunctions
-
-.define CloseFunctions close_fnd0, close_printer, close_network, close_clock, close_modem, close_cpm
-CloseFunctionsLo:     .lobytes CloseFunctions
-CloseFunctionsHi:     .hibytes CloseFunctions
-
-.define ReadFunctions read_fnd0, read_printer, read_network, read_clock, read_modem, read_cpm
-ReadFunctionsLo:     .lobytes ReadFunctions
-ReadFunctionsHi:     .hibytes ReadFunctions
-
-.define WriteFunctions write_fnd0, write_printer, write_network, write_clock, write_modem, write_cpm
-WriteFunctionsLo:     .lobytes WriteFunctions
-WriteFunctionsHi:     .hibytes WriteFunctions
 
 ; strings to set in payload
 m_fn_d0:        .byte "FUJINET_DISK_0", 0
