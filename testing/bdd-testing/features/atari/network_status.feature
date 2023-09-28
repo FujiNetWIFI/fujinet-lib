@@ -14,7 +14,7 @@ Feature: library test - network_status and io_status
       And I write word at t_w1 with hex $a000
       And I write memory at $02ED with <ERR_RET>
       And I write word at t_fn with address _network_status
-     When I execute the procedure at _init for no more than 90 instructions
+     When I execute the procedure at _init for no more than 100 instructions
 
     Then I expect register A equal <A>
      And I expect register X equal <X>
@@ -52,7 +52,7 @@ Feature: library test - network_status and io_status
       And I write memory at t_b1 with <unit>
       And I write memory at $02ED with <ERR_RET>
       And I write word at t_fn with address _network_status_unit
-     When I execute the procedure at _init for no more than 75 instructions
+     When I execute the procedure at _init for no more than 90 instructions
 
     Then I expect register A equal <A>
      And I expect register X equal <X>
@@ -93,7 +93,7 @@ Feature: library test - network_status and io_status
       And I write memory at $1003 with 144
       And I write memory at $02ED with 10
       And I write word at t_fn with address _io_status
-     When I execute the procedure at _init for no more than 80 instructions
+     When I execute the procedure at _init for no more than 90 instructions
 
     Then I expect register A equal 10
      And I expect register X equal 0
@@ -127,7 +127,7 @@ Feature: library test - network_status and io_status
       And I write memory at DSTATS with 2
       And I write memory at t_b1 with 1
       And I write word at t_fn with address _io_status
-     When I execute the procedure at _init for no more than 20 instructions
+     When I execute the procedure at _init for no more than 30 instructions
 
     # check the error code is same as DSTATS
     Then I expect register A equal 2

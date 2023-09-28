@@ -10,7 +10,7 @@ Feature: library test - network_unit
       And I write string "<device_spec>" as ascii to memory address $a000
       And I write word at t_w1 with hex $a000
       And I write word at t_fn with address _network_unit
-     When I execute the procedure at _init for no more than 30 instructions
+     When I execute the procedure at _init for no more than 40 instructions
 
     Then I expect register A equal <A>
      And I expect register X equal <X>

@@ -1,5 +1,7 @@
         .export     _setup_sp
         .export     sp_emulator
+        .export     set_payload
+
         .export     spe_cmd
         .export     spe_dest
         .export     spe_cmdlist
@@ -56,7 +58,13 @@ _setup_sp:
 ; -------------------------------------------------------------
 ; Dispatch routine for our SmartPort emulator
 ; which knows about 6 devices, detailed below.
+;
 sp_emulator:
+        ; save the ZP values
+        mva     tmp7, spe_tmp7_old
+        mva     tmp8, spe_tmp8_old
+        mva     tmp9, spe_tmp9_old
+        mva     tmp10, spe_tmp10_old
         ; The caller invokes dispatcher with:
         ;   jsr dispatcher
         ;   db command
@@ -98,14 +106,13 @@ sp_emulator:
         lda     (tmp9), y
         sta     spe_cmd
 
-        ; cmdlist -> ptr1 & spe_cmdlist
+        ; cmdlist -> spe_cmdlist
         iny
         lda     (tmp9), y       ; cmdlist low
-        sta     ptr1
+        sta     spe_cmdlist
         iny
         lda     (tmp9), y       ; cmdlist high
-        sta     ptr1+1
-        mwa     ptr1, spe_cmdlist
+        sta     spe_cmdlist+1
 
         ; fix the stack to point to correct return address
         adw1    tmp9, #$03
@@ -116,19 +123,22 @@ sp_emulator:
         lda     tmp9
         pha
 
+        mwa     spe_cmdlist, tmp9
+
         ; dest -> spe_dest
         ldy     #$01
-        mva     {(ptr1), y}, spe_dest
+        mva     {(tmp9), y}, spe_dest
 
-        ; payload -> ptr2 & spe_payload
+        ; payload -> spe_payload
         iny
-        lda     (ptr1), y
-        sta     ptr2
+        lda     (tmp9), y
+        sta     spe_payload
         iny
-        lda     (ptr1), y
-        sta     ptr2+1
-        mwa     ptr2, spe_payload
+        lda     (tmp9), y
+        sta     spe_payload+1
 
+        ; done with cmdlist, make tmp9 = payload location
+        mwa     spe_payload, tmp9
 
         ; decide what to do with the command
         lda     spe_cmd
@@ -145,7 +155,7 @@ sp_emulator:
 
         ; yes, so return 0 and no error, and set payload[0] = 6 for 6 devices
         ldy     #$00
-        mva     #$06, {(ptr2), y}
+        mva     #$06, {(tmp9), y}
         jmp     end_emulator_ok
 
 not_DIB:
@@ -156,6 +166,8 @@ not_DIB:
 
         lda     DeviceNamesLo, y
         ldx     DeviceNamesHi, y
+        axinto  tmp7
+
         jsr     set_payload
         jmp     end_emulator_ok
 
@@ -171,39 +183,48 @@ not_status:
         ; fall through to ok case
 
 end_emulator_ok:
+        jsr     restore_tmp
         lda     #$00
-        .byte   $2c             ; BIT, ignore next 2 bytes
+        beq     :+
+
 end_emulator_not_ok:
+        jsr     restore_tmp
         lda     #$01
 
-        ldx     #$00
+:       ldx     #$00
         ldy     #$00
         ; this will return the caller to 3 bytes after the initial call to dispatcher
         rts
 
 ; A/X point to string to setup, put it into payload, and save its length in there too
 set_payload:
-        axinto  ptr3
-        ; decrease ptr3 (pointer to string to save) by 5 so the y index matches copy
-        sbw1    ptr3, #$05
-        ldy     #$05            ; payload offset for string [5..5+len]
-:       lda     (ptr3), y
+        ; adjust spe_payload (pointed to by ptr9) by 5 for string copy location
+        adw1    tmp9, #$05
+
+        ; copy from message location (tmp7) to spe_payload
+        ldy     #$00
+:       lda     (tmp7), y
         beq     @end_copy
-        sta     (ptr2), y
+        sta     (tmp9), y
         iny
         bne     :-
 
 @end_copy:
-        ; decrease y by 5 to get string length
-        tya
-        sec
-        sbc     #$05            ; a = string length
-        ldy     #$04            ; payload offset for length
-        sta     (ptr2), y       ; payload[4] = string length
+        sbw1    tmp9, #$05              ; reset payload pointer to correct address
+        tya                             ; string length in y
+        ldy     #$04
+        sta     (tmp9), y               ; payload[4] = string length
         rts
 
 do_cb:
         jmp     (spe_cb)
+
+restore_tmp:
+        mva     spe_tmp7_old, tmp7
+        mva     spe_tmp8_old, tmp8
+        mva     spe_tmp9_old, tmp9
+        mva     spe_tmp10_old, tmp10
+        rts
 
 ; --------------------------------------------------
 ; BSS
@@ -214,6 +235,11 @@ spe_dest:       .res 1
 spe_cmdlist:    .res 2
 spe_payload:    .res 2
 spe_cb:         .res 2
+
+spe_tmp7_old:   .res 1
+spe_tmp8_old:   .res 1
+spe_tmp9_old:   .res 1
+spe_tmp10_old:  .res 1
 
 ; --------------------------------------------------
 ; DATA
