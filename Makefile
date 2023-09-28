@@ -8,7 +8,7 @@
 ###############################################################################
 
 # Space or comma separated list of cc65 supported target platforms to build for.
-TARGETS := atari
+TARGETS := atari apple2
 
 # Name of the final, single-file library.
 PROGRAM := fujinet-network.lib
@@ -307,7 +307,6 @@ clean:
 	$(call RMFILES,$(DEPENDS))
 	$(call RMFILES,$(REMOVES))
 	$(call RMFILES,$(BUILD_DIR)/$(PROGRAM))
-	$(call RMFILES,dist/*)
 
 dist: $(PROGRAM)
 	$(call MKDIR,dist/)

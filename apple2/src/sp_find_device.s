@@ -1,8 +1,8 @@
-        .export     _spn_find_device
+        .export     _sp_find_device
         .export     check_name
 
-        .import     _spn_payload
-        .import     _spn_status
+        .import     _sp_payload
+        .import     _sp_status
         .import     pusha
         .import     return0
 
@@ -16,12 +16,12 @@
 ; errors are returned as negative values from the sp_status DIB call
 ; 0 = no errors, but no device found
 ; n = slot of given named device
-.proc _spn_find_device
+.proc _sp_find_device
         axinto  tmp9            ; the device name we're looking for
 
         ; find the device count - do we need to keep doing this?
         pusha   #$00            ; doubles up as both parameters
-        jsr     _spn_status
+        jsr     _sp_status
         beq     :+
         
         ; convert to an error code by making negative
@@ -30,7 +30,7 @@
         adc     #$01
         rts
 
-:       lda     _spn_payload    ; number of devices in payload[0], 1 based
+:       lda     _sp_payload    ; number of devices in payload[0], 1 based
         sta     tmp8            ; device index, set to max (e.g. 6) initially
 
         mva     #$01, tmp7      ; this will be our device index to check. saves time in emulator as fuji disk is device 1
@@ -38,7 +38,7 @@
         ; get DIB for each device in turn looking for name
 :       pusha   tmp7
         lda     #$03
-        jsr     _spn_status
+        jsr     _sp_status
         bne     skip_next
 
         jsr     check_name
@@ -68,7 +68,7 @@ skip_next:
 
 :       lda     (tmp9), y               ; device name searching for
         beq     end_string
-        cmp     _spn_payload+5, y       ; payload[5+i]th character
+        cmp     _sp_payload+5, y       ; payload[5+i]th character
         bne     not_found
         inx
         iny

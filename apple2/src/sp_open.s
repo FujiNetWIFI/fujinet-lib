@@ -1,7 +1,7 @@
-        .export     _spn_open
+        .export     _sp_open
 
-        .import     _spn_cmdlist
-        .import     _spn_error
+        .import     _sp_cmdlist
+        .import     _sp_error
         .import     dispatch
         .import     popa
         .import     pusha
@@ -9,23 +9,23 @@
         .include    "sp.inc"
         .include    "macros.inc"
 
-; int8_t _spn_open(uint8_t dest)
+; int8_t _sp_open(uint8_t dest)
 ;
 ; Open smartport device
-; this changes _spn_payload
+; this changes _sp_payload
 ; returns any error code from dispatch call
-.proc _spn_open
-        sta     _spn_cmdlist+1          ; dest
+.proc _sp_open
+        sta     _sp_cmdlist+1          ; dest
         lda     #SP_OPEN_PARAM_COUNT
-        sta     _spn_cmdlist
+        sta     _sp_cmdlist
 
         pusha   #SP_CMD_OPEN
-        setax   #_spn_cmdlist
+        setax   #_sp_cmdlist
         jsr     dispatch
 
-        sta     _spn_error
+        sta     _sp_error
 
         ldx     #$00
-        lda     _spn_error
+        lda     _sp_error
         rts
 .endproc

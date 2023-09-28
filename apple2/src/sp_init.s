@@ -1,8 +1,8 @@
-        .export     _spn_init
+        .export     _sp_init
         .export     find_slot
 
-        .import     _spn_find_fuji
-        .import     _spn_dispatch
+        .import     _sp_find_fuji
+        .import     _sp_dispatch
         .import     return0
         .import     return1
 
@@ -14,7 +14,7 @@
 ; returns true if Smart Port initialised
 ; otherwise false.
 ; sets 
-.proc _spn_init
+.proc _sp_init
         jsr     find_slot
         bne     :+
 
@@ -26,7 +26,7 @@
         ; but the original implementation of this doesn't use the lack of FN to check other SP instances.
 
 ;         ; find FUJINET_DISK_0 device, and return 0/1 depending on if we found it.
-; :       jsr     _spn_find_fuji
+; :       jsr     _sp_find_fuji
 ;         bne     found
 ;         ; A/X already 0
 ;         rts
@@ -70,13 +70,13 @@ all_slots:
         jmp     return0
 
 found_sp:
-        ; set _spn_dispatch address while we have the correct slot in ptr1
+        ; set _sp_dispatch address while we have the correct slot in ptr1
         ldy     #$ff
         lda     (ptr1), y       ; dispatch vector is this value +3
         clc
         adc     #$03
         adw1    ptr1, a         ; move ptr1 to dispatch address, and store it
-        mwa     ptr1, _spn_dispatch
+        mwa     ptr1, _sp_dispatch
 
         ; now return the slot id in A, with X = 0
         txa                     ; device index into a

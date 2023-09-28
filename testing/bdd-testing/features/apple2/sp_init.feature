@@ -9,6 +9,6 @@ Feature: library test - apple2 spn_init
       And I create and load apple-single application
      When I execute the procedure at _init for no more than 100 instructions
 
-     # return from _spn_init is 1 in A, and 0 in X
+     # return from _sp_init is 1 in A, and 0 in X
      And I expect register A equal 1
      And I expect register X equal 0

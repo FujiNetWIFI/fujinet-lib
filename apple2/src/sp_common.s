@@ -1,6 +1,6 @@
         .export     dispatch
 
-        .import     _spn_dispatch
+        .import     _sp_dispatch
         .import     popa
 
 ; int8_t dispatch(uint8_t cmd, void *cmdlist)
@@ -20,6 +20,6 @@ dispatch_data:
         rts
 
 do_dispatch:
-        jmp     (_spn_dispatch)
+        jmp     (_sp_dispatch)
 
 .endproc

@@ -1,9 +1,9 @@
-        .export     _spn_payload
-        .export     _spn_count
-        .export     _spn_cmdlist
-        .export     _spn_dest
-        .export     _spn_dispatch
-        .export     _spn_error
+        .export     _sp_payload
+        .export     _sp_count
+        .export     _sp_cmdlist
+        .export     _sp_dest
+        .export     _sp_dispatch
+        .export     _sp_error
 
         .export     spn_fn_d0
         .export     spn_printer
@@ -13,12 +13,12 @@
         .export     spn_cpm
 
 .bss
-_spn_dest:      .res 1
-_spn_error:     .res 1
-_spn_count:     .res 2
-_spn_dispatch:  .res 2
-_spn_cmdlist:   .res 10
-_spn_payload:   .res 1024
+_sp_dest:      .res 1
+_sp_error:     .res 1
+_sp_count:     .res 2
+_sp_dispatch:  .res 2
+_sp_cmdlist:   .res 10
+_sp_payload:   .res 1024
 
 .data
 spn_fn_d0:      .byte "FUJINET_DISK_0", 0

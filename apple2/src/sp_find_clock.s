@@ -1,13 +1,13 @@
-        .export     _spn_find_clock
+        .export     _sp_find_clock
 
         .import     spn_clock
-        .import     _spn_find_device
+        .import     _sp_find_device
 
         .include    "macros.inc"
         .include    "zp.inc"
 
-.proc _spn_find_clock
+.proc _sp_find_clock
         ; look for spn_clock in devices
         setax   #spn_clock
-        jmp     _spn_find_device
+        jmp     _sp_find_device
 .endproc
