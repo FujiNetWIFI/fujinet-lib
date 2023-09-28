@@ -6,5 +6,7 @@
 .proc _network_open
         jsr     _sp_init
 
+        
+
         rts
 .endproc

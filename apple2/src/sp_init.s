@@ -9,7 +9,7 @@
         .include    "macros.inc"
         .include    "zp.inc"
 
-; bool spn_init()
+; bool sp_init()
 ;
 ; returns true if Smart Port initialised
 ; otherwise false.

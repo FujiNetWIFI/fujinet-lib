@@ -1,8 +1,8 @@
-Feature: library test - apple2 spn_init
+Feature: library test - apple2 sp_init
 
-  This tests fujinet-network apple2 spn_init
+  This tests fujinet-network apple2 sp_init
 
-  Scenario: execute spn_init
+  Scenario: execute sp_init
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add file for compiling "features/apple2/invokers/test_sp_init.s"

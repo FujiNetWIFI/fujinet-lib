@@ -1,12 +1,12 @@
-Feature: library test - apple2 spn_find_network
+Feature: library test - apple2 sp_find_network
 
-  This tests fujinet-network apple2 spn_find_network
+  This tests fujinet-network apple2 sp_find_network
 
   Scenario: execute sp.c
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add file for compiling "features/apple2/invokers/test_sp_find_network.s"
-      And I add file for compiling "../../apple2/src/spn_find_network.s"
+      And I add file for compiling "../../apple2/src/sp_find_network.s"
       And I create and load apple-single application
      When I execute the procedure at _init for no more than 930 instructions
 

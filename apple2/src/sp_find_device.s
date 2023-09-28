@@ -9,7 +9,7 @@
         .include    "macros.inc"
         .include    "zp.inc"
 
-; int8_t spn_find_device(char *device_name);
+; int8_t sp_find_device(char *device_name);
 ;
 ; find the device number for the one matching given name
 ; return:
