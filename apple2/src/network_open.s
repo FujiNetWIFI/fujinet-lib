@@ -5,6 +5,7 @@
         .import     _sp_control
         .import     _sp_find_network
         .import     _sp_init
+        .import     _sp_network
         .import     _sp_payload
         .import     _strlen
         .import     incsp3
@@ -12,6 +13,7 @@
         .import     popax
         .import     pusha
         .import     pushax
+        .import     return0
 
         .include    "macros.inc"
         .include    "zp.inc"
@@ -20,7 +22,8 @@
 .proc _network_open
         sta     tmp1            ; trans
 
-        ;; Not sure this is needed, not everything writes 00s to payload buffer
+        ;; Not sure this is needed, not everything writes 00s to payload buffer, by time it does the final sp_control, it's
+        ;; already been trashed with values from init, and find_network.
         ; pushax  #_sp_payload
         ; setax   #$400
         ; jsr     _bzero
@@ -30,13 +33,10 @@
         beq     no_network
 
         sta     tmp2            ; store the unit
+        sta     _sp_network     ; keep track of network unit
 
-        jsr     popa
-        sta     _sp_payload+2   ; mode
-        jsr     popax
-        sta     ptr1
-        stx     ptr1+1
-        ; popax   ptr1            ; devicespec
+        popa    _sp_payload+2   ; mode
+        popax   ptr1            ; devicespec
         jsr     _strlen
 
         axinto  tmp9            ; tmp9/10 hold string len
@@ -66,5 +66,6 @@
 
 no_network:
         ; need to move SP on 3 bytes to skip unread args
-        jmp     incsp3
+        jsr     incsp3
+        jmp     return0
 .endproc

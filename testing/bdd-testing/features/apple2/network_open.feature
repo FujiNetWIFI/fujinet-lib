@@ -19,8 +19,8 @@ Feature: library test - apple2 network_open
     Then I expect register A equal 0
      And I expect register X equal 0
      And I expect to see t_cb_executed equal 1
-     # CMD is OPEN (4)
-     And I expect to see spe_cmd equal 4
+     # CMD is SP_CMD_CONTROL (4)
+     And I expect to see spe_cmd equal $4
      # DEST is smartport NETWORK device (3)
      And I expect to see spe_dest equal 3
      # 'O' control code

@@ -35,7 +35,7 @@
 :       lda     _sp_payload    ; number of devices in payload[0], 1 based
         sta     tmp8            ; device index, set to max (e.g. 6) initially
 
-        mva     #$01, tmp7      ; this will be our device index to check. saves time in emulator as fuji disk is device 1
+        mva     #$01, tmp7      ; this will be our device index to check
 
         ; get DIB for each device in turn looking for name
 :       pusha   tmp7

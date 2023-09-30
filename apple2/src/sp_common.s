@@ -4,6 +4,8 @@
         .import     popa
 
 ; int8_t dispatch(uint8_t cmd, void *cmdlist)
+;
+; returns any error code from the smart port dispatch function
 .proc dispatch
         sta     dispatch_data+1         ; cmdlist low
         stx     dispatch_data+2         ; cmdlist high

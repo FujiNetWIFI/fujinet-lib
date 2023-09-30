@@ -4,6 +4,7 @@
         .export     _sp_dest
         .export     _sp_dispatch
         .export     _sp_error
+        .export     _sp_network
 
         .export     sp_fn_d0
         .export     sp_printer
@@ -21,6 +22,7 @@ _sp_cmdlist:   .res 10
 _sp_payload:   .res 1024
 
 .data
+_sp_network:   .byte $00
 sp_fn_d0:      .byte "FUJINET_DISK_0", 0
 sp_printer:    .byte "PRINTER", 0
 sp_network:    .byte "NETWORK", 0
