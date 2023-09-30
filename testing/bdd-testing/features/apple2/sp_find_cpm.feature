@@ -2,12 +2,12 @@ Feature: library test - apple2 sp_find_cpm
 
   This tests fujinet-network apple2 sp_find_cpm
 
-  Scenario: execute sp.c
+  Scenario: execute apple2 sp_find_cpm
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add file for compiling "features/apple2/invokers/test_sp_find_cpm.s"
       And I add file for compiling "../../apple2/src/sp_find_cpm.s"
-      And I create and load apple-single application
+      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
      When I execute the procedure at _init for no more than 1475 instructions
 
     # offset 5 contains the device name

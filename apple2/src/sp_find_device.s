@@ -16,6 +16,8 @@
 ; errors are returned as negative values from the sp_status DIB call
 ; 0 = no errors, but no device found
 ; n = slot of given named device
+
+; uses tmp7-tmp10
 .proc _sp_find_device
         axinto  tmp9            ; the device name we're looking for
 

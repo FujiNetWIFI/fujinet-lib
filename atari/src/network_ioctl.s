@@ -37,6 +37,7 @@
         jsr     popax                   ; devicespec, we can only get the UNIT out of this
         jsr     _network_unit
         sta     IO_DCB::dunit
+        sta     tmp8
 
         jsr     popa                    ; aux2
         sta     IO_DCB::daux2
@@ -51,6 +52,7 @@
         mva     #$0f, IO_DCB::dtimlo    ; timeout
 
         jsr     _bus
+        lda     tmp8
         jmp     _io_status              ; set return to the status
 
 @args_error:

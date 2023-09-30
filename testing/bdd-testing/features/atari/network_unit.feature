@@ -1,6 +1,6 @@
-Feature: library test - network_unit
+Feature: library test - atari network_unit
 
-  This tests fujinet-network network_unit
+  This tests fujinet-network atari network_unit
 
   Scenario Outline: execute _network_unit
     Given atari-fn-nw application test setup

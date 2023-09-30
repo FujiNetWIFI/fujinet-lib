@@ -1,20 +1,23 @@
-Feature: library test - network_status and io_status
+Feature: library test - atari network_status and io_status
 
-  This tests fujinet-network network_status
+  This tests fujinet-network atari network_status
 
   Scenario Outline: execute _network_status
     Given atari-fn-nw application test setup
       And I add common atari-io files
       And I add atari src file "network_status.s"
       And I add common src file "network_unit.s"
-      And I add file for compiling "features/test-setup/test-apps/test_w.s"
+      And I add file for compiling "features/test-setup/test-apps/test_wwb.s"
       And I add file for compiling "features/atari/stubs/bus_simple.s"
       And I create and load atari application
       And I write string "<devspec>" as ascii to memory address $a000
       And I write word at t_w1 with hex $a000
+      # not implemented yet
+      And I write word at t_w2 with hex $ffff
+      And I write memory at t_b3 with $ff
       And I write memory at $02ED with <ERR_RET>
       And I write word at t_fn with address _network_status
-     When I execute the procedure at _init for no more than 100 instructions
+     When I execute the procedure at _init for no more than 150 instructions
 
     Then I expect register A equal <A>
      And I expect register X equal <X>

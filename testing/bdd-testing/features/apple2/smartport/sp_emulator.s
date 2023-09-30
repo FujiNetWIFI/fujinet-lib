@@ -1,7 +1,10 @@
-        .export     _setup_sp
+        .export     _setup_smartport
         .export     sp_emulator
         .export     set_payload
+        .export     end_emulator_ok
+        .export     end_emulator_not_ok
 
+        .export     spe_cb
         .export     spe_cmd
         .export     spe_dest
         .export     spe_cmdlist
@@ -20,7 +23,7 @@
 ; The callback function is run when a non DIB command is made
 ; which can read the variables spe_cmd, spe_dest, spe_cmdlist, spe_payload
 
-_setup_sp:
+_setup_smartport:
         axinto  spe_cb
         mwa     #$c100, ptr1
 
@@ -92,7 +95,7 @@ sp_emulator:
         ; 7 = CLOSE
         ; 8 = READ
         ; 9 = WRITE
-        ;     All the above are passed to Callback routine established in _setup_sp
+        ;     All the above are passed to Callback routine established in _setup_smartport
         ;     which can access the command/dest/cmdlist/payload via exported spe_* variables
         ;
 
@@ -198,10 +201,10 @@ end_emulator_not_ok:
 
 ; A/X point to string to setup, put it into payload, and save its length in there too
 set_payload:
-        ; adjust spe_payload (pointed to by ptr9) by 5 for string copy location
+        ; adjust payload (pointed to by ptr9) by 5 for string copy location
         adw1    tmp9, #$05
 
-        ; copy from message location (tmp7) to spe_payload
+        ; copy from message location (tmp7) to payload
         ldy     #$00
 :       lda     (tmp7), y
         beq     @end_copy

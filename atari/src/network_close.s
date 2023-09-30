@@ -14,17 +14,18 @@
 .proc _network_close
         ; get the network unit for this device, A/X already set correctly
         jsr     _network_unit
-        sta     tmp6                    ; save the UNIT
+        sta     tmp8                    ; save the UNIT
 
         setax   #t_network_close
         jsr     copy_cmd_data
 
         ; add our specifics, and call SIO
-        mva     tmp6, IO_DCB::dunit
+        mva     tmp8, IO_DCB::dunit
         mva     #$00, IO_DCB::dbuflo
         sta     IO_DCB::dbufhi
         jsr     _bus
 
+        lda     tmp8
         jmp     _io_status
 .endproc
 

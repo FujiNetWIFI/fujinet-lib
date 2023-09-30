@@ -4,16 +4,22 @@
         .import     _bus
         .import     _network_unit
         .import     copy_cmd_data
+        .import     incsp2
+        .import     popax
 
         .include    "atari.inc"
         .include    "device.inc"
         .include    "macros.inc"
         .include    "zp.inc"
 
-; uint8_t network_status(char *devicespec)
+; uint8_t network_status(char *devicespec, uint16_t *bw, uint8_t *c)
 ;
 _network_status:
-        ; get the network unit for this device, A/X already set correctly
+        ; initially ignoring the c/bw params
+        jsr     incsp2          ; drop bw
+
+        ; get the network unit for this device
+        jsr     popax
         jsr     _network_unit
         ; fall through to known unit case
 

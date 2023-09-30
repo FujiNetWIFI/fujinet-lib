@@ -1,6 +1,6 @@
-Feature: library test - network_write
+Feature: library test - atari network_write
 
-  This tests fujinet-network network_write
+  This tests fujinet-network atari network_write
 
   Scenario: execute _network_write
     Given atari-fn-nw application test setup

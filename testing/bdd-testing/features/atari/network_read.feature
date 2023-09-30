@@ -1,6 +1,6 @@
-Feature: library test - network_read
+Feature: library test - atari network_read
 
-  This tests fujinet-network network_read
+  This tests fujinet-network atari network_read
 
   Scenario: execute _network_read
     Given atari-fn-nw application test setup

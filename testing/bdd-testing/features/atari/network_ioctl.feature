@@ -1,6 +1,6 @@
-Feature: library test - network_ioctl
+Feature: library test - atari network_ioctl
 
-  This tests fujinet-network network_ioctl
+  This tests fujinet-network atari network_ioctl
   See the associated test file which calls with:
     return network_ioctl('X', 1, 2, my_devicespec, my_dstats, my_dbuf, my_dbyt);
 

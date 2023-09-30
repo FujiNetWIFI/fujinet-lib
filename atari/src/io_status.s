@@ -7,6 +7,8 @@
         .include    "zp.inc"
 
 ; uint8_t io_status(uint8_t unit)
+;
+; unit is only used when dstats is equal to DERROR (144) for extended information
 .proc _io_status
         sta     tmp8                ; unit
 

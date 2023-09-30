@@ -5,6 +5,7 @@
 - Moved BDD src to separate project as it shared over multiple projects now
 - Added apple-single testing feature
 - Added Smart Port emulator for feature tests to be able to run apple2 fujinet code
+- Added network_open for apple2
 
 ## [1.0.0] - 2023-09-24
 

@@ -1,6 +1,6 @@
-Feature: library test - network_close
+Feature: library test - atari network_close
 
-  This tests fujinet-network network_close
+  This tests fujinet-network atari network_close
 
   Scenario: execute _network_close
     Given atari-fn-nw application test setup
