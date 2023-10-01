@@ -7,7 +7,8 @@ Given common apple2-fn-nw test setup
 Given apple2-fn-nw application test setup
   Given common apple2-fn-nw test setup
     And I start compiling for apple2 in "build/tests" with config "features/test-setup/inc/fn-nw-apple2.cfg"
-    # These must come after the "start compiling"
+    # These must come after the "start compiling". Root dirs added for fujinet-network.h/inc
+    And I add compiler option "--asm-include-dir ../../"
     And I add compiler option "--asm-include-dir features/apple2/inc"
     And I add compiler option "--asm-include-dir ../../apple2/src/inc"
     And I add compiler option "--asm-include-dir ../../common/inc"
@@ -24,3 +25,5 @@ Given I add common apple2-sp files
     And I add file for compiling "../../apple2/src/sp_status.s"
     And I add file for compiling "../../apple2/src/sp_control.s"
     And I add file for compiling "../../apple2/src/sp_find_device.s"
+    And I add file for compiling "../../apple2/src/fn_error.s"
+    And I add file for compiling "../../common/src/errs.s"

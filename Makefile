@@ -211,14 +211,17 @@ DEPENDS := $(OBJECTS:.o=.d)
 # Add to LIBS something like 'src/foo.lib src/c64/bar.lib'.
 LIBS += $(wildcard $(TARGETLIST)/$(SRCDIR)/*.lib)
 
-ASFLAGS += --asm-include-dir common/inc --asm-include-dir $(TARGETLIST)/$(SRCDIR)/inc
-CFLAGS += --include-dir common/inc --include-dir $(TARGETLIST)/$(SRCDIR)/inc
+# add common/inc, <target>/src/inc, and the root directory (for fujinet-network.[h|inc])
+ASFLAGS += --asm-include-dir common/inc --asm-include-dir $(TARGETLIST)/$(SRCDIR)/inc --asm-include-dir .
+CFLAGS += --include-dir common/inc --include-dir $(TARGETLIST)/$(SRCDIR)/inc --include-dir .
 
 CHANGELOG = Changelog.md
 
+# single line with version number in semantic form (e.g. 2.1.3)
 VERSION_FILE = version.txt
 VERSION_STRING := $(file < $(VERSION_FILE))
 
+# include files that are included in the ZIP dist/release target
 FN_NW_HEADER = fujinet-network.h
 FN_NW_INC = fujinet-network.inc
 

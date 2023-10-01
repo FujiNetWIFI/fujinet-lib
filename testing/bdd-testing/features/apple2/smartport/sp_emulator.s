@@ -6,8 +6,9 @@
 
         .export     spe_cb
         .export     spe_cmd
-        .export     spe_dest
         .export     spe_cmdlist
+        .export     spe_code
+        .export     spe_dest
         .export     spe_payload
 
         .import     popa
@@ -140,6 +141,11 @@ sp_emulator:
         lda     (tmp9), y
         sta     spe_payload+1
 
+        ; next code is statcode for STATUS, or ctrlcode for CONTROL calls
+        iny
+        lda     (tmp9), y
+        sta     spe_code
+
         ; done with cmdlist, make tmp9 = payload location
         mwa     spe_payload, tmp9
 
@@ -152,16 +158,21 @@ sp_emulator:
         bne     not_status
 
         lda     spe_dest
-        ; is this the DIB request?
+        ; is this the device count request?
         cmp     #$00
-        bne     not_DIB
+        bne     not_device_count
 
         ; yes, so return 0 and no error, and set payload[0] = 6 for 6 devices
         ldy     #$00
         mva     #$06, {(tmp9), y}
         jmp     end_emulator_ok
 
-not_DIB:
+not_device_count:
+        ; is this a DIB request (statcode == 0x03)?
+        lda     spe_code
+        cmp     #$03
+        bne     not_DIB
+
         ; set y to the device 0-5, so we can read from table
         lda     spe_dest
         tay
@@ -173,6 +184,10 @@ not_DIB:
 
         jsr     set_payload
         jmp     end_emulator_ok
+
+not_DIB:
+        ; this is a normal status request with statcode in A
+        ; simply fall through to the callback as it will be expecting to handle this and non-status calls
 
 not_status:
 ; --------------------------------------------------
@@ -237,6 +252,8 @@ spe_cmd:        .res 1
 spe_dest:       .res 1
 spe_cmdlist:    .res 2
 spe_payload:    .res 2
+; doubles up as ctrlcode or statcode when it's either of those 2 commands
+spe_code:       .res 1
 spe_cb:         .res 2
 
 spe_tmp7_old:   .res 1

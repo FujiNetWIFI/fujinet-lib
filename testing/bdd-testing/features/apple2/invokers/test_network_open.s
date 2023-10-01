@@ -26,11 +26,12 @@
 
 
 .proc t_cb
-        ; the callback for the open routine.
-        ; set some values for out test to detect
+        ; the callback for the network call
         inc     t_cb_executed
 
-        jmp     return0
+        ldx     #$00
+        lda     t_return_code
+        rts
 .endproc
 
 .bss
@@ -40,3 +41,4 @@ t_translate:    .res 1
 
 .data
 t_cb_executed:  .byte 0
+t_return_code:  .byte 0

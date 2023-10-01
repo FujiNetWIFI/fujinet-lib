@@ -21,8 +21,7 @@ Feature: library test - atari network_write
       And I set register X to $ff
      When I execute the procedure at _init for no more than 165 instructions
 
-    # return value is DSTATS, which is untouched after setting CMD table
-    Then I expect register A equal $80
+    Then I expect register A equal 1
      And I expect register X equal 0
 
     # check the DCB values were set correctly

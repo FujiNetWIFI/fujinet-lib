@@ -17,7 +17,7 @@ Feature: library test - atari network_close
       And I write word at t_fn with address _network_close
       # show X is changed by giving it an initial value
       And I set register X to $ff
-     When I execute the procedure at _init for no more than 100 instructions
+     When I execute the procedure at _init for no more than 120 instructions
 
     # return value is DSTATS, which is untouched after setting CMD table
     Then I expect register A equal 0

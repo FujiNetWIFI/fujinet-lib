@@ -8,7 +8,7 @@ Feature: library test - apple2 sp_find_modem
       And I add file for compiling "features/apple2/invokers/test_sp_find_modem.s"
       And I add file for compiling "../../apple2/src/sp_find_modem.s"
       And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
-     When I execute the procedure at _init for no more than 1300 instructions
+     When I execute the procedure at _init for no more than 1400 instructions
 
     # offset 5 contains the device name
     Then string at _sp_payload+5 contains

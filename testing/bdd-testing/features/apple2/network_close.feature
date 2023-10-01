@@ -12,7 +12,7 @@ Feature: library test - apple2 network_close
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write memory at _sp_network with $03
-     When I execute the procedure at _init for no more than 1300 instructions
+     When I execute the procedure at _init for no more than 250 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0
@@ -34,7 +34,7 @@ Feature: library test - apple2 network_close
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write memory at _sp_network with $00
-     When I execute the procedure at _init for no more than 1300 instructions
+     When I execute the procedure at _init for no more than 120 instructions
 
     Then I expect register A equal 1
      And I expect register X equal 0

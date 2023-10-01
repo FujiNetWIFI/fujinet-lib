@@ -15,7 +15,7 @@ Feature: library test - atari network_ioctl
       And I add file for compiling "features/atari/stubs/bus_simple.s"
       And I set register X to $ff
       And I create and load atari application
-     When I execute the procedure at _init for no more than 220 instructions
+     When I execute the procedure at _init for no more than 230 instructions
 
     Then I expect to see DDEVIC equal $71
      And I expect to see DUNIT equal 3
@@ -29,6 +29,5 @@ Feature: library test - atari network_ioctl
      And I expect to see DAUX1 equal 1
      And I expect to see DAUX2 equal 2
 
-    # DSTATS still in A, X forced to 0
-    Then I expect register A equal $40
+    Then I expect register A equal 0
      And I expect register X equal 0

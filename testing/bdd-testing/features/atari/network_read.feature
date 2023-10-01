@@ -19,10 +19,9 @@ Feature: library test - atari network_read
       And I write word at t_fn with address _network_read
       # show X is changed by giving it an initial value
       And I set register X to $ff
-     When I execute the procedure at _init for no more than 165 instructions
+     When I execute the procedure at _init for no more than 170 instructions
 
-    # return value is DSTATS, which is untouched after setting CMD table
-    Then I expect register A equal $40
+    Then I expect register A equal 0
      And I expect register X equal 0
 
     # check the DCB values were set correctly

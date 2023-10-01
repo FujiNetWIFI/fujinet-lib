@@ -19,10 +19,10 @@ Feature: library test - atari network_open
       And I write word at t_fn with address _network_open
       # show X is changed by giving it an initial value
       And I set register X to $ff
-     When I execute the procedure at _init for no more than 150 instructions
+     When I execute the procedure at _init for no more than 160 instructions
 
-    # return value is DSTATS, which is untouched after setting CMD table
-    Then I expect register A equal $80
+    # error value is 1
+    Then I expect register A equal 1
      And I expect register X equal 0
 
     # check the DCB values were set correctly

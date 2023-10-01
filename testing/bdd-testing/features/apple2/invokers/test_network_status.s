@@ -1,9 +1,13 @@
         .export     _main
         .export     t_devicespec
-        .export     t_cb
+        .export     t_bw
+        .export     t_c
+        .export     t_err
         .export     t_cb_executed
+        .export     t_return_code
+        .export     t_statcode
 
-        .import     _network_close
+        .import     _network_status
         .import     _sp_init
         .import     pusha
         .import     pushax
@@ -20,13 +24,16 @@
         jsr     _sp_init
 
         ; call function under test
-        setax   t_devicespec
-        jmp     _network_close
+        pushax  t_devicespec
+        pushax  t_bw
+        pushax  t_c
+        setax   t_err
+        jmp     _network_status
 .endproc
 
-
 .proc t_cb
-        ; the callback for the network call
+        ; the callback for the status call
+        sta     t_statcode
         inc     t_cb_executed
 
         ldx     #$00
@@ -36,6 +43,12 @@
 
 .bss
 t_devicespec:   .res 2
+t_bw:           .res 2
+t_c:            .res 2
+t_err:          .res 2
+
+; for testing CB was called with correct statcode
+t_statcode:     .res 1
 
 .data
 t_cb_executed:  .byte 0
