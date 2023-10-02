@@ -47,3 +47,6 @@ Feature: library test - apple2 network_status
      And I expect to see $b001 equal $12
      And I expect to see $b002 equal 2
      And I expect to see $b003 equal 3
+
+# TODO: test error case
+# TODO: test setting nulls in parameters

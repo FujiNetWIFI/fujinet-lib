@@ -36,10 +36,8 @@ Feature: library test - apple2 network_close
       And I write memory at _sp_network with $00
      When I execute the procedure at _init for no more than 120 instructions
 
-    # Return is FN_ERR_BAD_CMD
-    Then I expect register A equal 2
+    Then I expect register A equal FN_ERR_BAD_CMD
      And I expect register X equal 0
      # sp_status was not called
      And I expect to see t_cb_executed equal 0
-     # The device error is BAD UNIT
-     And I expect to see _fn_device_error equal $11
+     And I expect to see _fn_device_error equal SP_ERR_BAD_UNIT

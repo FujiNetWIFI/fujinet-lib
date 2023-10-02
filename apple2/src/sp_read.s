@@ -12,7 +12,6 @@
 
 ; int8_t _sp_read(uint8_t dest, uint16_t len)
 ;
-; Close smartport device
 ; this changes _sp_payload
 ; returns any error code from _sp_dispatch call
 .proc _sp_read

@@ -10,6 +10,7 @@
 - Added network_open for apple2
 - Added network_close for apple2
 - Added network_status for apple2
+- Added network_read for apple2
 - Create set of standard error codes that device specific values get converted to
 
 ### Breaking

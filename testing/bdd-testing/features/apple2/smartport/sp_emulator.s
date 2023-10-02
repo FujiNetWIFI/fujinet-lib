@@ -217,8 +217,9 @@ end_emulator_ok:
         beq     :+
 
 end_emulator_not_ok:
+        pha                     ; save the error code
         jsr     restore_tmp
-        lda     #$01
+        pla                     ; restore error code, we want that to go to caller as a raw device error, set by test
 
 :       ldx     #$00
         ldy     #$00
