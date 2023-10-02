@@ -4,7 +4,7 @@
         .import     _sp_count
         .import     _sp_error
         .import     _sp_payload
-        .import     dispatch
+        .import     _sp_dispatch
         .import     popa
         .import     pusha
 
@@ -15,7 +15,7 @@
 ;
 ; call smart port for status using given code for given destination
 ; this changes _sp_payload, and _sp_count
-; returns any error code from dispatch call
+; returns any error code from _sp_dispatch call
 .proc _sp_status
         sta     _sp_cmdlist+4          ; statcode
 
@@ -30,7 +30,7 @@
 
         pusha   #SP_CMD_STATUS
         setax   #_sp_cmdlist
-        jsr     dispatch
+        jsr     _sp_dispatch
 
         ; X/Y contains count (of bytes transferred), A contains error
         stx     _sp_count

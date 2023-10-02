@@ -3,7 +3,7 @@
         .import     _sp_cmdlist
         .import     _sp_error
         .import     _sp_payload
-        .import     dispatch        
+        .import     _sp_dispatch        
         .import     popa
         .import     pusha
 
@@ -14,7 +14,7 @@
 ;
 ; Close smartport device
 ; this changes _sp_payload
-; returns any error code from dispatch call
+; returns any error code from _sp_dispatch call
 .proc _sp_write
         sta     _sp_cmdlist+4          ; len (low)
         stx     _sp_cmdlist+5          ; len (high)
@@ -29,7 +29,7 @@
 
         pusha   #SP_CMD_WRITE
         setax   #_sp_cmdlist
-        jsr     dispatch
+        jsr     _sp_dispatch
 
         sta     _sp_error
 

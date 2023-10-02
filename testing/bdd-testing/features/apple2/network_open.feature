@@ -2,11 +2,30 @@ Feature: library test - apple2 network_open
 
   This tests fujinet-network apple2 network_open
 
-  Scenario: execute apple2 _network_open
+  Scenario: execute apple2 _network_open finding no network device returns io error
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add apple2 src file "network_open.s"
-      And I add common src file "network_unit.s"
+      And I add file for compiling "features/apple2/invokers/test_network_open.s"
+      And I add file for compiling "../../apple2/src/sp_find_network.s"
+      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I write memory at _sp_network with 0
+      And I write memory at spe_should_fail_device_lookup with 1
+      And I write memory at spe_num_devices with 1
+     When I execute the procedure at _init for no more than 500 instructions
+
+    # FN_IO_ERROR returned
+    Then I expect register A equal 1
+     And I expect register X equal 0
+    # real device error is SP_ERR_IO_ERROR
+     And I expect to see _fn_device_error equal $27
+     And I expect to see t_cb_executed equal 0
+
+
+  Scenario: execute apple2 _network_open sets payload data correctly when there is a valuid network
+    Given apple2-fn-nw application test setup
+      And I add common apple2-sp files
+      And I add apple2 src file "network_open.s"
       And I add file for compiling "features/apple2/invokers/test_network_open.s"
       And I add file for compiling "../../apple2/src/sp_find_network.s"
       And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"

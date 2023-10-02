@@ -1,6 +1,6 @@
         .export     _network_open
 
-        .import     _bzero
+        .import     _fn_device_error
         .import     _memcpy
         .import     _sp_control
         .import     _sp_find_network
@@ -13,8 +13,9 @@
         .import     popax
         .import     pusha
         .import     pushax
-        .import     return0
+        .import     return1
 
+        .include    "sp.inc"
         .include    "macros.inc"
         .include    "zp.inc"
 
@@ -65,7 +66,10 @@
         jmp     _sp_control
 
 no_network:
+        ; we searched for NETWORK device in SmartPort and found nothing. Set IO ERRORS for normal and extended error
         ; need to move SP on 3 bytes to skip unread args
         jsr     incsp3
-        jmp     return0
+        lda     #SP_ERR_IO_ERROR
+        sta     _fn_device_error
+        jmp     return1         ; FN_ERR_IO_ERROR
 .endproc

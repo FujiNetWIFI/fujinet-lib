@@ -2,7 +2,7 @@
 
         .import     _sp_cmdlist
         .import     _sp_error
-        .import     dispatch
+        .import     _sp_dispatch
         .import     pusha
 
         .include    "sp.inc"
@@ -12,7 +12,7 @@
 ;
 ; Close smartport device
 ; this changes _sp_payload
-; returns any error code from dispatch call
+; returns any error code from _sp_dispatch call
 .proc _sp_close
         sta     _sp_cmdlist+1          ; dest
         lda     #SP_CLOSE_PARAM_COUNT
@@ -20,7 +20,7 @@
 
         pusha   #SP_CMD_CLOSE
         setax   #_sp_cmdlist
-        jsr     dispatch
+        jsr     _sp_dispatch
 
         sta     _sp_error
 

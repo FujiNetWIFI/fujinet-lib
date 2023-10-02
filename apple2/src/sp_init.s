@@ -2,7 +2,7 @@
         .export     find_slot
 
         .import     _sp_find_fuji
-        .import     _sp_dispatch
+        .import     _sp_dispatch_fn
         .import     return0
         .import     return1
 
@@ -70,13 +70,13 @@ all_slots:
         jmp     return0
 
 found_sp:
-        ; set _sp_dispatch address while we have the correct slot in ptr1
+        ; set _sp_dispatch_fn address while we have the correct slot in ptr1
         ldy     #$ff
-        lda     (ptr1), y       ; dispatch vector is this value +3
+        lda     (ptr1), y       ; _sp_dispatch vector is this value +3
         clc
         adc     #$03
-        adw1    ptr1, a         ; move ptr1 to dispatch address, and store it
-        mwa     ptr1, _sp_dispatch
+        adw1    ptr1, a         ; move ptr1 to _sp_dispatch address, and store it
+        mwa     ptr1, _sp_dispatch_fn
 
         ; now return the slot id in A, with X = 0
         txa                     ; device index into a

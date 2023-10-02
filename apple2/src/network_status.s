@@ -1,5 +1,6 @@
         .export     _network_status
 
+        .import     _bad_unit
         .import     _fn_device_error
         .import     _fn_error
         .import     _sp_network
@@ -28,12 +29,7 @@
 
         ; remove the function args we didn't read from the stack, save the real error, and return bad command
         jsr     incsp6
-        lda     #SP_ERR_BAD_UNIT
-        sta     _fn_device_error
-
-        ldx     #$00
-        lda     #FN_ERR_BAD_CMD
-        rts
+        jmp     _bad_unit
 
 have_network:
         jsr     pusha           ; network unit

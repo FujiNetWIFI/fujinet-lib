@@ -9,7 +9,9 @@
         .export     spe_cmdlist
         .export     spe_code
         .export     spe_dest
+        .export     spe_num_devices
         .export     spe_payload
+        .export     spe_should_fail_device_lookup
 
         .import     popa
 
@@ -45,7 +47,7 @@ _setup_smartport:
         ldy     #$07
         mva     #$00, {(ptr1), y}
 
-        ; setup dispatch, if we put CXFF = $06, then CX09 = dispatch address (CX00+3 + $06).
+        ; setup _sp_dispatch, if we put CXFF = $06, then CX09 = _sp_dispatch address (CX00+3 + $06).
         ldy     #$ff
         mva     #$06, {(ptr1), y}
 
@@ -60,7 +62,7 @@ _setup_smartport:
         rts
 
 ; -------------------------------------------------------------
-; Dispatch routine for our SmartPort emulator
+; _sp_dispatch routine for our SmartPort emulator
 ; which knows about 6 devices, detailed below.
 ;
 sp_emulator:
@@ -160,26 +162,35 @@ sp_emulator:
         lda     spe_dest
         ; is this the device count request?
         cmp     #$00
-        bne     not_device_count
+        bne     @not_device_count
 
-        ; yes, so return 0 and no error, and set payload[0] = 6 for 6 devices
+        ; yes, so return 0 and no error, and set payload[0] = num devices
         ldy     #$00
-        mva     #$06, {(tmp9), y}
+        mva     spe_num_devices, {(tmp9), y}
         jmp     end_emulator_ok
 
-not_device_count:
+@not_device_count:
         ; is this a DIB request (statcode == 0x03)?
         lda     spe_code
         cmp     #$03
         bne     not_DIB
 
+        ; don't load the correct dest name device if we are told to deliberately fail device lookup        
+        lda     spe_should_fail_device_lookup
+        beq     @use_dest
+
+        lda     #<m_other
+        ldx     #>m_other
+        jmp     @over
+
+@use_dest:
         ; set y to the device 0-5, so we can read from table
-        lda     spe_dest
-        tay
+        ldy     spe_dest
         dey
 
         lda     DeviceNamesLo, y
         ldx     DeviceNamesHi, y
+@over:
         axinto  tmp7
 
         jsr     set_payload
@@ -265,6 +276,12 @@ spe_tmp10_old:  .res 1
 ; DATA
 .data
 
+; allows tests to force emulator to not find the device they are looking for
+spe_should_fail_device_lookup:  .byte 0
+
+; allow test to override number of devices we return
+spe_num_devices:                .byte 6
+
 .define DeviceNames m_fn_d0, m_printer, m_network, m_clock, m_modem, m_cpm
 DeviceNamesLo:          .lobytes DeviceNames
 DeviceNamesHi:          .hibytes DeviceNames
@@ -276,3 +293,5 @@ m_network:      .byte "NETWORK", 0
 m_clock:        .byte "FN_CLOCK", 0
 m_modem:        .byte "MODEM", 0
 m_cpm:          .byte "CPM", 0
+; used when flag to fail is set
+m_other:        .byte "X", 0

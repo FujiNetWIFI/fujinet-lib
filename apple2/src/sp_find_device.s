@@ -54,6 +54,7 @@
 skip_next:
         ; keep looping until tmp7 (device index) is greater than device count
         inc     tmp7
+        lda     tmp7
         cmp     tmp8
         bcc     :-
         beq     :-

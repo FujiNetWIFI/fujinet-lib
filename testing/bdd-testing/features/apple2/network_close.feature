@@ -24,7 +24,7 @@ Feature: library test - apple2 network_close
      # 'C' control code
      And I expect to see _sp_cmdlist+4 equal 67
 
-  Scenario: execute apple2 _network_close when network id is unsetl
+  Scenario: execute apple2 _network_close when network id is unset
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add apple2 src file "network_close.s"
@@ -36,6 +36,10 @@ Feature: library test - apple2 network_close
       And I write memory at _sp_network with $00
      When I execute the procedure at _init for no more than 120 instructions
 
-    Then I expect register A equal 1
+    # Return is FN_ERR_BAD_CMD
+    Then I expect register A equal 2
      And I expect register X equal 0
+     # sp_status was not called
      And I expect to see t_cb_executed equal 0
+     # The device error is BAD UNIT
+     And I expect to see _fn_device_error equal $11

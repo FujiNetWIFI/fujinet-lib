@@ -1,10 +1,10 @@
         .export     _network_close
 
+        .import     _bad_unit
         .import     _fn_error
         .import     _sp_control
         .import     _sp_network
         .import     pusha
-        .import     return1
 
 ; uint8_t network_close(char* devicespec);
 ;
@@ -35,5 +35,5 @@
         jmp     _fn_error
 
 no_network:
-        jmp     return1
+        jmp     _bad_unit
 .endproc

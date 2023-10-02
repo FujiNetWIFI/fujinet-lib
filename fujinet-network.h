@@ -65,7 +65,7 @@ uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, char* devicespec,
 
 
 #define FN_ERR_OK               (0x00)      /* No error */
-#define FN_ERR_IO_ERROR         (0x01)      /* The device returned an IO Error */
+#define FN_ERR_IO_ERROR         (0x01)      /* There was IO error/issue with the device */
 #define FN_ERR_BAD_CMD          (0x02)      /* Function called with bad arguments */
 #define FN_ERR_OFFLINE          (0x03)      /* The device is offline */
 #define FN_ERR_WARNING          (0x04)      /* Device specific non-fatal warning issued */
