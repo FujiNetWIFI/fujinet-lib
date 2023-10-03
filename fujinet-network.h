@@ -66,11 +66,12 @@ uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, char* devicespec,
 /**
  * @brief  Parse the currently open JSON location
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
+ * @param  mode (4=read, 8=write, 12=read/write, 13=POST, etc.)
  * @return fujinet-network error code (See FN_ERR_* values)
  * 
  * This will set the channel mode to JSON, which will be unset in the close.
  */
-uint8_t network_json_parse(char *devicespec);
+uint8_t network_json_parse(char *devicespec, uint8_t mode);
 
 /**
  * @brief  Perform JSON query

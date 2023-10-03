@@ -33,6 +33,7 @@ Feature: library test - atari network_json_query
       And I expect to see t_ioctl_devspec+1 equal $90
       And I expect to see t_ioctl_aux1 equal $c
       And I expect to see t_ioctl_aux2 equal 0
+      # 'Q'
       And I expect to see t_ioctl_cmd equal 81
       And I expect to see t_network_unit_devicespec equal 0
       And I expect to see t_network_unit_devicespec+1 equal $90
