@@ -12,7 +12,8 @@
 - Added network_status for apple2
 - Added network_read for apple2
 - Added network_write for apple2
-- Create set of standard error codes that device specific values get converted to
+- Added network_ioctl for apple2 - not implemented, just returns bad cmd error
+- Create set of standard error codes that device specific values get converted to for both apple2 and atari
 
 ### Breaking
 

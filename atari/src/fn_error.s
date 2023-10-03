@@ -10,7 +10,7 @@
 ;
 ; Converts DCB status code into fujinet-network error.
 ; Keeps original status in _fn_device_error.
-; Needs work if more than FN_ERR_OK/FN_ERR_IO_ERROR required
+; TODO: Needs work to translate between DCB codes to FN specific versions
 
 .proc _fn_error
         sta     _fn_device_error

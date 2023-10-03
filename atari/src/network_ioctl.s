@@ -1,6 +1,8 @@
         .export     _network_ioctl
 
         .import     _bus
+        .import     _fn_device_error
+        .import     _fn_error
         .import     _io_status
         .import     _network_unit
         .import     addysp
@@ -9,9 +11,10 @@
         .import     popax
         .import     return1
 
+        .include    "fujinet-network.inc"
         .include    "device.inc"
-        .include    "zp.inc"
         .include    "macros.inc"
+        .include    "zp.inc"
 
 ; uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, char* devicespec, ...);
 ;
@@ -20,6 +23,8 @@
 ;
 ; CC65 uses 2 bytes for every variadic parameter, even if they are uint8_t (from cl65 output), so each param
 ; should be done with popax.
+;
+; ASSEMBLY CALLERS MUST SET Y TO 11 ($b) TO EMULATE C CALL WITH VARARGS
 .proc _network_ioctl
         cpy     #$0b                    ; 5 for standard args, 3 extra args at 2 bytes each = 5 + 6 = 11 bytes on stack. if not, we have been called incorrectly
         bne     @args_error
@@ -59,7 +64,8 @@
         ; increase SP by Y to clear the params we received, and return error
         jsr     addysp
         ldx     #$00
-        lda     #$ff
+        stx     _fn_device_error        ; no device error, it's just bad args
+        lda     #FN_ERR_BAD_CMD
         rts
 
 .endproc

@@ -63,6 +63,13 @@ uint8_t network_write(char* devicespec, uint8_t *buf, uint16_t len);
  */
 uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, char* devicespec, ...);
 
+/**
+ * @brief  
+ */
+
+
+uint8_t network_json_query(char *devicespec, char *query, char *s);
+
 
 #define FN_ERR_OK               (0x00)      /* No error */
 #define FN_ERR_IO_ERROR         (0x01)      /* There was IO error/issue with the device */
