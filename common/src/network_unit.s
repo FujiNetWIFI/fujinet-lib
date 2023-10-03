@@ -11,6 +11,8 @@
 ;      "N2:bar" = 2
 ; see testing/bdd-testing/features/atari/network_unit.feature
 
+; TODO: what is the empty string? Depends on 2nd char of empty string!
+
 .proc _network_unit
         sta     tmp9            ; devicespec
         stx     tmp10
@@ -20,7 +22,7 @@
         cmp     #':'
         bne     :+
 
-        ; unit is 1, e.g. "N:"
+        ; unit is 1, e.g. "N:".
         jmp     return1
 
 :       iny

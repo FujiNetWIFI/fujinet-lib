@@ -26,8 +26,7 @@ _network_status:
         ; initially ignoring the c/bw/err params
         jsr     incsp4          ; drop 'bw', and 'c' parameters (2 bytes each). err is just in a/x, so ignored anyway
 
-        ; get the network unit for this device
-        jsr     popax
+        jsr     popax           ; devicespec
         jsr     _network_unit
         ; fall through to known unit case
 

@@ -18,3 +18,4 @@ FN_ERR_BAD_CMD          = $02
 FN_ERR_OFFLINE          = $03
 FN_ERR_WARNING          = $04
 FN_ERR_UNKNOWN          = $ff
+DVSTAT  = $02EA

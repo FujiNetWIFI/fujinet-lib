@@ -64,10 +64,23 @@ uint8_t network_write(char* devicespec, uint8_t *buf, uint16_t len);
 uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, char* devicespec, ...);
 
 /**
- * @brief  
+ * @brief  Parse the currently open JSON location
+ * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
+ * @return fujinet-network error code (See FN_ERR_* values)
+ * 
+ * This will set the channel mode to JSON, which will be unset in the close.
  */
+uint8_t network_json_parse(char *devicespec);
 
-
+/**
+ * @brief  Perform JSON query
+ * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
+ * @param  query pointer to string containing json path to query
+ * @param  s pointer to receiving string, nul terminated, if no data was retrieved, returns empty string
+ * @return fujinet-network error code (See FN_ERR_* values)
+ * 
+ * Assumes an open and parsed json.
+ */
 uint8_t network_json_query(char *devicespec, char *query, char *s);
 
 

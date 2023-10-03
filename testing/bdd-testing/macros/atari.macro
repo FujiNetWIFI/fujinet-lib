@@ -40,5 +40,5 @@ Given I add common atari-io files
   And I add atari/stubs test-setup file "bus.s"
   # Others for compiling
   And I add atari src file "copy_cmd_data.s"
-  And I add common src file "errs.s"
+  And I add common src file "bss_data.s"
   And I add atari src file "fn_error.s"

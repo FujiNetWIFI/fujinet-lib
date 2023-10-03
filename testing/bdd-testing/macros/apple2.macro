@@ -27,4 +27,4 @@ Given I add common apple2-sp files
     And I add file for compiling "../../apple2/src/sp_control.s"
     And I add file for compiling "../../apple2/src/sp_find_device.s"
     And I add file for compiling "../../apple2/src/fn_error.s"
-    And I add file for compiling "../../common/src/errs.s"
+    And I add file for compiling "../../common/src/bss_data.s"

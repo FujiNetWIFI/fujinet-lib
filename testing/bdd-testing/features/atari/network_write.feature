@@ -5,7 +5,9 @@ Feature: library test - atari network_write
   Scenario: execute _network_write
     Given atari-fn-nw application test setup
       And I add common atari-io files
-      And I add atari src file "network_read_write.s"
+      And I add atari src file "network_write.s"
+      And I add atari src file "network_read.s"
+      And I add atari src file "network_rw.s"
       And I add common src file "network_unit.s"
       And I add atari src file "network_status.s"
       And I add atari src file "io_status.s"
@@ -19,7 +21,7 @@ Feature: library test - atari network_write
       And I write word at t_fn with address _network_write
       # show X is changed by giving it an initial value
       And I set register X to $ff
-     When I execute the procedure at _init for no more than 165 instructions
+     When I execute the procedure at _init for no more than 170 instructions
 
     Then I expect register A equal 1
      And I expect register X equal 0
