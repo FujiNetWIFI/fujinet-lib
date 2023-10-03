@@ -1,6 +1,6 @@
 Given common apple2-fn-nw test setup
   Given I have a simple overclocked 6502 system
-    # And I enable trace with indent
+    And I enable trace with indent
     And I create or clear directory "build/tests"
     And I load labels "features/apple2/inc/test_constants.inc"
 

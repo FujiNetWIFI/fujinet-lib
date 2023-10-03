@@ -8,6 +8,7 @@
         .import     _sp_network
         .import     _sp_payload
         .import     _strlen
+        .import     fn_open_mode_table
         .import     incsp3
         .import     popa
         .import     popax
@@ -37,6 +38,11 @@
         sta     _sp_network     ; keep track of network unit
 
         popa    _sp_payload+2   ; mode
+
+        ; save mode (a) into the modes table for this unit
+        ldx     tmp2            ; unit
+        sta     fn_open_mode_table-1, x
+
         popax   ptr1            ; devicespec
         jsr     _strlen
 
