@@ -13,22 +13,36 @@ Feature: library test - atari network_json_parse
       And I create and load atari application
       And I write string "n9:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000
-      And I write memory at t_mode with $69
+      # set the channel mode into the table, this would have been set by open
+      And I write memory at fn_open_mode_table with $69
      When I execute the procedure at _init for no more than 400 instructions
 
      # Validate every function was called with correct values.
-     Then I expect to see t_ioctl_dbyt equal 0
-      And I expect to see t_ioctl_dbyt+1 equal 0
-      And I expect to see t_ioctl_dbuf equal 0
-      And I expect to see t_ioctl_dbuf+1 equal 0
-      And I expect to see t_ioctl_dstats equal 0
-      And I expect to see t_ioctl_dstats+1 equal 0
-      And I expect to see t_ioctl_devspec equal 0
-      And I expect to see t_ioctl_devspec+1 equal $90
-      And I expect to see t_ioctl_aux1 equal $69
-      And I expect to see t_ioctl_aux2 equal 0
+     Then I expect to see t_ioctl_dbyta equal 0
+      And I expect to see t_ioctl_dbyta+1 equal 0
+      And I expect to see t_ioctl_dbufa equal 0
+      And I expect to see t_ioctl_dbufa+1 equal 0
+      And I expect to see t_ioctl_dstatsa equal 0
+      And I expect to see t_ioctl_dstatsa+1 equal 0
+      And I expect to see t_ioctl_devspeca equal 0
+      And I expect to see t_ioctl_devspeca+1 equal $90
+      And I expect to see t_ioctl_aux1a equal $69
+      And I expect to see t_ioctl_aux2a equal 0
+      # Channel mode
+      And I expect to see t_ioctl_cmda equal $FC
+
+     Then I expect to see t_ioctl_dbytb equal 0
+      And I expect to see t_ioctl_dbytb+1 equal 0
+      And I expect to see t_ioctl_dbufb equal 0
+      And I expect to see t_ioctl_dbufb+1 equal 0
+      And I expect to see t_ioctl_dstatsb equal 0
+      And I expect to see t_ioctl_dstatsb+1 equal 0
+      And I expect to see t_ioctl_devspecb equal 0
+      And I expect to see t_ioctl_devspecb+1 equal $90
+      And I expect to see t_ioctl_aux1b equal $69
+      And I expect to see t_ioctl_aux2b equal 0
       # 'P'
-      And I expect to see t_ioctl_cmd equal 80
+      And I expect to see t_ioctl_cmdb equal 80
 
       And I expect register A equal 0
       And I expect register X equal 0

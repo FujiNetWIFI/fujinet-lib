@@ -71,7 +71,7 @@ uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, char* devicespec,
  * 
  * This will set the channel mode to JSON, which will be unset in the close.
  */
-uint8_t network_json_parse(char *devicespec, uint8_t mode);
+uint8_t network_json_parse(char *devicespec);
 
 /**
  * @brief  Perform JSON query

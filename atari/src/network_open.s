@@ -4,6 +4,7 @@
         .import     _io_status
         .import     _network_unit
         .import     copy_cmd_data
+        .import     fn_open_mode_table
         .import     popa
         .import     popax
 
@@ -30,9 +31,13 @@
         sta     IO_DCB::dunit
         pha
 
+        ; save mode in modes table with offset of unit
+        ; this allows other users of this unit to see the mode set
+        tax
+        mva     IO_DCB::daux1, {fn_open_mode_table-1, x}
+
         lda     tmp8                    ; trans
         sta     IO_DCB::daux2
-
 
         jsr     _bus
         pla
