@@ -13,7 +13,7 @@ Feature: library test - apple2 network_json_parse
       And I write memory at _sp_network with 1
       And I write string "n1:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000
-     When I execute the procedure at _init for no more than 2000 instructions
+     When I execute the procedure at _init for no more than 700 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0
@@ -27,7 +27,7 @@ Feature: library test - apple2 network_json_parse
       And I add file for compiling "features/apple2/invokers/test_network_json_parse.s"
       And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
       And I write memory at _sp_network with 0
-     When I execute the procedure at _init for no more than 200 instructions
+     When I execute the procedure at _init for no more than 120 instructions
 
     Then I expect register A equal FN_ERR_BAD_CMD
      And I expect register X equal 0
@@ -45,7 +45,7 @@ Feature: library test - apple2 network_json_parse
       And I write string "n1:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000
       And I write memory at t_r1_error with SP_ERR_IO_ERROR
-     When I execute the procedure at _init for no more than 2000 instructions
+     When I execute the procedure at _init for no more than 400 instructions
 
     Then I expect register A equal FN_ERR_IO_ERROR
      And I expect register X equal 0
@@ -71,7 +71,7 @@ Feature: library test - apple2 network_json_parse
       And I write string "n1:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000
       And I write memory at t_r2_error with SP_ERR_IO_ERROR
-     When I execute the procedure at _init for no more than 2000 instructions
+     When I execute the procedure at _init for no more than 700 instructions
 
     Then I expect register A equal FN_ERR_IO_ERROR
      And I expect register X equal 0

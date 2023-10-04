@@ -1,10 +1,11 @@
         .export     _network_json_query
-        .export     add_nul
 
+        .import     _fn_network_bw
+        .import     _fn_network_conn
+        .import     _fn_network_error
         .import     _network_ioctl
         .import     _network_read
-        .import     _network_status_unit
-        .import     _network_unit
+        .import     _network_status
         .import     popax
         .import     pusha
         .import     pushax
@@ -34,9 +35,11 @@ _network_json_query:
         bne     error
 
         ; perform a status to get the data length
-        setax   ptr3            ; devicespec
-        jsr     _network_unit   ; get the unit. this allows us to call the optimised version of status without stack pointer hacks
-        jsr     _network_status_unit
+        pushax  ptr3                    ; devicespec
+        pushax  #_fn_network_bw         ; bytes waiting location
+        pushax  #_fn_network_conn       ; connection status
+        setax   #_fn_network_error      ; network error
+        jsr     _network_status
 
         ; check for errors
         bne     error

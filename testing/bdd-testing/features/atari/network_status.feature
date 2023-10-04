@@ -2,7 +2,7 @@ Feature: library test - atari network_status and io_status
 
   This tests fujinet-network atari network_status
 
-  Scenario Outline: execute _network_status
+  Scenario Outline: execute _network_status with a device spec
     Given atari-fn-nw application test setup
       And I add common atari-io files
       And I add atari src file "network_status.s"
@@ -11,19 +11,27 @@ Feature: library test - atari network_status and io_status
       And I add file for compiling "features/atari/stubs/bus_simple.s"
       And I create and load atari application
       And I write string "<devspec>" as ascii to memory address $a000
+      # devicespec
       And I write word at t_w1 with hex $a000
-      # not implemented yet
-      And I write word at t_w2 with hex $ffff
-      And I write memory at t_w3 with $ffff
-      And I write memory at t_w4 with $ffff
-      And I write memory at $02ED with <ERR_RET>
+      # bw
+      And I write word at t_w2 with hex $a100
+      # connection
+      And I write word at t_w3 with hex $a200
+      # device error
+      And I write word at t_w4 with hex $a300
+      And I write memory at $02EA with lo(<BW>)
+      And I write memory at $02EB with hi(<BW>)
+      And I write memory at $02EC with <CON>
+      And I write memory at $02ED with <ERR>
       And I write word at t_fn with address _network_status
-     When I execute the procedure at _init for no more than 175 instructions
+     When I execute the procedure at _init for no more than 200 instructions
 
     Then I expect register A equal <A>
      And I expect register X equal <X>
-     And I expect to see _fn_device_error equal <device_error>
-     And I expect to see _fn_device_error_ext1 equal <ext_error>
+     And I expect to see $a100 equal lo(<BW>)
+     And I expect to see $a101 equal hi(<BW>)
+     And I expect to see $a200 equal <CON>
+     And I expect to see $a300 equal <ERR>
 
     # check the DCB values were set correctly
     Then I expect to see DDEVIC equal $71
@@ -42,28 +50,40 @@ Feature: library test - atari network_status and io_status
     Then I expect to see $80 equal $01
 
     Examples:
-        | devspec  | unit | ERR_RET | A | X | device_error | ext_error |
-        | n2:foo   | 2    | 1       | 0 | 0 | $40          | 1         |
-        | n3:bar   | 3    | 2       | 0 | 0 | $40          | 2         |
-        | n4:baz   | 4    | 3       | 0 | 0 | $40          | 3         |
+    | devspec  | unit | BW  | CON | ERR | A | X |
+    | n2:foo   | 2    | 512 |  7  |  1  | 0 | 0 |
+    | n3:bar   | 3    |   1 |  8  |  2  | 0 | 0 |
+    | n4:baz   | 4    |   0 |  9  |  3  | 0 | 0 |
 
-  Scenario Outline: execute _network_status_unit
+  Scenario Outline: execute _network_status with a device unit
     Given atari-fn-nw application test setup
       And I add common atari-io files
       And I add atari src file "network_status.s"
       And I add common src file "network_unit.s"
-      And I add file for compiling "features/test-setup/test-apps/test_b.s"
+      And I add file for compiling "features/test-setup/test-apps/test_bwww.s"
       And I add file for compiling "features/atari/stubs/bus_simple.s"
       And I create and load atari application
+      # devicespec
       And I write memory at t_b1 with <unit>
-      And I write memory at $02ED with <ERR_RET>
+      # bw
+      And I write word at t_w2 with hex $a100
+      # connection
+      And I write word at t_w3 with hex $a200
+      # device error
+      And I write word at t_w4 with hex $a300
+      And I write memory at $02EA with lo(<BW>)
+      And I write memory at $02EB with hi(<BW>)
+      And I write memory at $02EC with <CON>
+      And I write memory at $02ED with <ERR>
       And I write word at t_fn with address _network_status_unit
-     When I execute the procedure at _init for no more than 90 instructions
+     When I execute the procedure at _init for no more than 200 instructions
 
     Then I expect register A equal <A>
      And I expect register X equal <X>
-     And I expect to see _fn_device_error equal <device_error>
-     And I expect to see _fn_device_error_ext1 equal <ext_error>
+     And I expect to see $a100 equal lo(<BW>)
+     And I expect to see $a101 equal hi(<BW>)
+     And I expect to see $a200 equal <CON>
+     And I expect to see $a300 equal <ERR>
 
     # check the DCB values were set correctly
     Then I expect to see DDEVIC equal $71
@@ -82,99 +102,7 @@ Feature: library test - atari network_status and io_status
     Then I expect to see $80 equal $01
 
     Examples:
-        | unit | ERR_RET | A | X | device_error | ext_error |
-        | 2    | 1       | 0 | 0 | $40          | 1         |
-        | 3    | 2       | 0 | 0 | $40          | 2         |
-        | 4    | 3       | 0 | 0 | $40          | 3         |
-
-  Scenario: execute _io_status with extended data
-    Given atari-fn-nw application test setup
-      And I add common atari-io files
-      And I add atari src file "io_status.s"
-      And I add atari src file "network_status.s"
-      And I add common src file "network_unit.s"
-      And I add file for compiling "features/test-setup/test-apps/test_b.s"
-      And I add file for compiling "features/atari/stubs/bus_simple_err.s"
-      And I create and load atari application
-      And I write memory at t_b1 with 1
-      # Set DSTATS to 144 (extended)
-      And I write memory at t_err_code with 144
-      And I write memory at DSTATS with 144
-      And I write memory at $02ED with 10
-      And I write word at t_fn with address _io_status
-     When I execute the procedure at _init for no more than 120 instructions
-
-    Then I expect register A equal 1
-     And I expect register X equal 0
-     And I expect to see _fn_device_error equal 144
-     And I expect to see _fn_device_error_ext1 equal 10
-
-    # check the DCB values were set correctly
-    Then I expect to see DDEVIC equal $71
-     And I expect to see DUNIT equal 1
-     And I expect to see DCOMND equal $53
-     # t_dstats holds value that SIO was called with
-     And I expect to see t_dstats equal $40
-     And I expect to see DBUFLO equal $ea
-     And I expect to see DBUFHI equal $02
-     And I expect to see DTIMLO equal $0f
-     And I expect to see DBYTLO equal 4
-     And I expect to see DBYTHI equal 0
-     And I expect to see DAUX1 equal 0
-     And I expect to see DAUX2 equal 0
-
-    # check BUS was called
-    Then I expect to see $80 equal $01
-
-  Scenario: execute _io_status with no extended data but with non-error
-    Given atari-fn-nw application test setup
-      And I add common atari-io files
-      And I add atari src file "io_status.s"
-      And I add atari src file "network_status.s"
-      And I add common src file "network_unit.s"
-      And I add file for compiling "features/test-setup/test-apps/test_b.s"
-      And I add file for compiling "features/atari/stubs/bus_simple_err.s"
-      And I create and load atari application
-      And I write memory at DDEVIC with $ff
-      And I write memory at DSTATS with 2
-      And I write memory at t_b1 with 1
-      And I write word at t_fn with address _io_status
-     When I execute the procedure at _init for no more than 60 instructions
-
-    # check the error code is same as DSTATS in _fn_device_error, and A is set to FN_ERR_OK (0) as dstats is < $80
-    Then I expect register A equal 0
-     And I expect register X equal 0
-     And I expect to see _fn_device_error equal 2
-
-    # check the DCB is not changed
-    Then I expect to see DDEVIC equal $ff
-
-    # check BUS was not called
-    Then I expect to see $80 equal $0
-
-
-  Scenario: execute _io_status with no extended data but with an error
-    Given atari-fn-nw application test setup
-      And I add common atari-io files
-      And I add atari src file "io_status.s"
-      And I add atari src file "network_status.s"
-      And I add common src file "network_unit.s"
-      And I add file for compiling "features/test-setup/test-apps/test_b.s"
-      And I add file for compiling "features/atari/stubs/bus_simple_err.s"
-      And I create and load atari application
-      And I write memory at DDEVIC with $ff
-      And I write memory at DSTATS with $82
-      And I write memory at t_b1 with 1
-      And I write word at t_fn with address _io_status
-     When I execute the procedure at _init for no more than 60 instructions
-
-    # check the error code is same as DSTATS in _fn_device_error, and A is set to FN_ERR_IO_ERROR (1)
-    Then I expect register A equal 1
-     And I expect register X equal 0
-     And I expect to see _fn_device_error equal $82
-
-    # check the DCB is not changed
-    Then I expect to see DDEVIC equal $ff
-
-    # check BUS was not called
-    Then I expect to see $80 equal $0
+    | unit | BW  | CON | ERR | A | X |
+    | 2    | 567 |  7  |  1  | 0 | 0 |
+    | 3    |   1 |  8  |  2  | 0 | 0 |
+    | 4    |   0 |  9  |  3  | 0 | 0 |

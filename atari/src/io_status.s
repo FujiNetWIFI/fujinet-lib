@@ -2,10 +2,16 @@
 
         .import     _fn_device_error
         .import     _fn_error
+        .import     _fn_network_bw
+        .import     _fn_network_conn
+        .import     _fn_network_error
         .import     _network_status_unit
+        .import     pusha
+        .import     pushax
 
         .include    "atari.inc"
         .include    "device.inc"
+        .include    "macros.inc"
         .include    "zp.inc"
 
 ; uint8_t io_status(uint8_t unit)
@@ -22,6 +28,9 @@
         jmp     _fn_error
 
 @extended:
-        lda     tmp8
+        pusha   tmp8                    ; unit
+        pushax  #_fn_network_bw         ; bytes waiting location
+        pushax  #_fn_network_conn       ; connection status
+        setax   #_fn_network_error      ; network error
         jmp     _network_status_unit
 .endproc

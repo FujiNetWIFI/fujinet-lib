@@ -37,35 +37,21 @@ have_network:
         jsr     _sp_status
         pha                     ; save the error until we've dealt with the function args
 
-        ldy     #$00            ; setup the zp ptr index offset
+        ldy     #$00
 
-        ; process the err value
-        lda     ptr1
-        ora     ptr1+1
-        beq     @no_err_param
-
+        ; process the device error
         lda     _sp_payload+3
         sta     (ptr1), y       ; *err = sp_payload[3]
 
-@no_err_param:
         ; process the connection status param
         popax   ptr1
-        ora     ptr1+1
-        beq     @no_conn_param
-
         lda     _sp_payload+2
         sta     (ptr1), y       ; *c = sp_payload[2]
 
-@no_conn_param:
         ; process the bytes waiting (bw) param
         popax   ptr1
-        ora     ptr1+1
-        beq     @no_bw_param
-
-        ; save the 2 bytes at sp_payload[0,1] into address pointed to by bw
         mway    _sp_payload, {(ptr1), y}
 
-@no_bw_param:
         ; remove the devicespec parameter from stack, it isn't used
         jsr     incsp2
 

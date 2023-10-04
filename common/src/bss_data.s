@@ -1,16 +1,19 @@
         .export     _fn_device_error
-        .export     _fn_device_error_ext1
-        .export     _fn_device_error_ext2
-        .export     fn_open_mode_table
+        .export     _fn_network_error
+        .export     _fn_network_bw
+        .export     _fn_network_conn
 
 .bss
 
-; device specific error value
+; device specific error value, e.g. SmartPort specific errors
 _fn_device_error:       .res 1
 
-; allow for 2 additional codes to be saved
-_fn_device_error_ext1:  .res 1
-_fn_device_error_ext2:  .res 1
 
-; index into this to get the currently open channel's mode, set when open is called
-fn_open_mode_table:     .res 8
+;; network status values, these come from FujiNet itself, not the host machine.
+
+; general network error
+_fn_network_error:      .res 1
+; bytes waiting
+_fn_network_bw:         .res 1
+; connection status
+_fn_network_conn:       .res 1

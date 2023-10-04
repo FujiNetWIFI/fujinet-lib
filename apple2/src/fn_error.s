@@ -12,9 +12,6 @@
 .proc _fn_error
         sta     _fn_device_error
 
-        ; If additional error values are required, they can be put in _fn_device_error_ext1/2
-        ; but that will require additional code below on a case by case basis
-
         ldx     #$00                ; high byte
         cmp     #SP_ERR_OK
         bne     not_ok

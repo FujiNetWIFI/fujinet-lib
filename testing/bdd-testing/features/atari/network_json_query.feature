@@ -20,7 +20,7 @@ Feature: library test - atari network_json_query
       And I write string "{json}" as ascii to memory address t_read_data
       # check what gets overwritten in the target buffer
       And I write string "XXXXXXXX" as ascii to memory address $9200
-     When I execute the procedure at _init for no more than 400 instructions
+     When I execute the procedure at _init for no more than 500 instructions
 
      # Validate every function was called with correct values.
      Then I expect to see t_ioctl_dbyt equal 0
@@ -35,9 +35,15 @@ Feature: library test - atari network_json_query
       And I expect to see t_ioctl_aux2 equal 0
       # 'Q'
       And I expect to see t_ioctl_cmd equal 81
-      And I expect to see t_network_unit_devicespec equal 0
-      And I expect to see t_network_unit_devicespec+1 equal $90
-      And I expect to see t_network_status_unit equal 1
+      And I expect to see t_network_status_devicespec equal 0
+      And I expect to see t_network_status_devicespec+1 equal $90
+      And I expect to see t_network_status_bw equal lo(_fn_network_bw)
+      And I expect to see t_network_status_bw+1 equal hi(_fn_network_bw)
+      And I expect to see t_network_status_conn equal lo(_fn_network_conn)
+      And I expect to see t_network_status_conn+1 equal hi(_fn_network_conn)
+      And I expect to see t_network_status_err equal lo(_fn_network_error)
+      And I expect to see t_network_status_err+1 equal hi(_fn_network_error)
+
       And I expect to see t_network_read_devicespec equal 0
       And I expect to see t_network_read_devicespec+1 equal $90
       And I expect to see t_network_read_buf equal 0
@@ -87,7 +93,7 @@ Feature: library test - atari network_json_query
       # force a status error
       And I write memory at t_is_status_error with 1
       And I write word at DVSTAT with hex $0006
-     When I execute the procedure at _init for no more than 400 instructions
+     When I execute the procedure at _init for no more than 350 instructions
     Then I expect register A equal 1
      And I expect register X equal 0
 
@@ -106,7 +112,7 @@ Feature: library test - atari network_json_query
       And I write word at t_s with hex $9200
       And I write memory at t_is_read_error with 1
       And I write word at DVSTAT with hex $0006
-     When I execute the procedure at _init for no more than 500 instructions
+     When I execute the procedure at _init for no more than 440 instructions
     Then I expect register A equal 1
      And I expect register X equal 0
 
@@ -125,7 +131,7 @@ Feature: library test - atari network_json_query
       And I write word at t_s with hex $9200
       And I write word at DVSTAT with hex $0000
       And I write string "XXXXXXXX" as ascii to memory address $9200
-     When I execute the procedure at _init for no more than 500 instructions
+     When I execute the procedure at _init for no more than 400 instructions
     Then I expect register A equal 0
      And I expect register X equal 0
      When I hex+ dump ascii between $9200 and $9203

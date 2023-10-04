@@ -1,6 +1,6 @@
 Given common atari-fn-nw test setup
   Given I have a simple overclocked 6502 system
-    # And I enable trace with indent
+    And I enable trace with indent
     And I create or clear directory "build/tests"
     And I load labels "features/atari/inc/test_constants.inc"
 
@@ -42,3 +42,4 @@ Given I add common atari-io files
   And I add atari src file "copy_cmd_data.s"
   And I add common src file "bss_data.s"
   And I add atari src file "fn_error.s"
+  And I add atari src file "network_data.s"

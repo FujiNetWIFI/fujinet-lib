@@ -45,7 +45,7 @@ Feature: library test - apple2 network_open
      # 'O' control code
      And I expect to see _sp_cmdlist+4 equal 79
      # network is unit 3, table is 0 based
-     And I expect to see fn_open_mode_table+2 equal 4
+     And I expect to see fn_open_mode equal 4
 
      # validate payload
      #  [0] = strlen+2

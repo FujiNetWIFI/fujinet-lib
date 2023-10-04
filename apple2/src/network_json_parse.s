@@ -5,7 +5,7 @@
         .import     _sp_control
         .import     _sp_network
         .import     _sp_payload
-        .import     fn_open_mode_table
+        .import     fn_open_mode
         .import     pusha
 
         .include    "sp.inc"
@@ -23,8 +23,7 @@
         jsr     pusha           ; push network unit into stack to be read by sp_control for JSON channel mode call
 
         ; get the mode for the current open connection from modes table
-        tax
-        lda     fn_open_mode_table-1, x
+        lda     fn_open_mode
         sta     _sp_payload+2   ; mode
 
         lda     #$01

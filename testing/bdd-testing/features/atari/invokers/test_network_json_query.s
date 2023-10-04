@@ -1,7 +1,6 @@
         .export     _main
         .export     _network_ioctl
-        .export     _network_unit
-        .export     _network_status_unit
+        .export     _network_status
         .export     _network_read
 
         .export     t_ioctl_dbyt
@@ -12,7 +11,10 @@
         .export     t_ioctl_aux2
         .export     t_ioctl_cmd
         .export     t_network_unit_devicespec
-        .export     t_network_status_unit
+        .export     t_network_status_devicespec
+        .export     t_network_status_bw
+        .export     t_network_status_conn
+        .export     t_network_status_err
         .export     t_network_read_devicespec
         .export     t_network_read_buf
         .export     t_network_read_len
@@ -62,13 +64,11 @@
 
 .endproc
 
-.proc _network_unit
-        axinto  t_network_unit_devicespec
-        jmp     return1
-.endproc
-
-.proc _network_status_unit
-        sta     t_network_status_unit
+.proc _network_status
+        axinto  t_network_status_err
+        popax   t_network_status_conn
+        popax   t_network_status_bw
+        popax   t_network_status_devicespec
 
         lda     t_is_status_error
         beq     :+
@@ -118,7 +118,10 @@ t_ioctl_cmd:        .res 1
 
 t_network_unit_devicespec:  .res 2
 
-t_network_status_unit:      .res 1
+t_network_status_devicespec:    .res 2
+t_network_status_bw:            .res 2
+t_network_status_conn:          .res 2
+t_network_status_err:           .res 2
 
 t_network_read_devicespec:  .res 2
 t_network_read_buf:         .res 2
