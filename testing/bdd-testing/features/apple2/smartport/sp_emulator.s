@@ -198,12 +198,12 @@ sp_emulator:
 
 not_DIB:
         ; this is a normal status request with statcode in A
-        ; simply fall through to the callback as it will be expecting to handle this and non-status calls
+        ; simply fall through to the callback as it will be expecting to handle this and command calls
 
 not_status:
 ; --------------------------------------------------
 ; ALL OTHER COMMANDS TO CALLBACK
-; (CONTROL, OPEN, CLOSE, READ, WRITE)
+; (IOCTL, OPEN, CLOSE, READ, WRITE)
 
         ; call a generic call back routine the test can supply, it can read values from spe_* vars
         ; it must return 0 for success, 1 for error

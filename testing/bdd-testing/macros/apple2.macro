@@ -1,6 +1,6 @@
 Given common apple2-fn-nw test setup
   Given I have a simple overclocked 6502 system
-    And I enable trace with indent
+    # And I enable trace with indent
     And I create or clear directory "build/tests"
     And I load labels "features/apple2/inc/test_constants.inc"
 
@@ -19,12 +19,12 @@ Given apple2-fn-nw application test setup
 
 Given I add common apple2-sp files
     And I add file for compiling "features/apple2/smartport/sp_emulator.s"
-    And I add file for compiling "../../apple2/src/sp_data.s"
-    And I add file for compiling "../../apple2/src/sp_init.s"
-    And I add file for compiling "../../apple2/src/sp_dispatch.s"
-    And I add file for compiling "../../apple2/src/bad_unit.s"
-    And I add file for compiling "../../apple2/src/sp_status.s"
-    And I add file for compiling "../../apple2/src/sp_control.s"
-    And I add file for compiling "../../apple2/src/sp_find_device.s"
-    And I add file for compiling "../../apple2/src/fn_error.s"
-    And I add file for compiling "../../common/src/bss_data.s"
+    And I add apple2 src file "sp_data.s"
+    And I add apple2 src file "sp_init.s"
+    And I add apple2 src file "sp_dispatch.s"
+    And I add apple2 src file "bad_unit.s"
+    And I add apple2 src file "sp_status.s"
+    And I add apple2 src file "sp_control.s"
+    And I add apple2 src file "sp_find_device.s"
+    And I add apple2 src file "fn_error.s"
+    And I add common src file "bss_data.s"

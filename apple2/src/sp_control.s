@@ -20,7 +20,7 @@
 
         lda     #SP_STATUS_PARAM_COUNT
         sta     _sp_cmdlist
-        jsr     popa                    ; dest
+        jsr     popa                    ; dest - this is currently always _sp_network, but may change, so keep as a param
         sta     _sp_cmdlist+1
         lda     #<_sp_payload
         sta     _sp_cmdlist+2

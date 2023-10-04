@@ -10,7 +10,7 @@
         .include    "sp.inc"
         .include    "macros.inc"
 
-; int8_t _sp_read(uint8_t dest, uint16_t len)
+; int8_t _sp_read(uint8_t * dest, uint16_t len)
 ;
 ; this changes _sp_payload
 ; returns any error code from _sp_dispatch call
@@ -30,8 +30,8 @@
         setax   #_sp_cmdlist
         jsr     _sp_dispatch
 
+        ; store then read last. this saves a cmp by the caller, as Z will be set correctly to error
         sta     _sp_error
-
         ldx     #$00
         lda     _sp_error
         rts
