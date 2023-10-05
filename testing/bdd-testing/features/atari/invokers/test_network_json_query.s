@@ -2,6 +2,7 @@
         .export     _network_ioctl
         .export     _network_status
         .export     _network_read
+        .export     _network_unit
 
         .export     t_ioctl_dbyt
         .export     t_ioctl_dbuf
@@ -48,8 +49,13 @@
 ; MOCK implemenations
 ; these will save the args that were called, then return ok/err depending on what the test requires
 
+.proc _network_unit
+        axinto  t_network_unit_devicespec
+        jmp     return1
+.endproc
+
 .proc _network_ioctl
-        axinto  t_ioctl_dbyt
+        popax   t_ioctl_dbyt
         popax   t_ioctl_dbuf
         popax   t_ioctl_dstats
         popax   t_ioctl_devspec

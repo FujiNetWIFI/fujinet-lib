@@ -20,6 +20,7 @@ Feature: library test - atari network_json_query
       And I write string "{json}" as ascii to memory address t_read_data
       # check what gets overwritten in the target buffer
       And I write string "XXXXXXXX" as ascii to memory address $9200
+      And I write memory at fn_open_mode_table with $c
      When I execute the procedure at _init for no more than 500 instructions
 
      # Validate every function was called with correct values.
@@ -73,7 +74,7 @@ Feature: library test - atari network_json_query
       # force an ioctl error
       And I write memory at t_is_ioctl_error with 1
       And I write word at DVSTAT with hex $0006
-     When I execute the procedure at _init for no more than 240 instructions
+     When I execute the procedure at _init for no more than 300 instructions
     Then I expect register A equal 1
      And I expect register X equal 0
 
@@ -93,7 +94,7 @@ Feature: library test - atari network_json_query
       # force a status error
       And I write memory at t_is_status_error with 1
       And I write word at DVSTAT with hex $0006
-     When I execute the procedure at _init for no more than 350 instructions
+     When I execute the procedure at _init for no more than 400 instructions
     Then I expect register A equal 1
      And I expect register X equal 0
 

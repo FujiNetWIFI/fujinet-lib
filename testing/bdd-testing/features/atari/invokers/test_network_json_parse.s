@@ -50,7 +50,7 @@
         cpy     #$01
         bne     r2
 r1:
-        axinto  t_ioctl_dbyta
+        popax   t_ioctl_dbyta
         popax   t_ioctl_dbufa
         popax   t_ioctl_dstatsa
         popax   t_ioctl_devspeca
@@ -59,7 +59,7 @@ r1:
         popa    t_ioctl_cmda
         jmp     over
 r2:
-        axinto  t_ioctl_dbytb
+        popax   t_ioctl_dbytb
         popax   t_ioctl_dbufb
         popax   t_ioctl_dstatsb
         popax   t_ioctl_devspecb

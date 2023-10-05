@@ -38,12 +38,12 @@ _network_status_unit:
         jsr     popa            ; unit
 
 common:
-        sta     tmp5                    ; save the UNIT
+        sta     tmp8                    ; save the UNIT
 
         setax   #t_network_status
         jsr     copy_cmd_data
 
-        mva     tmp5, IO_DCB::dunit
+        mva     tmp8, IO_DCB::dunit
         mwa     #DVSTAT, IO_DCB::dbuflo
         jsr     _bus
 

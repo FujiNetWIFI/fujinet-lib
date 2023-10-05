@@ -26,8 +26,9 @@ Feature: library test - atari network_json_parse
       And I expect to see t_ioctl_dstatsa+1 equal 0
       And I expect to see t_ioctl_devspeca equal 0
       And I expect to see t_ioctl_devspeca+1 equal $90
+      # CHANNELMODE_JSON
       And I expect to see t_ioctl_aux1a equal $69
-      And I expect to see t_ioctl_aux2a equal 0
+      And I expect to see t_ioctl_aux2a equal 1
       # Channel mode
       And I expect to see t_ioctl_cmda equal $FC
 

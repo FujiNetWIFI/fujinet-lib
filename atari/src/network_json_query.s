@@ -6,6 +6,8 @@
         .import     _network_ioctl
         .import     _network_read
         .import     _network_status
+        .import     _network_unit
+        .import     fn_open_mode_table
         .import     popax
         .import     pusha
         .import     pushax
@@ -18,24 +20,30 @@
 
 ; uint8_t network_json_query(char *devicespec, char *query, char *s);
 ;
-_network_json_query:
-        axinto  ptr1            ; save target string location
-        popax   ptr2            ; save the input query location
-        popax   ptr3            ; device spec
+.proc _network_json_query
+        axinto  tmp1            ; save target string location
+        popax   tmp3            ; save the input query location
+        popax   ptr4            ; device spec
+        jsr     _network_unit   ; get the unit so we can find the mode
+
+        tax
+        lda     fn_open_mode_table-1, x
+        sta     tmp10           ; open mode
 
         ; call IOCTL with cmd Q
         pusha   #'Q'            ; cmd:  Query
-        pusha   #$0c            ; aux1: read/write. could be a param?
+        pusha   tmp10           ; aux1: mode for this connection from open
         pusha   #$00            ; aux2: no translation
-        pushax  ptr3            ; devicespec
+        pushax  ptr4            ; devicespec
         pushax  #$80            ; dstats: sending mode. this is varargs, so must be WORD
-        pushax  ptr2            ; dbuf: query string
-        setax   #$100           ; dbyt: 256 chars
+        pushax  tmp3            ; dbuf: query string
+        pushax  #$100           ; dbyt: 256 chars
+        ldy     #$0b            ; varargs size
         jsr     _network_ioctl  ; call ioctl
         bne     error
 
         ; perform a status to get the data length
-        pushax  ptr3                    ; devicespec
+        pushax  ptr4                    ; devicespec
         pushax  #_fn_network_bw         ; bytes waiting location
         pushax  #_fn_network_conn       ; connection status
         setax   #_fn_network_error      ; network error
@@ -45,21 +53,21 @@ _network_json_query:
         bne     error
 
         ; get the length of the read from DVSTAT
-        mwa     DVSTAT, ptr2    ; reuse ptr2
+        mwa     DVSTAT, tmp3    ; reuse tmp3
         ora     DVSTAT          ; check for 0 length. A is currently DVSTAT+1, "or" with DVSTAT tells us if length is 0
         beq     no_data
 
         ; call network_read
-        pushax  ptr3            ; devicespec
-        pushax  ptr1            ; target string location
-        setax   ptr2            ; length
+        pushax  ptr4            ; devicespec
+        pushax  tmp1            ; target string location
+        setax   tmp3            ; length
         jsr     _network_read
 
         ; check for errors
         bne     error
 
         ; move string pointer on by len so we can nul terminate it
-        adw     ptr1, ptr2      ; ptr1 += len
+        adw     tmp1, tmp3      ; tmp1 += len
 
 no_data:
         jsr     add_nul
@@ -76,7 +84,7 @@ error:
 add_nul:
         ldy     #$00
         tya
-        sta     (ptr1), y       ; add nul
+        sta     (tmp1), y       ; add nul
         rts
 
-; .endproc
+.endproc

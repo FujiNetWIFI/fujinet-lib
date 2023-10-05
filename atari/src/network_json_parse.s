@@ -22,12 +22,13 @@
 
         ; set channel mode to json
         pusha   #$FC            ; cmd:  Set channel mode
-        pusha   tmp1            ; aux1: read/write. could be a param?
-        pusha   #$00            ; aux2: no translation
+        pusha   tmp1            ; aux1: open-mode
+        pusha   #$01            ; aux2: CHANNELMODE_JSON
         pushax  ptr1            ; devicespec
         pushax  #$00            ; dstats: none. this is varargs, so must be WORD
         pushax  #$00            ; dbuf: 0
-        setax   #$00            ; dbyt: 0
+        pushax  #$00            ; dbyt: 0
+        ldy     #$0b            ; varargs size
         jsr     _network_ioctl  ; call ioctl
         bne     error
 
@@ -38,7 +39,8 @@
         pushax  ptr1            ; devicespec
         pushax  #$00            ; dstats: none. this is varargs, so must be WORD
         pushax  #$00            ; dbuf: 0
-        setax   #$00            ; dbyt: 0
+        pushax  #$00            ; dbyt: 0
+        ldy     #$0b            ; varargs size
         jsr     _network_ioctl  ; call ioctl
 
 error:
