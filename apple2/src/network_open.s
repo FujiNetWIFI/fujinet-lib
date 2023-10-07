@@ -5,6 +5,7 @@
         .import     _sp_control
         .import     _sp_find_network
         .import     _sp_init
+        .import     _sp_open
         .import     _sp_network
         .import     _sp_payload
         .import     _strlen
@@ -31,11 +32,15 @@
         ; jsr     _bzero
 
         jsr     _sp_init
+        beq     init_error      ; didn't find a FN device at all
         jsr     _sp_find_network
-        beq     no_network
+        beq     init_error      ; didn't find a network device on the smartport
+        bmi     sp_error        ; actual device error, but negative so we can distinguish between device count and an error
 
         sta     tmp2            ; store the unit
-        sta     _sp_network     ; keep track of network unit
+        sta     _sp_network     ; keep track of network unit for other functions
+        jsr     _sp_open
+        bne     remove_params_return_error      ; failed to call open, SmartPort error in A (not negative)
 
         popa    _sp_payload+2   ; mode
 
@@ -60,21 +65,35 @@
         setax   tmp9            ; strlen from tmp9/10
         jsr     _memcpy         ; copy string. this trashes ptr1-3, hence using tmp9/10
 
-        ; add 0x9b to the end
+        ; add 0x00 to the end of string as a terminator
         mwa     #_sp_payload+4, ptr1
         adw     ptr1, tmp9      ; ptr1 = _sp_payload + string length + 4. i.e. location of 0x9b
         ldy     #$00
-        mva     #$9b, {(ptr1), y}
+        tya
+        sta     (ptr1), y
 
         pusha   tmp2            ; unit
         lda     #'O'            ; open
-        jmp     _sp_control
+        jmp     _sp_control     ; do control, and return its errors directly
+        ; implicit rts
 
-no_network:
-        ; we searched for NETWORK device in SmartPort and found nothing. Set IO ERRORS for normal and extended error
+init_error:
+        ; set io error
+        lda     #SP_ERR_IO_ERROR
+        ; fall through
+
+remove_params_return_error:
+        sta     _fn_device_error
         ; need to move SP on 3 bytes to skip unread args
         jsr     incsp3
-        lda     #SP_ERR_IO_ERROR
-        sta     _fn_device_error
         jmp     return1         ; FN_ERR_IO_ERROR
+
+sp_error:
+        ; smart port error (negative value in a)
+        eor     #$ff
+        clc
+        adc     #$01
+        ; never 0, as we detected the error before calling sp_error
+        bne     remove_params_return_error
+
 .endproc
