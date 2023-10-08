@@ -24,7 +24,7 @@
 ; uint8_t network_json_query(char *devicespec, char *query, char *s);
 ;
 .proc _network_json_query
-        axinto  tmp5            ; save string output location
+        axinto  ptr3            ; save string output location
 
         ; is there a network id?
         lda     _sp_network     ; get network id
@@ -50,6 +50,12 @@
         pushax  ptr1            ; src
         setax   _sp_payload     ; length in payload[0..1]
         jsr     _strncpy        ; trashes ptr1-2, but we don't need ptr1 anymore
+        ; add a 0 to end of query string
+        mwa     #_sp_payload+2, ptr1
+        adw     ptr1, _sp_payload
+        ldy     #$00
+        tya
+        sta     (ptr1), y
 
         pusha   _sp_network
         lda     #'Q'
@@ -62,10 +68,10 @@
         lda     #'S'
         jsr     _sp_status
         bne     error
-        mwa     _sp_payload, tmp1       ; keep length in tmp1/2
+        mwa     _sp_payload, ptr4       ; keep length in ptr4
 
-        ; check length > 0, a is currently _sp_payload+1, high byte. "ora" with lo byte in tmp1
-        ora     tmp1
+        ; check length > 0, a is currently _sp_payload+1, high byte. "ora" with lo byte in ptr4
+        ora     ptr4
         bne     not_empty
 
         ; there was 0 data to read for this query
@@ -75,16 +81,16 @@
 ;----------------------------------------------------------------------------------------
 ; put in the middle so all code can reach it
 error:
-        sta     tmp1            ; store error while we deal with nulling string
+        sta     ptr4            ; store error while we deal with nulling string
         jsr     add_nul
-        lda     tmp1
+        lda     ptr4
         jmp     _fn_error
 
 add_nul:
-        ; tmp5/6 points to current target string, send back an empty string
+        ; ptr3 points to current target string, send back an empty string
         ldy     #$00
         tya
-        sta     (tmp5), y
+        sta     (ptr3), y
         rts
 ;----------------------------------------------------------------------------------------
 
@@ -92,29 +98,28 @@ add_nul:
         ; read
 not_empty:
         pusha   _sp_network
-        ; length of waiting bytes to read in tmp1/2
-        setax   tmp1
+        ; length of waiting bytes to read in ptr4
+        setax   ptr4
         jsr     _sp_read
         bne     error
 
-        ; add a terminal nul to end of data, then use strncpy to copy into target.
+        ; copy to destination
         mwa     #_sp_payload+2, ptr1
-        adw     ptr1, tmp1      ; ptr1 += len
-        lda     #$00
-        tay
+        adw     ptr1, ptr4      ; ptr1 += len
+        ldy     #$00
+        tya
         sta     (ptr1), y
 
         ; copy to destination
-        pushax  tmp5            ; dst
-        pushax  #_sp_payload+2   ; src
-        ; increment the length by 1 to guarantee a nul is copied
-        lda     tmp1
-        ldx     tmp2
-        clc
-        adc     #$01
-        bcc     :+
-        inx
-:       jsr     _strncpy
-        jmp     return0         ; FN_ERR_OK
+        pushax  ptr3            ; dst
+        pushax  #_sp_payload+2  ; src
+        setax   ptr4            ; len
+        jsr     _strncpy
+        ; nul terminate the string
+        adw     ptr3, ptr4      ; set ptr3 to end of string
+        ldy     #$00
+        tya
+        sta     (ptr3), y
 
+        jmp     return0         ; FN_ERR_OK
 .endproc

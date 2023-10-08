@@ -30,6 +30,10 @@ Feature: library test - apple2 network_json_query
      When I hex+ dump ascii between $9200 and $920C
      Then property "test.BDD6502.lastHexDump" must contain string "9200: 31 32 33 34 35 36 37 38  39 30 00 58 :"
 
+     When I hex+ dump ascii between t_r2_payload and t_r2_payload+11
+     Then property "test.BDD6502.lastHexDump" must contain string ": 04 00 2f 62 61 72 00 00  00 00 00 :"
+     Then property "test.BDD6502.lastHexDump" must contain string "/bar"
+
   # -----------------------------------------------------------------------------------------------------------------
   Scenario: execute apple2 _network_json_query with no network unit returns bad cmd and does not call sp functions
     Given apple2-fn-nw application test setup

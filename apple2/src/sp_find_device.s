@@ -17,9 +17,8 @@
 ; 0 = no errors, but no device found
 ; n = slot of given named device
 
-; uses tmp7-tmp10
 .proc _sp_find_device
-        axinto  tmp9            ; the device name we're looking for
+        axinto  ptr1            ; the device name we're looking for
 
         ; find the device count - do we need to keep doing this?
         pusha   #$00            ; doubles up as both parameters
@@ -33,12 +32,12 @@
         rts
 
 :       lda     _sp_payload    ; number of devices in payload[0], 1 based
-        sta     tmp8            ; device index, set to max (e.g. 6) initially
+        sta     tmp1            ; device index, set to max (e.g. 6) initially
 
-        mva     #$01, tmp7      ; this will be our device index to check
+        mva     #$01, tmp2      ; this will be our device index to check
 
         ; get DIB for each device in turn looking for name
-:       pusha   tmp7
+:       pusha   tmp2
         lda     #$03
         jsr     _sp_status
         bne     skip_next
@@ -46,16 +45,16 @@
         jsr     check_name
         beq     skip_next
 
-        ; we found the device in slot tmp7
+        ; we found the device in slot tmp2
         ldx     #$00
-        lda     tmp7
+        lda     tmp2
         rts
 
 skip_next:
-        ; keep looping until tmp7 (device index) is greater than device count
-        inc     tmp7
-        lda     tmp7
-        cmp     tmp8
+        ; keep looping until tmp2 (device index) is greater than device count
+        inc     tmp2
+        lda     tmp2
+        cmp     tmp1
         bcc     :-
         beq     :-
 
@@ -64,12 +63,12 @@ skip_next:
 
 .endproc
 
-; tmp9/10 is pointer to device name we are comparing to.
+; ptr1 is pointer to device name we are comparing to.
 .proc check_name
         ldx     #$00                    ; count of matching chars, and string length in match
         ldy     #$00
 
-:       lda     (tmp9), y               ; device name searching for
+:       lda     (ptr1), y               ; device name searching for
         beq     end_string
         cmp     _sp_payload+5, y       ; payload[5+i]th character
         bne     not_found

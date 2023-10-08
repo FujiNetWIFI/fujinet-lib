@@ -10,7 +10,6 @@
 
         .include    "sp.inc"
         .include    "macros.inc"
-        .include    "zp.inc"
 
 ; uint8_t network_json_parse(char *devicespec);
 ;
@@ -35,9 +34,6 @@
         ; JSON parse
         lda     _sp_network
         jsr     pusha
-        ; lda     #$00
-        ; sta     _sp_payload
-        ; sta     _sp_payload+1
         lda     #'P'
         jsr     _sp_control
         ; fall through to the error handler to return appropriate code, OK is handled too

@@ -24,13 +24,11 @@
         jsr     pusha           ; push network unit into stack to be read by sp_control
         lda     #'C'            ; close
         jsr     _sp_control
-        pha                     ; save return value, x is also affected, but we don't touch that before return
 
         ; setting sp_network to 0, as it's checked in various other functions
-        lda     #$00
-        sta     _sp_network
+        ldy     #$00
+        sty     _sp_network
 
-        pla
         ; convert to fujinet-network error
         jmp     _fn_error
 
