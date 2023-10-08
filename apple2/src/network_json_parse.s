@@ -22,12 +22,9 @@
         ; JSON channel mode
         jsr     pusha           ; push network unit into stack to be read by sp_control for JSON channel mode call
 
-        ; get the mode for the current open connection from modes table
-        lda     fn_open_mode
-        sta     _sp_payload+2   ; mode
-
         lda     #$01
         sta     _sp_payload
+        sta     _sp_payload+2   ; JSON mode
         lda     #$00
         sta     _sp_payload+1
         lda     #$fc            ; set json channel mode
@@ -38,9 +35,9 @@
         ; JSON parse
         lda     _sp_network
         jsr     pusha
-        lda     #$00
-        sta     _sp_payload
-        sta     _sp_payload+1
+        ; lda     #$00
+        ; sta     _sp_payload
+        ; sta     _sp_payload+1
         lda     #'P'
         jsr     _sp_control
         ; fall through to the error handler to return appropriate code, OK is handled too

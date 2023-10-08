@@ -88,8 +88,8 @@ sp_emulator:
         ;     if dest == n (unit), statcode == 3
         ;       return info according to unit being asked for:
         ;         FUJINET_DISK_0 -> unit = 1, pl[4] = 14, pl[5..18] = name : sp_dest = 1 for fujinet device in tests
-        ;                PRINTER -> unit = 2, pl[4] = 7,  pl[5..11] = name
-        ;                NETWORK -> unit = 3, pl[4] = 7,  pl[5..11] = name
+        ;                NETWORK -> unit = 2, pl[4] = 7,  pl[5..11] = name
+        ;                PRINTER -> unit = 3, pl[4] = 7,  pl[5..11] = name
         ;               FN_CLOCK -> unit = 4, pl[4] = 8,  pl[5..12] = name
         ;                  MODEM -> unit = 5, pl[4] = 5,  pl[5..9]  = name
         ;                    CPM -> unit = 6, pl[4] = 3,  pl[5..7]  = name
@@ -283,14 +283,14 @@ spe_should_fail_device_lookup:  .byte 0
 ; allow test to override number of devices we return
 spe_num_devices:                .byte 6
 
-.define DeviceNames m_fn_d0, m_printer, m_network, m_clock, m_modem, m_cpm
+.define DeviceNames m_fn_d0, m_network, m_printer, m_clock, m_modem, m_cpm
 DeviceNamesLo:          .lobytes DeviceNames
 DeviceNamesHi:          .hibytes DeviceNames
 
 ; strings to set in payload
 m_fn_d0:        .byte "FUJINET_DISK_0", 0
-m_printer:      .byte "PRINTER", 0
 m_network:      .byte "NETWORK", 0
+m_printer:      .byte "PRINTER", 0
 m_clock:        .byte "FN_CLOCK", 0
 m_modem:        .byte "MODEM", 0
 m_cpm:          .byte "CPM", 0

@@ -20,7 +20,7 @@ Feature: library test - apple2 network_json_query
       # ensure there target location has some data so we can prove we overwrote it
       And I write string "XXXXXXXXXXXXX" as ascii to memory address $9200
       And I write word at t_s with hex $9200
-     When I execute the procedure at _init for no more than 1400 instructions
+     When I execute the procedure at _init for no more than 1350 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0

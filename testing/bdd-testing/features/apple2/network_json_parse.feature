@@ -13,11 +13,28 @@ Feature: library test - apple2 network_json_parse
       And I write memory at _sp_network with 1
       And I write string "n1:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000
-     When I execute the procedure at _init for no more than 700 instructions
+      And I write memory at fn_open_mode with $0c
+     When I execute the procedure at _init for no more than 670 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0
      And I expect to see t_cb_executed equal 2
+
+     # json channel mode
+     And I expect to see t_cb_codes+0 equal $FC
+     And I expect to see t_r1_unit equal 1
+     And I expect to see t_r1_payload equal 1
+     And I expect to see t_r1_payload+1 equal 0
+     And I expect to see t_r1_payload+2 equal 1
+
+     # 'P' for parse
+     And I expect to see t_cb_codes+1 equal 80
+     And I expect to see t_r2_unit equal 1
+     # Unchanged from previous call - doesn't really prove anything, these bytes aren't used
+     And I expect to see t_r2_payload equal 1
+     And I expect to see t_r2_payload+1 equal 0
+     And I expect to see t_r2_payload+2 equal 1
+
 
   # -----------------------------------------------------------------------------------------------------------------
   Scenario: execute apple2 _network_json_parse with no network unit returns bad cmd and does not call sp functions
@@ -45,6 +62,7 @@ Feature: library test - apple2 network_json_parse
       And I write string "n1:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000
       And I write memory at t_r1_error with SP_ERR_IO_ERROR
+      And I write memory at fn_open_mode with $0c
      When I execute the procedure at _init for no more than 400 instructions
 
     Then I expect register A equal FN_ERR_IO_ERROR
@@ -59,6 +77,7 @@ Feature: library test - apple2 network_json_parse
      And I expect to see t_r1_unit equal 1
      And I expect to see t_r1_payload equal 1
      And I expect to see t_r1_payload+1 equal 0
+     And I expect to see t_r1_payload+2 equal 1
 
   # -----------------------------------------------------------------------------------------------------------------
   Scenario: execute apple2 _network_json_parse with error doing PARSE control
@@ -71,6 +90,7 @@ Feature: library test - apple2 network_json_parse
       And I write string "n1:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000
       And I write memory at t_r2_error with SP_ERR_IO_ERROR
+      And I write memory at fn_open_mode with $0c
      When I execute the procedure at _init for no more than 700 instructions
 
     Then I expect register A equal FN_ERR_IO_ERROR

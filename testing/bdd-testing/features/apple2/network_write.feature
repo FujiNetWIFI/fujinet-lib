@@ -55,7 +55,7 @@ Feature: library test - apple2 network_write
       And I write memory at $b000 with $01
       And I write memory at $b009 with $09
       And I write memory at $b00a with $0a
-     When I execute the procedure at _init for no more than 500 instructions
+     When I execute the procedure at _init for no more than 450 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0
@@ -81,7 +81,7 @@ Feature: library test - apple2 network_write
       And I write memory at _sp_network with 1
       # simulate SP_ERR_BUS_ERR error when read called
       And I write memory at t_return_code with SP_ERR_BUS_ERR
-     When I execute the procedure at _init for no more than 500 instructions
+     When I execute the procedure at _init for no more than 450 instructions
 
     Then I expect register A equal FN_ERR_IO_ERROR
      And I expect register X equal 0
@@ -105,7 +105,7 @@ Feature: library test - apple2 network_write
       And I write memory at $b000 with $96
       And I write memory at $b1ff with $aa
       And I write memory at $b200 with $69
-     When I execute the procedure at _init for no more than 2550 instructions
+     When I execute the procedure at _init for no more than 2450 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0

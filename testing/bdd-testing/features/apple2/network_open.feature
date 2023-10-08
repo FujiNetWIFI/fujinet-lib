@@ -13,7 +13,7 @@ Feature: library test - apple2 network_open
       And I write memory at _sp_network with 0
       And I write memory at spe_should_fail_device_lookup with 1
       And I write memory at spe_num_devices with 1
-     When I execute the procedure at _init for no more than 500 instructions
+     When I execute the procedure at _init for no more than 460 instructions
 
     # FN_IO_ERROR returned
     Then I expect register A equal 1
@@ -33,7 +33,7 @@ Feature: library test - apple2 network_open
       And I write memory at _sp_network with 0
       And I write memory at spe_should_fail_device_lookup with 1
       And I write memory at spe_num_devices with 1
-     When I execute the procedure at _init for no more than 500 instructions
+     When I execute the procedure at _init for no more than 460 instructions
 
     # FN_IO_ERROR returned
     Then I expect register A equal 1
@@ -55,23 +55,23 @@ Feature: library test - apple2 network_open
       And I write word at t_devicespec with hex $a012
       And I write memory at t_mode with $04
       And I write memory at t_translate with $80
-     When I execute the procedure at _init for no more than 2000 instructions
+     When I execute the procedure at _init for no more than 1500 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0
      And I expect to see t_cb_executed equal 2
      And I expect to see spe_cmd equal SP_CMD_CONTROL
-     # DEST is smartport NETWORK device in emulator (3)
-     And I expect to see spe_dest equal 3
+     # DEST is smartport NETWORK device in emulator (2)
+     And I expect to see spe_dest equal 2
      # 'O' control code
      And I expect to see _sp_cmdlist+4 equal 79
-     # network is unit 3, table is 0 based
+     # network is unit 2, table is 0 based
      And I expect to see fn_open_mode equal 4
 
      # check sp_open was called correctly
      And I expect to see t_r1_cmd equal SP_CMD_OPEN
-     # Network unit is 3 in smartport emulator
-     And I expect to see t_r1_unit equal 3
+     # Network unit is 2 in smartport emulator
+     And I expect to see t_r1_unit equal 2
 
     When I hex+ dump ascii between t_r1_payload+5 and t_r1_payload+12
     Then property "test.BDD6502.lastHexDump" must contain string "NETWORK"

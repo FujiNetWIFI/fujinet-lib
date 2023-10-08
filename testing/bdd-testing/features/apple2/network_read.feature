@@ -53,7 +53,7 @@ Feature: library test - apple2 network_read
       And I write memory at _sp_network with 1
       # The value to return to the read call, 20 chars, but only 10 will be read
       And I write string "12345678901234567890" as ascii to memory address _sp_payload
-     When I execute the procedure at _init for no more than 500 instructions
+     When I execute the procedure at _init for no more than 450 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0
@@ -81,7 +81,7 @@ Feature: library test - apple2 network_read
       # simulate SP_ERR_BUS_ERR error when read called
       And I write memory at t_return_code with SP_ERR_BUS_ERR
       And I write string "12345678901234567890" as ascii to memory address _sp_payload
-     When I execute the procedure at _init for no more than 500 instructions
+     When I execute the procedure at _init for no more than 325 instructions
 
     Then I expect register A equal FN_ERR_IO_ERROR
      And I expect register X equal 0
@@ -107,7 +107,7 @@ Feature: library test - apple2 network_read
       And I write memory at _sp_network with 1
       And I disable trace
       # sp_payload will be set by the test runner as there's 513 bytes to copy
-     When I execute the procedure at _init for no more than 2550 instructions
+     When I execute the procedure at _init for no more than 2500 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0

@@ -2,7 +2,6 @@
 
         .import     _bad_unit
         .import     _fn_error
-        .import     _memcpy
         .import     _sp_control
         .import     _sp_network
         .import     _sp_payload
@@ -50,7 +49,7 @@
         pushax  #_sp_payload+2  ; dest
         pushax  ptr1            ; src
         setax   _sp_payload     ; length in payload[0..1]
-        jsr     _memcpy         ; trashes ptr1-3, but we don't need ptr1 anymore
+        jsr     _strncpy        ; trashes ptr1-2, but we don't need ptr1 anymore
 
         pusha   _sp_network
         lda     #'Q'

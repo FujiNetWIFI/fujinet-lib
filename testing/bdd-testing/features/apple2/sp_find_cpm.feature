@@ -15,7 +15,7 @@ Feature: library test - apple2 sp_find_cpm
      """
      0:CPM
      """
-     # number of devices in slot 1 is 6 (FUJINET_DISK_0/PRINTER/NETWORK/FN_CLOCK/MODEM/CPM)
+     # number of devices in slot 1 is 6 (FUJINET_DISK_0/NETWORK/PRINTER/FN_CLOCK/MODEM/CPM)
      And I expect to see _sp_payload equal 6
      # length of the device name
      And I expect to see _sp_payload+4 equal 3
