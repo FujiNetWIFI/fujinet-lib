@@ -1,11 +1,16 @@
         .export     _network_read
 
         .import     _bad_unit
+        .import     _fn_bytes_read
         .import     _fn_error
+        .import     _fn_network_bw
+        .import     _fn_network_conn
+        .import     _fn_network_error
+        .import     _memcpy
+        .import     _network_status
         .import     _sp_network
         .import     _sp_payload
         .import     _sp_read
-        .import     _memcpy
         .import     incsp2
         .import     incsp4
         .import     popax
@@ -34,6 +39,7 @@
 :       lda     _sp_network     ; get network id
         bne     :+
 
+        ; got an error.
         ; remove the function args we didn't read from the stack, save the real error, and return bad command
         jsr     incsp4
         jmp     _bad_unit
@@ -41,16 +47,34 @@
         ; check the buffer is not null
 :       popax   tmp9            ; buffer location into tmp9/10
         ora     tmp10           ; it's 0 if both bytes are 0
-        bne     skip_devicespec
+        bne     :+
 
         ; bad buffer, remove 2 bytes from stack and return bad command
         jsr     incsp2
         lda     #SP_ERR_BAD_CMD
         jmp     _fn_error
 
-skip_devicespec:
-        ; remove parameter from call stack
-        jsr     incsp2
+:
+        ; the devicespec is still on the call args stack, pass it on to network_status to remove for us :+1:
+        pushax  #_fn_network_bw         ; bytes waiting location
+        pushax  #_fn_network_conn       ; connection status
+        setax   #_fn_network_error      ; network error
+        jsr     _network_status
+        bne     read_err
+
+        ; check the bytes waiting count, if it's under len, use bw instead
+        lda     tmp8                    ; hi byte of count
+        cmp     _fn_network_bw+1
+        bne     :+
+        lda     tmp7
+        cmp     _fn_network_bw
+:       bcc     :+                      ; no need to alter len, it's under BW
+
+        ; len >= bw, so use bw instead as we can only get a max of bw bytes.
+        mwa     _fn_network_bw, tmp7
+        bcs     while_len
+
+:       mwa     tmp7, _fn_bytes_read    ; save the count of bytes we're going to read
 
 while_len:
         ; push network id into stack for call to sp_read
@@ -59,7 +83,7 @@ while_len:
         ; use the minimum of MAX_READ_SIZE (512) or len
         lda     tmp8            ; hi byte of len (tmp7/8)
         cmp     #$2             ; 512 high byte
-        bcc     @len_under_512
+        bcc     len_under_512
         ; len >= 512, so cap at max value of 512
         lda     #$00
         sta     tmp5
@@ -67,7 +91,11 @@ while_len:
         stx     tmp6
         bne     :+              ; always
 
-@len_under_512:
+read_err:
+        ; convert device error to library error and return
+        jmp     _fn_error
+
+len_under_512:
         lda     tmp7
         ldx     tmp8
         sta     tmp5
@@ -96,9 +124,5 @@ while_len:
 
         ; no more data, no errors reported, return OK
         jmp     return0         ; FN_ERR_OK
-
-read_err:
-        ; convert device error to library error and return
-        jmp     _fn_error
 
 .endproc

@@ -1,11 +1,12 @@
         .export     _network_json_query
 
+        .import     _fn_bytes_read
         .import     _fn_network_bw
         .import     _fn_network_conn
         .import     _fn_network_error
         .import     _network_ioctl
         .import     _network_read
-        .import     _network_status
+        .import     _network_status_unit
         .import     _network_unit
         .import     fn_open_mode_table
         .import     popax
@@ -21,19 +22,19 @@
 ; uint8_t network_json_query(char *devicespec, char *query, char *s);
 ;
 .proc _network_json_query
-        axinto  tmp1            ; save target string location
+        axinto  tmp6            ; save target string location
         popax   tmp3            ; save the input query location
         popax   ptr4            ; device spec
         jsr     _network_unit   ; get the unit so we can find the mode
-
-        tax
-        lda     fn_open_mode_table-1, x
-        sta     tmp10           ; open mode
+        sta     tmp5            ; save unit
+        tax                     ; convert to our table index for mode/trans values
 
         ; call IOCTL with cmd Q
         pusha   #'Q'            ; cmd:  Query
-        pusha   tmp10           ; aux1: mode for this connection from open
-        pusha   #$00            ; aux2: no translation
+        lda     fn_open_mode_table-1, x
+        jsr     pusha           ; aux1: mode for this connection from open - UNUSED IN Q COMMAND, setting it anyway
+        lda     #$00
+        jsr     pusha           ; aux2: I18N translation - NOT SET HERE. use ioctl 0xFB for this instead
         pushax  ptr4            ; devicespec
         pushax  #$80            ; dstats: sending mode. this is varargs, so must be WORD
         pushax  tmp3            ; dbuf: query string
@@ -43,31 +44,33 @@
         bne     error
 
         ; perform a status to get the data length
-        pushax  ptr4                    ; devicespec
+        pusha   tmp5                    ; unit
         pushax  #_fn_network_bw         ; bytes waiting location
         pushax  #_fn_network_conn       ; connection status
         setax   #_fn_network_error      ; network error
-        jsr     _network_status
+        jsr     _network_status_unit
 
         ; check for errors
         bne     error
 
-        ; get the length of the read from DVSTAT
-        mwa     DVSTAT, tmp3    ; reuse tmp3
+        ; get the length of the read from DVSTAT, save it in the global read count
+        mwa     DVSTAT, _fn_bytes_read
         ora     DVSTAT          ; check for 0 length. A is currently DVSTAT+1, "or" with DVSTAT tells us if length is 0
         beq     no_data
 
         ; call network_read
         pushax  ptr4            ; devicespec
-        pushax  tmp1            ; target string location
-        setax   tmp3            ; length
+        pushax  tmp6            ; target string location
+        setax   _fn_bytes_read  ; length
         jsr     _network_read
-
-        ; check for errors
         bne     error
 
-        ; move string pointer on by len so we can nul terminate it
-        adw     tmp1, tmp3      ; tmp1 += len
+        ; reduce bytes read by 1, as there's always an 0x9b line ending we don't require
+        ; This could now be replaced by setting the line ending with ioctl 0x9b, but this is much easier
+        sbw1    _fn_bytes_read, #$01
+
+        ; move string pointer on by len-1 (for atari) so we can nul terminate it
+        adw     tmp6, _fn_bytes_read
 
 no_data:
         jsr     add_nul
@@ -84,7 +87,8 @@ error:
 add_nul:
         ldy     #$00
         tya
-        sta     (tmp1), y       ; add nul
+        sta     (tmp6), y       ; add nul
         rts
 
 .endproc
+

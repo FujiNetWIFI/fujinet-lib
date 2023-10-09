@@ -47,7 +47,7 @@ Feature: library test - atari network_ioctl
       And I create and load atari application
       # tell the test invoker to call with wrong args
       And I write memory at _t_do_bad_args with 1
-     When I execute the procedure at _init for no more than 90 instructions
+     When I execute the procedure at _init for no more than 120 instructions
 
     # Return value is set correctly
     Then I expect register A equal FN_ERR_BAD_CMD

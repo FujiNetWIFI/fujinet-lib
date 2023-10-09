@@ -5,7 +5,11 @@
         .export     t_return_code
 
         .export     t_cb_executed
+        .export     _network_status
 
+        .import     _fn_network_bw
+        .import     _fn_network_conn
+        .import     _fn_network_error
         .import     _network_read
         .import     _sp_init
         .import     _sp_payload
@@ -62,6 +66,14 @@ clear:
 :       sta     _sp_payload, x
         dex
         bne     :-
+        rts
+.endproc
+
+.proc _network_status
+        mwa     #513, _fn_network_bw
+        mva     #$00, _fn_network_conn
+        sta     _fn_network_error
+
         rts
 .endproc
 

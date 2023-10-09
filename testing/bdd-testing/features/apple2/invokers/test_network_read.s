@@ -5,7 +5,11 @@
         .export     t_return_code
 
         .export     t_cb_executed
+        .export     _network_status
 
+        .import     _fn_network_bw
+        .import     _fn_network_conn
+        .import     _fn_network_error
         .import     _network_read
         .import     _sp_init
         .import     pusha
@@ -36,6 +40,14 @@
 
         ldx     #$00
         lda     t_return_code
+        rts
+.endproc
+
+.proc _network_status
+        mwa     #10, _fn_network_bw
+        mva     #$00, _fn_network_conn
+        sta     _fn_network_error
+
         rts
 .endproc
 

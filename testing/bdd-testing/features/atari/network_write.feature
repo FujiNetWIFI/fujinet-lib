@@ -7,7 +7,6 @@ Feature: library test - atari network_write
       And I add common atari-io files
       And I add atari src file "network_write.s"
       And I add atari src file "network_read.s"
-      And I add atari src file "network_rw.s"
       And I add common src file "network_unit.s"
       And I add atari src file "network_status.s"
       And I add atari src file "io_status.s"

@@ -5,6 +5,7 @@
         .import     _network_unit
         .import     copy_cmd_data
         .import     fn_open_mode_table
+        .import     fn_open_trans_table
         .import     popa
         .import     popax
 
@@ -38,6 +39,9 @@
 
         lda     tmp8                    ; trans
         sta     IO_DCB::daux2
+
+        ; store the translation mode for this device
+        sta     fn_open_trans_table-1, x
 
         jsr     _bus
         pla

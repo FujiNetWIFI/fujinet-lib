@@ -16,12 +16,13 @@ Feature: library test - atari network_json_query
       And I write string "/bar" as ascii to memory address $9100
       And I write word at t_query with hex $9100
       And I write word at t_s with hex $9200
-      And I write word at DVSTAT with hex $0006
-      And I write string "{json}" as ascii to memory address t_read_data
+      And I write word at DVSTAT with hex $0007
+      # String from FN contains a \x9b at the end, we just put an x in our string to emulate 1 extra char
+      And I write string "{json}x" as ascii to memory address t_read_data
       # check what gets overwritten in the target buffer
       And I write string "XXXXXXXX" as ascii to memory address $9200
       And I write memory at fn_open_mode_table with $c
-     When I execute the procedure at _init for no more than 500 instructions
+     When I execute the procedure at _init for no more than 1500 instructions
 
      # Validate every function was called with correct values.
      Then I expect to see t_ioctl_dbyt equal 0
@@ -36,8 +37,7 @@ Feature: library test - atari network_json_query
       And I expect to see t_ioctl_aux2 equal 0
       # 'Q'
       And I expect to see t_ioctl_cmd equal 81
-      And I expect to see t_network_status_devicespec equal 0
-      And I expect to see t_network_status_devicespec+1 equal $90
+      And I expect to see t_network_status_unit equal 1
       And I expect to see t_network_status_bw equal lo(_fn_network_bw)
       And I expect to see t_network_status_bw+1 equal hi(_fn_network_bw)
       And I expect to see t_network_status_conn equal lo(_fn_network_conn)
@@ -49,7 +49,7 @@ Feature: library test - atari network_json_query
       And I expect to see t_network_read_devicespec+1 equal $90
       And I expect to see t_network_read_buf equal 0
       And I expect to see t_network_read_buf+1 equal $92
-      And I expect to see t_network_read_len equal 6
+      And I expect to see t_network_read_len equal 7
       And I expect to see t_network_read_len+1 equal 0
 
      # check the string was copied to the destination, with a trailing 0 to terminate the string

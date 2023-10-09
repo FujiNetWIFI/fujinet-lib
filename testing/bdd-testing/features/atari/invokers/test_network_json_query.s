@@ -1,6 +1,6 @@
         .export     _main
         .export     _network_ioctl
-        .export     _network_status
+        .export     _network_status_unit
         .export     _network_read
         .export     _network_unit
 
@@ -12,7 +12,7 @@
         .export     t_ioctl_aux2
         .export     t_ioctl_cmd
         .export     t_network_unit_devicespec
-        .export     t_network_status_devicespec
+        .export     t_network_status_unit
         .export     t_network_status_bw
         .export     t_network_status_conn
         .export     t_network_status_err
@@ -28,6 +28,7 @@
         .export     t_query
         .export     t_s
 
+        .import     _fn_network_bw
         .import     _network_json_query
         .import     popa
         .import     popax
@@ -70,11 +71,13 @@
 
 .endproc
 
-.proc _network_status
+.proc _network_status_unit
         axinto  t_network_status_err
         popax   t_network_status_conn
         popax   t_network_status_bw
-        popax   t_network_status_devicespec
+        popa    t_network_status_unit
+
+        mwa     #$07, _fn_network_bw
 
         lda     t_is_status_error
         beq     :+
@@ -86,6 +89,11 @@
         axinto  t_network_read_len
         popax   t_network_read_buf
         popax   t_network_read_devicespec
+
+        mva     tmp7, t_tmp7
+        mva     tmp8, t_tmp8
+        mva     tmp9, t_tmp9
+        mva     tmp10, t_tmp10
 
         lda     t_is_read_error
         beq     :+
@@ -101,7 +109,12 @@
         iny
         bne     :-
 
-:       jmp     return0         ; FN_ERR_OK
+:       mva     t_tmp7, tmp7
+        mva     t_tmp8, tmp8
+        mva     t_tmp9, tmp9
+        mva     t_tmp10, tmp10
+
+        jmp     return0         ; FN_ERR_OK
 
 .endproc
 
@@ -124,10 +137,10 @@ t_ioctl_cmd:        .res 1
 
 t_network_unit_devicespec:  .res 2
 
-t_network_status_devicespec:    .res 2
-t_network_status_bw:            .res 2
-t_network_status_conn:          .res 2
-t_network_status_err:           .res 2
+t_network_status_unit:      .res 1
+t_network_status_bw:        .res 2
+t_network_status_conn:      .res 2
+t_network_status_err:       .res 2
 
 t_network_read_devicespec:  .res 2
 t_network_read_buf:         .res 2
@@ -135,6 +148,11 @@ t_network_read_len:         .res 2
 
 ; area to write text to for reading
 t_read_data:        .res 32
+
+t_tmp7:         .res 1
+t_tmp8:         .res 1
+t_tmp9:         .res 1
+t_tmp10:        .res 1
 
 .data
 ; control values

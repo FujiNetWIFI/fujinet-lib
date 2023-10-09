@@ -38,5 +38,8 @@ Feature: library test - atari network_open
      And I expect to see DAUX1 equal $04
      And I expect to see DAUX2 equal $80
 
+     # Check translation value is saved to trans table
+     And I expect to see fn_open_trans_table+4 equal $80
+
     # check BUS was called
     Then I expect to see $80 equal $01
