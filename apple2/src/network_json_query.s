@@ -1,6 +1,7 @@
         .export     _network_json_query
 
         .import     _bad_unit
+        .import     _fn_device_error
         .import     _fn_error
         .import     _sp_control
         .import     _sp_network
@@ -25,6 +26,9 @@
 ;
 .proc _network_json_query
         axinto  ptr3            ; save string output location
+
+        ldy     #$00
+        sty     _fn_device_error
 
         ; is there a network id?
         lda     _sp_network     ; get network id

@@ -28,6 +28,9 @@
         cpy     #$0b                    ; 5 for standard args, 3 extra args at 2 bytes each = 5 + 6 = 11 bytes on stack. if not, we have been called incorrectly
         bne     @args_error
 
+        ldy     #$00
+        sty     _fn_device_error
+
         ; we have every DCB parameter on stack
         jsr     popax                   ; dbyt
         axinto  IO_DCB::dbytlo

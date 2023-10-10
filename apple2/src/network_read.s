@@ -2,6 +2,7 @@
 
         .import     _bad_unit
         .import     _fn_bytes_read
+        .import     _fn_device_error
         .import     _fn_error
         .import     _fn_network_bw
         .import     _fn_network_conn
@@ -27,6 +28,9 @@
 ;
 .proc _network_read
         axinto  tmp7            ; len into tmp7/8
+        ldy     #$00
+        sty     _fn_device_error
+
         ora     tmp8            ; check len > 0
         bne     :+
 
@@ -39,8 +43,8 @@
 :       lda     _sp_network     ; get network id
         bne     :+
 
-        ; got an error.
-        ; remove the function args we didn't read from the stack, save the real error, and return bad command
+        ; didn't find the network unit.
+        ; remove the function args we didn't read from the stack, save the real error, and return bad unit
         jsr     incsp4
         jmp     _bad_unit
 

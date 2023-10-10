@@ -1,5 +1,7 @@
 Given common atari-fn-nw test setup
   Given I have a simple overclocked 6502 system
+    And set memory between $$800 and $$7fff to $$aa
+    # And property "fujinet.logging" is set to string "true"
     # And I enable trace with indent
     And I create or clear directory "build/tests"
     And I load labels "features/atari/inc/test_constants.inc"

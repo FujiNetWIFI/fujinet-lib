@@ -1,6 +1,7 @@
         .export     _network_open
 
         .import     _bus
+        .import     _fn_device_error
         .import     _io_status
         .import     _network_unit
         .import     copy_cmd_data
@@ -16,6 +17,9 @@
 ; uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans);
 .proc _network_open
         sta     tmp8                    ; save trans
+
+        ldy     #$00
+        sty     _fn_device_error
 
         setax   #t_network_open
         jsr     copy_cmd_data

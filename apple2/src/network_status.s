@@ -21,6 +21,9 @@
 .proc _network_status
         axinto  ptr1            ; save err location
 
+        ldy     #$00
+        sty     _fn_device_error
+
         ; apple currently does nothing with the devicespec except during open.
         ; where it sets the network device id in _sp_network
 

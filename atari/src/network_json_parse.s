@@ -1,5 +1,6 @@
         .export     _network_json_parse
 
+        .import     _fn_device_error
         .import     _network_ioctl
         .import     _network_unit
         .import     fn_open_mode_table
@@ -14,6 +15,10 @@
 ;
 .proc _network_json_parse
         axinto  ptr1            ; devicespec
+
+        ldy     #$00
+        sty     _fn_device_error
+
         jsr     _network_unit   ; this is lookup index for the mode
         tax
         ; mode for this unit (which is 1 based)

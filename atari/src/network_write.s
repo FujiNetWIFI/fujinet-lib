@@ -2,6 +2,7 @@
 
         .import     _bus
         .import     _io_status
+        .import     _fn_device_error
         .import     _network_unit
         .import     copy_cmd_data
         .import     popax
@@ -13,6 +14,10 @@
 ; uint8_t network_write(char* devicespec, uint8_t *buf, uint16_t len)
 _network_write:
         axinto  tmp7                    ; len
+
+        ldy     #$00
+        sty     _fn_device_error
+
         setax   #t_network_write
 
         jsr     copy_cmd_data

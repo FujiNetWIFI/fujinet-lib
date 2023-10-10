@@ -5,7 +5,6 @@ Feature: library test - atari network_json_query
   # -----------------------------------------------------------------------------------------------------------------
   Scenario: execute _network_json_query returns the expected data
     Given atari-fn-nw application test setup
-      And I enable trace with indent
       And I add common atari-io files
       And I add atari src file "network_json_query.s"
       And I add file for compiling "features/atari/invokers/test_network_json_query.s"
@@ -61,7 +60,6 @@ Feature: library test - atari network_json_query
   # -----------------------------------------------------------------------------------------------------------------
   Scenario: execute _network_json_query handles ioctl error
     Given atari-fn-nw application test setup
-      And I enable trace with indent
       And I add common atari-io files
       And I add atari src file "network_json_query.s"
       And I add file for compiling "features/atari/invokers/test_network_json_query.s"
@@ -81,7 +79,6 @@ Feature: library test - atari network_json_query
   # -----------------------------------------------------------------------------------------------------------------
   Scenario: execute _network_json_query handles status error
     Given atari-fn-nw application test setup
-      And I enable trace with indent
       And I add common atari-io files
       And I add atari src file "network_json_query.s"
       And I add file for compiling "features/atari/invokers/test_network_json_query.s"
@@ -101,7 +98,6 @@ Feature: library test - atari network_json_query
   # -----------------------------------------------------------------------------------------------------------------
   Scenario: execute _network_json_query handles read error
     Given atari-fn-nw application test setup
-      And I enable trace with indent
       And I add common atari-io files
       And I add atari src file "network_json_query.s"
       And I add file for compiling "features/atari/invokers/test_network_json_query.s"
@@ -120,7 +116,6 @@ Feature: library test - atari network_json_query
   # -----------------------------------------------------------------------------------------------------------------
   Scenario: execute _network_json_query handles 0 byte read and writes empty string with no error
     Given atari-fn-nw application test setup
-      And I enable trace with indent
       And I add common atari-io files
       And I add atari src file "network_json_query.s"
       And I add file for compiling "features/atari/invokers/test_network_json_query.s"

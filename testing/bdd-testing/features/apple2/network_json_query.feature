@@ -30,8 +30,9 @@ Feature: library test - apple2 network_json_query
      When I hex+ dump ascii between $9200 and $920C
      Then property "test.BDD6502.lastHexDump" must contain string "9200: 31 32 33 34 35 36 37 38  39 30 00 58 :"
 
-     When I hex+ dump ascii between t_r2_payload and t_r2_payload+11
-     Then property "test.BDD6502.lastHexDump" must contain string ": 04 00 2f 62 61 72 00 00  00 00 00 :"
+     # $aa is the memory's initial value
+     When I hex+ dump ascii between t_r2_payload and t_r2_payload+8
+     Then property "test.BDD6502.lastHexDump" must contain string ": 04 00 2f 62 61 72 00 aa :"
      Then property "test.BDD6502.lastHexDump" must contain string "/bar"
 
   # -----------------------------------------------------------------------------------------------------------------

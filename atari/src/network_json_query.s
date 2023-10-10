@@ -1,6 +1,7 @@
         .export     _network_json_query
 
         .import     _fn_bytes_read
+        .import     _fn_device_error
         .import     _fn_network_bw
         .import     _fn_network_conn
         .import     _fn_network_error
@@ -23,6 +24,10 @@
 ;
 .proc _network_json_query
         axinto  tmp6            ; save target string location
+
+        ldy     #$00
+        sty     _fn_device_error
+
         popax   tmp3            ; save the input query location
         popax   ptr4            ; device spec
         jsr     _network_unit   ; get the unit so we can find the mode

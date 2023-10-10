@@ -15,7 +15,7 @@ Feature: library test - apple2 network_write
 
     Then I expect register A equal FN_ERR_BAD_CMD
      And I expect register X equal 0
-     And I expect to see _fn_device_error equal SP_ERR_BAD_CMD
+     And I expect to see _fn_device_error equal SP_ERR_BAD_UNIT
      And I expect to see t_cb_executed equal 0
 
   # -----------------------------------------------------------------------------------------------------------------
@@ -64,7 +64,8 @@ Feature: library test - apple2 network_write
      And I expect to see _sp_payload equal $01
      And I expect to see _sp_payload+9 equal $09
      # only 10 bytes copied (0-9)
-     And I expect to see _sp_payload+10 equal $00
+     # default memory value is aa
+     And I expect to see _sp_payload+10 equal $aa
 
   # -----------------------------------------------------------------------------------------------------------------
   Scenario: execute apple2 _network_write for with an error it returns library version of that error code

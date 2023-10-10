@@ -1,6 +1,7 @@
         .export     _network_write
 
         .import     _bad_unit
+        .import     _fn_device_error
         .import     _fn_error
         .import     _memcpy
         .import     _sp_network
@@ -20,6 +21,10 @@
 
 .proc _network_write
         axinto  tmp7            ; len into tmp7/8
+
+        ldy     #$00
+        sty     _fn_device_error
+
         ora     tmp8            ; check len > 0
         bne     :+
 

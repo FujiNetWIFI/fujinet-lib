@@ -2,6 +2,7 @@
 
         .import     _bus
         .import     _fn_bytes_read
+        .import     _fn_device_error
         .import     _fn_network_bw
         .import     _fn_network_conn
         .import     _fn_network_error
@@ -21,6 +22,10 @@
 ; uint8_t network_read(char* devicespec, uint8_t *buf, uint16_t len)
 _network_read:
         axinto  tmp2                    ; len, tmp2/3
+
+        ldy     #$00
+        sty     _fn_device_error
+
         popax   ptr4                    ; buf
         jsr     popax                   ; device spec, only need unit from it
         jsr     _network_unit           ; unit

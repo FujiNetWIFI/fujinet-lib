@@ -9,6 +9,7 @@
         .import     _sp_network
         .import     _sp_payload
         .import     _strlen
+        .import     _strncpy
         .import     fn_open_mode
         .import     incsp3
         .import     popa
@@ -25,48 +26,47 @@
 .proc _network_open
         sta     tmp4            ; trans
 
+        ldy     #$00
+        sty     _fn_device_error
+
         jsr     _sp_init
         beq     init_error      ; didn't find a FN device at all
         jsr     _sp_find_network
         beq     init_error      ; didn't find a network device on the smartport
         bmi     sp_error        ; actual device error, but negative so we can distinguish between device count and an error
 
-        sta     tmp1            ; store the unit
         sta     _sp_network     ; keep track of network unit for other functions
         jsr     _sp_open
         bne     remove_params_return_error      ; failed to call open, SmartPort error in A (not negative)
 
-        popa    _sp_payload+2   ; mode
+        popa    _sp_payload+2   ; mode (e.g. $0c for read/write)
 
         ; save mode
         sta     fn_open_mode
 
         popax   ptr1            ; devicespec
         jsr     _strlen
+        axinto  ptr4            ; ptr4 hold string len
 
-        axinto  ptr4            ; ptr4/10 hold string len
-        sta     _sp_payload     ; strlen + 2 for mode and translation
-        inc     _sp_payload
-        inc     _sp_payload
-        lda     #$00
-        sta     _sp_payload+1
-        lda     tmp4            ; translation
-        sta     _sp_payload+3
+        ; add 2 and store resultant length+2 in sp_payload[0,1]. this is the length of bytes to read from payload, so includes 2 for trans/mode
+        adw     ptr4, #$02, _sp_payload
+
+        mva     tmp4, _sp_payload+3     ; translation
 
         ; copy the devicespec to payload[4], and add on 0x00
         pushax  #_sp_payload+4  ; dst (payload[4])
         pushax  ptr1            ; src (devicespec)
-        setax   ptr4            ; strlen from ptr4
-        jsr     _memcpy         ; copy string. this trashes ptr1-3, hence using ptr4
+        setax   ptr4            ; length of devicespec. doesn't include the +2
+        jsr     _strncpy        ; copy string. this trashes ptr1/2, t1-4
 
         ; add 0x00 to the end of string as a terminator
         mwa     #_sp_payload+4, ptr1
-        adw     ptr1, ptr4      ; ptr1 = _sp_payload + string length + 4. i.e. location of 0x00 terminator
+        adw     ptr1, ptr4      ; ptr1 = (_sp_payload+4) + string length. i.e. location of 0x00 terminator
         ldy     #$00
         tya
         sta     (ptr1), y
 
-        pusha   tmp1            ; unit
+        pusha   _sp_network     ; unit
         lda     #'O'            ; open
         jmp     _sp_control     ; do control, and return its errors directly
         ; implicit rts

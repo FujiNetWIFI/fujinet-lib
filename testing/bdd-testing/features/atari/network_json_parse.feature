@@ -5,7 +5,6 @@ Feature: library test - atari network_json_parse
   # -----------------------------------------------------------------------------------------------------------------
   Scenario: execute _network_json_parse returns the expected data
     Given atari-fn-nw application test setup
-      And I enable trace with indent
       And I add common atari-io files
       And I add atari src file "network_json_parse.s"
       And I add file for compiling "features/atari/invokers/test_network_json_parse.s"
@@ -52,7 +51,6 @@ Feature: library test - atari network_json_parse
   # -----------------------------------------------------------------------------------------------------------------
   Scenario: execute _network_json_parse handles ioctl error
     Given atari-fn-nw application test setup
-      And I enable trace with indent
       And I add common atari-io files
       And I add atari src file "network_json_parse.s"
       And I add file for compiling "features/atari/invokers/test_network_json_parse.s"

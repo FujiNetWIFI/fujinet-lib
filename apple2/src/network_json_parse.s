@@ -1,6 +1,7 @@
         .export     _network_json_parse
 
         .import     _bad_unit
+        .import     _fn_device_error
         .import     _fn_error
         .import     _sp_control
         .import     _sp_network
@@ -14,6 +15,10 @@
 ; uint8_t network_json_parse(char *devicespec);
 ;
 .proc _network_json_parse
+        ; devicespec is in A/X but ignored for apple2, as there's only 1 device
+        ldy     #$00
+        sty     _fn_device_error
+
         lda     _sp_network     ; get network id
         beq     no_network
 

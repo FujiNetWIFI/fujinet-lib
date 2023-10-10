@@ -1,6 +1,7 @@
         .export     _network_close
 
         .import     _bus
+        .import     _fn_device_error
         .import     _io_status
         .import     _network_unit
         .import     copy_cmd_data
@@ -12,6 +13,9 @@
 
 ; uint8_t network_close(char* devicespec)
 .proc _network_close
+        ldy     #$00
+        sty     _fn_device_error
+
         ; get the network unit for this device, A/X already set correctly
         jsr     _network_unit
         sta     tmp8                    ; save the UNIT

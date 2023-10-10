@@ -2,6 +2,7 @@
         .export     _network_status_unit
 
         .import     _bus
+        .import     _fn_device_error
         .import     _fn_error
         .import     _network_unit
         .import     copy_cmd_data
@@ -22,6 +23,10 @@
 ; Actual device error is stored in err
 _network_status:
         axinto  ptr1            ; err location
+
+        ldy     #$00
+        sty     _fn_device_error
+
         popax   ptr2            ; connected status location
         popax   ptr3            ; bytes waiting location
 
