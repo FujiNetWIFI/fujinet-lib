@@ -1,5 +1,6 @@
         .export     _network_open
 
+        .import     _bzero
         .import     _fn_device_error
         .import     _memcpy
         .import     _sp_control
@@ -24,6 +25,28 @@
 
 ; uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans);
 .proc _network_open
+        jmp     over
+
+init_error:
+        ; set io error
+        lda     #SP_ERR_IO_ERROR
+        ; fall through
+
+remove_params_return_error:
+        sta     _fn_device_error
+        ; need to move SP on 3 bytes to skip unread args
+        jsr     incsp3
+        jmp     return1         ; FN_ERR_IO_ERROR
+
+sp_error:
+        ; smart port error (negative value in a)
+        eor     #$ff
+        clc
+        adc     #$01
+        ; never 0, as we detected the error before calling sp_error
+        bne     remove_params_return_error
+
+over:
         sta     tmp4            ; trans
 
         ldy     #$00
@@ -39,9 +62,18 @@
         jsr     _sp_open
         bne     remove_params_return_error      ; failed to call open, SmartPort error in A (not negative)
 
-        popa    _sp_payload+2   ; mode (e.g. $0c for read/write)
+        jsr     popa            ; mode
+        pha
 
-        ; save mode
+        ; CLEAR PAYLOAD!
+        pushax  _sp_payload
+        setax   #$400
+        jsr     _bzero
+
+        pla
+        sta     _sp_payload+2   ; save mode into payload (e.g. $c for r/w)
+
+        ; save mode in our global value
         sta     fn_open_mode
 
         popax   ptr1            ; devicespec
@@ -70,24 +102,5 @@
         lda     #'O'            ; open
         jmp     _sp_control     ; do control, and return its errors directly
         ; implicit rts
-
-init_error:
-        ; set io error
-        lda     #SP_ERR_IO_ERROR
-        ; fall through
-
-remove_params_return_error:
-        sta     _fn_device_error
-        ; need to move SP on 3 bytes to skip unread args
-        jsr     incsp3
-        jmp     return1         ; FN_ERR_IO_ERROR
-
-sp_error:
-        ; smart port error (negative value in a)
-        eor     #$ff
-        clc
-        adc     #$01
-        ; never 0, as we detected the error before calling sp_error
-        bne     remove_params_return_error
 
 .endproc
