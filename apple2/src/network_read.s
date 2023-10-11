@@ -8,10 +8,11 @@
         .import     _fn_network_conn
         .import     _fn_network_error
         .import     _memcpy
-        .import     _network_status
+        .import     _sp_clr_pay
         .import     _sp_network
         .import     _sp_payload
         .import     _sp_read
+        .import     _sp_status
         .import     incsp2
         .import     incsp4
         .import     popax
@@ -28,9 +29,15 @@
 ;
 .proc _network_read
         axinto  tmp7            ; len into tmp7/8
+
+        ; ---------------------------------------------------------------------------------------------
+        ; ARGS PARSING AND VALIDATION
+        ; ---------------------------------------------------------------------------------------------
+        jsr     _sp_clr_pay
         ldy     #$00
         sty     _fn_device_error
 
+        lda     tmp7
         ora     tmp8            ; check len > 0
         bne     :+
 
@@ -58,13 +65,19 @@
         lda     #SP_ERR_BAD_CMD
         jmp     _fn_error
 
-:
-        ; the devicespec is still on the call args stack, pass it on to network_status to remove for us :+1:
-        pushax  #_fn_network_bw         ; bytes waiting location
-        pushax  #_fn_network_conn       ; connection status
-        setax   #_fn_network_error      ; network error
-        jsr     _network_status
+        ; remove the devicespec, still on the call args stack
+        jsr     incsp2
+
+        ; ---------------------------------------------------------------------------------------------
+        ; GET BYTE COUNT (NETWORK STATUS)
+        ; ---------------------------------------------------------------------------------------------
+
+:       pusha   _sp_network
+        lda     #'S'
+        jsr     _sp_status
         bne     read_err
+
+        mwa     _sp_payload, _fn_network_bw
 
         ; check the bytes waiting count, if it's under len, use bw instead
         lda     tmp8                    ; hi byte of count
@@ -80,11 +93,17 @@
 
 :       mwa     tmp7, _fn_bytes_read    ; save the count of bytes we're going to read
 
+; ---------------------------------------------------------------------------------------------
+; READ LOOP IN 512 BYTE BLOCKS (or Bytes Waiting if lower)
+; ---------------------------------------------------------------------------------------------
+
+; len (in tmp7/8) is the outstanding bytes to read overall
+; tmp5/6 holds count of the number of bytes we will fetch in this round
 while_len:
         ; push network id into stack for call to sp_read
         pusha   _sp_network
 
-        ; use the minimum of MAX_READ_SIZE (512) or len
+        ; use the minimum of MAX_READ_SIZE (512) or len, which decreases as we read blocks
         lda     tmp8            ; hi byte of len (tmp7/8)
         cmp     #$2             ; 512 high byte
         bcc     len_under_512
@@ -100,19 +119,21 @@ read_err:
         jmp     _fn_error
 
 len_under_512:
-        lda     tmp7
-        ldx     tmp8
-        sta     tmp5
-        stx     tmp6
+        setax   tmp7            ; last block of bytes to load
+        axinto  tmp5            ; copy it to amount we will request
+
+        ; ---------------------------------------------------------------------------------------------
+        ; PERFORM READ
+        ; ---------------------------------------------------------------------------------------------
 
         ; A/X hold bytes to transfer, also in tmp5/6 to decrease len afterwards
 :       jsr     _sp_read
         bne     read_err
 
-        ; copy tmp5/6 bytes into buffer from sp_payload
+        ; copy tmp5/6 bytes into buffer from sp_payload+2
         pushax  tmp9            ; dst tmp9/10 (memcpy trashes ptr1-3)
-        pushax  #_sp_payload    ; src
-        setax   tmp5            ; length in tmp5/6 (either 512, or lower if len is less)
+        pushax  #_sp_payload+2  ; src
+        setax   tmp5            ; request length (either 512, or lower if on last block)
         jsr     _memcpy
 
         ; move the buffer pointer on by len

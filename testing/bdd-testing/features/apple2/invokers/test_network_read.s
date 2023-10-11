@@ -1,23 +1,43 @@
         .export     _main
+        .export     t_cb
+
+        .export     t_cb_a
+        .export     t_cb_codes
+        .export     t_cb_executed
+
         .export     t_devicespec
         .export     t_buffer
         .export     t_len
-        .export     t_return_code
+        .export     t_read_string
 
-        .export     t_cb_executed
-        .export     _network_status
+        .export     t_r1_cmd
+        .export     t_r1_unit
+        .export     t_r1_error
+        .export     t_r1_payload
+
+        .export     t_r2_cmd
+        .export     t_r2_unit
+        .export     t_r2_error
+        .export     t_r2_payload
 
         .import     _fn_network_bw
         .import     _fn_network_conn
         .import     _fn_network_error
         .import     _network_read
         .import     _sp_init
+        .import     _sp_payload
+
+        .import     incsp6
         .import     pusha
         .import     pushax
         .import     return0
         .import     spe_cb
+        .import     spe_cmd
+        .import     spe_dest
+        .import     spe_code
 
         .include    "macros.inc"
+        .include    "zp.inc"
 
 .proc _main
         ; setup callback
@@ -36,26 +56,96 @@
 
 ; the callback for the network call
 .proc t_cb
+        ; store calling parameter in table for later inspection
+        ldx     t_cb_executed
+        sta     t_cb_a, x
+        mva     spe_code, {t_cb_codes, x}
+
         inc     t_cb_executed
+        lda     t_cb_executed
+        cmp     #$01
+        beq     r1
+        cmp     #$02
+        beq     r2
+
+        lda     #$ff
+        rts
+
+r1:     ; network status
+        mva     spe_cmd, t_r1_cmd
+        mva     spe_dest, t_r1_unit
+        setax   #t_r1_payload
+        jsr     copy_payload
+
+        mwa     t_len, _sp_payload
 
         ldx     #$00
-        lda     t_return_code
+        lda     t_r1_error
         rts
+
+r2:     ; read
+        mva     spe_cmd, t_r2_cmd
+        mva     spe_dest, t_r2_unit
+        setax   #t_r2_payload
+        jsr     copy_payload
+
+        ; copy read string into payload[2] for our "read", length in payload[0]
+        mwa     t_len, _sp_payload
+        ldy     #$00
+:       lda     t_read_string, y
+        sta     _sp_payload+2, y
+        iny
+        cpy     t_len
+        bne     :-
+
+        ldx     #$00
+        lda     t_r2_error
+        rts
+
+copy_payload:
+        ; a/x contains destination
+        axinto  t_payload_copy_dst
+        lda     tmp9
+        pha
+        lda     tmp10
+        pha
+        mwa     t_payload_copy_dst, tmp9
+        ldy     #$00
+:       mva     {_sp_payload, y}, {(tmp9), y}
+        iny
+        cpy     #20
+        bne     :-
+        pla
+        sta     tmp10
+        pla
+        sta     tmp9
+        rts
+
 .endproc
 
-.proc _network_status
-        mwa     #10, _fn_network_bw
-        mva     #$00, _fn_network_conn
-        sta     _fn_network_error
-
-        rts
-.endproc
 
 .bss
 t_devicespec:   .res 2
 t_buffer:       .res 2
 t_len:          .res 2
 
+t_read_string:  .res 30
+
+t_r1_cmd:       .res 1
+t_r1_unit:      .res 1
+t_r1_payload:   .res 20
+
+t_r2_cmd:       .res 1
+t_r2_unit:      .res 1
+t_r2_payload:   .res 20
+
+t_payload_copy_dst: .res 2
+
+; save locations for accumulator, ctrlcode/statcode when cb invoked
+t_cb_a:         .res 5
+t_cb_codes:     .res 5
+
 .data
 t_cb_executed:  .byte 0
-t_return_code:  .byte 0
+t_r1_error:     .byte 0
+t_r2_error:     .byte 0

@@ -3,6 +3,7 @@
         .import     _bad_unit
         .import     _fn_device_error
         .import     _fn_error
+        .import     _sp_clr_pay
         .import     _sp_control
         .import     _sp_network
         .import     _sp_payload
@@ -25,7 +26,9 @@
 ; uint8_t network_json_query(char *devicespec, char *query, char *s);
 ;
 .proc _network_json_query
-        axinto  ptr3            ; save string output location
+        axinto  tmp5            ; save string output location
+
+        jsr     _sp_clr_pay     ; calls bzero, so trashes p1/2/3
 
         ldy     #$00
         sty     _fn_device_error
@@ -52,14 +55,16 @@
         ; copy query string into payload
         pushax  #_sp_payload+2  ; dest
         pushax  ptr1            ; src
-        setax   _sp_payload     ; length in payload[0..1]
-        jsr     _strncpy        ; trashes ptr1-2, but we don't need ptr1 anymore
-        ; add a 0 to end of query string
-        mwa     #_sp_payload+2, ptr1
-        adw     ptr1, _sp_payload
-        ldy     #$00
-        tya
-        sta     (ptr1), y
+        setax   _sp_payload     ; length from payload[0..1]
+        jsr     _strncpy        ; trashes ptr1-2, but we don't need ptr1 anymore, returns dest
+
+        ;; NOT REQUIRED - we have zero'd whole of sp_payload previous to the strncpy        
+        ; ; add a 0 to end of query string
+        ; axinto  ptr1            ; move sp_payload+2 location into ptr1
+        ; adw     ptr1, _sp_payload       ; increment ptr1 by length of query string
+        ; ldy     #$00
+        ; tya
+        ; sta     (ptr1), y
 
         pusha   _sp_network
         lda     #'Q'
@@ -91,10 +96,10 @@ error:
         jmp     _fn_error
 
 add_nul:
-        ; ptr3 points to current target string, send back an empty string
+        ; tmp5 points to current target string, send back an empty string
         ldy     #$00
         tya
-        sta     (ptr3), y
+        sta     (tmp5), y
         rts
 ;----------------------------------------------------------------------------------------
 
@@ -107,7 +112,7 @@ not_empty:
         jsr     _sp_read
         bne     error
 
-        ; copy to destination
+        ; add nul
         mwa     #_sp_payload+2, ptr1
         adw     ptr1, ptr4      ; ptr1 += len
         ldy     #$00
@@ -115,15 +120,16 @@ not_empty:
         sta     (ptr1), y
 
         ; copy to destination
-        pushax  ptr3            ; dst
+        pushax  tmp5            ; dst
         pushax  #_sp_payload+2  ; src
         setax   ptr4            ; len
         jsr     _strncpy
+
         ; nul terminate the string
-        adw     ptr3, ptr4      ; set ptr3 to end of string
+        adw     tmp5, ptr4      ; set tmp5 to end of string
         ldy     #$00
         tya
-        sta     (ptr3), y
+        sta     (tmp5), y
 
         jmp     return0         ; FN_ERR_OK
 .endproc

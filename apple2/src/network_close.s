@@ -3,6 +3,7 @@
         .import     _bad_unit
         .import     _fn_device_error
         .import     _fn_error
+        .import     _sp_clr_pay
         .import     _sp_control
         .import     _sp_network
         .import     pusha
@@ -16,6 +17,9 @@
         ; devicespec parameter is ignored.
         ; so we just close the 1 network device we know about.
         ; TODO: revisit this when there are multiple network devices for multiple device specs.
+
+        ; if params are honoured, they will have to use them before this call which trashes a/x, and p1/2/3
+        jsr     _sp_clr_pay
 
         ldy     #$00
         sty     _fn_device_error

@@ -1,4 +1,6 @@
         .export     _main
+        .export     t_cb
+
         .export     t_devicespec
         .export     t_buffer
         .export     t_len

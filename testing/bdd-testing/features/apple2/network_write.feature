@@ -11,7 +11,8 @@ Feature: library test - apple2 network_write
       And I add file for compiling "features/apple2/invokers/test_network_write.s"
       And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
       And I write memory at _sp_network with 0
-     When I execute the procedure at _init for no more than 200 instructions
+      And I ignore cc65-noise
+     When I execute the procedure at _init for no more than 2100 instructions
 
     Then I expect register A equal FN_ERR_BAD_CMD
      And I expect register X equal 0
@@ -31,7 +32,8 @@ Feature: library test - apple2 network_write
       And I write word at t_buffer with hex $b000
       And I write word at t_len with hex $0000
       And I write memory at _sp_network with 1
-     When I execute the procedure at _init for no more than 200 instructions
+      And I ignore cc65-noise
+     When I execute the procedure at _init for no more than 2400 instructions
 
     Then I expect register A equal FN_ERR_BAD_CMD
      And I expect register X equal 0
@@ -55,7 +57,8 @@ Feature: library test - apple2 network_write
       And I write memory at $b000 with $01
       And I write memory at $b009 with $09
       And I write memory at $b00a with $0a
-     When I execute the procedure at _init for no more than 450 instructions
+      And I ignore cc65-noise
+     When I execute the procedure at _init for no more than 2350 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0
@@ -64,8 +67,8 @@ Feature: library test - apple2 network_write
      And I expect to see _sp_payload equal $01
      And I expect to see _sp_payload+9 equal $09
      # only 10 bytes copied (0-9)
-     # default memory value is aa
-     And I expect to see _sp_payload+10 equal $aa
+     # sp_payload is zero'd
+     And I expect to see _sp_payload+10 equal 0
 
   # -----------------------------------------------------------------------------------------------------------------
   Scenario: execute apple2 _network_write for with an error it returns library version of that error code
@@ -82,7 +85,8 @@ Feature: library test - apple2 network_write
       And I write memory at _sp_network with 1
       # simulate SP_ERR_BUS_ERR error when read called
       And I write memory at t_return_code with SP_ERR_BUS_ERR
-     When I execute the procedure at _init for no more than 450 instructions
+      And I ignore cc65-noise
+     When I execute the procedure at _init for no more than 2350 instructions
 
     Then I expect register A equal FN_ERR_IO_ERROR
      And I expect register X equal 0
@@ -104,14 +108,15 @@ Feature: library test - apple2 network_write
       And I write memory at _sp_network with 1
       # setup the buffer to push values from
       And I write memory at $b000 with $96
-      And I write memory at $b1ff with $aa
+      And I write memory at $b1ff with $bb
       And I write memory at $b200 with $69
-     When I execute the procedure at _init for no more than 2450 instructions
+      And I ignore cc65-noise
+     When I execute the procedure at _init for no more than 4350 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0
      And I expect to see t_cb_executed equal 2
      And I expect to see _fn_device_error equal 0
      And I expect to see t_r1b1 equal $96
-     And I expect to see t_r1b2 equal $aa
+     And I expect to see t_r1b2 equal $bb
      And I expect to see t_r2b1 equal $69

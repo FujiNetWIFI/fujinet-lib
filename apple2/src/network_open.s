@@ -3,6 +3,7 @@
         .import     _bzero
         .import     _fn_device_error
         .import     _memcpy
+        .import     _sp_clr_pay
         .import     _sp_control
         .import     _sp_find_network
         .import     _sp_init
@@ -23,10 +24,6 @@
         .include    "macros.inc"
         .include    "zp.inc"
 
-; uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans);
-.proc _network_open
-        jmp     over
-
 init_error:
         ; set io error
         lda     #SP_ERR_IO_ERROR
@@ -46,9 +43,11 @@ sp_error:
         ; never 0, as we detected the error before calling sp_error
         bne     remove_params_return_error
 
-over:
+; uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans);
+_network_open:
         sta     tmp4            ; trans
 
+        jsr     _sp_clr_pay     ; calls bzero, so trashes p1/2/3
         ldy     #$00
         sty     _fn_device_error
 
@@ -63,17 +62,9 @@ over:
         bne     remove_params_return_error      ; failed to call open, SmartPort error in A (not negative)
 
         jsr     popa            ; mode
-        pha
-
-        ; CLEAR PAYLOAD!
-        pushax  _sp_payload
-        setax   #$400
-        jsr     _bzero
-
-        pla
         sta     _sp_payload+2   ; save mode into payload (e.g. $c for r/w)
 
-        ; save mode in our global value
+        ; save mode in our global variable as it's used in several places
         sta     fn_open_mode
 
         popax   ptr1            ; devicespec
@@ -103,4 +94,3 @@ over:
         jmp     _sp_control     ; do control, and return its errors directly
         ; implicit rts
 
-.endproc

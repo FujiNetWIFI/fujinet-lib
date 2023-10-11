@@ -10,15 +10,15 @@
         .include    "sp.inc"
         .include    "macros.inc"
 
-; int8_t _sp_read(uint8_t * dest, uint16_t len)
+; int8_t _sp_read(uint8_t dest, uint16_t len)
 ;
 ; this changes _sp_payload
 ; returns any error code from _sp_dispatch call
 .proc _sp_read
-        sta     _sp_cmdlist+4          ; len (low)
-        stx     _sp_cmdlist+5          ; len (high)
+        sta     _sp_cmdlist+4           ; len (low)
+        stx     _sp_cmdlist+5           ; len (high)
         jsr     popa
-        sta     _sp_cmdlist+1          ; dest
+        sta     _sp_cmdlist+1           ; dest
         lda     #SP_READ_PARAM_COUNT
         sta     _sp_cmdlist
         lda     #<_sp_payload

@@ -10,24 +10,27 @@ Given apple2-fn-nw application test setup
   Given common apple2-fn-nw test setup
     And I start compiling for apple2 in "build/tests" with config "features/test-setup/inc/fn-nw-apple2.cfg"
     # These must come after the "start compiling". Root dirs added for fujinet-network.h/inc
+    # ASM Compiler options
     And I add compiler option "--asm-include-dir ../../"
     And I add compiler option "--asm-include-dir features/apple2/inc"
     And I add compiler option "--asm-include-dir ../../apple2/src/inc"
     And I add compiler option "--asm-include-dir ../../common/inc"
+    # C Compiler options
     And I add compiler option "--include-dir ../../"
     And I add compiler option "--include-dir features/apple2/inc"
     And I add compiler option "--include-dir ../../apple2/src/inc"
     And I add compiler option "--include-dir ../../common/inc"
 
 Given I add common apple2-sp files
-    And I add file for compiling "features/apple2/smartport/sp_emulator.s"
-    And I add apple2 src file "bad_unit.s"
-    And I add common src file "bss_data.s"
-    And I add apple2 src file "fn_error.s"
-    And I add apple2 src file "network_data.s"
-    And I add apple2 src file "sp_control.s"
-    And I add apple2 src file "sp_data.s"
-    And I add apple2 src file "sp_dispatch.s"
-    And I add apple2 src file "sp_find_device.s"
-    And I add apple2 src file "sp_init.s"
-    And I add apple2 src file "sp_status.s"
+  And I add file for compiling "features/apple2/smartport/sp_emulator.s"
+  And I add apple2 src file "bad_unit.s"
+  And I add common src file "bss_data.s"
+  And I add apple2 src file "fn_error.s"
+  And I add apple2 src file "network_data.s"
+  And I add apple2 src file "sp_clr_pay.s"
+  And I add apple2 src file "sp_control.s"
+  And I add apple2 src file "sp_data.s"
+  And I add apple2 src file "sp_dispatch.s"
+  And I add apple2 src file "sp_find_device.s"
+  And I add apple2 src file "sp_init.s"
+  And I add apple2 src file "sp_status.s"

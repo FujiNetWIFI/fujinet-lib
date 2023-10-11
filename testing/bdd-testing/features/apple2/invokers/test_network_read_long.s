@@ -1,4 +1,6 @@
         .export     _main
+        .export     t_cb
+
         .export     t_devicespec
         .export     t_buffer
         .export     t_len
@@ -42,31 +44,38 @@
         inc     t_cb_executed
         lda     t_cb_executed
         cmp     #$01
+        beq     r1
+        cmp     #$02
         bne     r2
+        cmp     #$03
+        bne     r3
 
-        ; round 1 $96
+        ; round 1 - status
 r1:
-        mva     #$96, _sp_payload
-        jsr     clear
-        beq     :+
+        mwa     t_len, _sp_payload
 
-        ; round 2 $69
-r2:
-        mva     #$69, _sp_payload
-        jsr     clear
-
-:       ldx     #$00
+        ldx     #$00
         lda     t_return_code
         rts
 
-clear:
-        ; blank next few chars as there's some crap in _sp_payload
-        ldx     #$05
-        lda     #$00
-:       sta     _sp_payload, x
-        dex
-        bne     :-
+        ; round 2 READ $69
+r2:
+        mwa     #$200, _sp_payload
+        mva     #$69, _sp_payload+2
+
+        ldx     #$00
+        lda     t_return_code
         rts
+
+        ; round 2 READ $69
+r3:
+        mwa     #$1, _sp_payload
+        mva     #$96, _sp_payload+2
+
+        ldx     #$00
+        lda     t_return_code
+        rts
+
 .endproc
 
 .proc _network_status

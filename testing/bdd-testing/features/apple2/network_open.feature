@@ -13,7 +13,8 @@ Feature: library test - apple2 network_open
       And I write memory at _sp_network with 0
       And I write memory at spe_should_fail_device_lookup with 1
       And I write memory at spe_num_devices with 1
-     When I execute the procedure at _init for no more than 480 instructions
+      And I ignore cc65-noise
+     When I execute the procedure at _init for no more than 2380 instructions
 
     # FN_IO_ERROR returned
     Then I expect register A equal 1
@@ -33,7 +34,8 @@ Feature: library test - apple2 network_open
       And I write memory at _sp_network with 0
       And I write memory at spe_should_fail_device_lookup with 1
       And I write memory at spe_num_devices with 1
-     When I execute the procedure at _init for no more than 480 instructions
+      And I ignore cc65-noise
+     When I execute the procedure at _init for no more than 2380 instructions
 
     # FN_IO_ERROR returned
     Then I expect register A equal 1
@@ -55,6 +57,7 @@ Feature: library test - apple2 network_open
       And I write word at t_devicespec with hex $a012
       And I write memory at t_mode with $04
       And I write memory at t_translate with $80
+      And I ignore cc65-noise
      When I execute the procedure at _init for no more than 3400 instructions
 
     Then I expect register A equal 0

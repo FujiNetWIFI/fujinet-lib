@@ -3,6 +3,7 @@
         .import     _bad_unit
         .import     _fn_device_error
         .import     _fn_error
+        .import     _sp_clr_pay
         .import     _sp_network
         .import     _sp_payload
         .import     _sp_status
@@ -19,8 +20,9 @@
 ; uint8_t network_status(char *devicespec, uint16_t *bw, uint8_t *c, uint8_t *err);
 ;
 .proc _network_status
-        axinto  ptr1            ; save err location
+        axinto  ptr4            ; save err location
 
+        jsr     _sp_clr_pay     ; calls bzero, so trashes p1/2/3
         ldy     #$00
         sty     _fn_device_error
 
@@ -44,16 +46,16 @@ have_network:
 
         ; process the device error
         lda     _sp_payload+3
-        sta     (ptr1), y       ; *err = sp_payload[3]
+        sta     (ptr4), y       ; *err = sp_payload[3]
 
         ; process the connection status param
-        popax   ptr1
+        popax   ptr4
         lda     _sp_payload+2
-        sta     (ptr1), y       ; *c = sp_payload[2]
+        sta     (ptr4), y       ; *c = sp_payload[2]
 
         ; process the bytes waiting (bw) param
-        popax   ptr1
-        mway    _sp_payload, {(ptr1), y}
+        popax   ptr4
+        mway    _sp_payload, {(ptr4), y}
 
         ; remove the devicespec parameter from stack, it isn't used
         jsr     incsp2

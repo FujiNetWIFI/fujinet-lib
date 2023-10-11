@@ -12,7 +12,8 @@ Feature: library test - apple2 network_close
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write memory at _sp_network with $02
-     When I execute the procedure at _init for no more than 250 instructions
+      And I ignore cc65-noise
+     When I execute the procedure at _init for no more than 2150 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0
@@ -34,7 +35,8 @@ Feature: library test - apple2 network_close
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write memory at _sp_network with $00
-     When I execute the procedure at _init for no more than 120 instructions
+      And I ignore cc65-noise
+     When I execute the procedure at _init for no more than 2020 instructions
 
     Then I expect register A equal FN_ERR_BAD_CMD
      And I expect register X equal 0

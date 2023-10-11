@@ -4,6 +4,7 @@
         .import     _fn_device_error
         .import     _fn_error
         .import     _memcpy
+        .import     _sp_clr_pay
         .import     _sp_network
         .import     _sp_payload
         .import     _sp_write
@@ -22,9 +23,11 @@
 .proc _network_write
         axinto  tmp7            ; len into tmp7/8
 
+        jsr     _sp_clr_pay     ; calls bzero, so trashes p1/2/3
         ldy     #$00
         sty     _fn_device_error
 
+        lda     tmp7
         ora     tmp8            ; check len > 0
         bne     :+
 

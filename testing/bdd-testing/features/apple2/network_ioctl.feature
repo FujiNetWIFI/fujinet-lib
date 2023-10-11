@@ -10,7 +10,8 @@ Feature: library test - apple2 network_ioctl
       And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
       # tell the test invoker to call with wrong args
       And I write memory at _t_do_bad_args with 1
-     When I execute the procedure at _init for no more than 120 instructions
+      And I ignore cc65-noise
+     When I execute the procedure at _init for no more than 2020 instructions
 
     Then I expect register A equal FN_ERR_BAD_CMD
      And I expect register X equal 0
