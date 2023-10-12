@@ -9,6 +9,7 @@
         .import     _network_read
         .import     _network_status_unit
         .import     _network_unit
+        .import     _sio_read
         .import     fn_open_mode_table
         .import     popax
         .import     pusha
@@ -58,23 +59,22 @@
         ; check for errors
         bne     error
 
-        ; get the length of the read from DVSTAT, save it in the global read count
-        mwa     DVSTAT, _fn_bytes_read
-        ora     DVSTAT          ; check for 0 length. A is currently DVSTAT+1, "or" with DVSTAT tells us if length is 0
+        ; get the length of the read from DVSTAT
+        lda     DVSTAT
+        ora     DVSTAT+1        ; check for 0 length. A is currently DVSTAT+1, "or" with DVSTAT tells us if length is 0
         beq     no_data
 
-        ; call network_read
-        pushax  ptr4            ; devicespec
-        pushax  tmp6            ; target string location
-        setax   _fn_bytes_read  ; length
-        jsr     _network_read
+        ; read data, this sets _fn_bytes_read
+        pusha   tmp5
+        pushax  tmp6
+        setax   DVSTAT
+        jsr     _sio_read
         bne     error
 
         ; reduce bytes read by 1, as there's always an 0x9b line ending we don't require
-        ; This could now be replaced by setting the line ending with ioctl 0x9b, but this is much easier
         sbw1    _fn_bytes_read, #$01
 
-        ; move string pointer on by len-1 (for atari) so we can nul terminate it
+        ; move string pointer on by len-1 (for atari) so we can nul terminate it (will overwrite the 0x9b)
         adw     tmp6, _fn_bytes_read
 
 no_data:

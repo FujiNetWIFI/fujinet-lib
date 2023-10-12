@@ -6,7 +6,7 @@ Feature: library test - atari network_read
     Given atari-fn-nw application test setup
       And I add common atari-io files
       And I add atari src file "network_read.s"
-      And I add atari src file "network_write.s"
+      And I add atari src file "sio_read.s"
       And I add common src file "network_unit.s"
       And I add atari src file "network_status.s"
       And I add atari src file "io_status.s"
@@ -21,7 +21,7 @@ Feature: library test - atari network_read
       And I write word at DVSTAT with hex $2000
       # show X is changed by giving it an initial value
       And I set register X to $ff
-     When I execute the procedure at _init for no more than 350 instructions
+     When I execute the procedure at _init for no more than 400 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0
@@ -46,7 +46,7 @@ Feature: library test - atari network_read
     Given atari-fn-nw application test setup
       And I add common atari-io files
       And I add atari src file "network_read.s"
-      And I add atari src file "network_write.s"
+      And I add atari src file "sio_read.s"
       And I add common src file "network_unit.s"
       And I add atari src file "network_status.s"
       And I add atari src file "io_status.s"
@@ -62,7 +62,7 @@ Feature: library test - atari network_read
       And I write word at DVSTAT with hex $0345
       # show X is changed by giving it an initial value
       And I set register X to $ff
-     When I execute the procedure at _init for no more than 350 instructions
+     When I execute the procedure at _init for no more than 400 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0
@@ -87,7 +87,7 @@ Feature: library test - atari network_read
     Given atari-fn-nw application test setup
       And I add common atari-io files
       And I add atari src file "network_read.s"
-      And I add atari src file "network_write.s"
+      And I add atari src file "sio_read.s"
       And I add common src file "network_unit.s"
       And I add atari src file "network_status.s"
       And I add atari src file "io_status.s"

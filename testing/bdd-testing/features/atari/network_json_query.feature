@@ -44,12 +44,11 @@ Feature: library test - atari network_json_query
       And I expect to see t_network_status_err equal lo(_fn_network_error)
       And I expect to see t_network_status_err+1 equal hi(_fn_network_error)
 
-      And I expect to see t_network_read_devicespec equal 0
-      And I expect to see t_network_read_devicespec+1 equal $90
-      And I expect to see t_network_read_buf equal 0
-      And I expect to see t_network_read_buf+1 equal $92
-      And I expect to see t_network_read_len equal 7
-      And I expect to see t_network_read_len+1 equal 0
+      And I expect to see t_sio_read_unit equal 1
+      And I expect to see t_sio_read_buf equal 0
+      And I expect to see t_sio_read_buf+1 equal $92
+      And I expect to see t_sio_read_len equal 7
+      And I expect to see t_sio_read_len+1 equal 0
 
      # check the string was copied to the destination, with a trailing 0 to terminate the string
      # The location held all XXXX chars, we show we overwrite exactly 6+nul, and the extra chars are untouched (final 58 is an X)
@@ -62,6 +61,7 @@ Feature: library test - atari network_json_query
     Given atari-fn-nw application test setup
       And I add common atari-io files
       And I add atari src file "network_json_query.s"
+      And I add atari src file "io_status.s"
       And I add file for compiling "features/atari/invokers/test_network_json_query.s"
       And I add file for compiling "features/atari/stubs/bus_simple.s"
       And I create and load atari application
@@ -81,6 +81,7 @@ Feature: library test - atari network_json_query
     Given atari-fn-nw application test setup
       And I add common atari-io files
       And I add atari src file "network_json_query.s"
+      And I add atari src file "io_status.s"
       And I add file for compiling "features/atari/invokers/test_network_json_query.s"
       And I add file for compiling "features/atari/stubs/bus_simple.s"
       And I create and load atari application
@@ -100,6 +101,7 @@ Feature: library test - atari network_json_query
     Given atari-fn-nw application test setup
       And I add common atari-io files
       And I add atari src file "network_json_query.s"
+      And I add atari src file "io_status.s"
       And I add file for compiling "features/atari/invokers/test_network_json_query.s"
       And I add file for compiling "features/atari/stubs/bus_simple.s"
       And I create and load atari application
@@ -109,7 +111,7 @@ Feature: library test - atari network_json_query
       And I write word at t_s with hex $9200
       And I write memory at t_is_read_error with 1
       And I write word at DVSTAT with hex $0006
-     When I execute the procedure at _init for no more than 440 instructions
+     When I execute the procedure at _init for no more than 640 instructions
     Then I expect register A equal 1
      And I expect register X equal 0
 
@@ -118,6 +120,7 @@ Feature: library test - atari network_json_query
     Given atari-fn-nw application test setup
       And I add common atari-io files
       And I add atari src file "network_json_query.s"
+      And I add atari src file "io_status.s"
       And I add file for compiling "features/atari/invokers/test_network_json_query.s"
       And I add file for compiling "features/atari/stubs/bus_simple.s"
       And I create and load atari application

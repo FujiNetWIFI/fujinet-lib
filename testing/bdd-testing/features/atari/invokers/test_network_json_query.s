@@ -1,8 +1,8 @@
         .export     _main
         .export     _network_ioctl
         .export     _network_status_unit
-        .export     _network_read
         .export     _network_unit
+        .export     _sio_read
 
         .export     t_ioctl_dbyt
         .export     t_ioctl_dbuf
@@ -16,9 +16,9 @@
         .export     t_network_status_bw
         .export     t_network_status_conn
         .export     t_network_status_err
-        .export     t_network_read_devicespec
-        .export     t_network_read_buf
-        .export     t_network_read_len
+        .export     t_sio_read_unit
+        .export     t_sio_read_buf
+        .export     t_sio_read_len
         .export     t_read_data
         .export     t_is_ioctl_error
         .export     t_is_status_error
@@ -28,6 +28,7 @@
         .export     t_query
         .export     t_s
 
+        .import     _fn_bytes_read
         .import     _fn_network_bw
         .import     _network_json_query
         .import     popa
@@ -85,10 +86,10 @@
 :       jmp     return0         ; FN_ERR_OK
 .endproc
 
-.proc _network_read
-        axinto  t_network_read_len
-        popax   t_network_read_buf
-        popax   t_network_read_devicespec
+.proc _sio_read
+        axinto  t_sio_read_len
+        popax   t_sio_read_buf
+        popa    t_sio_read_unit
 
         mva     tmp7, t_tmp7
         mva     tmp8, t_tmp8
@@ -101,7 +102,7 @@
 
         ; copy string from test to the target buffer
 :       mwa     #t_read_data, tmp9
-        mwa     t_network_read_buf, tmp7
+        mwa     t_sio_read_buf, tmp7
         ldy     #$00
 :       lda     (tmp9), y
         beq     :+
@@ -109,7 +110,8 @@
         iny
         bne     :-
 
-:       mva     t_tmp7, tmp7
+:       mwa     t_sio_read_len, _fn_bytes_read
+        mva     t_tmp7, tmp7
         mva     t_tmp8, tmp8
         mva     t_tmp9, tmp9
         mva     t_tmp10, tmp10
@@ -137,17 +139,17 @@ t_ioctl_cmd:        .res 1
 
 t_network_unit_devicespec:  .res 2
 
-t_network_status_unit:      .res 1
-t_network_status_bw:        .res 2
-t_network_status_conn:      .res 2
-t_network_status_err:       .res 2
+t_network_status_unit:  .res 1
+t_network_status_bw:    .res 2
+t_network_status_conn:  .res 2
+t_network_status_err:   .res 2
 
-t_network_read_devicespec:  .res 2
-t_network_read_buf:         .res 2
-t_network_read_len:         .res 2
+t_sio_read_unit:        .res 1
+t_sio_read_buf:         .res 2
+t_sio_read_len:         .res 2
 
 ; area to write text to for reading
-t_read_data:        .res 32
+t_read_data:    .res 32
 
 t_tmp7:         .res 1
 t_tmp8:         .res 1
