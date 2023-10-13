@@ -60,8 +60,11 @@ r1:
 
         ; round 2 READ $69
 r2:
-        mwa     #$200, _sp_payload
-        mva     #$69, _sp_payload+2
+        mva     #$69, _sp_payload
+        lda     #$00
+        sta     _sp_payload+1
+        sta     _sp_payload+2
+        sta     _sp_payload+3
 
         ldx     #$00
         lda     t_return_code
@@ -69,8 +72,11 @@ r2:
 
         ; round 2 READ $69
 r3:
-        mwa     #$01, _sp_payload
-        mva     #$96, _sp_payload+2
+        mva     #$96, _sp_payload
+        lda     #$00
+        sta     _sp_payload+1
+        sta     _sp_payload+2
+        sta     _sp_payload+3
 
         ldx     #$00
         lda     t_return_code

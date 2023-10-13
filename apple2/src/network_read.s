@@ -131,9 +131,9 @@ len_under_512:
         jsr     _sp_read
         bne     read_err
 
-        ; copy tmp5/6 bytes into buffer from sp_payload+2
+        ; copy tmp5/6 bytes into buffer from sp_payload
         pushax  tmp9            ; dst tmp9/10 (memcpy trashes ptr1-3)
-        pushax  #_sp_payload+2  ; src
+        pushax  #_sp_payload    ; src
         setax   tmp5            ; request length (either 512, or lower if on last block)
         jsr     _memcpy
 

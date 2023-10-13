@@ -89,11 +89,10 @@ r2:     ; read
         setax   #t_r2_payload
         jsr     copy_payload
 
-        ; copy read string into payload[2] for our "read", length in payload[0]
-        mwa     t_len, _sp_payload
+        ; copy read string into payload[0] for our "read"
         ldy     #$00
 :       lda     t_read_string, y
-        sta     _sp_payload+2, y
+        sta     _sp_payload, y
         iny
         cpy     t_len
         bne     :-
