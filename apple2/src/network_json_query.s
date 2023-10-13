@@ -3,6 +3,7 @@
         .import     _bad_unit
         .import     _fn_device_error
         .import     _fn_error
+        .import     _memcpy
         .import     _sp_clr_pay
         .import     _sp_control
         .import     _sp_network
@@ -77,7 +78,7 @@
         lda     #'S'
         jsr     _sp_status
         bne     error
-        mwa     _sp_payload, ptr4       ; keep length in ptr4
+        mwa     _sp_payload, ptr4       ; keep length (currently in sp_payload[0,1]) in ptr4
 
         ; check length > 0, a is currently _sp_payload+1, high byte. "ora" with lo byte in ptr4
         ora     ptr4
@@ -112,18 +113,18 @@ not_empty:
         jsr     _sp_read
         bne     error
 
-        ; add nul
-        mwa     #_sp_payload+2, ptr1
-        adw     ptr1, ptr4      ; ptr1 += len
-        ldy     #$00
-        tya
-        sta     (ptr1), y
+        ; ; add nul - not required, we use memcpy instead to do exact count, then add nul afterwards
+        ; mwa     #_sp_payload+2, ptr1
+        ; adw     ptr1, ptr4      ; ptr1 += len
+        ; ldy     #$00
+        ; tya
+        ; sta     (ptr1), y
 
         ; copy to destination
         pushax  tmp5            ; dst
         pushax  #_sp_payload+2  ; src
         setax   ptr4            ; len
-        jsr     _strncpy
+        jsr     _memcpy         ; doesn't touch ptr4.
 
         ; nul terminate the string
         adw     tmp5, ptr4      ; set tmp5 to end of string

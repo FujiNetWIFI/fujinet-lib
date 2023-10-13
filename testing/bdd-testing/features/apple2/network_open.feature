@@ -58,6 +58,7 @@ Feature: library test - apple2 network_open
       And I write memory at t_mode with $04
       And I write memory at t_translate with $80
       And I ignore cc65-noise
+      And I write string "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" as ascii to memory address _sp_payload
      When I execute the procedure at _init for no more than 3400 instructions
 
     Then I expect register A equal 0
@@ -87,7 +88,7 @@ Feature: library test - apple2 network_open
      #  [4..4+len] = devicespec
      #  [..+1] = 0x00
      #  ... = $00
-    When I hex+ dump ascii between t_r2_payload and t_r2_payload+11
+    When I hex+ dump ascii between t_r2_payload and t_r2_payload+14
     # exact bytes, and string version
-    Then property "test.BDD6502.lastHexDump" must contain string ": 08 00 04 80 6e 35 3a 66  6f 6f 00 :"
+    Then property "test.BDD6502.lastHexDump" must contain string ": 08 00 04 80 6e 35 3a 66  6f 6f 00 00 00 00 :"
     Then property "test.BDD6502.lastHexDump" must contain string "n5:foo"

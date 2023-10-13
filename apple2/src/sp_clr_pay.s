@@ -6,6 +6,8 @@
 
         .include    "macros.inc"
 
+; void 
+
 .proc _sp_clr_pay
         pushax  #_sp_payload
         setax   #$400

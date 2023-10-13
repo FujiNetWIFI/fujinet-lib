@@ -12,7 +12,7 @@ Feature: library test - apple2 network_write
       And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
       And I write memory at _sp_network with 0
       And I ignore cc65-noise
-     When I execute the procedure at _init for no more than 2100 instructions
+     When I execute the procedure at _init for no more than 175 instructions
 
     Then I expect register A equal FN_ERR_BAD_CMD
      And I expect register X equal 0
@@ -33,7 +33,7 @@ Feature: library test - apple2 network_write
       And I write word at t_len with hex $0000
       And I write memory at _sp_network with 1
       And I ignore cc65-noise
-     When I execute the procedure at _init for no more than 2400 instructions
+     When I execute the procedure at _init for no more than 175 instructions
 
     Then I expect register A equal FN_ERR_BAD_CMD
      And I expect register X equal 0

@@ -47,7 +47,6 @@ sp_error:
 _network_open:
         sta     tmp4            ; trans
 
-        jsr     _sp_clr_pay     ; calls bzero, so trashes p1/2/3
         ldy     #$00
         sty     _fn_device_error
 
@@ -61,33 +60,41 @@ _network_open:
         jsr     _sp_open
         bne     remove_params_return_error      ; failed to call open, SmartPort error in A (not negative)
 
-        jsr     popa            ; mode
-        sta     _sp_payload+2   ; save mode into payload (e.g. $c for r/w)
 
-        ; save mode in our global variable as it's used in several places
+        ; ----------------------------------------------------------------------------------------------------
+        ; SETUP SP_PAYLOAD
+        ; ----------------------------------------------------------------------------------------------------
+
+        ; first clear it. Do this after the _sp_open etc to ensure there's no data left in sp_payload from previous calls
+        jsr     _sp_clr_pay     ; calls bzero, so trashes p1/2/3
+
+        ; [2] = mode (e.g. $c for r/w)
+        popa    _sp_payload+2
         sta     fn_open_mode
 
+        ; [0,1] = LENGTH of payload (devicespec.size() + 2 for trans/mode)
         popax   ptr1            ; devicespec
         jsr     _strlen
-        axinto  ptr4            ; ptr4 hold string len
+        axinto  ptr4            ; save devicespec.size()
 
-        ; add 2 and store resultant length+2 in sp_payload[0,1]. this is the length of bytes to read from payload, so includes 2 for trans/mode
+        ; add 2 and store
         adw     ptr4, #$02, _sp_payload
 
-        mva     tmp4, _sp_payload+3     ; translation
+        ; [3] = translation mode
+        mva     tmp4, _sp_payload+3
 
-        ; copy the devicespec to payload[4], and add on 0x00
+        ; [4..4+len]
         pushax  #_sp_payload+4  ; dst (payload[4])
         pushax  ptr1            ; src (devicespec)
-        setax   ptr4            ; length of devicespec. doesn't include the +2
+        setax   ptr4            ; devicespec.size()
         jsr     _strncpy        ; copy string. this trashes ptr1/2, t1-4
 
-        ; add 0x00 to the end of string as a terminator
-        mwa     #_sp_payload+4, ptr1
-        adw     ptr1, ptr4      ; ptr1 = (_sp_payload+4) + string length. i.e. location of 0x00 terminator
-        ldy     #$00
-        tya
-        sta     (ptr1), y
+        ; ;; add 0x00 to the end of string as a terminator - SHOULDN'T BE NEEDED, WE DID BZERO
+        ; mwa     #_sp_payload+4, ptr1
+        ; adw     ptr1, ptr4      ; ptr1 = (_sp_payload+4) + string length. i.e. location of 0x00 terminator
+        ; ldy     #$00
+        ; tya
+        ; sta     (ptr1), y
 
         pusha   _sp_network     ; unit
         lda     #'O'            ; open

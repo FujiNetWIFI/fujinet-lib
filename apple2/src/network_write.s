@@ -23,7 +23,7 @@
 .proc _network_write
         axinto  tmp7            ; len into tmp7/8
 
-        jsr     _sp_clr_pay     ; calls bzero, so trashes p1/2/3
+        ;jsr     _sp_clr_pay     ; calls bzero, so trashes p1/2/3
         ldy     #$00
         sty     _fn_device_error
 
@@ -74,6 +74,8 @@ while_len:
         bne     :+              ; always
 
 @len_under_512:
+        ; if buffer is shorter than 512, ensure it's blank before using it. for a full block, it would be pointless clearing first
+        jsr     _sp_clr_pay
         lda     tmp7
         ldx     tmp8
         sta     tmp5
