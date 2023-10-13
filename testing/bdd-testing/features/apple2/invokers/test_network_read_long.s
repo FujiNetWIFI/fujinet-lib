@@ -69,7 +69,7 @@ r2:
 
         ; round 2 READ $69
 r3:
-        mwa     #$1, _sp_payload
+        mwa     #$01, _sp_payload
         mva     #$96, _sp_payload+2
 
         ldx     #$00
@@ -79,7 +79,7 @@ r3:
 .endproc
 
 .proc _network_status
-        mwa     #513, _fn_network_bw
+        mwa     #$201, _fn_network_bw
         mva     #$00, _fn_network_conn
         sta     _fn_network_error
 

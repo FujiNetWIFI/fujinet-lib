@@ -14,7 +14,7 @@
 ; returns 1 if the sp_network isn't set, e.g. calling before calling _network_open.
 .proc _network_close
         ; At the moment, we can't handle multiple device specs at the same time on apple, so the
-        ; devicespec parameter is ignored.
+        ; devicespec parameter is ignored (it's previously been read in "open" and unit was saved in _sp_network).
         ; so we just close the 1 network device we know about.
         ; TODO: revisit this when there are multiple network devices for multiple device specs.
 

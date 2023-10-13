@@ -5,8 +5,6 @@
         .import     _fn_device_error
         .import     _fn_error
         .import     _fn_network_bw
-        .import     _fn_network_conn
-        .import     _fn_network_error
         .import     _memcpy
         .import     _sp_clr_pay
         .import     _sp_network
@@ -33,9 +31,13 @@
         ; ---------------------------------------------------------------------------------------------
         ; ARGS PARSING AND VALIDATION
         ; ---------------------------------------------------------------------------------------------
+
+        ; clear memory
         jsr     _sp_clr_pay
         ldy     #$00
         sty     _fn_device_error
+        sty     _fn_bytes_read
+        sty     _fn_bytes_read+1
 
         lda     tmp7
         ora     tmp8            ; check len > 0
@@ -85,13 +87,10 @@
         bne     :+
         lda     tmp7
         cmp     _fn_network_bw
-:       bcc     :+                      ; no need to alter len, it's under BW
+:       bcc     while_len               ; no need to alter len, it's under BW
 
         ; len >= bw, so use bw instead as we can only get a max of bw bytes.
         mwa     _fn_network_bw, tmp7
-        bcs     while_len
-
-:       mwa     tmp7, _fn_bytes_read    ; save the count of bytes we're going to read
 
 ; ---------------------------------------------------------------------------------------------
 ; READ LOOP IN 512 BYTE BLOCKS (or Bytes Waiting if lower)
@@ -99,10 +98,8 @@
 
 ; len (in tmp7/8) is the outstanding bytes to read overall
 ; tmp5/6 holds count of the number of bytes we will fetch in this round
+; _fn_bytes_read is the cumulative count of bytes read
 while_len:
-        ; push network id into stack for call to sp_read
-        pusha   _sp_network
-
         ; use the minimum of MAX_READ_SIZE (512) or len, which decreases as we read blocks
         lda     tmp8            ; hi byte of len (tmp7/8)
         cmp     #$2             ; 512 high byte
@@ -126,8 +123,12 @@ len_under_512:
         ; PERFORM READ
         ; ---------------------------------------------------------------------------------------------
 
-        ; A/X hold bytes to transfer, also in tmp5/6 to decrease len afterwards
-:       jsr     _sp_read
+        ; add the count of requested bytes to total
+:       adw     _fn_bytes_read, tmp5
+
+        pusha   _sp_network
+        setax   tmp5            ; restore count for sp_read
+        jsr     _sp_read
         bne     read_err
 
         ; copy tmp5/6 bytes into buffer from sp_payload+2

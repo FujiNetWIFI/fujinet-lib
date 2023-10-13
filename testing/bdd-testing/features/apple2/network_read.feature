@@ -88,6 +88,9 @@ Feature: library test - apple2 network_read
 
      When I hex+ dump ascii between _sp_payload and _sp_payload+16
      Then property "test.BDD6502.lastHexDump" must contain string ": 0a 00 31 32 33 34 35 36  37 38 39 30 00 00 00 00 :"
+     
+      And I expect to see _fn_bytes_read equal 10
+      And I expect to see _fn_bytes_read+1 equal 0
 
   # -----------------------------------------------------------------------------------------------------------------
   Scenario: execute apple2 _network_read for with an error it returns library version of that error code
@@ -131,7 +134,7 @@ Feature: library test - apple2 network_read
       And I write word at t_len with hex $0201
       And I write memory at _sp_network with 1
       And I ignore cc65-noise
-     When I execute the procedure at _init for no more than 4600 instructions
+     When I execute the procedure at _init for no more than 4500 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0
@@ -145,3 +148,6 @@ Feature: library test - apple2 network_read
     When I hex+ dump ascii between $b1fe and $b202
     # aa is default memory value
     Then property "test.BDD6502.lastHexDump" must contain string "b1fe: 00 00 69 00 :"
+
+     And I expect to see _fn_bytes_read+1 equal 2
+     And I expect to see _fn_bytes_read equal 1
