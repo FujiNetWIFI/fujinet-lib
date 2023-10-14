@@ -1,4 +1,4 @@
-        .export     _sp_clr_pay
+        .export     _sp_clr_payload
 
         .import     _bzero
         .import     _sp_payload
@@ -6,9 +6,9 @@
 
         .include    "macros.inc"
 
-; void 
+; void _sp_clr_payload();
 
-.proc _sp_clr_pay
+.proc _sp_clr_payload
         pushax  #_sp_payload
         setax   #$400
         jmp     _bzero

@@ -7,7 +7,6 @@ Feature: library test - apple2 network_open
       And I add common apple2-sp files
       And I add apple2 src file "network_open.s"
       And I add file for compiling "features/apple2/invokers/test_network_open.s"
-      And I add file for compiling "../../apple2/src/sp_find_network.s"
       And I add file for compiling "../../apple2/src/sp_open.s"
       And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
       And I write memory at _sp_network with 0
@@ -28,7 +27,6 @@ Feature: library test - apple2 network_open
       And I add common apple2-sp files
       And I add apple2 src file "network_open.s"
       And I add file for compiling "features/apple2/invokers/test_network_open.s"
-      And I add file for compiling "../../apple2/src/sp_find_network.s"
       And I add file for compiling "../../apple2/src/sp_open.s"
       And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
       And I write memory at _sp_network with 0
@@ -50,7 +48,6 @@ Feature: library test - apple2 network_open
       And I add common apple2-sp files
       And I add apple2 src file "network_open.s"
       And I add file for compiling "features/apple2/invokers/test_network_open.s"
-      And I add file for compiling "../../apple2/src/sp_find_network.s"
       And I add file for compiling "../../apple2/src/sp_open.s"
       And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012

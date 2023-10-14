@@ -34,7 +34,7 @@ Testing is done with BDD features. See [Testing README](testing/bdd-testing/READ
 |System | network_open() | network_close() | network_read() | network_write() | network_status() | network_ioctl() | network_json_parse() | network_json_query() |
 |-------|----------------|-----------------|----------------|-----------------|------------------|-----------------|----------------------|----------------------|
 | Atari | `[x]`          |  `[x]`          | `[x]`          | `[x]`           | `[x]`            | `[x]`           | `[x]`                | `[x]`                |
-| Apple2| `[x]`          |  `[x]`          | `[x]`          | `[x]`           | `[x]`            | `[ ]`           | `[x]`                | `[x]`                |
+| Apple2| `[x]`          |  `[x]`          | `[x]`          | `[x]`           | `[x]`            | `[x]`           | `[x]`                | `[x]`                |
 | ADAM  | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           | `[ ]`                | `[ ]`                |
 | CBM   | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           | `[ ]`                | `[ ]`                |
 | Coco  | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           | `[ ]`                | `[ ]`                |
@@ -69,7 +69,7 @@ Listed:
 - [x] network_read()
 - [x] network_write()
 - [x] network_status()
-- [ ] network_ioctl()
+- [x] network_ioctl()
 - [x] network_json_parse()
 - [x] network_json_query()
 

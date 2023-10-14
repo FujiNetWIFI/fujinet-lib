@@ -3,7 +3,7 @@
         .import     _bzero
         .import     _fn_device_error
         .import     _memcpy
-        .import     _sp_clr_pay
+        .import     _sp_clr_payload
         .import     _sp_control
         .import     _sp_find_network
         .import     _sp_init
@@ -66,7 +66,7 @@ _network_open:
         ; ----------------------------------------------------------------------------------------------------
 
         ; first clear it. Do this after the _sp_open etc to ensure there's no data left in sp_payload from previous calls
-        jsr     _sp_clr_pay     ; calls bzero, so trashes p1/2/3
+        jsr     _sp_clr_payload     ; calls bzero, so trashes p1/2/3
 
         ; [2] = mode (e.g. $c for r/w)
         popa    _sp_payload+2

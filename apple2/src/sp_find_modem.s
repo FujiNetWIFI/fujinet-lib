@@ -1,6 +1,5 @@
         .export     _sp_find_modem
 
-        .import     sp_modem
         .import     _sp_find_device
 
         .include    "macros.inc"
@@ -11,3 +10,6 @@
         setax   #sp_modem
         jmp     _sp_find_device
 .endproc
+
+.data
+sp_modem:       .byte "MODEM", 0

@@ -3,7 +3,7 @@
         .import     _bad_unit
         .import     _fn_device_error
         .import     _fn_error
-        .import     _sp_clr_pay
+        .import     _sp_clr_payload
         .import     _sp_control
         .import     _sp_network
         .import     pusha
@@ -19,7 +19,7 @@
         ; TODO: revisit this when there are multiple network devices for multiple device specs.
 
         ; if params are honoured, they will have to use them before this call which trashes a/x, and p1/2/3
-        jsr     _sp_clr_pay
+        jsr     _sp_clr_payload
 
         ldy     #$00
         sty     _fn_device_error

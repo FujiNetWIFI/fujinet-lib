@@ -1,6 +1,5 @@
         .export     _sp_find_fuji
 
-        .import     sp_fn_d0
         .import     _sp_find_device
 
         .include    "macros.inc"
@@ -11,3 +10,6 @@
         setax   #sp_fn_d0
         jmp     _sp_find_device
 .endproc
+
+.data
+sp_fn_d0:       .byte "FUJINET_DISK_0", 0

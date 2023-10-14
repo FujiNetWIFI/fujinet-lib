@@ -4,7 +4,7 @@
         .import     _fn_device_error
         .import     _fn_error
         .import     _memcpy
-        .import     _sp_clr_pay
+        .import     _sp_clr_payload
         .import     _sp_control
         .import     _sp_network
         .import     _sp_payload
@@ -29,7 +29,7 @@
 .proc _network_json_query
         axinto  tmp5            ; save string output location
 
-        jsr     _sp_clr_pay     ; calls bzero, so trashes p1/2/3
+        jsr     _sp_clr_payload     ; calls bzero, so trashes p1/2/3
 
         ldy     #$00
         sty     _fn_device_error

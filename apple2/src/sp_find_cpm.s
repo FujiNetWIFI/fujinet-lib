@@ -1,6 +1,5 @@
         .export     _sp_find_cpm
 
-        .import     sp_cpm
         .import     _sp_find_device
 
         .include    "macros.inc"
@@ -11,3 +10,6 @@
         setax   #sp_cpm
         jmp     _sp_find_device
 .endproc
+
+.data
+sp_cpm:         .byte "CPM", 0

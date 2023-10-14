@@ -99,6 +99,8 @@ uint8_t network_json_parse(char *devicespec);
 uint8_t network_json_query(char *devicespec, char *query, char *s);
 
 
+// uint8_t network_http_add_header(char *devicespec, char *header);
+
 #define FN_ERR_OK               (0x00)      /* No error */
 #define FN_ERR_IO_ERROR         (0x01)      /* There was IO error/issue with the device */
 #define FN_ERR_BAD_CMD          (0x02)      /* Function called with bad arguments */
@@ -106,5 +108,21 @@ uint8_t network_json_query(char *devicespec, char *query, char *s);
 #define FN_ERR_WARNING          (0x04)      /* Device specific non-fatal warning issued */
 
 #define FN_ERR_UNKNOWN          (0xff)      /* Device specific error we didn't handle */
+
+#define OPEN_MODE_READ          (0x04)
+#define OPEN_MODE_WRITE         (0x08)
+#define OPEN_MODE_RW            (0x0C)
+
+#define OPEN_MODE_HTTP_GET      (0x04)
+#define OPEN_MODE_HTTP_PUT      (0x08)
+#define OPEN_MODE_HTTP_GET_H    (0x0C)
+#define OPEN_MODE_HTTP_POST     (0x0D)
+#define OPEN_MODE_HTTP_PUT_H    (0x0E)
+
+#define OPEN_TRANS_NONE         (0x00)
+#define OPEN_TRANS_CR           (0x01)
+#define OPEN_TRANS_LF           (0x02)
+#define OPEN_TRANS_CRLF         (0x03)
+#define OPEN_TRANS_PET          (0x04)
 
 #endif /* FUJINET_NETWORK_H */

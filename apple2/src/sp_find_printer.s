@@ -1,6 +1,5 @@
         .export     _sp_find_printer
 
-        .import     sp_printer
         .import     _sp_find_device
 
         .include    "macros.inc"
@@ -11,3 +10,6 @@
         setax   #sp_printer
         jmp     _sp_find_device
 .endproc
+
+.data
+sp_printer:     .byte "PRINTER", 0

@@ -3,7 +3,7 @@
         .import     _bad_unit
         .import     _fn_device_error
         .import     _fn_error
-        .import     _sp_clr_pay
+        .import     _sp_clr_payload
         .import     _sp_control
         .import     _sp_network
         .import     _sp_payload
@@ -20,7 +20,7 @@
         ldy     #$00
         sty     _fn_device_error
 
-        jsr     _sp_clr_pay     ; calls bzero, so trashes p1/2/3
+        jsr     _sp_clr_payload     ; calls bzero, so trashes p1/2/3
 
         lda     _sp_network     ; get network id
         beq     no_network

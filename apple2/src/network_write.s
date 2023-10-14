@@ -4,7 +4,7 @@
         .import     _fn_device_error
         .import     _fn_error
         .import     _memcpy
-        .import     _sp_clr_pay
+        .import     _sp_clr_payload
         .import     _sp_network
         .import     _sp_payload
         .import     _sp_write
@@ -23,7 +23,7 @@
 .proc _network_write
         axinto  tmp7            ; len into tmp7/8
 
-        ;jsr     _sp_clr_pay     ; calls bzero, so trashes p1/2/3
+        ;jsr     _sp_clr_payload     ; calls bzero, so trashes p1/2/3
         ldy     #$00
         sty     _fn_device_error
 
@@ -75,7 +75,7 @@ while_len:
 
 @len_under_512:
         ; if buffer is shorter than 512, ensure it's blank before using it. for a full block, it would be pointless clearing first
-        jsr     _sp_clr_pay
+        jsr     _sp_clr_payload
         lda     tmp7
         ldx     tmp8
         sta     tmp5

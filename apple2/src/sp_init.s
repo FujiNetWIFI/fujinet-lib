@@ -1,20 +1,21 @@
         .export     _sp_init
         .export     find_slot
 
-        .import     _sp_find_fuji
         .import     _sp_dispatch_fn
+        .import     _sp_find_fuji
+        .import     _sp_is_init
         .import     return0
         .import     return1
 
         .include    "macros.inc"
         .include    "zp.inc"
 
-; bool sp_init()
+; bool sp_init();
 ;
 ; returns true if Smart Port initialised
 ; otherwise false.
-; sets 
 .proc _sp_init
+        mva     #$01, _sp_is_init
         jsr     find_slot
         bne     :+
 

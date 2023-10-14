@@ -6,7 +6,7 @@
         .import     _fn_error
         .import     _fn_network_bw
         .import     _memcpy
-        .import     _sp_clr_pay
+        .import     _sp_clr_payload
         .import     _sp_network
         .import     _sp_payload
         .import     _sp_read
@@ -33,7 +33,7 @@
         ; ---------------------------------------------------------------------------------------------
 
         ; clear memory
-        jsr     _sp_clr_pay
+        jsr     _sp_clr_payload
         ldy     #$00
         sty     _fn_device_error
         sty     _fn_bytes_read

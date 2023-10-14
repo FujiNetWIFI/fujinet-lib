@@ -1,6 +1,5 @@
         .export     _sp_find_clock
 
-        .import     sp_clock
         .import     _sp_find_device
 
         .include    "macros.inc"
@@ -11,3 +10,6 @@
         setax   #sp_clock
         jmp     _sp_find_device
 .endproc
+
+.data
+sp_clock:       .byte "FN_CLOCK", 0

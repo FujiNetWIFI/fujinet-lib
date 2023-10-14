@@ -3,7 +3,7 @@
         .import     _bad_unit
         .import     _fn_device_error
         .import     _fn_error
-        .import     _sp_clr_pay
+        .import     _sp_clr_payload
         .import     _sp_network
         .import     _sp_payload
         .import     _sp_status
@@ -22,7 +22,7 @@
 .proc _network_status
         axinto  ptr4            ; save err location
 
-        jsr     _sp_clr_pay     ; calls bzero, so trashes p1/2/3
+        jsr     _sp_clr_payload     ; calls bzero, so trashes p1/2/3
         ldy     #$00
         sty     _fn_device_error
 
