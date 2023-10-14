@@ -87,5 +87,5 @@ Feature: library test - apple2 network_open
      #  ... = $00
     When I hex+ dump ascii between t_r2_payload and t_r2_payload+14
     # exact bytes, and string version
-    Then property "test.BDD6502.lastHexDump" must contain string ": 08 00 04 80 6e 35 3a 66  6f 6f 00 00 00 00 :"
+    Then property "test.BDD6502.lastHexDump" must contain string ": 09 00 04 80 6e 35 3a 66  6f 6f 00 00 00 00 :"
     Then property "test.BDD6502.lastHexDump" must contain string "n5:foo"

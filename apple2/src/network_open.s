@@ -77,8 +77,8 @@ _network_open:
         jsr     _strlen
         axinto  ptr4            ; save devicespec.size()
 
-        ; add 2 and store
-        adw     ptr4, #$02, _sp_payload
+        ; add 3 and store, 2 for the extra control bytes at start and 1 for the NUL terminator
+        adw     ptr4, #$03, _sp_payload
 
         ; [3] = translation mode
         mva     tmp4, _sp_payload+3

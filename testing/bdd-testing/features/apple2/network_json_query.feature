@@ -32,8 +32,8 @@ Feature: library test - apple2 network_json_query
      # 'Q'
      And I expect to see t_cb_codes+0 equal 81
      And I expect to see t_r1_unit equal 1
-     # Payload should just have 04 (length of query) at position 0
-     And I expect to see t_r1_payload equal 4
+     # Payload should just have 05 (length of query plus nul) at position 0
+     And I expect to see t_r1_payload equal 5
      And I expect to see t_r1_payload+1 equal 0
      # should see the query string "/bar" at locations payload[2,5]
      When I hex+ dump ascii between t_r1_payload+2 and t_r1_payload+6
@@ -60,7 +60,7 @@ Feature: library test - apple2 network_json_query
 
      # sp_payload was zeroed out, so only bytes in there are the ones we have from the query, this is the state BEFORE doing read
      When I hex+ dump ascii between t_r2_payload and t_r2_payload+8
-     Then property "test.BDD6502.lastHexDump" must contain string ": 04 00 2f 62 61 72 00 00 :"
+     Then property "test.BDD6502.lastHexDump" must contain string ": 05 00 2f 62 61 72 00 00 :"
      Then property "test.BDD6502.lastHexDump" must contain string "/bar"
 
      # final Payload after sp_read contains length, then string, then 0s
@@ -116,8 +116,8 @@ Feature: library test - apple2 network_json_query
      # 'Q'
      And I expect to see t_cb_codes+0 equal 81
      And I expect to see t_r1_unit equal 1
-     # Payload should just have 04 (length of query) at position 0
-     And I expect to see t_r1_payload equal 4
+     # Payload should just have 05 (length of query + nul) at position 0
+     And I expect to see t_r1_payload equal 5
      And I expect to see t_r1_payload+1 equal 0
      # should see the query string "/bar" at locations payload[2,5]
      When I hex+ dump ascii between t_r1_payload+2 and t_r1_payload+6

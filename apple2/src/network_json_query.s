@@ -48,7 +48,12 @@
         ; sp_payload[2..2+len] = query string
 :       popax   ptr1            ; query string location
         jsr     _strlen
-        axinto  _sp_payload     ; sp_payload[0..1]
+        ; ADD 1 for NUL char we need to send
+        clc
+        adc     #$01
+        bcc     :+
+        inx
+:       axinto  _sp_payload     ; sp_payload[0..1]
 
         ; remove the devicespec parameter from stack, it isn't used yet by apple, the sp_network unit already found
         jsr     incsp2
