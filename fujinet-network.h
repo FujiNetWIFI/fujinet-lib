@@ -117,11 +117,19 @@ uint8_t network_json_query(char *devicespec, char *query, char *s);
 #define OPEN_MODE_HTTP_GET_H    (0x0C)
 #define OPEN_MODE_HTTP_POST     (0x0D)
 #define OPEN_MODE_HTTP_PUT_H    (0x0E)
+#define OPEN_MODE_HTTP_DELETE   (0x05)
+#define OPEN_MODE_HTTP_DELETE_H (0x09)
 
 #define OPEN_TRANS_NONE         (0x00)
 #define OPEN_TRANS_CR           (0x01)
 #define OPEN_TRANS_LF           (0x02)
 #define OPEN_TRANS_CRLF         (0x03)
 #define OPEN_TRANS_PET          (0x04)
+
+#define HTTP_CHAN_MODE_BODY             (0)
+#define HTTP_CHAN_MODE_COLLECT_HEADERS  (1)
+#define HTTP_CHAN_MODE_GET_HEADERS      (2)
+#define HTTP_CHAN_MODE_SET_HEADERS      (3)
+#define HTTP_CHAN_MODE_POST_SET_DATA    (4)
 
 #endif /* FUJINET_NETWORK_H */
