@@ -2,9 +2,11 @@
 
 ## [Unreleased]
 
+## [2.0.0] - 2023-09-24
+
 ### Added
 
-- Moved BDD src to separate project as it shared over multiple projects now
+- Moved BDD src to separate project as it shared over multiple projects
 - Added apple-single testing feature
 - Added Smart Port emulator for feature tests to be able to run apple2 fujinet code
 - Added network_open for apple2
@@ -16,6 +18,9 @@
 - Create set of standard error codes that device specific values get converted to for both apple2 and atari
 - Added network_json_query for atari and apple2
 - Added network_json_parse for atari and apple2
+
+Test applications that run on hardware can be found at <https://github.com/markjfisher/fujinet-network-lib-tests>
+Unit tests are still run from testing/bdd-testing directory.
 
 ### Breaking
 
