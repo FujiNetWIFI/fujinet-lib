@@ -118,16 +118,9 @@ not_empty:
         jsr     _sp_read
         bne     error
 
-        ; ; add nul - not required, we use memcpy instead to do exact count, then add nul afterwards
-        ; mwa     #_sp_payload+2, ptr1
-        ; adw     ptr1, ptr4      ; ptr1 += len
-        ; ldy     #$00
-        ; tya
-        ; sta     (ptr1), y
-
         ; copy to destination
         pushax  tmp5            ; dst
-        pushax  #_sp_payload+2  ; src
+        pushax  #_sp_payload    ; src, 0 based after a read
         setax   ptr4            ; len
         jsr     _memcpy         ; doesn't touch ptr4.
 

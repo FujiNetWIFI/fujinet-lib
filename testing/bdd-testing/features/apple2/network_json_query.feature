@@ -65,7 +65,7 @@ Feature: library test - apple2 network_json_query
 
      # final Payload after sp_read contains length, then string, then 0s
      When I hex+ dump ascii between _sp_payload and _sp_payload+16
-     Then property "test.BDD6502.lastHexDump" must contain string ": 0a 00 31 32 33 34 35 36  37 38 39 30 00 00 00 00 :"
+     Then property "test.BDD6502.lastHexDump" must contain string ": 31 32 33 34 35 36 37 38  39 30 00 00 00 00 00 00 :"
      Then property "test.BDD6502.lastHexDump" must contain string "1234567890"
 
 

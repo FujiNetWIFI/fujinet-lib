@@ -108,11 +108,11 @@ r3:
         setax   #t_r3_payload
         jsr     copy_payload
 
-        ; copy 10 bytes into payload+2 for our "read"
+        ; copy 10 bytes into payload for our "read"
         mwa     #10, _sp_payload
         ldy     #$00
 :       lda     t_read_string, y
-        sta     _sp_payload+2, y
+        sta     _sp_payload, y
         iny
         cpy     #10
         bne     :-
