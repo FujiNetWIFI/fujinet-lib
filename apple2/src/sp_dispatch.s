@@ -3,7 +3,7 @@
         .import     _sp_dispatch_fn
         .import     popa
 
-; int8_t _sp_dispatch(uint8_t cmd, void *cmdlist)
+; int8_t sp_dispatch(uint8_t cmd, void *cmdlist)
 ;
 ; returns any error code from the smart port _sp_dispatch function
 .proc _sp_dispatch

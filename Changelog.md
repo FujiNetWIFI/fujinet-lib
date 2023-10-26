@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+- Added network_http_add_header
+- Added network_http_start_add_headers
+- Added network_http_end_add_headers
+- Added network_http_post
+- Added network_http_put
+- Added network_http_delete
+
 ## [2.0.0] - 2023-09-24
 
 ### Added

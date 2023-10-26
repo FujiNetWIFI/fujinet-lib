@@ -107,18 +107,12 @@ sp_emulator:
         pla                     ; high byte of return-1
         sta     tmp10
 
-        ; COMMAND -> spe_cmd
-        ldy     #$01
-        lda     (tmp9), y
-        sta     spe_cmd
-
-        ; cmdlist -> spe_cmdlist
-        iny
-        lda     (tmp9), y       ; cmdlist low
-        sta     spe_cmdlist
-        iny
-        lda     (tmp9), y       ; cmdlist high
-        sta     spe_cmdlist+1
+        ; copy spe_cmd and cmdlist (3 bytes) from after the jsr
+        ldy     #$03
+:       lda     (tmp9), y
+        sta     spe_cmd-1, y      ; spe_cmdlist follows spe_cmd
+        dey
+        bne     :-
 
         ; fix the stack to point to correct return address
         adw1    tmp9, #$03
@@ -132,7 +126,7 @@ sp_emulator:
         mwa     spe_cmdlist, tmp9
 
         ; dest -> spe_dest
-        ldy     #$01
+        iny                             ; y=1
         mva     {(tmp9), y}, spe_dest
 
         ; payload -> spe_payload
@@ -261,8 +255,8 @@ restore_tmp:
 .bss
 
 spe_cmd:        .res 1
-spe_dest:       .res 1
 spe_cmdlist:    .res 2
+spe_dest:       .res 1
 spe_payload:    .res 2
 ; doubles up as ctrlcode or statcode when it's either of those 2 commands
 spe_code:       .res 1

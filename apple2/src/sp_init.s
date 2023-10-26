@@ -22,18 +22,6 @@
         ; A/X are 0, so return that, as we didn't find a slot
         rts
 
-        ; Do we really need to do this? it doesn't alter init in any way.
-        ; I could imagine that we should try other Smart Ports (if there are any) checking each for a FujiNet device
-        ; but the original implementation of this doesn't use the lack of FN to check other SP instances.
-
-;         ; find FUJINET_DISK_0 device, and return 0/1 depending on if we found it.
-; :       jsr     _sp_find_fuji
-;         bne     found
-;         ; A/X already 0
-;         rts
-
-; found:
-        ; A is currently slot index, but need to convert to boolean
  :      jmp     return1
 
 .endproc
@@ -46,7 +34,8 @@
 all_slots:
         inc     ptr1+1
 
-        ; test bytes
+        ; test Cn01, Cn03, Cn05, Cn07 match expected values.
+        ; for Cn03 (which should be 03), allow $83 for AppleWin emulator.
         ldy     #$01
         lda     (ptr1), y
         cmp     #$20
@@ -58,7 +47,10 @@ all_slots:
         ldy     #$05
         lda     (ptr1), y
         cmp     #$03
+        beq     @check_07
+        cmp     #$83            ; fudge for AppleWin emulator
         bne     :+
+@check_07:
         ldy     #$07
         lda     (ptr1), y
         cmp     #$00

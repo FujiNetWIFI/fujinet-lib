@@ -89,13 +89,6 @@ _network_open:
         setax   ptr4            ; devicespec.size()
         jsr     _strncpy        ; copy string. this trashes ptr1/2, t1-4
 
-        ; ;; add 0x00 to the end of string as a terminator - SHOULDN'T BE NEEDED, WE DID BZERO
-        ; mwa     #_sp_payload+4, ptr1
-        ; adw     ptr1, ptr4      ; ptr1 = (_sp_payload+4) + string length. i.e. location of 0x00 terminator
-        ; ldy     #$00
-        ; tya
-        ; sta     (ptr1), y
-
         pusha   _sp_network     ; unit
         lda     #'O'            ; open
         jmp     _sp_control     ; do control, and return its errors directly

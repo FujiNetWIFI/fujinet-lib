@@ -89,7 +89,7 @@ uint8_t network_json_parse(char *devicespec);
 /**
  * @brief  Perform JSON query
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
- * @param  query pointer to string containing json path to query
+ * @param  query pointer to string containing json path to query, e.g. "/path/field". No need to add device drive.
  * @param  s pointer to receiving string, nul terminated, if no data was retrieved, returns empty string
  * @return fujinet-network error code (See FN_ERR_* values)
  * 
@@ -97,8 +97,75 @@ uint8_t network_json_parse(char *devicespec);
  */
 uint8_t network_json_query(char *devicespec, char *query, char *s);
 
+/**
+ * @brief  Sets the channel mode.
+ * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
+ * @param  mode The mode to set
+ * @return fujinet-network error code (See FN_ERR_* values)
+ * 
+ * Assumes an open connection.
+ */
+uint8_t network_http_set_channel_mode(char *devicespec, uint8_t mode);
 
-// uint8_t network_http_add_header(char *devicespec, char *header);
+/**
+ * @brief  Start adding headers.
+ * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
+ * @return fujinet-network error code (See FN_ERR_* values)
+ * 
+ * Assumes an open connection. After calling this, add any headers with network_http_add_header, and finally call network_http_end_add_headers
+ */
+uint8_t network_http_start_add_headers(char *devicespec);
+
+/**
+ * @brief  End adding headers.
+ * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
+ * @return fujinet-network error code (See FN_ERR_* values)
+ * 
+ * Assumes an open connection. Completes header adding, and sets mode back to BODY
+ */
+uint8_t network_http_end_add_headers(char *devicespec);
+
+/**
+ * @brief  Add header to HTTP request
+ * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
+ * @param  header pointer to string containing full header to add, e.g. "Accept: application/json"
+ * @return fujinet-network error code (See FN_ERR_* values)
+ * 
+ * Assumes an open connection.
+ */
+uint8_t network_http_add_header(char *devicespec, char *header);
+
+
+/**
+ * @brief  Send POST HTTP request
+ * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
+ * @param  data data to post
+ * @return fujinet-network error code (See FN_ERR_* values)
+ * 
+ * Assumes an open connection.
+ */
+uint8_t network_http_post(char *devicespec, char *data);
+
+/**
+ * @brief  Send PUT HTTP request
+ * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
+ * @param  data data to put
+ * @return fujinet-network error code (See FN_ERR_* values)
+ * 
+ * Assumes an open connection.
+ */
+uint8_t network_http_put(char *devicespec, char *data);
+
+/**
+ * @brief  Send DELETE HTTP request
+ * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
+ * @param  trans translation value
+ * @return fujinet-network error code (See FN_ERR_* values)
+ * 
+ * This will open a connection, consumer can then query the data, and must close the connection.
+ */
+uint8_t network_http_delete(char *devicespec, uint8_t trans);
+
 
 #define FN_ERR_OK               (0x00)      /* No error */
 #define FN_ERR_IO_ERROR         (0x01)      /* There was IO error/issue with the device */

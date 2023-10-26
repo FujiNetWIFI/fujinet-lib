@@ -10,7 +10,7 @@
         .include    "sp.inc"
         .include    "macros.inc"
 
-; int8_t _sp_write(uint8_t dest, uint16_t len);
+; int8_t sp_write(uint8_t dest, uint16_t len);
 ;
 ; Close smartport device
 ; this changes _sp_payload

@@ -11,7 +11,7 @@
         .include    "sp.inc"
         .include    "macros.inc"
 
-; int8_t _sp_status(uint8_t dest, uint8_t statcode);
+; int8_t sp_status(uint8_t dest, uint8_t statcode);
 ;
 ; call smart port for status using given code for given destination
 ; this changes _sp_payload, and _sp_count

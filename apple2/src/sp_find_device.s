@@ -31,7 +31,7 @@
         adc     #$01
         rts
 
-:       lda     _sp_payload    ; number of devices in payload[0], 1 based
+:       lda     _sp_payload     ; number of devices in payload[0], 1 based
         sta     tmp1            ; device index, set to max (e.g. 6) initially
 
         mva     #$01, tmp2      ; this will be our device index to check
@@ -47,7 +47,7 @@
 
         ; we found the device in slot tmp2
         ldx     #$00
-        lda     tmp2
+        lda     tmp2    ; TODO: why was this C0?
         rts
 
 skip_next:

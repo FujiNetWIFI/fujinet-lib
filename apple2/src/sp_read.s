@@ -10,7 +10,7 @@
         .include    "sp.inc"
         .include    "macros.inc"
 
-; int8_t _sp_read(uint8_t dest, uint16_t len);
+; int8_t sp_read(uint8_t dest, uint16_t len);
 ;
 ; this changes _sp_payload
 ; returns any error code from _sp_dispatch call

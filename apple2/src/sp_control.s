@@ -10,7 +10,7 @@
         .include    "sp.inc"
         .include    "macros.inc"
 
-; int8_t _sp_control(uint8_t dest, uint8_t ctrlcode);
+; int8_t sp_control(uint8_t dest, uint8_t ctrlcode);
 ;
 ; Issues a control to the specified device.
 ; this changes _sp_payload

@@ -9,7 +9,7 @@
         .include    "sp.inc"
         .include    "macros.inc"
 
-; int8_t _sp_open(uint8_t dest);
+; int8_t sp_open(uint8_t dest);
 ;
 ; Open smartport device
 ; this changes _sp_payload

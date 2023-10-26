@@ -6,7 +6,7 @@
 
         .include    "macros.inc"
 
-; void _sp_clr_payload();
+; void sp_clr_payload();
 
 .proc _sp_clr_payload
         pushax  #_sp_payload
