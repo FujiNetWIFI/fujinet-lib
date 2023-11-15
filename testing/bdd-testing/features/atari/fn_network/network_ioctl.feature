@@ -7,7 +7,7 @@ Feature: library test - atari network_ioctl
   # -----------------------------------------------------------------------------------------------------------------
   Scenario: execute _network_ioctl with correct args count
     Given atari-fn-nw application test setup
-      And I add common atari-io files
+      And I add common atari-nw-io files
       And I add atari src file "fn_network/network_ioctl.s"
       And I add common src file "network_unit.s"
       And I add atari src file "fn_network/network_status.s"
@@ -36,7 +36,7 @@ Feature: library test - atari network_ioctl
   # -----------------------------------------------------------------------------------------------------------------
   Scenario: execute _network_ioctl with bad args list returns error
     Given atari-fn-nw application test setup
-      And I add common atari-io files
+      And I add common atari-nw-io files
       And I add atari src file "fn_network/network_ioctl.s"
       And I add common src file "network_unit.s"
       And I add atari src file "fn_network/network_status.s"

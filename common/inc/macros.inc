@@ -1,6 +1,6 @@
 ; various macros to make asm easier to read
 
-.macro  mwa arg1, arg2
+.macro  mwa    arg1, arg2
     .if (.match (.left (1, {arg1}), #))
         ; arg1 is immediate mode
         lda     #<(.right (.tcount ({arg1})-1, {arg1}))
@@ -37,6 +37,25 @@
     ; commas are arg separators, so `mva #$00, {($80),y}` is how to use this with addressing modes
     lda     arg1
     sta     arg2
+.endmacro
+
+.macro cpw arg1, arg2
+    .local s1, s2
+    .if (.match (.left (1, {arg2}), #))
+        lda     1+(arg1)
+        cmp     #>(.right (.tcount ({arg2})-1, {arg2}))
+        bne     s1
+        lda     arg1
+        cmp     #<(.right (.tcount ({arg2})-1, {arg2}))
+s1:
+    .else
+        lda     1+(arg1)
+        cmp     1+(arg2)
+        bne     s2
+        lda     arg1
+        cmp     arg2
+s2:
+    .endif
 .endmacro
 
 ; use CA65 function calling conventions, passing values into SP via pushax
@@ -220,7 +239,7 @@ l1_b:
     .endif
 .endmacro
 
-; adds byte1 to word arg1 dealing with carry, allow byte1 to be 'a'
+; adds byte1 to word arg1 dealing with carry, allow byte1 to be a
 ; so we can directly add accumulator to WORD
 .macro adw1 arg1, byte1
     .local l1

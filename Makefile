@@ -8,7 +8,7 @@
 ###############################################################################
 
 # Space or comma separated list of cc65 supported target platforms to build for.
-TARGETS := atari apple2
+TARGETS := atari apple2 commodore
 
 # Name of the final, single-file library.
 PROGRAM := fujinet-network.lib
@@ -60,6 +60,10 @@ OBJDIR := obj
 ###################################################################################
 ####  DO NOT EDIT BELOW THIS LINE, UNLESS YOU REALLY KNOW WHAT YOU ARE DOING!  ####
 ###################################################################################
+
+CC65_TARGET_apple2     := apple2
+CC65_TARGET_atari      := atari
+CC65_TARGET_commodore  := c64
 
 ###################################################################################
 ### Mapping abstract options to the actual compiler, assembler and linker flags ###
@@ -207,8 +211,17 @@ DEPENDS := $(OBJECTS:.o=.d)
 LIBS += $(wildcard $(TARGETLIST)/$(SRCDIR)/*.lib)
 
 # add common/inc, <target>/src/inc, and the root directory (for fujinet-network.[h|inc])
-ASFLAGS += --asm-include-dir common/inc --asm-include-dir $(TARGETLIST)/$(SRCDIR)/fn_network/inc --asm-include-dir .
-CFLAGS += --include-dir common/inc --include-dir $(TARGETLIST)/$(SRCDIR)/fn_network/inc --include-dir .
+ASFLAGS += \
+	--asm-include-dir common/inc \
+	--asm-include-dir $(TARGETLIST)/$(SRCDIR)/fn_network/inc \
+	--asm-include-dir $(TARGETLIST)/$(SRCDIR)/fn_io/inc \
+	--asm-include-dir .
+
+CFLAGS += \
+	--include-dir common/inc \
+	--include-dir $(TARGETLIST)/$(SRCDIR)/fn_network/inc \
+	--include-dir $(TARGETLIST)/$(SRCDIR)/fn_io/inc \
+	--include-dir .
 
 CHANGELOG = Changelog.md
 
@@ -279,21 +292,21 @@ vpath %.c $(SRC_INC_DIRS)
 
 obj/common/%.o: %.c | $(TARGETOBJDIR)
 	@$(call MKDIR,$(dir $@))
-	$(CC) -t $(TARGETLIST) -c --create-dep $(@:.o=.d) $(CFLAGS) -o $@ $<
+	$(CC) -t $(CC65_TARGET_$(TARGETLIST)) -c --create-dep $(@:.o=.d) $(CFLAGS) -o $@ $<
 
 $(TARGETOBJDIR)/%.o: %.c | $(TARGETOBJDIR)
 	@$(call MKDIR,$(dir $@))
-	$(CC) -t $(TARGETLIST) -c --create-dep $(@:.o=.d) $(CFLAGS) -o $@ $<
+	$(CC) -t $(CC65_TARGET_$(TARGETLIST)) -c --create-dep $(@:.o=.d) $(CFLAGS) -o $@ $<
 
 vpath %.s $(SRC_INC_DIRS)
 
 obj/common/%.o: %.s | $(TARGETOBJDIR)
 	@$(call MKDIR,$(dir $@))
-	$(CC) -t $(TARGETLIST) -c --create-dep $(@:.o=.d) $(ASFLAGS) -o $@ $<
+	$(CC) -t $(CC65_TARGET_$(TARGETLIST)) -c --create-dep $(@:.o=.d) $(ASFLAGS) -o $@ $<
 
 $(TARGETOBJDIR)/%.o: %.s | $(TARGETOBJDIR)
 	@$(call MKDIR,$(dir $@))
-	$(CC) -t $(TARGETLIST) -c --create-dep $(@:.o=.d) $(ASFLAGS) -o $@ $<
+	$(CC) -t $(CC65_TARGET_$(TARGETLIST)) -c --create-dep $(@:.o=.d) $(ASFLAGS) -o $@ $<
 
 $(BUILD_DIR)/$(PROGRAM): $(OBJECTS) | $(BUILD_DIR)
 	ar65 a $@ $(OBJECTS)

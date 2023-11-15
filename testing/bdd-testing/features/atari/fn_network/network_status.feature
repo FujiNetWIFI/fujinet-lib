@@ -4,7 +4,7 @@ Feature: library test - atari network_status and io_status
 
   Scenario Outline: execute _network_status with a device spec
     Given atari-fn-nw application test setup
-      And I add common atari-io files
+      And I add common atari-nw-io files
       And I add atari src file "fn_network/network_status.s"
       And I add common src file "network_unit.s"
       And I add file for compiling "features/test-setup/test-apps/test_wwww.s"
@@ -57,7 +57,7 @@ Feature: library test - atari network_status and io_status
 
   Scenario Outline: execute _network_status with a device unit
     Given atari-fn-nw application test setup
-      And I add common atari-io files
+      And I add common atari-nw-io files
       And I add atari src file "fn_network/network_status.s"
       And I add common src file "network_unit.s"
       And I add file for compiling "features/test-setup/test-apps/test_bwww.s"

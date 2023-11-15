@@ -4,7 +4,7 @@ Feature: library test - atari network_read
 
   Scenario: execute _network_read when Bytes Waiting is greater than Length Specified
     Given atari-fn-nw application test setup
-      And I add common atari-io files
+      And I add common atari-nw-io files
       And I add atari src file "fn_network/network_read.s"
       And I add atari src file "fn_network/sio_read.s"
       And I add common src file "network_unit.s"
@@ -44,7 +44,7 @@ Feature: library test - atari network_read
 
   Scenario: execute _network_read when Bytes Waiting is less than Length Specified uses only BW count
     Given atari-fn-nw application test setup
-      And I add common atari-io files
+      And I add common atari-nw-io files
       And I add atari src file "fn_network/network_read.s"
       And I add atari src file "fn_network/sio_read.s"
       And I add common src file "network_unit.s"
@@ -85,7 +85,7 @@ Feature: library test - atari network_read
 
   Scenario: execute _network_read when 0 Length Specified 
     Given atari-fn-nw application test setup
-      And I add common atari-io files
+      And I add common atari-nw-io files
       And I add atari src file "fn_network/network_read.s"
       And I add atari src file "fn_network/sio_read.s"
       And I add common src file "network_unit.s"

@@ -11,6 +11,8 @@
 - Added network_http_put
 - Added network_http_delete
 
+- Combined fn_io.lib with fn_network.lib for single library
+
 ### Changed
 
 - apple2 - Check if there are any devices before issuing DIB command in sp_find_device

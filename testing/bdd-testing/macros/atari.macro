@@ -6,6 +6,13 @@ Given common atari-fn-nw test setup
     And I create or clear directory "build/tests"
     And I load labels "features/atari/fn_network/inc/test_constants.inc"
 
+Given common atari-fn-io test setup
+  Given I have a simple overclocked 6502 system
+    And set memory between $$800 and $$7fff to $$aa
+    And I enable trace with indent
+    And I create or clear directory "build/tests"
+    And I load labels "features/atari/fn_io/inc/test_constants.inc"
+
 # More complex test that sets up a full application to run, establishing Stack Pointer (SP) etc
 # test asm must have _main, and test feature calls _init to run
 Given atari-fn-nw application test setup
@@ -20,6 +27,20 @@ Given atari-fn-nw application test setup
     And I add compiler option "--include-dir ../../"
     And I add compiler option "--include-dir features/atari/fn_network/inc"
     And I add compiler option "--include-dir ../../atari/src/fn_network/inc"
+    And I add compiler option "--include-dir ../../common/inc"
+
+Given atari-fn-io application test setup
+  Given common atari-fn-io test setup
+    # we do need some compiler target here, going to try none over atari
+    And I start compiling for none in "build/tests" with config "features/test-setup/inc/fn-io-app.cfg"
+    # These must come after the "start compiling"
+    And I add compiler option "--asm-include-dir ../../"
+    And I add compiler option "--asm-include-dir features/atari/fn_io/inc"
+    And I add compiler option "--asm-include-dir ../../atari/src/fn_io/inc"
+    And I add compiler option "--asm-include-dir ../../common/inc"
+    And I add compiler option "--include-dir ../../"
+    And I add compiler option "--include-dir features/atari/fn_io/inc"
+    And I add compiler option "--include-dir ../../atari/src/fn_io/inc"
     And I add compiler option "--include-dir ../../common/inc"
 
 # Simple test that does no init, sets up minimal xex for loading and testing
@@ -37,7 +58,20 @@ Given atari-fn-nw simple test setup
     And I add compiler option "--include-dir ../../atari/src/fn_network/inc"
     And I add compiler option "--include-dir ../../common/inc"
 
-Given I add common atari-io files
+Given atari-fn-io simple test setup
+  Given common atari-fn-io test setup
+    And I start compiling for none in "build/tests" with config "features/test-setup/inc/fn-io-direct.cfg"
+    # These must come after the "start compiling"
+    And I add compiler option "--asm-include-dir ../../"
+    And I add compiler option "--asm-include-dir features/atari/fn_io/inc"
+    And I add compiler option "--asm-include-dir ../../atari/src/fn_io/inc"
+    And I add compiler option "--asm-include-dir ../../common/inc"
+    And I add compiler option "--include-dir ../../"
+    And I add compiler option "--include-dir features/atari/fn_io/inc"
+    And I add compiler option "--include-dir ../../atari/src/fn_io/inc"
+    And I add compiler option "--include-dir ../../common/inc"
+
+Given I add common atari-nw-io files
   # The test implementation of BUS
   And I add atari/fn_network/stubs test-setup file "bus.s"
   # Others for compiling
@@ -45,3 +79,11 @@ Given I add common atari-io files
   And I add common src file "bss_data.s"
   And I add atari src file "fn_network/fn_error.s"
   And I add atari src file "fn_network/network_data.s"
+
+Given I add common atari-io files
+  # The test implementation of BUS
+  And I add atari/fn_io/stubs test-setup file "fn_io_do_bus.s"
+  # Others for compiling
+  And I add atari src file "fn_io/fn_io_bus.s"
+  And I add atari src file "fn_io/fn_io_copy_cmd_data.s"
+  And I add atari src file "fn_io/fn_io_error.s"
