@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.1.0] - 2023-11-15
+
 ### Added
 
 - Added network_http_add_header
