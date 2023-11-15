@@ -1,5 +1,5 @@
         .export         _fn_io_mount_host_slot
-        .import         fn_io_copy_cmd_data, fn_io_hostslots, _fn_io_do_bus
+        .import         copy_io_cmd_data, fn_io_hostslots, _bus
         .import         popa
 
         .include        "zp.inc"
@@ -12,10 +12,10 @@
         sta     tmp8
 
         setax   #t_io_mount_host_slot
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         mva     tmp8, IO_DCB::daux1
-        jmp     _fn_io_do_bus
+        jmp     _bus
 
 .endproc
 

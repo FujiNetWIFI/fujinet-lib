@@ -1,8 +1,8 @@
         .export         _fn_io_appkey_write
 
-        .import         _fn_io_do_bus
+        .import         _bus
         .import         _fn_io_error
-        .import         fn_io_copy_cmd_data
+        .import         copy_io_cmd_data
         .import         popa, popax
 
         .include        "zp.inc"
@@ -16,14 +16,14 @@
         axinto  tmp7                    ; save buffer address
 
         setax   #t_fn_io_write_appkey
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         mwa     tmp7, IO_DCB::dbuflo
         jsr     popax                   ; count of bytes to store in key file from buffer.
         sta     IO_DCB::daux1
         stx     IO_DCB::daux2
 
-        jsr     _fn_io_do_bus
+        jsr     _bus
         jmp     _fn_io_error
 .endproc
 

@@ -1,7 +1,7 @@
         .export         _fn_io_status
 
-        .import         fn_io_copy_cmd_data
-        .import         _fn_io_do_bus
+        .import         copy_io_cmd_data
+        .import         _bus
         .import         popa, popax
 
         .include        "zp.inc"
@@ -13,11 +13,11 @@
 .proc _fn_io_status
         axinto  tmp7                    ; 4 byte buffer location
         setax   #t_fn_io_status
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         mwa     tmp7, IO_DCB::dbuflo
 
-        jmp     _fn_io_do_bus
+        jmp     _bus
 .endproc
 
 .rodata

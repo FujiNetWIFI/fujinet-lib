@@ -1,8 +1,8 @@
         .export         _fn_io_get_host_prefix
         .export         _fn_io_set_host_prefix
 
-        .import         fn_io_copy_cmd_data
-        .import         _fn_io_do_bus
+        .import         copy_io_cmd_data
+        .import         _bus
         .import         popa, popax
 
         .include        "zp.inc"
@@ -16,13 +16,13 @@ _fn_io_get_host_prefix:
         setax   #t_fn_io_get_host_prefix
 
 hp_common:
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         mwa     tmp7, IO_DCB::dbuflo
         jsr     popa                    ; host slot
         sta     IO_DCB::daux1
 
-        jmp     _fn_io_do_bus
+        jmp     _bus
 
 
 ; void fn_io_set_host_prefix(uint8_t hs, char *prefix);

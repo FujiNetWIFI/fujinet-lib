@@ -1,8 +1,8 @@
         .export         _fn_io_hash_compute
 
-        .import         _fn_io_do_bus
+        .import         _bus
         .import         _fn_io_error
-        .import         fn_io_copy_cmd_data
+        .import         copy_io_cmd_data
         .import         popa, popax
 
         .include        "zp.inc"
@@ -15,11 +15,11 @@
         sta     tmp7                    ; hash type, one of HashType. No validation done though
 
         setax   #t_fn_io_hash_compute
-        jsr    fn_io_copy_cmd_data
+        jsr    copy_io_cmd_data
 
         mva     tmp7, IO_DCB::daux1
         mva     #$03, IO_DCB::dtimlo
-        jsr     _fn_io_do_bus
+        jsr     _bus
         jmp     _fn_io_error
 .endproc
 

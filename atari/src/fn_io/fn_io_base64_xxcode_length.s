@@ -1,8 +1,8 @@
         .export         _fn_io_base64_decode_length
         .export         _fn_io_base64_encode_length
 
-        .import         fn_io_copy_cmd_data
-        .import         _fn_io_do_bus
+        .import         copy_io_cmd_data
+        .import         _bus
         .import         _fn_io_error
         .import         popa, popax
 
@@ -17,11 +17,11 @@ _fn_io_base64_decode_length:
         setax   #t_fn_io_base64_decode_length
 
 de_common:
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         mwa     tmp7, IO_DCB::dbuflo
         mva     #$03, IO_DCB::dtimlo
-        jsr     _fn_io_do_bus
+        jsr     _bus
         jmp     _fn_io_error
 
 ; uint8_t fn_io_base64_encode_length(unsigned long *len);

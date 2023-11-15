@@ -1,6 +1,6 @@
         .export         _fn_io_scan_for_networks
 
-        .import         fn_io_copy_cmd_data, _fn_io_do_bus
+        .import         copy_io_cmd_data, _bus
 
         .include        "zp.inc"
         .include        "macros.inc"
@@ -12,9 +12,9 @@
 ; Uses tmp1-4 as the 4 byte buffer for scan data
 .proc _fn_io_scan_for_networks
         setax   #t_io_scan_for_networks
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
         mwa     #tmp9, IO_DCB::dbuflo
-        jsr     _fn_io_do_bus
+        jsr     _bus
 
         lda     tmp9
         ldx     #$00

@@ -1,20 +1,31 @@
-        .export         copy_cmd_data
+        .export         copy_nw_cmd_data
+        .export         copy_io_cmd_data
 
         .include        "device.inc"
         .include        "macros.inc"
         .include        "zp.inc"
 
 ; INTERNAL COPY ROUTINE
-; void copy_cmd_data(void *cmd_table)
+; void copy_nw_cmd_data(void *cmd_table)
 ;
 ; Sets DCB data from given table address
 ; Trashes tmp9/10 as only ZP location
-.proc copy_cmd_data
+copy_nw_cmd_data:
         ; the table of dcb bytes to insert
         axinto  tmp9
 
         mva     #$71, IO_DCB::ddevic
+        bne     common
 
+copy_io_cmd_data:
+        ; the table of dcb bytes to insert
+        axinto  tmp9
+
+        ; first 2 bytes always $70, $01, so we can do those manually. saves table space, and loops
+        mva     #$70, IO_DCB::ddevic
+        mva     #$01, IO_DCB::dunit
+
+common:
         ; these 2 are always set by the command, no use having them in the table
         mva     #$00, IO_DCB::dbuflo
         sta     IO_DCB::dbufhi
@@ -31,7 +42,7 @@ l1:
         bpl     l1
 
         rts
-.endproc
+
 
 .rodata
 ; which DCB entries to write to, indexed from DDEVIC

@@ -5,7 +5,7 @@
         .import     _fn_device_error
         .import     _fn_error
         .import     _network_unit
-        .import     copy_cmd_data
+        .import     copy_nw_cmd_data
         .import     incsp4
         .import     popa
         .import     popax
@@ -46,7 +46,7 @@ common:
         sta     tmp8                    ; save the UNIT
 
         setax   #t_network_status
-        jsr     copy_cmd_data
+        jsr     copy_nw_cmd_data
 
         mva     tmp8, IO_DCB::dunit
         mwa     #DVSTAT, IO_DCB::dbuflo

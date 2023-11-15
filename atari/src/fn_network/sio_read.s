@@ -3,7 +3,7 @@
         .import     _bus
         .import     _fn_bytes_read
         .import     _io_status
-        .import     copy_cmd_data
+        .import     copy_nw_cmd_data
         .import     popa
         .import     popax
 
@@ -18,7 +18,7 @@ _sio_read:
         axinto  _fn_bytes_read
 
         setax   #t_network_read
-        jsr     copy_cmd_data           ; setup DCB
+        jsr     copy_nw_cmd_data           ; setup DCB
 
         popax   IO_DCB::dbuflo          ; buffer arg
         popa    IO_DCB::dunit           ; unit arg

@@ -4,7 +4,7 @@
         .import     _io_status
         .import     _fn_device_error
         .import     _network_unit
-        .import     copy_cmd_data
+        .import     copy_nw_cmd_data
         .import     popax
 
         .include    "device.inc"
@@ -20,7 +20,7 @@ _network_write:
 
         setax   #t_network_write
 
-        jsr     copy_cmd_data
+        jsr     copy_nw_cmd_data
 
         jsr     popax                   ; buf
         sta     IO_DCB::dbuflo

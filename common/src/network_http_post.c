@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <string.h>
-#include "../../fujinet-network.h"
+#include "fujinet-network.h"
 
 uint8_t network_http_post(char *devicespec, char *data) {
     uint8_t err;

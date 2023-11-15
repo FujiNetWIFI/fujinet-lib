@@ -3,8 +3,8 @@
         .export         _fn_io_base64_encode_input
         .export         _fn_io_base64_encode_output
 
-        .import         _fn_io_do_bus
-        .import         fn_io_copy_cmd_data
+        .import         _bus
+        .import         copy_io_cmd_data
         .import         io_common
         .import         popa, popax
 

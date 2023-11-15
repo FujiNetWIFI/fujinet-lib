@@ -13,7 +13,7 @@ Feature: library test - atari network_ioctl
       And I add atari src file "fn_network/network_status.s"
       And I add atari src file "fn_network/io_status.s"
       And I add file for compiling "features/atari/fn_network/invokers/test_network_ioctl.c"
-      And I add file for compiling "features/atari/fn_network/stubs/bus_simple.s"
+      And I add file for compiling "features/atari/stubs/bus_simple.s"
       And I set register X to $ff
       And I create and load atari application
      When I execute the procedure at _init for no more than 240 instructions
@@ -42,7 +42,7 @@ Feature: library test - atari network_ioctl
       And I add atari src file "fn_network/network_status.s"
       And I add atari src file "fn_network/io_status.s"
       And I add file for compiling "features/atari/fn_network/invokers/test_network_ioctl.c"
-      And I add file for compiling "features/atari/fn_network/stubs/bus_simple.s"
+      And I add file for compiling "features/atari/stubs/bus_simple.s"
       And I set register X to $ff
       And I create and load atari application
       # tell the test invoker to call with wrong args

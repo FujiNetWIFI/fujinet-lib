@@ -1,15 +1,15 @@
-        .export         fn_io_copy_cmd_data
+        .export         copy_io_cmd_data
 
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "device.inc"
 
 ; INTERNAL COPY ROUTINE
-; void fn_io_copy_cmd_data(void *cmd_table)
+; void copy_io_cmd_data(void *cmd_table)
 ;
 ; Sets DCB data from given table address
 ; Trashes tmp9/10 as only ZP location
-.proc fn_io_copy_cmd_data
+.proc copy_io_cmd_data
         ; the table of dcb bytes to insert
         axinto  tmp9
 

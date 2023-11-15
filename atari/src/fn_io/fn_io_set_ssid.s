@@ -1,5 +1,5 @@
         .export         _fn_io_set_ssid
-        .import          fn_io_copy_cmd_data, _fn_io_do_bus
+        .import          copy_io_cmd_data, _bus
 
         .include        "zp.inc"
         .include        "macros.inc"
@@ -12,11 +12,11 @@
         axinto  tmp7
 
         setax   #t_io_set_ssid
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         ; copy mem location to DCB, and call bus
         mwa     tmp7, IO_DCB::dbuflo
-        jmp     _fn_io_do_bus
+        jmp     _bus
 .endproc
 
 .rodata

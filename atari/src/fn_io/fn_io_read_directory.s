@@ -1,5 +1,5 @@
         .export     _fn_io_read_directory
-        .import     fn_io_copy_cmd_data, popa, _fn_io_do_bus
+        .import     copy_io_cmd_data, popa, _bus
 
         .include    "zp.inc"
         .include    "macros.inc"
@@ -12,7 +12,7 @@
         axinto  tmp7                    ; buffer location
 
         setax   #t_io_read_directory
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         jsr     popa                    ; aux2 param
         sta     IO_DCB::daux2
@@ -25,7 +25,7 @@
         ldy     #$00
         mva     #$7f, {(tmp7), y}       ; it's the thing to do apparantly. I think this is a DIR marker
 
-        jsr     _fn_io_do_bus
+        jsr     _bus
         setax   tmp7
         rts
 

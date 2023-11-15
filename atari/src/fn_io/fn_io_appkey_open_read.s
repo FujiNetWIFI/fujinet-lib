@@ -1,9 +1,9 @@
         .export         _fn_io_appkey_open
         .export         _fn_io_appkey_read
 
-        .import         _fn_io_do_bus
+        .import         _bus
         .import         _fn_io_error
-        .import         fn_io_copy_cmd_data
+        .import         copy_io_cmd_data
         .import         popa, popax
 
         .include        "zp.inc"
@@ -18,11 +18,11 @@ _fn_io_appkey_open:
         setax   #t_fn_io_open_appkey
 
 ak_common:
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         mwa     tmp7, IO_DCB::dbuflo
 
-        jsr     _fn_io_do_bus
+        jsr     _bus
         jmp     _fn_io_error
 
 

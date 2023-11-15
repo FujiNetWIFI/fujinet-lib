@@ -1,5 +1,5 @@
         .export     _fn_io_unmount_host_slot
-        .import     fn_io_copy_cmd_data, _fn_io_do_bus
+        .import     copy_io_cmd_data, _bus
 
         .include    "zp.inc"
         .include    "macros.inc"
@@ -10,10 +10,10 @@
         sta     tmp8    ; save host slot
 
         setax   #t_io_unmount_host_slot
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         mva     tmp8, IO_DCB::daux1
-        jmp     _fn_io_do_bus
+        jmp     _bus
 .endproc
 
 .rodata

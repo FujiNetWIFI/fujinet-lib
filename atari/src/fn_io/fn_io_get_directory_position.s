@@ -1,7 +1,7 @@
         .export         _fn_io_get_directory_position
 
-        .import         fn_io_copy_cmd_data
-        .import         _fn_io_do_bus
+        .import         copy_io_cmd_data
+        .import         _bus
         .import         popa, popax
 
         .include        "zp.inc"
@@ -12,10 +12,10 @@
 ;
 .proc _fn_io_get_directory_position
         setax   #t_fn_io_get_directory_position
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         mwa     #tmp7, IO_DCB::dbuflo
-        jsr     _fn_io_do_bus
+        jsr     _bus
         ldx     tmp8
         lda     tmp7
         rts

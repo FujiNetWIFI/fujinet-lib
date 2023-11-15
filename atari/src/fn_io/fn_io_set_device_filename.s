@@ -1,5 +1,5 @@
         .export         _fn_io_set_device_filename
-        .import         fn_io_copy_cmd_data, _fn_io_do_bus
+        .import         copy_io_cmd_data, _bus
         .import         popa
 
         .include        "zp.inc"
@@ -12,7 +12,7 @@
         axinto  tmp7    ; buffer
 
         setax   #t_io_set_device_filename
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         jsr     popa            ; device slot
         sta     IO_DCB::daux1
@@ -32,7 +32,7 @@
         sta     IO_DCB::daux2
 
         mwa     tmp7, IO_DCB::dbuflo
-        jmp     _fn_io_do_bus
+        jmp     _bus
 .endproc
 
 .rodata

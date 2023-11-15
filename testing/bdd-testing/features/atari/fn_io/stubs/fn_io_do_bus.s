@@ -1,8 +1,8 @@
-                .export   _fn_io_do_bus
+                .export   _bus
 
                 .include  "device.inc"
 
-; required implementation of _fn_io_do_bus
-.proc _fn_io_do_bus
+; required implementation of _bus
+.proc _bus
         jmp     BUS
 .endproc

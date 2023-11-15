@@ -1,7 +1,7 @@
         .export     _fn_io_open_directory
 
         .import     _fn_io_error
-        .import     fn_io_copy_cmd_data, _fn_io_do_bus
+        .import     copy_io_cmd_data, _bus
         .import     popa, return0
 
         .include    "zp.inc"
@@ -15,13 +15,13 @@
         axinto  tmp7            ; save location of path+filter buffer
 
         setax   #t_io_open_directory
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         jsr     popa            ; host slot
         sta     IO_DCB::daux1
         mwa     tmp7, IO_DCB::dbuflo
 
-        jsr     _fn_io_do_bus
+        jsr     _bus
         jmp     _fn_io_error
 
 .endproc

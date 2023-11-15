@@ -1,5 +1,5 @@
         .export     _fn_io_set_directory_position
-        .import     fn_io_copy_cmd_data, _fn_io_do_bus
+        .import     copy_io_cmd_data, _bus
 
         .include    "zp.inc"
         .include    "macros.inc"
@@ -10,10 +10,10 @@
         axinto  tmp7        ; save the directory pos to tmp7/2
 
         setax   #t_io_set_directory_position
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         mwa     tmp7, IO_DCB::daux1
-        jmp     _fn_io_do_bus
+        jmp     _bus
 .endproc
 
 .rodata

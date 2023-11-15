@@ -1,8 +1,8 @@
         .export     io_common
 
-        .import     _fn_io_do_bus
+        .import     _bus
         .import     _fn_io_error
-        .import     fn_io_copy_cmd_data
+        .import     copy_io_cmd_data
         .import     popax
 
         .include    "zp.inc"
@@ -10,7 +10,7 @@
         .include    "device.inc"
 
 .proc io_common
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         setax   tmp7
         sta     IO_DCB::dbytlo
@@ -23,6 +23,6 @@
         sta     IO_DCB::dbuflo
         stx     IO_DCB::dbufhi
 
-        jsr     _fn_io_do_bus
+        jsr     _bus
         jmp     _fn_io_error
 .endproc

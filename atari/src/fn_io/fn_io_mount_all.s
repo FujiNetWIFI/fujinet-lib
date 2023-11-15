@@ -1,5 +1,7 @@
         .export         _fn_io_mount_all
-        .import         _fn_io_bus
+
+        .import         _bus
+        .import         copy_io_cmd_data
 
         .include        "zp.inc"
         .include        "macros.inc"
@@ -10,7 +12,8 @@
 ; 1 = success, otherwise error
 .proc _fn_io_mount_all
         setax   #t_io_mount_all
-        jsr     _fn_io_bus
+        jsr     copy_io_cmd_data
+        jsr     _bus
 
         ldx     #$00
         lda     IO_DCB::dstats

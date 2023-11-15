@@ -1,6 +1,6 @@
         .export         _fn_io_put_device_slots
 
-        .import         fn_io_copy_cmd_data, _fn_io_do_bus
+        .import         copy_io_cmd_data, _bus
 
         .include        "zp.inc"
         .include        "macros.inc"
@@ -12,10 +12,10 @@
         axinto  tmp7
 
         setax   #t_io_put_device_slots
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         mwa     tmp7, IO_DCB::dbuflo
-        jmp     _fn_io_do_bus
+        jmp     _bus
 .endproc
 
 .rodata

@@ -6,7 +6,7 @@
         .import     _io_status
         .import     _network_unit
         .import     addysp
-        .import     copy_cmd_data
+        .import     copy_nw_cmd_data
         .import     popa
         .import     popax
         .import     return1

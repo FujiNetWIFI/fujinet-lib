@@ -1,6 +1,6 @@
         .export     _fn_io_create_new
 
-        .import     fn_io_copy_cmd_data, _fn_io_do_bus
+        .import     copy_io_cmd_data, _bus
 
         .include    "zp.inc"
         .include    "macros.inc"
@@ -14,10 +14,10 @@
         axinto  tmp7                    ; buffer to NewDisk
 
         setax   #t_io_create_new
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
         mwa     tmp7, IO_DCB::dbuflo
         mva     #$fe, IO_DCB::dtimlo    ; high for ATX. could check the filename end and reduce this if it isn't atx
-        jmp     _fn_io_do_bus
+        jmp     _bus
         ; implicit rts
 .endproc
 

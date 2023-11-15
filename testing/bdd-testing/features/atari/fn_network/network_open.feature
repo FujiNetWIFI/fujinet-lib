@@ -10,7 +10,7 @@ Feature: library test - atari network_open
       And I add atari src file "fn_network/network_status.s"
       And I add atari src file "fn_network/io_status.s"
       And I add file for compiling "features/test-setup/test-apps/test_wbb.s"
-      And I add file for compiling "features/atari/fn_network/stubs/bus_simple.s"
+      And I add file for compiling "features/atari/stubs/bus_simple.s"
       And I create and load atari application
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_w1 with hex $a012

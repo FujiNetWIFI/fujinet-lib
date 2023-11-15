@@ -1,5 +1,5 @@
         .export     _fn_io_read_directory_block
-        .import     fn_io_copy_cmd_data, popa, _fn_io_do_bus
+        .import     copy_io_cmd_data, popa, _bus
 
         .include    "zp.inc"
         .include    "macros.inc"
@@ -14,7 +14,7 @@
 
         ; setup DCB basic data
         setax   #t_io_read_directory_block
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
         mwa     tmp7, IO_DCB::dbuflo
 
         popa    tmp10   ; extended mode, 1 = on, 0 = off
@@ -38,7 +38,7 @@
         jsr     popa            ; maxlen
         sta     IO_DCB::daux1   ; save in aux1
 
-        jsr     _fn_io_do_bus
+        jsr     _bus
         setax   tmp7
         rts
 

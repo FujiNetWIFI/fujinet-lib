@@ -1,8 +1,8 @@
         .export         _fn_io_hash_output
 
-        .import         _fn_io_do_bus
+        .import         _bus
         .import         _fn_io_error
-        .import         fn_io_copy_cmd_data
+        .import         copy_io_cmd_data
         .import         popa, popax
 
         .include        "zp.inc"
@@ -15,7 +15,7 @@
         axinto  tmp7                    ; len pointer
 
         setax   #t_fn_io_hash_output
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         setax   tmp7
         sta     IO_DCB::dbytlo
@@ -27,7 +27,7 @@
         jsr     popa                    ; output type (0 = bin, 1 = hex)
         sta     IO_DCB::daux1
 
-        jsr     _fn_io_do_bus
+        jsr     _bus
         jmp     _fn_io_error
 .endproc
 

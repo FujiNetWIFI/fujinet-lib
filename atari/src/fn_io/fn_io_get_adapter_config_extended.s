@@ -1,5 +1,5 @@
         .export         _fn_io_get_adapter_config_extended
-        .import         fn_io_copy_cmd_data, _fn_io_do_bus
+        .import         copy_io_cmd_data, _bus
 
         .include        "zp.inc"
         .include        "macros.inc"
@@ -13,11 +13,11 @@
         axinto  tmp7
 
         setax   #t_io_get_adapter_config_ext
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         ; set the memory address, new size, and aux1 for DCB
         mwa     tmp7, IO_DCB::dbuflo
-        jmp     _fn_io_do_bus
+        jmp     _bus
 
 .endproc
 

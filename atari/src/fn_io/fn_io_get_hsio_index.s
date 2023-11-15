@@ -1,7 +1,7 @@
         .export         _fn_io_get_hsio_index
 
-        .import         fn_io_copy_cmd_data
-        .import         _fn_io_do_bus
+        .import         copy_io_cmd_data
+        .import         _bus
         .import         popa, popax
 
         .include        "zp.inc"
@@ -12,11 +12,11 @@
 ;
 .proc _fn_io_get_hsio_index
         setax   #t_fn_io_get_hsio_index
-        jsr    fn_io_copy_cmd_data
+        jsr    copy_io_cmd_data
 
         ; give tmp7/8 as the location of the address to store HSIO index into
         mwa     #tmp7, IO_DCB::dbuflo
-        jsr     _fn_io_do_bus
+        jsr     _bus
         ldx     #$00
         lda     tmp7
         rts

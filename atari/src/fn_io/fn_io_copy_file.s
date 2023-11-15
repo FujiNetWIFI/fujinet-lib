@@ -1,5 +1,5 @@
         .export     _fn_io_copy_file
-        .import     fn_io_copy_cmd_data, popa, _fn_io_do_bus
+        .import     copy_io_cmd_data, popa, _bus
         .include    "zp.inc"
         .include    "macros.inc"
         .include    "device.inc"
@@ -12,7 +12,7 @@
         axinto  tmp7    ; copyspec write location
 
         setax   #t_io_copy_file
-        jsr     fn_io_copy_cmd_data
+        jsr     copy_io_cmd_data
 
         ;  fujinet tracks 1-8, we do 0-7, so need to increment both values
         jsr     popa            ; dst slot -> daux2
@@ -27,7 +27,7 @@
 
         mwa     tmp7,  IO_DCB::dbuflo
         mva     #$fe,  IO_DCB::dtimlo
-        jmp     _fn_io_do_bus
+        jmp     _bus
 .endproc
 
 .rodata
