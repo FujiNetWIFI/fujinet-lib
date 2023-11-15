@@ -13,7 +13,6 @@
 .endproc
 
 
-
 .data
 ; the global NETWORK unit id
 _sp_network:    .byte $00

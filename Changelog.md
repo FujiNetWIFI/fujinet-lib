@@ -2,12 +2,18 @@
 
 ## [Unreleased]
 
+### Added
+
 - Added network_http_add_header
 - Added network_http_start_add_headers
 - Added network_http_end_add_headers
 - Added network_http_post
 - Added network_http_put
 - Added network_http_delete
+
+### Changed
+
+- apple2 - Check if there are any devices before issuing DIB command in sp_find_device
 
 ## [2.0.0] - 2023-09-24
 
