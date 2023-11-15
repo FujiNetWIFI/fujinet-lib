@@ -1,6 +1,6 @@
 ; stub BUS
     .include    "macros.inc"
-    .include    "fn_data.inc"
+    .include    "device.inc"
 
     .segment "BUS"
     .org BUS

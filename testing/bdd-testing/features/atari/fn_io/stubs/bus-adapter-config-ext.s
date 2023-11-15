@@ -1,7 +1,7 @@
 ; stub BUS
   .include    "macros.inc"
   .include    "fujinet-io.inc"
-  .include    "fn_data.inc"
+  .include    "device.inc"
   .export     ac
 
 ; short copy <$7F bytes (uses bpl), using Y to index

@@ -7,7 +7,7 @@
 
         .include        "zp.inc"
         .include        "macros.inc"
-        .include        "fn_data.inc"
+        .include        "device.inc"
 
 ; void fn_io_get_host_prefix(uint8_t hs, char *prefix);
 ;

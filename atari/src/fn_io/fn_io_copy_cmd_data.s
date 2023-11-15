@@ -2,7 +2,7 @@
 
         .include        "zp.inc"
         .include        "macros.inc"
-        .include        "fn_data.inc"
+        .include        "device.inc"
 
 ; INTERNAL COPY ROUTINE
 ; void fn_io_copy_cmd_data(void *cmd_table)

@@ -1,7 +1,7 @@
         .export     _fn_io_error
         .import     return0, return1
 
-        .include    "fn_data.inc"
+        .include    "device.inc"
 
 ; bool fn_io_error()
 ;

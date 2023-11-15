@@ -3,7 +3,7 @@
 
         .include        "zp.inc"
         .include        "macros.inc"
-        .include        "fn_data.inc"
+        .include        "device.inc"
 
 ; int fn_io_get_wifi_status()
 ;

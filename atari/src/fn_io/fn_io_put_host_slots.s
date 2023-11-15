@@ -4,7 +4,7 @@
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "fujinet-io.inc"
-        .include        "fn_data.inc"
+        .include        "device.inc"
 
 ; void _fn_io_put_host_slots(HostSlot *h)
 .proc _fn_io_put_host_slots

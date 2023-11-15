@@ -1,7 +1,7 @@
 ; stub BUS
     .include    "macros.inc"
     .include    "fujinet-io.inc"
-    .include    "fn_data.inc"
+    .include    "device.inc"
 
   .segment "BUS"
   .org BUS

@@ -4,7 +4,7 @@
 
         .include        "zp.inc"
         .include        "macros.inc"
-        .include        "fn_data.inc"
+        .include        "device.inc"
 
 
 ; void _fn_io_set_device_filename(uint8_t mode, uint8_t hs, uint8_t ds, char *buffer)

@@ -207,20 +207,21 @@ OBJECTS := $(OBJECTS:common/$(SRCDIR)/%=$(OBJDIR)/common/%)
 # Set DEPENDS to something like 'obj/c64/foo.d obj/c64/bar.d'.
 DEPENDS := $(OBJECTS:.o=.d)
 
-# Add to LIBS something like 'src/foo.lib src/c64/bar.lib'.
+# Add to LIBS something like atari/src/bar.lib'.
 LIBS += $(wildcard $(TARGETLIST)/$(SRCDIR)/*.lib)
 
-# add common/inc, <target>/src/inc, and the root directory (for fujinet-network.[h|inc])
 ASFLAGS += \
 	--asm-include-dir common/inc \
 	--asm-include-dir $(TARGETLIST)/$(SRCDIR)/fn_network/inc \
 	--asm-include-dir $(TARGETLIST)/$(SRCDIR)/fn_io/inc \
+	--asm-include-dir $(TARGETLIST)/$(SRCDIR)/fn_fuji/inc \
 	--asm-include-dir .
 
 CFLAGS += \
 	--include-dir common/inc \
 	--include-dir $(TARGETLIST)/$(SRCDIR)/fn_network/inc \
 	--include-dir $(TARGETLIST)/$(SRCDIR)/fn_io/inc \
+	--include-dir $(TARGETLIST)/$(SRCDIR)/fn_fuji/inc \
 	--include-dir .
 
 CHANGELOG = Changelog.md
@@ -232,6 +233,8 @@ VERSION_STRING := $(file < $(VERSION_FILE))
 # include files that are included in the ZIP dist/release target
 FN_NW_HEADER = fujinet-network.h
 FN_NW_INC = fujinet-network.inc
+FN_IO_HEADER = fujinet-io.h
+FN_IO_INC = fujinet-io.inc
 
 .SUFFIXES:
 .PHONY: all clean dist fujinet-network.lib.$(TARGETLIST)
@@ -325,6 +328,8 @@ dist: $(PROGRAM)
 	cp build/$(PROGRAM) dist/fujinet-network-$(TARGETLIST)_$(VERSION_STRING).lib
 	cp $(FN_NW_HEADER) dist/
 	cp $(FN_NW_INC) dist/
+	cp $(FN_IO_HEADER) dist/
+	cp $(FN_IO_INC) dist/
 	cp $(CHANGELOG) dist/
 	cd dist && zip fujinet-network-$(TARGETLIST)_$(VERSION_STRING).zip $(CHANGELOG) fujinet-network-$(TARGETLIST)_$(VERSION_STRING).lib *.h *.inc
 	$(call RMFILES,dist/fujinet-network-$(TARGETLIST)_*.lib)

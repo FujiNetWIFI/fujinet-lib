@@ -7,7 +7,7 @@
 
         .include        "zp.inc"
         .include        "macros.inc"
-        .include        "fn_data.inc"
+        .include        "device.inc"
 
 ; uint8_t fn_io_hash_output(uint8_t output_type, char *s, uint16_t len);
 ;

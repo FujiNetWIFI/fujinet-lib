@@ -3,7 +3,7 @@
 
         .include        "zp.inc"
         .include        "macros.inc"
-        .include        "fn_data.inc"
+        .include        "device.inc"
 
 ; void fn_io_mount_disk_image(uint8_t device_slot, uint8_t mode)
 .proc _fn_io_mount_disk_image

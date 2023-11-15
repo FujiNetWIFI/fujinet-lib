@@ -3,7 +3,7 @@
 
         .include    "zp.inc"
         .include    "macros.inc"
-        .include    "fn_data.inc"
+        .include    "device.inc"
 
 ; void *fn_io_read_directory_block(uint8_t maxlen, uint8_t pages, uint8_t extended_mode, void *buffer)
 ;

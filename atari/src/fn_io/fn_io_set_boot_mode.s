@@ -3,7 +3,7 @@
 
         .include    "zp.inc"
         .include    "macros.inc"
-        .include    "fn_data.inc"
+        .include    "device.inc"
 
 ; void _fn_io_set_boot_mode(uint8_t mode)
 .proc _fn_io_set_boot_mode

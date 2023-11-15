@@ -7,7 +7,7 @@
 
         .include    "zp.inc"
         .include    "macros.inc"
-        .include    "fn_data.inc"
+        .include    "device.inc"
 
 .proc io_common
         jsr     fn_io_copy_cmd_data

@@ -5,7 +5,7 @@
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "fujinet-io.inc"
-        .include        "fn_data.inc"
+        .include        "device.inc"
 
 ; void fn_io_get_scan_result(uint8_t network_index, SSIDInfo *ssid_info)
 ;

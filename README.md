@@ -1,6 +1,6 @@
 # Fujinet Network Lib
 
-Routines to use the FujiNet Network Adapter sub-device
+Routines to use the FujiNet Network Adapter sub-device.
 
 Top level folder contains the .h API, one subfolder for each platform.
 
@@ -27,7 +27,7 @@ Testing is done with BDD features. See [Testing README](testing/bdd-testing/READ
 ### global
 
 - [x] Makefile
-- [ ] .h overall API
+- [x] .h overall API
 
 ### define API (we are here)
 

@@ -3,7 +3,7 @@
 
         .include    "zp.inc"
         .include    "macros.inc"
-        .include    "fn_data.inc"
+        .include    "device.inc"
 
 ; void _fn_io_unmount_host_slot(uint8_t hs)
 .proc _fn_io_unmount_host_slot

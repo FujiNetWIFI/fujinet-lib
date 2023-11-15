@@ -3,7 +3,7 @@
 
         .include    "zp.inc"
         .include    "macros.inc"
-        .include    "fn_data.inc"
+        .include    "device.inc"
 
 ; void _fn_io_unmount_disk_image(uint8_t ds)
 .proc _fn_io_unmount_disk_image

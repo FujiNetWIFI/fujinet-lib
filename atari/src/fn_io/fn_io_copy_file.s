@@ -2,7 +2,7 @@
         .import     fn_io_copy_cmd_data, popa, _fn_io_do_bus
         .include    "zp.inc"
         .include    "macros.inc"
-        .include    "fn_data.inc"
+        .include    "device.inc"
  
 ; void fn_io_copy_file(uint8_t src_slot, uint8_t dst_slot, char *copy_spec)
 ;

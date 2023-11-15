@@ -4,7 +4,7 @@
 
         .include        "zp.inc"
         .include        "macros.inc"
-        .include        "fn_data.inc"
+        .include        "device.inc"
 
 ; void fn_io_mount_host_slot(uint8_t slot_num)
 ;

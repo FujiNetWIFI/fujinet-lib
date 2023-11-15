@@ -2,7 +2,7 @@
         .import         fn_io_copy_cmd_data, _fn_io_do_bus, popa
         .include        "zp.inc"
         .include        "macros.inc"
-        .include        "fn_data.inc"
+        .include        "device.inc"
 
 ; void fn_io_get_device_filename(uint8_t device_slot, char *buffer)
 .proc _fn_io_get_device_filename

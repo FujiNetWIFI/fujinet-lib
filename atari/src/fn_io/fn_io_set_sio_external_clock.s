@@ -6,7 +6,7 @@
 
         .include        "zp.inc"
         .include        "macros.inc"
-        .include        "fn_data.inc"
+        .include        "device.inc"
 
 ; void fn_io_set_sio_external_clock(uint16_t rate);
 ;

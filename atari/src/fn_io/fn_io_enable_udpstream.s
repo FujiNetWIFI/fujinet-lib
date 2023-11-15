@@ -6,7 +6,7 @@
 
         .include        "zp.inc"
         .include        "macros.inc"
-        .include        "fn_data.inc"
+        .include        "device.inc"
 
 ; void fn_io_enable_udpstream(uint16_t port, char *host);
 ;

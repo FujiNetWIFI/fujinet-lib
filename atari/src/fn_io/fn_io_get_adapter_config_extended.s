@@ -3,7 +3,7 @@
 
         .include        "zp.inc"
         .include        "macros.inc"
-        .include        "fn_data.inc"
+        .include        "device.inc"
         .include        "fujinet-io.inc"
 
 ; void fn_io_get_adapter_config_extended(AdapterConfigExtended *adapter_config)

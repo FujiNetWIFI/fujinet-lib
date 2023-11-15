@@ -3,7 +3,7 @@
 
         .include    "zp.inc"
         .include    "macros.inc"
-        .include    "fn_data.inc"
+        .include    "device.inc"
 
 ; char *fn_io_read_directory(unsigned char maxlen, unsigned char aux2, char *buffer)
 ;
