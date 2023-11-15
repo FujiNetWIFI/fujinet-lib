@@ -6,9 +6,9 @@ Feature: library test - atari network_json_parse
   Scenario: execute _network_json_parse returns the expected data
     Given atari-fn-nw application test setup
       And I add common atari-io files
-      And I add atari src file "network_json_parse.s"
-      And I add file for compiling "features/atari/invokers/test_network_json_parse.s"
-      And I add file for compiling "features/atari/stubs/bus_simple.s"
+      And I add atari src file "fn_network/network_json_parse.s"
+      And I add file for compiling "features/atari/fn_network/invokers/test_network_json_parse.s"
+      And I add file for compiling "features/atari/fn_network/stubs/bus_simple.s"
       And I create and load atari application
       And I write string "n9:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000
@@ -52,9 +52,9 @@ Feature: library test - atari network_json_parse
   Scenario: execute _network_json_parse handles ioctl error
     Given atari-fn-nw application test setup
       And I add common atari-io files
-      And I add atari src file "network_json_parse.s"
-      And I add file for compiling "features/atari/invokers/test_network_json_parse.s"
-      And I add file for compiling "features/atari/stubs/bus_simple.s"
+      And I add atari src file "fn_network/network_json_parse.s"
+      And I add file for compiling "features/atari/fn_network/invokers/test_network_json_parse.s"
+      And I add file for compiling "features/atari/fn_network/stubs/bus_simple.s"
       And I create and load atari application
       And I write string "n9:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000

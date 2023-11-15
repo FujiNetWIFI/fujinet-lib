@@ -6,10 +6,10 @@ Feature: library test - apple2 network_json_query
   Scenario: execute apple2 _network_json_query returns query results (happy path)
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_json_query.s"
-      And I add apple2 src file "sp_read.s"
-      And I add file for compiling "features/apple2/invokers/test_network_json_query.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_json_query.s"
+      And I add apple2 src file "fn_network/sp_read.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_query.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
       And I write string "n1:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000
@@ -73,10 +73,10 @@ Feature: library test - apple2 network_json_query
   Scenario: execute apple2 _network_json_query with no network unit returns bad cmd and does not call sp functions
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_json_query.s"
-      And I add apple2 src file "sp_read.s"
-      And I add file for compiling "features/apple2/invokers/test_network_json_query.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_json_query.s"
+      And I add apple2 src file "fn_network/sp_read.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_query.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 0
       And ignore address _bzero to _bzero+93 for trace
      When I execute the procedure at _init for no more than 2070 instructions
@@ -90,10 +90,10 @@ Feature: library test - apple2 network_json_query
   Scenario: execute apple2 _network_json_query with query error passes it to caller and sets empty string
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_json_query.s"
-      And I add apple2 src file "sp_read.s"
-      And I add file for compiling "features/apple2/invokers/test_network_json_query.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_json_query.s"
+      And I add apple2 src file "fn_network/sp_read.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_query.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
       And I write string "n1:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000
@@ -130,10 +130,10 @@ Feature: library test - apple2 network_json_query
   Scenario: execute apple2 _network_json_query with query that returns an error from the status getting length
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_json_query.s"
-      And I add apple2 src file "sp_read.s"
-      And I add file for compiling "features/apple2/invokers/test_network_json_query.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_json_query.s"
+      And I add apple2 src file "fn_network/sp_read.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_query.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
       And I write string "n1:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000
@@ -164,10 +164,10 @@ Feature: library test - apple2 network_json_query
   Scenario: execute apple2 _network_json_query that returns 0 byte length we write empty string to target
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_json_query.s"
-      And I add apple2 src file "sp_read.s"
-      And I add file for compiling "features/apple2/invokers/test_network_json_query.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_json_query.s"
+      And I add apple2 src file "fn_network/sp_read.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_query.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
       And I write string "n1:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000
@@ -196,10 +196,10 @@ Feature: library test - apple2 network_json_query
   Scenario: execute apple2 _network_json_query and read returns an error we pass that back and write empty string
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_json_query.s"
-      And I add apple2 src file "sp_read.s"
-      And I add file for compiling "features/apple2/invokers/test_network_json_query.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_json_query.s"
+      And I add apple2 src file "fn_network/sp_read.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_query.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
       And I write string "n1:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000

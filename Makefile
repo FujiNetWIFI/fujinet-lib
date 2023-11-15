@@ -183,11 +183,6 @@ CC65TARGET := $(firstword $(subst .,$(SPACE),$(TARGETLIST)))
 # Set PROGRAM to something like 'myprog.c64'.
 override PROGRAM := $(PROGRAM).$(TARGETLIST)
 
-# Set SOURCES to something like 'src/foo.c src/bar.s'.
-# Use of assembler files with names ending differently than .s is deprecated!
-
-# Add to SOURCES something like 'src/c64/me.c src/c64/too.s'.
-# Use of assembler files with names ending differently than .s is deprecated!
 # Recursive files
 SOURCES += $(call rwildcard,$(TARGETLIST)/$(SRCDIR)/,*.s)
 SOURCES += $(call rwildcard,$(TARGETLIST)/$(SRCDIR)/,*.c)
@@ -212,8 +207,8 @@ DEPENDS := $(OBJECTS:.o=.d)
 LIBS += $(wildcard $(TARGETLIST)/$(SRCDIR)/*.lib)
 
 # add common/inc, <target>/src/inc, and the root directory (for fujinet-network.[h|inc])
-ASFLAGS += --asm-include-dir common/inc --asm-include-dir $(TARGETLIST)/$(SRCDIR)/inc --asm-include-dir .
-CFLAGS += --include-dir common/inc --include-dir $(TARGETLIST)/$(SRCDIR)/inc --include-dir .
+ASFLAGS += --asm-include-dir common/inc --asm-include-dir $(TARGETLIST)/$(SRCDIR)/fn_network/inc --asm-include-dir .
+CFLAGS += --include-dir common/inc --include-dir $(TARGETLIST)/$(SRCDIR)/fn_network/inc --include-dir .
 
 CHANGELOG = Changelog.md
 

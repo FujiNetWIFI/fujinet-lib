@@ -6,10 +6,10 @@ Feature: library test - apple2 network_write
   Scenario: execute apple2 _network_write with no network unit returns bad cmd and does not call sp_write
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_write.s"
-      And I add apple2 src file "sp_write.s"
-      And I add file for compiling "features/apple2/invokers/test_network_write.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_write.s"
+      And I add apple2 src file "fn_network/sp_write.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_write.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 0
       And I ignore cc65-noise
      When I execute the procedure at _init for no more than 175 instructions
@@ -23,10 +23,10 @@ Feature: library test - apple2 network_write
   Scenario: execute apple2 _network_write with 0 len bytes returns bad cmd and does not call sp_write
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_write.s"
-      And I add apple2 src file "sp_write.s"
-      And I add file for compiling "features/apple2/invokers/test_network_write.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_write.s"
+      And I add apple2 src file "fn_network/sp_write.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_write.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write word at t_buffer with hex $b000
@@ -44,10 +44,10 @@ Feature: library test - apple2 network_write
   Scenario: execute apple2 _network_write for under 512 bytes with no errors copies data from buffer
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_write.s"
-      And I add apple2 src file "sp_write.s"
-      And I add file for compiling "features/apple2/invokers/test_network_write.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_write.s"
+      And I add apple2 src file "fn_network/sp_write.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_write.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write word at t_buffer with hex $b000
@@ -74,10 +74,10 @@ Feature: library test - apple2 network_write
   Scenario: execute apple2 _network_write for with an error it returns library version of that error code
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_write.s"
-      And I add apple2 src file "sp_write.s"
-      And I add file for compiling "features/apple2/invokers/test_network_write.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_write.s"
+      And I add apple2 src file "fn_network/sp_write.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_write.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write word at t_buffer with hex $b000
@@ -97,10 +97,10 @@ Feature: library test - apple2 network_write
   Scenario: execute apple2 _network_write for over 512 bytes with no errors copies data to buffer
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_write.s"
-      And I add apple2 src file "sp_write.s"
-      And I add file for compiling "features/apple2/invokers/test_network_write_long.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_write.s"
+      And I add apple2 src file "fn_network/sp_write.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_write_long.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write word at t_buffer with hex $b000

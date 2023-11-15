@@ -5,10 +5,10 @@ Feature: library test - apple2 network_close
   Scenario: execute apple2 _network_close with non-0 network id
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_close.s"
+      And I add apple2 src file "fn_network/network_close.s"
       And I add common src file "network_unit.s"
-      And I add file for compiling "features/apple2/invokers/test_network_close.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_close.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write memory at _sp_network with $02
@@ -28,10 +28,10 @@ Feature: library test - apple2 network_close
   Scenario: execute apple2 _network_close when network id is unset
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_close.s"
+      And I add apple2 src file "fn_network/network_close.s"
       And I add common src file "network_unit.s"
-      And I add file for compiling "features/apple2/invokers/test_network_close.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_close.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write memory at _sp_network with $00

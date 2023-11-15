@@ -5,9 +5,9 @@ Feature: library test - apple2 network_ioctl
   Scenario: execute apple2 _network_ioctl sets payload correctly and calls sp_control with no aux values
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_ioctl.s"
-      And I add file for compiling "features/apple2/invokers/test_network_ioctl1.c"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_ioctl.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_ioctl1.c"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
       And I write memory at _t_cmd with $58
       And I write memory at _t_aux1 with $fe
@@ -36,9 +36,9 @@ Feature: library test - apple2 network_ioctl
   Scenario: execute apple2 _network_ioctl sets payload correctly and calls sp_control with aux values
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_ioctl.s"
-      And I add file for compiling "features/apple2/invokers/test_network_ioctl1.c"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_ioctl.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_ioctl1.c"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
       And I write memory at _t_cmd with $58
       And I write memory at _t_aux1 with $fe
@@ -67,9 +67,9 @@ Feature: library test - apple2 network_ioctl
   Scenario: execute apple2 _network_ioctl only clears payload when NULL buffer is set
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_ioctl.s"
-      And I add file for compiling "features/apple2/invokers/test_network_ioctl1.c"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_ioctl.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_ioctl1.c"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
       And I write memory at _t_cmd with $58
       And I write memory at _t_aux1 with $fe
@@ -96,9 +96,9 @@ Feature: library test - apple2 network_ioctl
   Scenario: execute apple2 _network_ioctl returns error when sp_network is not set
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_ioctl.s"
-      And I add file for compiling "features/apple2/invokers/test_network_ioctl1.c"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_ioctl.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_ioctl1.c"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 0
       And I ignore cc65-noise
      When I execute the procedure at _init for no more than 250 instructions
@@ -110,9 +110,9 @@ Feature: library test - apple2 network_ioctl
   Scenario: execute apple2 _network_ioctl returns error when all args aren't set
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_ioctl.s"
-      And I add file for compiling "features/apple2/invokers/test_network_ioctl2.c"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_ioctl.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_ioctl2.c"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
       And I ignore cc65-noise
      When I execute the procedure at _init for no more than 120 instructions

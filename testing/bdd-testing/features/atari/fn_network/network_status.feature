@@ -5,10 +5,10 @@ Feature: library test - atari network_status and io_status
   Scenario Outline: execute _network_status with a device spec
     Given atari-fn-nw application test setup
       And I add common atari-io files
-      And I add atari src file "network_status.s"
+      And I add atari src file "fn_network/network_status.s"
       And I add common src file "network_unit.s"
       And I add file for compiling "features/test-setup/test-apps/test_wwww.s"
-      And I add file for compiling "features/atari/stubs/bus_simple.s"
+      And I add file for compiling "features/atari/fn_network/stubs/bus_simple.s"
       And I create and load atari application
       And I write string "<devspec>" as ascii to memory address $a000
       # devicespec
@@ -58,10 +58,10 @@ Feature: library test - atari network_status and io_status
   Scenario Outline: execute _network_status with a device unit
     Given atari-fn-nw application test setup
       And I add common atari-io files
-      And I add atari src file "network_status.s"
+      And I add atari src file "fn_network/network_status.s"
       And I add common src file "network_unit.s"
       And I add file for compiling "features/test-setup/test-apps/test_bwww.s"
-      And I add file for compiling "features/atari/stubs/bus_simple.s"
+      And I add file for compiling "features/atari/fn_network/stubs/bus_simple.s"
       And I create and load atari application
       # devicespec
       And I write memory at t_b1 with <unit>

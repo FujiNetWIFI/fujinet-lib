@@ -6,7 +6,7 @@ Feature: library test - apple2 fn_error
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add file for compiling "features/test-setup/test-apps/test_b.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at t_b1 with <device_error>
       And I write word at t_fn with address _fn_error
      When I execute the procedure at _init for no more than 100 instructions

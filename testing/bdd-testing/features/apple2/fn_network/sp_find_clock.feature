@@ -5,9 +5,9 @@ Feature: library test - apple2 sp_find_clock
   Scenario: execute apple2 _sp_find_clock
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add file for compiling "features/apple2/invokers/test_sp_find_clock.s"
-      And I add file for compiling "../../apple2/src/sp_find_clock.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_sp_find_clock.s"
+      And I add file for compiling "../../apple2/src/fn_network/sp_find_clock.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
      When I execute the procedure at _init for no more than 1200 instructions
 
     # offset 5 contains the device name

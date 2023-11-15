@@ -7,9 +7,9 @@ Feature: library test - apple2 network_json_parse
   Scenario: execute apple2 _network_json_parse returns ok (happy path)
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_json_parse.s"
-      And I add file for compiling "features/apple2/invokers/test_network_json_parse.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_json_parse.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_parse.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
       And I write string "n1:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000
@@ -41,9 +41,9 @@ Feature: library test - apple2 network_json_parse
   Scenario: execute apple2 _network_json_parse with no network unit returns bad cmd and does not call sp functions
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_json_parse.s"
-      And I add file for compiling "features/apple2/invokers/test_network_json_parse.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_json_parse.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_parse.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 0
       And I ignore cc65-noise
      When I execute the procedure at _init for no more than 2020 instructions
@@ -57,9 +57,9 @@ Feature: library test - apple2 network_json_parse
   Scenario: execute apple2 _network_json_parse with error calling control for json channel mode passes it to caller
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_json_parse.s"
-      And I add file for compiling "features/apple2/invokers/test_network_json_parse.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_json_parse.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_parse.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
       And I write string "n1:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000
@@ -86,9 +86,9 @@ Feature: library test - apple2 network_json_parse
   Scenario: execute apple2 _network_json_parse with error doing PARSE control
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_json_parse.s"
-      And I add file for compiling "features/apple2/invokers/test_network_json_parse.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_json_parse.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_parse.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
       And I write string "n1:foo" as ascii to memory address $9000
       And I write word at t_devicespec with hex $9000

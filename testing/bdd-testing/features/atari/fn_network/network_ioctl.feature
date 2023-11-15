@@ -8,12 +8,12 @@ Feature: library test - atari network_ioctl
   Scenario: execute _network_ioctl with correct args count
     Given atari-fn-nw application test setup
       And I add common atari-io files
-      And I add atari src file "network_ioctl.s"
+      And I add atari src file "fn_network/network_ioctl.s"
       And I add common src file "network_unit.s"
-      And I add atari src file "network_status.s"
-      And I add atari src file "io_status.s"
-      And I add file for compiling "features/atari/invokers/test_network_ioctl.c"
-      And I add file for compiling "features/atari/stubs/bus_simple.s"
+      And I add atari src file "fn_network/network_status.s"
+      And I add atari src file "fn_network/io_status.s"
+      And I add file for compiling "features/atari/fn_network/invokers/test_network_ioctl.c"
+      And I add file for compiling "features/atari/fn_network/stubs/bus_simple.s"
       And I set register X to $ff
       And I create and load atari application
      When I execute the procedure at _init for no more than 240 instructions
@@ -37,12 +37,12 @@ Feature: library test - atari network_ioctl
   Scenario: execute _network_ioctl with bad args list returns error
     Given atari-fn-nw application test setup
       And I add common atari-io files
-      And I add atari src file "network_ioctl.s"
+      And I add atari src file "fn_network/network_ioctl.s"
       And I add common src file "network_unit.s"
-      And I add atari src file "network_status.s"
-      And I add atari src file "io_status.s"
-      And I add file for compiling "features/atari/invokers/test_network_ioctl.c"
-      And I add file for compiling "features/atari/stubs/bus_simple.s"
+      And I add atari src file "fn_network/network_status.s"
+      And I add atari src file "fn_network/io_status.s"
+      And I add file for compiling "features/atari/fn_network/invokers/test_network_ioctl.c"
+      And I add file for compiling "features/atari/fn_network/stubs/bus_simple.s"
       And I set register X to $ff
       And I create and load atari application
       # tell the test invoker to call with wrong args

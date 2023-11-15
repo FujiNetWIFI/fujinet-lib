@@ -9,7 +9,7 @@
 ; Calculate the UNIT number from the device spec.
 ; e.g. "N:foo"  = 1
 ;      "N2:bar" = 2
-; see testing/bdd-testing/features/atari/network_unit.feature
+; see testing/bdd-testing/features/atari/fn_network/network_unit.feature
 
 ; TODO: what is the empty string? Depends on 2nd char of empty string!
 

@@ -6,11 +6,11 @@ Feature: library test - apple2 network_read
   Scenario: execute apple2 _network_read with no network unit returns bad cmd and does not call sp_read
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_read.s"
-      And I add apple2 src file "network_status.s"
-      And I add apple2 src file "sp_read.s"
-      And I add file for compiling "features/apple2/invokers/test_network_read.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_read.s"
+      And I add apple2 src file "fn_network/network_status.s"
+      And I add apple2 src file "fn_network/sp_read.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_read.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write word at t_devicespec with hex $a012
       And I write word at t_buffer with hex $b000
       And I write word at t_len with hex $000A
@@ -27,10 +27,10 @@ Feature: library test - apple2 network_read
   Scenario: execute apple2 _network_read with 0 len bytes returns bad cmd and does not call sp_read
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_read.s"
-      And I add apple2 src file "sp_read.s"
-      And I add file for compiling "features/apple2/invokers/test_network_read.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_read.s"
+      And I add apple2 src file "fn_network/sp_read.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_read.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write word at t_buffer with hex $b000
@@ -48,10 +48,10 @@ Feature: library test - apple2 network_read
   Scenario: execute apple2 _network_read for under 512 bytes with no errors copies data to buffer
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_read.s"
-      And I add apple2 src file "sp_read.s"
-      And I add file for compiling "features/apple2/invokers/test_network_read.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_read.s"
+      And I add apple2 src file "fn_network/sp_read.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_read.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write word at t_buffer with hex $b000
@@ -96,10 +96,10 @@ Feature: library test - apple2 network_read
   Scenario: execute apple2 _network_read for with an error it returns library version of that error code
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_read.s"
-      And I add apple2 src file "sp_read.s"
-      And I add file for compiling "features/apple2/invokers/test_network_read.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_read.s"
+      And I add apple2 src file "fn_network/sp_read.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_read.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write word at t_buffer with hex $b000
@@ -124,10 +124,10 @@ Feature: library test - apple2 network_read
   Scenario: execute apple2 _network_read for over 512 bytes with no errors copies data to buffer
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
-      And I add apple2 src file "network_read.s"
-      And I add apple2 src file "sp_read.s"
-      And I add file for compiling "features/apple2/invokers/test_network_read_long.s"
-      And I create and load apple-single application using crt-file "features/apple2/stubs/crt0.s"
+      And I add apple2 src file "fn_network/network_read.s"
+      And I add apple2 src file "fn_network/sp_read.s"
+      And I add file for compiling "features/apple2/fn_network/invokers/test_network_read_long.s"
+      And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write word at t_buffer with hex $b000
