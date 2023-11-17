@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Set `_sp_network` after calling `sp_find_network` in apple2 so ioctl can work after finding a network without calling open
+
 ## [2.1.0] - 2023-11-15
 
 ### Added

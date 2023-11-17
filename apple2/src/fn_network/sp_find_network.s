@@ -9,7 +9,9 @@
 .proc _sp_find_network
         ; look for sp_network in devices
         setax   #sp_network_s
-        jmp     _sp_find_device
+        jsr     _sp_find_device
+        sta     _sp_network
+        rts
 .endproc
 
 
