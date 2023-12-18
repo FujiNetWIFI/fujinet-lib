@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [2.1.2] - 2024-01-03
+
+### Changed
+
+- network_read handles chunked and delayed loading, and is common cross platform C file
+- refactored subdirectories of apple code in preparation for fn_io for apple2
+
 ## [2.1.1] - 2023-12-07
 
 ### Changed

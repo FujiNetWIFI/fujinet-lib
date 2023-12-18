@@ -1,4 +1,5 @@
         .export     _network_status
+        .export     _network_status_no_clr
 
         .import     _bad_unit
         .import     _fn_device_error
@@ -11,6 +12,7 @@
         .import     incsp6
         .import     popax
         .import     pusha
+        .import     pushax
 
         .include    "fujinet-network.inc"
         .include    "macros.inc"
@@ -19,10 +21,20 @@
 
 ; uint8_t network_status(char *devicespec, uint16_t *bw, uint8_t *c, uint8_t *err);
 ;
-.proc _network_status
+_network_status:
+        ; save A/X so we can restore them after clearing payload
+        pha
+        txa
+        pha
+        jsr     _sp_clr_payload     ; calls bzero, so trashes p1/2/3
+        pla
+        tax
+        pla
+        ; drop into no_clr version
+
+_network_status_no_clr:
         axinto  ptr4            ; save err location
 
-        jsr     _sp_clr_payload     ; calls bzero, so trashes p1/2/3
         ldy     #$00
         sty     _fn_device_error
 
@@ -63,5 +75,3 @@ have_network:
         ; reload any error from sp_status and deal with it
         pla
         jmp     _fn_error
-
-.endproc

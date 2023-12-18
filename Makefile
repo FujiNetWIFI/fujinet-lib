@@ -138,26 +138,6 @@ else
   CC := cl65
 endif
 
-
-###############################################################################
-### The magic begins                                                        ###
-###############################################################################
-
-# The "Native Win32" GNU Make contains quite some workarounds to get along with
-# cmd.exe as shell. However it does not provide means to determine that it does
-# actually activate those workarounds. Especially does $(SHELL) NOT contain the
-# value 'cmd.exe'. So the usual way to determine if cmd.exe is being used is to
-# execute the command 'echo' without any parameters. Only cmd.exe will return a
-# non-empy string - saying 'ECHO is on/off'.
-#
-# Many "Native Win32" prorams accept '/' as directory delimiter just fine. How-
-# ever the internal commands of cmd.exe generally require '\' to be used.
-#
-# cmd.exe has an internal command 'mkdir' that doesn't understand nor require a
-# '-p' to create parent directories as needed.
-#
-# cmd.exe has an internal command 'del' that reports a syntax error if executed
-# without any file so make sure to call it only if there's an actual argument.
 ifeq ($(shell echo),)
   MKDIR = mkdir -p $1
   RMDIR = rmdir $1
@@ -223,6 +203,13 @@ CFLAGS += \
 	--include-dir $(TARGETLIST)/$(SRCDIR)/fn_io/inc \
 	--include-dir $(TARGETLIST)/$(SRCDIR)/fn_fuji/inc \
 	--include-dir .
+
+# Add -DBUILD_(TARGET) to all args for the current name.
+UPPER_TARGETLIST := $(shell echo $(TARGETLIST) | tr a-z A-Z)
+CFLAGS += -DBUILD_$(UPPER_TARGETLIST)
+ASFLAGS += -DBUILD_$(UPPER_TARGETLIST)
+LDFLAGS += -DBUILD_$(UPPER_TARGETLIST)
+
 
 CHANGELOG = Changelog.md
 

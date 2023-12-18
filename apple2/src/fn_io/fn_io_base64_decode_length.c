@@ -3,5 +3,5 @@
 
 uint8_t fn_io_base64_decode_length(unsigned long *len)
 {
-    return 0;
+    return 1;
 }

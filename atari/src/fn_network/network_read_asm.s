@@ -1,4 +1,4 @@
-        .export     _network_read
+        .export     _network_readX
 
         .import     _fn_device_error
         .import     _fn_network_bw
@@ -20,7 +20,7 @@
 
 ; TODO: Work out LARGE transfers, like apple2 does in 512 byte chunks. Or does SIO allow single large chunks?
 
-_network_read:
+_network_readX:
         axinto  tmp2                    ; len, tmp2/3
 
         ldy     #$00
@@ -67,5 +67,5 @@ lower:
         ; -------------------------------------------------------------------------------------------------------------
 :       pusha   tmp1                    ; unit
         pushax  ptr4                    ; buffer
-        setax   tmp2
+        setax   tmp2                    ; length
         jmp     _sio_read
