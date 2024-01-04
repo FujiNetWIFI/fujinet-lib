@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [2.1.4] - 2024-01-06
+
+### Fixed
+
+- [apple2] network_json_query removes any trailing CR/LF/0x9b in results as last character
+
+### Changed
+
+- [apple2] reduced payload memory from 1024 to 512.
+
 ## [2.1.3] - 2024-01-03
 
 ### Changed

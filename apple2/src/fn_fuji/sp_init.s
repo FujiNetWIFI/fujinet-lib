@@ -63,15 +63,17 @@
 
 @found_sp:
         ; set _sp_dispatch_fn address while we have the correct slot in ptr1
+        ; first copy it into ptr2, as we need to keep the original ptr1 for next loop if this card fails.
+        mwa     ptr1, ptr2
         ldy     #$ff
-        lda     (ptr1), y       ; _sp_dispatch vector is this value +3
+        lda     (ptr2), y       ; _sp_dispatch vector is this value +3
         clc
         adc     #$03
-        adw1    ptr1, a         ; move ptr1 to _sp_dispatch address, and store it
-        mwa     ptr1, _sp_dispatch_fn
+        adw1    ptr2, a         ; move ptr1 to _sp_dispatch address, and store it
+        mwa     ptr2, _sp_dispatch_fn
 
         ; does this device have a NETWORK adapter?
-        ; first save X which is the slot ID
+        ; first save X which is our counter for number of devices tested so far
         txa
         pha
 

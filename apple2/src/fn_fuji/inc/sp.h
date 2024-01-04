@@ -20,4 +20,6 @@
 #define SP_ERR_NON_FATAL50 (0x50)   //    ; DEVICE SPECIFIC WARNING
 #define SP_ERR_NON_FATAL7F (0x7F)   //    ; DEVICE SPECIFIC WARNING
 
+#define SP_PAYLOAD_SIZE    (512)
+
 #endif /* SP_H */

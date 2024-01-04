@@ -12,13 +12,19 @@
 // These are for C files to be able to access ASM functions, and values
 // that are internal and not exposed in the normal fujinet-network.h header
 
-#define MAX_SP_PAYLOAD (1024)
+#define MAX_DATA_LEN (767)
 
 // The id of the network device
 extern uint8_t sp_network;
 
 // the general payload buffer
 extern uint8_t sp_payload[];
+
+// the dispatch function used for doing SP calls for a particular card
+extern uint8_t sp_dispatch_fn[2];
+
+// count of bytes the status request returned
+extern uint16_t sp_count;
 
 void sp_clr_payload();
 int8_t sp_status(uint8_t dest, uint8_t statcode);

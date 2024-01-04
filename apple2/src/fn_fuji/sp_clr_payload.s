@@ -5,11 +5,12 @@
         .import     pushax
 
         .include    "macros.inc"
+        .include    "sp.inc"
 
 ; void sp_clr_payload();
 
 .proc _sp_clr_payload
         pushax  #_sp_payload
-        setax   #$400
+        setax   #SP_PAYLOAD_SIZE
         jmp     _bzero
 .endproc

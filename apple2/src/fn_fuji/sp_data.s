@@ -6,10 +6,11 @@
         .export     _sp_is_init
         .export     _sp_payload
 
+        .include    "sp.inc"
+
 .data
 ; has the init routine been run?
 _sp_is_init:        .byte 0
-
 
 .bss
 
@@ -19,5 +20,4 @@ _sp_count:          .res 2
 _sp_dispatch_fn:    .res 2
 _sp_cmdlist:        .res 10
 
-; can this be reduced in size? not sure much more than 512 is used in library
-_sp_payload:        .res 1024
+_sp_payload:        .res SP_PAYLOAD_SIZE

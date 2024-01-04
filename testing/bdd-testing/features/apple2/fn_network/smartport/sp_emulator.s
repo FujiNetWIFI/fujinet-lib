@@ -79,7 +79,7 @@ sp_emulator:
         ; where sp_cmdList holds:
         ;   db command_count    - number of bytes in the cmdList that are relevant
         ;   db dest             - see table below for dest/unit values. 1 == fujinet, etc.
-        ;   dw sp_payload       - always address of payload array (1024)
+        ;   dw sp_payload       - always address of payload array (767)
         ;   ... various additional bytes depending on the command
         ;
         ; commands:

@@ -20,7 +20,7 @@
 .proc _sp_find_device
         axinto  ptr1            ; the device name we're looking for
 
-        ; find the device count - do we need to keep doing this?
+        ; find the device count by sending 0/0 status request
         pusha   #$00            ; doubles up as both parameters
         jsr     _sp_status
         beq     :+

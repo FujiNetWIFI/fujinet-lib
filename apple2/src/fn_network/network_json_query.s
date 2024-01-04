@@ -4,7 +4,6 @@
         .import     _fn_device_error
         .import     _fn_error
         .import     _memcpy
-        .import     _sp_clr_payload
         .import     _sp_control
         .import     _sp_network
         .import     _sp_payload
@@ -14,11 +13,13 @@
         .import     _strncpy
         .import     incsp2
         .import     incsp4
-        .import     popa
         .import     popax
         .import     pusha
         .import     pushax
         .import     return0
+
+        ; .import     _sp_clr_payload
+        ; .import     _hd
 
         .include    "sp.inc"
         .include    "macros.inc"
@@ -29,7 +30,7 @@
 .proc _network_json_query
         axinto  tmp5            ; save string output location
 
-        jsr     _sp_clr_payload     ; calls bzero, so trashes p1/2/3
+        ; jsr     _sp_clr_payload     ; calls bzero, so trashes p1/2/3
 
         ldy     #$00
         sty     _fn_device_error
@@ -64,7 +65,7 @@
         setax   _sp_payload     ; length from payload[0..1]
         jsr     _strncpy        ; trashes ptr1-2, but we don't need ptr1 anymore, returns dest
 
-        ;; NOT REQUIRED - we have zero'd whole of sp_payload previous to the strncpy        
+        ;; NOT REQUIRED
         ; ; add a 0 to end of query string
         ; axinto  ptr1            ; move sp_payload+2 location into ptr1
         ; adw     ptr1, _sp_payload       ; increment ptr1 by length of query string
@@ -124,10 +125,46 @@ not_empty:
         setax   ptr4            ; len
         jsr     _memcpy         ; doesn't touch ptr4.
 
+        ; ----------------------------------------------
+        ; DEBUG hex dump the retruned string.
+        ; pushax  tmp5
+        ; pushax  ptr4
+
+        ; pushax  tmp5
+        ; setax   ptr4            ; length
+        ; jsr     _hd
+
+        ; popax   ptr4
+        ; popax   tmp5
+        ; ----------------------------------------------
+
         ; nul terminate the string
         adw     tmp5, ptr4      ; set tmp5 to end of string
-        sbw1    tmp5, #$01      ; remove 1 for the 0x9b char at the end of the result
+        sbw1    tmp5, #$01
+
+        ; ----------------------------------------------
+        ; pushax  tmp5
+
+        ; pushax  tmp5
+        ; setax   #$08
+        ; jsr     _hd
+
+        ; popax   tmp5
+        ; ----------------------------------------------
+
+        ; check if last char is 9b/0d/0a, if it is not, move on 1 char before nul terminating
         ldy     #$00
+        lda     (tmp5), y
+        cmp     #$9b
+        beq     @skip_add
+        cmp     #$0d
+        beq     @skip_add
+        cmp     #$0a
+        beq     @skip_add
+
+        adw1    tmp5, #$01
+
+@skip_add:
         tya
         sta     (tmp5), y
 
