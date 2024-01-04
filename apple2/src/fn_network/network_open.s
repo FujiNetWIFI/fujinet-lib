@@ -7,6 +7,7 @@
         .import     _sp_control
         .import     _sp_find_network
         .import     _sp_init
+        .import     _sp_is_init
         .import     _sp_open
         .import     _sp_network
         .import     _sp_payload
@@ -35,14 +36,6 @@ remove_params_return_error:
         jsr     incsp3
         jmp     return1         ; FN_ERR_IO_ERROR
 
-sp_error:
-        ; smart port error (negative value in a)
-        eor     #$ff
-        clc
-        adc     #$01
-        ; never 0, as we detected the error before calling sp_error
-        bne     remove_params_return_error
-
 ; uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans);
 _network_open:
         sta     tmp4            ; trans
@@ -50,16 +43,17 @@ _network_open:
         ldy     #$00
         sty     _fn_device_error
 
-        jsr     _sp_init
-        beq     init_error      ; didn't find a FN device at all
-        jsr     _sp_find_network
-        beq     init_error      ; didn't find a network device on the smartport
-        bmi     sp_error        ; actual device error, but negative so we can distinguish between device count and an error
+        lda     _sp_is_init
+        bne     :+              ; already ran init, don't do it again
 
-        sta     _sp_network     ; keep track of network unit for other functions
+        jsr     _sp_init
+        beq     init_error      ; didn't find FN device
+
+:       lda     _sp_network
+        beq     init_error      ; we haven't seen a network device, even though we init already
+
         jsr     _sp_open
         bne     remove_params_return_error      ; failed to call open, SmartPort error in A (not negative)
-
 
         ; ----------------------------------------------------------------------------------------------------
         ; SETUP SP_PAYLOAD
@@ -80,7 +74,7 @@ _network_open:
         ; add 3 and store, 2 for the extra control bytes at start and 1 for the NUL terminator
         adw     ptr4, #$03, _sp_payload
 
-        ; [3] = translation mode
+        ; [3] = translation mode - TODO THIS IS BROKEN - FIX IT
         mva     tmp4, _sp_payload+3
 
         ; [4..4+len]

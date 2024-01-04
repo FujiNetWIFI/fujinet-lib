@@ -29,16 +29,16 @@ Testing is done with BDD features. See [Testing README](testing/bdd-testing/READ
 - [x] Makefile
 - [x] .h overall API
 
-### define API (we are here)
+### define API
 
-|System | network_open() | network_close() | network_read() | network_write() | network_status() | network_ioctl() | network_json_parse() | network_json_query() |
-|-------|----------------|-----------------|----------------|-----------------|------------------|-----------------|----------------------|----------------------|
-| Atari | `[x]`          |  `[x]`          | `[x]`          | `[x]`           | `[x]`            | `[x]`           | `[x]`                | `[x]`                |
-| Apple2| `[x]`          |  `[x]`          | `[x]`          | `[x]`           | `[x]`            | `[x]`           | `[x]`                | `[x]`                |
-| ADAM  | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           | `[ ]`                | `[ ]`                |
-| CBM   | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           | `[ ]`                | `[ ]`                |
-| Coco  | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           | `[ ]`                | `[ ]`                |
-| rc2014| `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           | `[ ]`                | `[ ]`                |
+|System | network_open() | network_close() | network_read() | network_write() | network_status() | network_ioctl() | network_json_parse() | network_json_query() | network_init() |
+|-------|----------------|-----------------|----------------|-----------------|------------------|-----------------|----------------------|----------------------|----------------|
+| Atari | `[x]`          |  `[x]`          | `[x]`          | `[x]`           | `[x]`            | `[x]`           | `[x]`                | `[x]`                | `[x]`          |
+| Apple2| `[x]`          |  `[x]`          | `[x]`          | `[x]`           | `[x]`            | `[x]`           | `[x]`                | `[x]`                | `[x]`          |
+| ADAM  | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           | `[ ]`                | `[ ]`                | `[ ]`          |
+| CBM   | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           | `[ ]`                | `[ ]`                | `[ ]`          |
+| Coco  | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           | `[ ]`                | `[ ]`                | `[ ]`          |
+| rc2014| `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           | `[ ]`                | `[ ]`                | `[ ]`          |
 
 Listed:
 
@@ -50,6 +50,7 @@ Listed:
 - [ ] network_ioctl()
 - [ ] network_json_parse()
 - [ ] network_json_query()
+- [ ] network_init()
 
 ### target: atari
 
@@ -61,6 +62,7 @@ Listed:
 - [x] network_ioctl()
 - [x] network_json_parse()
 - [x] network_json_query()
+- [x] network_init()
 
 ### target: apple2
 
@@ -72,6 +74,7 @@ Listed:
 - [x] network_ioctl()
 - [x] network_json_parse()
 - [x] network_json_query()
+- [x] network_init()
 
 ### target: adam
 

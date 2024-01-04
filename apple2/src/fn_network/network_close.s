@@ -31,10 +31,6 @@
         lda     #'C'            ; close
         jsr     _sp_control
 
-        ; setting sp_network to 0, as it's checked in various other functions
-        ldy     #$00
-        sty     _sp_network
-
         ; convert to fujinet-network error
         jmp     _fn_error
 

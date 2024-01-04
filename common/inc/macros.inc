@@ -47,14 +47,14 @@
         bne     s1
         lda     arg1
         cmp     #<(.right (.tcount ({arg2})-1, {arg2}))
-s1:
+@s1:
     .else
         lda     1+(arg1)
         cmp     1+(arg2)
         bne     s2
         lda     arg1
         cmp     arg2
-s2:
+@s2:
     .endif
 .endmacro
 
@@ -112,7 +112,7 @@ s2:
 ; adw src, #$4000, dst
 ; adw a, b, c
 .macro adw arg1, arg2, arg3
-    .local l1_a, l1_b
+    .local @l1_a, @l1_b
     ; ensure arg1/arg3 don't have immediate values. They are always locations.
     .if (.match (.left (1, {arg1}), #))
         .error "adw: arg1 cannot be literal"
@@ -137,14 +137,14 @@ s2:
                 ; must store high byte of arg1 in arg3 still, and adjust if carry set
                 lda 1+(arg1)
                 sta 1+(arg3)
-                bcc l1_a
+                bcc @l1_a
                 inc 1+(arg3)
-l1_a:
+@l1_a:
             .else
                 ; the literal was only a byte, so only need to check carry
-                bcc l1_b
+                bcc @l1_b
                 inc 1+(arg1)
-l1_b:
+@l1_b:
             .endif
         .else
             ; full add of 2nd byte of constant
@@ -177,7 +177,7 @@ l1_b:
 ; sbw: subtracts word values together, or immediate bytes.
 ; complement of adw
 .macro sbw arg1, arg2, arg3
-    .local l1_a, l1_b
+    .local @l1_a, @l1_b
     ; ensure arg1/arg3 don't have immediate values. They are always locations.
     .if (.match (.left (1, {arg1}), #))
         .error "sbw: arg1 cannot be literal"
@@ -202,14 +202,14 @@ l1_b:
                 ; must store high byte of arg1 in arg3 still, and adjust if carry set
                 lda 1+(arg1)
                 sta 1+(arg3)
-                bcs l1_a
+                bcs @l1_a
                 dec 1+(arg3)
-l1_a:
+@l1_a:
             .else
                 ; the literal was only a byte, so only need to check carry
-                bcs l1_b
+                bcs @l1_b
                 dec 1+(arg1)
-l1_b:
+@l1_b:
             .endif
         .else
             ; full add of 2nd byte of constant
@@ -242,7 +242,7 @@ l1_b:
 ; adds byte1 to word arg1 dealing with carry, allow byte1 to be a
 ; so we can directly add accumulator to WORD
 .macro adw1 arg1, byte1
-    .local l1
+    .local @l1
     clc
     .if (.match ({byte1}, a))
         adc arg1
@@ -252,19 +252,19 @@ l1_b:
         adc byte1
         sta arg1
     .endif
-    bcc l1
+    bcc @l1
     inc 1+(arg1)
-l1:
+@l1:
 .endmacro
 
 ; subtracts byte1 from word arg1 dealing with carry
 .macro sbw1 arg1, byte1
-    .local l1
+    .local @l1
     sec
     lda arg1
     sbc byte1
     sta arg1
-    bcs l1
+    bcs @l1
     dec 1+(arg1)
-l1:
+@l1:
 .endmacro

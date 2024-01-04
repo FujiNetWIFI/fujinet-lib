@@ -39,7 +39,8 @@
         mva     #$01, tmp2      ; this will be our device index to check
 
         ; get DIB for each device in turn looking for name
-:       pusha   tmp2
+        lda     tmp2
+:       jsr     pusha
         lda     #$03
         jsr     _sp_status
         bne     skip_next

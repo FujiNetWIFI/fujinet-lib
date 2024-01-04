@@ -1,35 +1,29 @@
         .export     _sp_init
-        .export     find_slot
 
         .import     _sp_dispatch_fn
         .import     _sp_find_fuji
         .import     _sp_is_init
+        .import     _sp_find_network
+        .import     _sp_network
         .import     incsp2
+        .import     popax
+        .import     pushax
         .import     return0
         .import     return1
 
         .include    "macros.inc"
         .include    "zp.inc"
 
-; bool sp_init();
+; uint8_t sp_init();
 ;
-; returns true if Smart Port initialised
-; otherwise false.
+; returns network slot if Smart Port initialised and has a NETWORK adapter
+; otherwise 0.
 .proc _sp_init
         mva     #$01, _sp_is_init
-        jsr     find_slot
-        bne     :+
-
-        ; A/X are 0, so return that, as we didn't find a slot
-        rts
-
- :      jmp     return1
-
-.endproc
+        mva     #$00, _sp_network
 
 ; find a device slot that has Smart Port with a NETWORK adapter
 ; going from 7 down to 1, which is more likely to hit a FN device before some other RAM Card etc.
-.proc find_slot
         mwa     #$c700, ptr1
         ldx     #$01
 
@@ -58,8 +52,13 @@
         cpx     #$08
         bne     @all_slots
 
-        ; not found, return 0
-        jmp     return0
+        ; not found, return 0 in A/X
+        ; first, clear the dispatch function in case it was set when testing for a network device
+        ldx     #$00
+        stx     _sp_dispatch_fn
+        stx     _sp_dispatch_fn+1
+        txa
+        rts
 
 @found_sp:
         ; set _sp_dispatch_fn address while we have the correct slot in ptr1
@@ -79,7 +78,7 @@
         pushax  ptr1
 
         jsr     _sp_find_network
-        bne     @found_network
+        bpl     @found_network
 
         ; didn't find network, keep trying more slots
         ; restore ptr1
@@ -92,11 +91,15 @@
         bne     @no_match
 
 @found_network:
+        ; a contains the found slot id of the network device
+        sta     _sp_network     ; save the value for other functions to use
+
+        ; fix the stack
+        jsr     incsp2          ; remove the ptr1 we saved for looping
+        pla                     ; remove the old X index we saved for looping
+        
         ; now return the slot id in A, with X = 0
-        jsr     incsp2          ; remove the ptr1 saved data from sw stack
-        pla                     ; restore network slot number
-        tay                     ; temp move into y, so that we can make setting of a last statement
         ldx     #$00            ; high byte of return
-        tya                     ; low byte of return (and sets Z)
+        lda     _sp_network     ; low byte of return (and sets Z)
         rts
 .endproc
