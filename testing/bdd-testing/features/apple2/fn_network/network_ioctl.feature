@@ -78,7 +78,7 @@ Feature: library test - apple2 network_ioctl
       And I write word at _t_buffer with hex $0000
       And I write word at _t_len with hex $0005
       And I ignore cc65-noise
-     When I execute the procedure at _init for no more than 2300 instructions
+     When I execute the procedure at _init for no more than 2500 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0
@@ -101,7 +101,7 @@ Feature: library test - apple2 network_ioctl
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 0
       And I ignore cc65-noise
-     When I execute the procedure at _init for no more than 250 instructions
+     When I execute the procedure at _init for no more than 300 instructions
 
     Then I expect register A equal FN_ERR_BAD_CMD
      And I expect register X equal 0

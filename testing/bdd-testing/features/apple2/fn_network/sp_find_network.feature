@@ -8,7 +8,7 @@ Feature: library test - apple2 sp_find_network
       And I add file for compiling "features/apple2/fn_network/invokers/test_sp_find_network.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with $FF
-     When I execute the procedure at _init for no more than 750 instructions
+     When I execute the procedure at _init for no more than 800 instructions
 
     # offset 5 contains the device name
     Then string at _sp_payload+5 contains

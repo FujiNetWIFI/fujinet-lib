@@ -6,6 +6,10 @@
         .include    "macros.inc"
         .include    "zp.inc"
 
+; uint8_t sp_find_network();
+;
+; returns the ID of the Network device, if available. 0 otherwise.
+
 .proc _sp_find_network
         ; look for sp_network in devices
         setax   #sp_network_s

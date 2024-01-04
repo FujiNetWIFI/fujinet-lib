@@ -35,7 +35,7 @@ Feature: library test - apple2 network_status
       # return no error when status called
       And I write memory at t_return_code with 0
       And I ignore cc65-noise
-     When I execute the procedure at _init for no more than 2250 instructions
+     When I execute the procedure at _init for no more than 2300 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0

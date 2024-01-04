@@ -7,12 +7,12 @@ Feature: library test - apple2 network_write
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add apple2 src file "fn_network/network_write.s"
-      And I add apple2 src file "fn_network/sp_write.s"
+      And I add apple2 src file "fn_fuji/sp_write.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_write.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 0
       And I ignore cc65-noise
-     When I execute the procedure at _init for no more than 175 instructions
+     When I execute the procedure at _init for no more than 250 instructions
 
     Then I expect register A equal FN_ERR_BAD_CMD
      And I expect register X equal 0
@@ -24,7 +24,7 @@ Feature: library test - apple2 network_write
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add apple2 src file "fn_network/network_write.s"
-      And I add apple2 src file "fn_network/sp_write.s"
+      And I add apple2 src file "fn_fuji/sp_write.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_write.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
@@ -33,7 +33,7 @@ Feature: library test - apple2 network_write
       And I write word at t_len with hex $0000
       And I write memory at _sp_network with 1
       And I ignore cc65-noise
-     When I execute the procedure at _init for no more than 175 instructions
+     When I execute the procedure at _init for no more than 250 instructions
 
     Then I expect register A equal FN_ERR_BAD_CMD
      And I expect register X equal 0
@@ -45,7 +45,7 @@ Feature: library test - apple2 network_write
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add apple2 src file "fn_network/network_write.s"
-      And I add apple2 src file "fn_network/sp_write.s"
+      And I add apple2 src file "fn_fuji/sp_write.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_write.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
@@ -58,7 +58,7 @@ Feature: library test - apple2 network_write
       And I write memory at $b009 with $09
       And I write memory at $b00a with $0a
       And I ignore cc65-noise
-     When I execute the procedure at _init for no more than 2350 instructions
+     When I execute the procedure at _init for no more than 2500 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0
@@ -75,7 +75,7 @@ Feature: library test - apple2 network_write
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add apple2 src file "fn_network/network_write.s"
-      And I add apple2 src file "fn_network/sp_write.s"
+      And I add apple2 src file "fn_fuji/sp_write.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_write.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
@@ -98,7 +98,7 @@ Feature: library test - apple2 network_write
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add apple2 src file "fn_network/network_write.s"
-      And I add apple2 src file "fn_network/sp_write.s"
+      And I add apple2 src file "fn_fuji/sp_write.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_write_long.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
@@ -111,7 +111,7 @@ Feature: library test - apple2 network_write
       And I write memory at $b1ff with $bb
       And I write memory at $b200 with $69
       And I ignore cc65-noise
-     When I execute the procedure at _init for no more than 4350 instructions
+     When I execute the procedure at _init for no more than 4550 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0

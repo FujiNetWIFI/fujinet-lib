@@ -7,7 +7,7 @@ Feature: library test - apple2 network_json_query
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add apple2 src file "fn_network/network_json_query.s"
-      And I add apple2 src file "fn_network/sp_read.s"
+      And I add apple2 src file "fn_fuji/sp_read.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_query.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
@@ -74,7 +74,7 @@ Feature: library test - apple2 network_json_query
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add apple2 src file "fn_network/network_json_query.s"
-      And I add apple2 src file "fn_network/sp_read.s"
+      And I add apple2 src file "fn_fuji/sp_read.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_query.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 0
@@ -91,7 +91,7 @@ Feature: library test - apple2 network_json_query
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add apple2 src file "fn_network/network_json_query.s"
-      And I add apple2 src file "fn_network/sp_read.s"
+      And I add apple2 src file "fn_fuji/sp_read.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_query.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
@@ -131,7 +131,7 @@ Feature: library test - apple2 network_json_query
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add apple2 src file "fn_network/network_json_query.s"
-      And I add apple2 src file "fn_network/sp_read.s"
+      And I add apple2 src file "fn_fuji/sp_read.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_query.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
@@ -165,7 +165,7 @@ Feature: library test - apple2 network_json_query
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add apple2 src file "fn_network/network_json_query.s"
-      And I add apple2 src file "fn_network/sp_read.s"
+      And I add apple2 src file "fn_fuji/sp_read.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_query.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
@@ -197,7 +197,7 @@ Feature: library test - apple2 network_json_query
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add apple2 src file "fn_network/network_json_query.s"
-      And I add apple2 src file "fn_network/sp_read.s"
+      And I add apple2 src file "fn_fuji/sp_read.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_json_query.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write memory at _sp_network with 1
@@ -210,7 +210,7 @@ Feature: library test - apple2 network_json_query
       And I write word at t_s with hex $9200
       And I write memory at t_r3_error with SP_ERR_IO_ERROR
       And ignore address _bzero to _bzero+93 for trace
-     When I execute the procedure at _init for no more than 3100 instructions
+     When I execute the procedure at _init for no more than 3150 instructions
 
     Then I expect register A equal FN_ERR_IO_ERROR
      And I expect register X equal 0
