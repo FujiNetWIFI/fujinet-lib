@@ -23,6 +23,9 @@
 
 ; uint8_t network_json_query(char *devicespec, char *query, char *s);
 ;
+; TODO: how do we deal with very large json results? Maybe interface with network_read, which can handle them.
+; Or does sio_read work with any max size?
+
 .proc _network_json_query
         axinto  tmp6            ; save target string location
 
@@ -65,9 +68,9 @@
         beq     no_data
 
         ; read data, this sets _fn_bytes_read
-        pusha   tmp5
-        pushax  tmp6
-        setax   DVSTAT
+        pusha   tmp5            ; unit
+        pushax  tmp6            ; buffer
+        setax   DVSTAT          ; length
         jsr     _sio_read
         bne     error
 

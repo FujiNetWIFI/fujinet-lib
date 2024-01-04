@@ -16,8 +16,7 @@
 _sio_read:
         axinto  ptr1                    ; length
 
-        ; this is wrong, we must set this in the network_read code, not here, as we could do more than 1 read for any connection, and need to accumulate
-        ; axinto  _fn_bytes_read
+        axinto  _fn_bytes_read
 
         setax   #t_network_read
         jsr     copy_nw_cmd_data           ; setup DCB

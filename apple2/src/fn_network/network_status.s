@@ -23,13 +23,15 @@
 ;
 _network_status:
         ; save A/X so we can restore them after clearing payload
-        pha
-        txa
-        pha
-        jsr     _sp_clr_payload     ; calls bzero, so trashes p1/2/3
-        pla
-        tax
-        pla
+
+        ; pha
+        ; txa
+        ; pha
+        ; jsr     _sp_clr_payload     ; calls bzero, so trashes p1/2/3
+        ; pla
+        ; tax
+        ; pla
+
         ; drop into no_clr version
 
 _network_status_no_clr:

@@ -126,6 +126,7 @@ not_empty:
 
         ; nul terminate the string
         adw     tmp5, ptr4      ; set tmp5 to end of string
+        sbw1    tmp5, #$01      ; remove 1 for the 0x9b char at the end of the result
         ldy     #$00
         tya
         sta     (tmp5), y

@@ -2,12 +2,16 @@
 
 ## [Unreleased]
 
+## [2.1.3] - 2024-01-03
+
 ### Changed
 
 - [apple2] sp_init looks from slot 7 down to 1 instead of up from 1 to 7
 - [apple2] sp_init now additionally looks for an SP card WITH the network adapter on it, which should skip other installed SP devices
 - [apple2] sp_init only runs once and stores network id, close no longer resets it.
 - lots of tests fixed (cycle count errors mostly)
+- add network_init to detect network errors early. Implemented on APPLE2, nop on atari.
+  Note: network_open still checks if appropriate init has happened on apple, but network_init will do same thing first, and then open will use the results from init.
 
 ## [2.1.2] - 2024-01-03
 

@@ -25,6 +25,7 @@ uint8_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
     uint8_t r = 0;
     uint16_t fetch_size = 0;
     uint16_t amount_left = len;
+    uint16_t total_read = 0;
 #ifdef BUILD_ATARI
     uint8_t unit = 0;
 #endif
@@ -75,7 +76,11 @@ uint8_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
         }
 
         fetch_size = MIN(amount_left, fn_network_bw);
-        fetch_size = MIN(fetch_size, MAX_READ_SIZE); // should we always limit to MAX_READ_SIZE on all devices?
+
+#ifdef BUILD_APPLE2
+        // need to validate this is only required for apple
+        fetch_size = MIN(fetch_size, MAX_READ_SIZE);
+#endif
 
 #ifdef BUILD_ATARI
         sio_read(unit, buf, fetch_size);
@@ -88,8 +93,10 @@ uint8_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
 
         buf += fetch_size;
         amount_left -= fetch_size;
-        fn_bytes_read += fetch_size;
+        total_read += fetch_size;
     }
 
+    // do this here at the end, not in the loop so sio_read for atari can continue to set fn_bytes_read for short reads.
+    fn_bytes_read = total_read;
     return 0;
 }

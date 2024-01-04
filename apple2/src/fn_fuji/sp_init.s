@@ -14,16 +14,17 @@
         .include    "macros.inc"
         .include    "zp.inc"
 
-; uint8_t sp_init();
+; int8_t sp_init();
 ;
 ; returns network slot if Smart Port initialised and has a NETWORK adapter
-; otherwise 0.
+; otherwise 0 if there were no errors but no SP device, else the -ve value of the device error from SP, as returned by sp_find_device.
 .proc _sp_init
-        mva     #$01, _sp_is_init
+        mva     #$01, _sp_is_init               ; we assume you can only call init once. No devices are mounted after powerup
         mva     #$00, _sp_network
+        sta     last_sp_error
 
 ; find a device slot that has Smart Port with a NETWORK adapter
-; going from 7 down to 1, which is more likely to hit a FN device before some other RAM Card etc.
+; going from 7 down to 1, which is more likely to hit a FN device before some other RAM Card etc (thanks @ShunKita)
         mwa     #$c700, ptr1
         ldx     #$01
 
@@ -52,12 +53,12 @@
         cpx     #$08
         bne     @all_slots
 
-        ; not found, return 0 in A/X
+        ; not found, return value of last_sp_error, which will be -ve or 0 for the caller to know there was a device error or not
         ; first, clear the dispatch function in case it was set when testing for a network device
         ldx     #$00
         stx     _sp_dispatch_fn
         stx     _sp_dispatch_fn+1
-        txa
+        lda     last_sp_error
         rts
 
 @found_sp:
@@ -79,10 +80,15 @@
 
         jsr     _sp_find_network
         bpl     @found_network
+        beq     :+
 
-        ; didn't find network, keep trying more slots
+        ; we had a -ve value, which indicates a real SP error of some kind, capture it
+        ; so we can indicate the issue at the end if we didn't find a SP with network
+        sta     last_sp_error
+
+        ; as we didn't find network, keep trying more slots
         ; restore ptr1
-        popax   ptr1
+:       popax   ptr1
         ; restore the id we last tried into X
         pla
         tax
@@ -94,6 +100,9 @@
         ; a contains the found slot id of the network device
         sta     _sp_network     ; save the value for other functions to use
 
+        ; if one of the potentially other SP devices was in error, we will ignore it, as we found the right one with network.
+        mva     #$00, last_sp_error
+
         ; fix the stack
         jsr     incsp2          ; remove the ptr1 we saved for looping
         pla                     ; remove the old X index we saved for looping
@@ -103,3 +112,8 @@
         lda     _sp_network     ; low byte of return (and sets Z)
         rts
 .endproc
+
+.data
+; store the last SP error we got.
+; we want to ensure any error from the last SP device detected that we discard is captured.
+last_sp_error: .byte 0
