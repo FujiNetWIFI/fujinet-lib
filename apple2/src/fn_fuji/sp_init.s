@@ -81,8 +81,8 @@
         pushax  ptr1
 
         jsr     _sp_find_network
+        beq     @not_found_nw
         bpl     @found_network
-        beq     :+
 
         ; we had a -ve value, which indicates a real SP error of some kind, capture it
         ; so we can indicate the issue at the end if we didn't find a SP with network
@@ -90,7 +90,8 @@
 
         ; as we didn't find network, keep trying more slots
         ; restore ptr1
-:       popax   ptr1
+@not_found_nw:
+        popax   ptr1
         ; restore the id we last tried into X
         pla
         tax

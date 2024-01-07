@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [2.1.5] - 2024-01-07
+
+### Fixed
+
+- [apple2] sp_init multiple SP device detection (thanks @ShunKita)
+
 ## [2.1.4] - 2024-01-06
 
 ### Fixed
