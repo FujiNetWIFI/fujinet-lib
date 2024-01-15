@@ -1,6 +1,6 @@
 # Fujinet Network Lib
 
-Routines to use the FujiNet Network Adapter sub-device.
+Routines for using the FujiNet Network Adapter sub-device.
 
 The top level folder contains the .h API, one subfolder for each platform.
 
