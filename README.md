@@ -2,7 +2,7 @@
 
 Routines to use the FujiNet Network Adapter sub-device.
 
-Top level folder contains the .h API, one subfolder for each platform.
+The top level folder contains the .h API, one subfolder for each platform.
 
 ## Building
 
