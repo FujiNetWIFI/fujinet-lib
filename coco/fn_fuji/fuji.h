@@ -70,6 +70,8 @@
 
 // Types and Structures ///////////////////////////////////////////////////
 
+#define SSID_MAXLEN 33
+#define FILE_MAXLEN 36
 /**
  * The current wifi SSID and password
  */
@@ -78,6 +80,45 @@ typedef struct
   char ssid[SSID_MAXLEN];
   char password[64];
 } NetConfig;
+
+/**
+ * Returned info for a single SSID entry
+ * from a WiFi scan
+ */
+typedef struct {
+  char ssid[SSID_MAXLEN];
+  signed char rssi;
+} SSIDInfo;
+
+/**
+ * @brief typedef for storing host slot information
+ */
+typedef unsigned char HostSlot[32];
+
+/**
+ * @brief Data structure for device slots
+ */
+typedef struct {
+  unsigned char hostSlot;
+  unsigned char mode;
+  unsigned char file[FILE_MAXLEN];
+} DeviceSlot;
+
+/**
+ * The current network adapter configuration
+ */
+typedef struct
+{
+  char ssid[SSID_MAXLEN];
+  char hostname[64];
+  unsigned char localIP[4];
+  unsigned char gateway[4];
+  unsigned char netmask[4];
+  unsigned char dnsIP[4];
+  unsigned char macAddress[6];
+  unsigned char bssid[6];
+  char fn_version[15];
+} AdapterConfig;
 
 // Interface //////////////////////////////////////////////////////////////
 
@@ -97,5 +138,101 @@ BOOL fuji_get_ssid(NetConfig *ssid);
  * @verbose This function will block until completion.
  */
 byte fuji_scan_networks(void);
+
+/**
+ * @brief Return scan result, after fuji_scan_networks
+ * @return TRUE if valid, false if INVALID (e.g. over index)
+ * @verbose This function will block until completion.
+ */
+byte fuji_get_scan_result(byte i, SSIDInfo *s);
+
+/**
+ * @brief Set WiFi SSID and Passphrase, and start connection.
+ * @param nc Pointer to NetConfig struct with SSID and passkey
+ * @return TRUE if successful, FALSE if failed.
+ */
+BOOL fuji_set_ssid(NetConfig *nc);
+
+/**
+ * @brief Return status of WiFi adapter
+ * @return WIFI Status byte
+ */
+byte fuji_get_wifi_status(void);
+
+/**
+ * @brief Mount host slot specified by hs (0-3)
+ * @param hs the Host slot to mount (0-3)
+ */
+void fuji_mount_host(byte hs);
+
+/**
+ * @brief Mount drive slot specified by ds (0-3) with mode m
+ * @param ds the drive slot to mount (0-3)
+ * @param m The mode to use (0=r/o 2=r/w)
+ */
+void fuji_mount_image(byte ds, byte m);
+
+/**
+ * @brief Open directory connection to host slot hs, path p, and filter by f
+ * @param hs Host slot to open (0-7)
+ * @param p Path to open
+ * @param f Filter by wildcard
+ */
+void fuji_open_directory(byte hs, char *p, char *f);
+
+/**
+ * @brief Read next directory entry in open directory
+ * @param maxlen Maximum length of filename to return (longer names are center-ellipsized)
+ * @param a if set to 128, return additional information (such as size and modified date)
+ * @param s target string to return directory entry, must be l+1
+ */
+void fuji_read_directory(byte maxlen, byte a, char *s);
+
+/**
+ * @brief Close open directory handle
+ */
+void fuji_close_directory(void);
+
+/**
+ * @brief Read host slots from FujiNet
+ * @param h Destination pointer for host slot data.
+ */
+void fuji_read_host_slots(HostSlot *h);
+
+/**
+ * @brief Write host slots from FujiNet
+ * @param h source pointer for host slot data.
+ */
+void fuji_write_host_slots(HostSlot *h);
+
+/**
+ * @brief Read device slots from FujiNet
+ * @param h Destination pointer for device slot data.
+ */
+void fuji_read_device_slots(DeviceSlot *d);
+
+/**
+ * @brief Write device slots from FujiNet
+ * @param h Destination pointer for device slot data.
+ */
+void fuji_write_device_slots(DeviceSlot *d);
+
+/**
+ * @brief Return whether WIFI is enabled (1) or disabled (0)
+ * @return 0 = wifi disabled, 1 = wifi enabled
+ */
+BOOL fuji_get_wifi_enabled(void);
+
+/**
+ * @brief Unmount disk image in device slot ds
+ * @param ds Device slot to unmount (0-3)
+ */
+void fuji_unmount_disk_image(byte ds);
+
+/**
+ * @brief Get FujiNet Adapter Config and place in AdapterConfig structure pointed to by ac
+ * @param ac Pointer to an allocated AdapterConfig structure
+ */
+void fuji_get_adapter_config(AdapterConfig *ac);
 
 #endif /* FUJI_H */
