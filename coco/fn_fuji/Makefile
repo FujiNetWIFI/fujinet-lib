@@ -18,7 +18,10 @@ OBJS=fuji_reset.o \
 	fuji_write_device_slots.o \
 	fuji_get_wifi_enabled.o \
 	fuji_unmount_image.o \
-	fuji_get_adapter_config.o
+	fuji_get_adapter_config.o \
+	fuji_unmount_host_slot.o \
+	fuji_get_directory_position.o \
+	fuji_set_directory_position.o
 
 libfuji.a: $(OBJS)
 	$(AR) --create libfuji.a $(OBJS)
@@ -76,6 +79,15 @@ fuji_unmount_image.o: fuji_unmount_image.c fuji.h
 
 fuji_get_adapter_config.o: fuji_get_adapter_config.c fuji.h
 	$(CC) -o fuji_get_adapter_config.o -c fuji_get_adapter_config.c
+
+fuji_unmount_host_slot.o: fuji_unmount_host_slot.c fuji.h
+	$(CC) -o fuji_unmount_host_slot.o -c fuji_unmount_host_slot.c
+
+fuji_get_directory_position.o: fuji_get_directory_position.c fuji.h
+	$(CC) -o fuji_get_directory_position.o -c fuji_get_directory_position.c
+
+fuji_set_directory_position.o: fuji_set_directory_position.c fuji.h
+	$(CC) -o fuji_set_directory_position.o -c fuji_set_directory_position.c
 
 clean:
 	$(RM) *.o *.a *~
