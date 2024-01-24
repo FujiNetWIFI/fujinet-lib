@@ -21,7 +21,9 @@ OBJS=fuji_reset.o \
 	fuji_get_adapter_config.o \
 	fuji_unmount_host_slot.o \
 	fuji_get_directory_position.o \
-	fuji_set_directory_position.o
+	fuji_set_directory_position.o \
+	fuji_get_device_filename.o \
+	fuji_set_device_filename.o
 
 libfuji.a: $(OBJS)
 	$(AR) --create libfuji.a $(OBJS)
@@ -88,6 +90,12 @@ fuji_get_directory_position.o: fuji_get_directory_position.c fuji.h
 
 fuji_set_directory_position.o: fuji_set_directory_position.c fuji.h
 	$(CC) -o fuji_set_directory_position.o -c fuji_set_directory_position.c
+
+fuji_get_device_filename.o: fuji_get_device_filename.c fuji.h
+	$(CC) -o fuji_get_device_filename.o -c fuji_get_device_filename.c
+
+fuji_set_device_filename.o: fuji_set_device_filename.c fuji.h
+	$(CC) -o fuji_set_device_filename.o -c fuji_set_device_filename.c
 
 clean:
 	$(RM) *.o *.a *~

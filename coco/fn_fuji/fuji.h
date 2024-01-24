@@ -247,4 +247,11 @@ unsigned int fuji_get_directory_position(void);
  */
 void fuji_set_directory_position(unsigned int pos);
 
+/**
+ * @brief Return device filename to string pointer s (needs to be 256 bytes!)
+ * @param ds the device slot to return (0-3)
+ * @param s Destination pointer
+ */
+void fuji_set_device_filename(byte ds, char *s);
+
 #endif /* FUJI_H */
