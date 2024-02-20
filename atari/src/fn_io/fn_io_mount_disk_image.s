@@ -5,7 +5,7 @@
         .include        "macros.inc"
         .include        "device.inc"
 
-; void fn_io_mount_disk_image(uint8_t device_slot, uint8_t mode)
+; uint8_t fn_io_mount_disk_image(uint8_t device_slot, uint8_t mode)
 .proc _fn_io_mount_disk_image
         sta     tmp8    ; save mode
 
@@ -17,7 +17,11 @@
         jsr     popa    ; slot
         sta     IO_DCB::daux1
         mva     #$fe, IO_DCB::dtimlo
-        jmp     _bus
+        jsr     _bus
+
+        ldx     #$00
+        lda     IO_DCB::dstats
+        rts
 .endproc
 
 .rodata

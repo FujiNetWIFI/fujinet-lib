@@ -4,7 +4,7 @@
 #include "fujinet-io.h"
 #include "fn_data.h"
 
-void fn_io_mount_host_slot(uint8_t hs)
+uint8_t fn_io_mount_host_slot(uint8_t hs)
 {
   memset(response, 0, sizeof(response));
 
@@ -13,4 +13,5 @@ void fn_io_mount_host_slot(uint8_t hs)
 
   cbm_open(LFN, DEV, SAN, response);
   cbm_close(LFN);
+  return 0; // TODO: is there an error code we can use here?
 }

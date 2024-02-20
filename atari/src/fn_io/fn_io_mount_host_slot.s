@@ -6,7 +6,7 @@
         .include        "macros.inc"
         .include        "device.inc"
 
-; void fn_io_mount_host_slot(uint8_t slot_num)
+; uint8_t fn_io_mount_host_slot(uint8_t slot_num)
 ;
 .proc _fn_io_mount_host_slot
         sta     tmp8
@@ -15,7 +15,11 @@
         jsr     copy_io_cmd_data
 
         mva     tmp8, IO_DCB::daux1
-        jmp     _bus
+        jsr     _bus
+
+        ldx     #$00
+        lda     IO_DCB::dstats
+        rts
 
 .endproc
 

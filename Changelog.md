@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [2.2.0] - 2024-02-20
+
+- Change signature of fn_io_mount_disk_image, and fn_io_mount_host_slot to return an error code, so all fn_io_mount* functions are consistent (fixes #2).
+- [atari] fn_io_mount_disk_image returns error code from BUS
+- [atari] fn_io_mount_host_slot returns error code from BUS
+- [atari] added test cases for BUS errors for fn_io_mount_disk_image, fn_io_mount_host_slot, fn_io_mount_all
+
 ## [2.1.5] - 2024-01-07
 
 ### Fixed
