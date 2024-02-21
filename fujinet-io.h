@@ -1,6 +1,8 @@
 #ifndef FN_IO_H
 #define FN_IO_H
 
+// TODO: this header file needs documenting
+
 #include <stdint.h>
 #include <stdbool.h>
 

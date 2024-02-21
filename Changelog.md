@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [2.2.1] - 2024-02-21
+
+- Renamed libs and archives to reflect name change from "fujinet-network" to "fujinet-lib"
+- Libs are now "fujinet-{target}-{version}.lib
+- Zips is now fujinet-lib-{target}-{version}.zip
+- Header and include files are still fujinet-io.{h,inc} and fujinet-network.{h,inc} to represent their sub-function within fujinet-lib
+
 ## [2.2.0] - 2024-02-20
 
 - Change signature of fn_io_mount_disk_image, and fn_io_mount_host_slot to return an error code, so all fn_io_mount* functions are consistent (fixes #2).

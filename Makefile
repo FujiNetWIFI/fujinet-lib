@@ -11,7 +11,7 @@
 TARGETS := atari apple2 commodore
 
 # Name of the final, single-file library.
-PROGRAM := fujinet-network.lib
+PROGRAM := fujinet.lib
 
 # Path(s) to additional libraries required for linking the program
 # Use only if you don't want to place copies of the libraries in SRCDIR
@@ -311,15 +311,15 @@ clean:
 
 dist: $(PROGRAM)
 	$(call MKDIR,dist/)
-	$(call RMFILES,dist/fujinet-network-$(TARGETLIST)-*.lib)
-	cp build/$(PROGRAM) dist/fujinet-network-$(TARGETLIST)_$(VERSION_STRING).lib
+	$(call RMFILES,dist/fujinet-$(TARGETLIST)-*.lib)
+	cp build/$(PROGRAM) dist/fujinet-$(TARGETLIST)-$(VERSION_STRING).lib
 	cp $(FN_NW_HEADER) dist/
 	cp $(FN_NW_INC) dist/
 	cp $(FN_IO_HEADER) dist/
 	cp $(FN_IO_INC) dist/
 	cp $(CHANGELOG) dist/
-	cd dist && zip fujinet-network-$(TARGETLIST)_$(VERSION_STRING).zip $(CHANGELOG) fujinet-network-$(TARGETLIST)_$(VERSION_STRING).lib *.h *.inc
-	$(call RMFILES,dist/fujinet-network-$(TARGETLIST)_*.lib)
+	cd dist && zip fujinet-lib-$(TARGETLIST)-$(VERSION_STRING).zip $(CHANGELOG) fujinet-$(TARGETLIST)-$(VERSION_STRING).lib *.h *.inc
+	$(call RMFILES,dist/fujinet-$(TARGETLIST)-*.lib)
 	$(call RMFILES,dist/$(CHANGELOG))
 	$(call RMFILES,dist/*.h)
 	$(call RMFILES,dist/*.inc)
