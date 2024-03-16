@@ -1,9 +1,14 @@
         .export     _sp_find_device
         .export     check_name
 
+        .import     _sp_is_init
+        .import     _sp_init
         .import     _sp_payload
         .import     _sp_status
+        .import     incsp2
+        .import     popax
         .import     pusha
+        .import     pushax
         .import     return0
 
         .include    "macros.inc"
@@ -20,6 +25,27 @@
 .proc _sp_find_device
         axinto  ptr1            ; the device name we're looking for
 
+        lda     _sp_is_init
+        bne     do_find         ; already initialised, skip init
+
+        ; we haven't initialized, so save ptr1, go do the init, then restore it
+        lda     ptr1            ; x still has ptr1+1, just get a back
+        jsr     pushax          ; store the values so we can run init
+        jsr     _sp_init
+        beq     not_found
+        bpl     ok              ; succeeded if >0
+
+        ; error initialising (-ve), or no network device found (0)
+        ; just return the value, and let caller deal with it
+not_found:
+        jsr     incsp2          ; remove the device name ptr from stack, doesn't affect A
+        cmp     #$00            ; set the N/Z flags according to value in A for the return
+        rts
+
+ok:
+        popax   ptr1            ; restore the device name
+
+do_find:
         ; find the device count by sending 0/0 status request
         pusha   #$00            ; doubles up as both parameters
         jsr     _sp_status

@@ -14,8 +14,16 @@
 
 #define MAX_DATA_LEN (767)
 
-// The id of the network device
-extern uint8_t sp_network;
+extern uint8_t sp_is_init;
+
+// device ids
+extern int8_t sp_network;
+// and then I started using _id
+extern int8_t sp_clock_id;
+extern int8_t sp_cpm_id;
+extern int8_t sp_fuji_id;
+extern int8_t sp_modem_id;
+extern int8_t sp_printer_id;
 
 // the general payload buffer
 extern uint8_t sp_payload[];
@@ -30,7 +38,8 @@ void sp_clr_payload();
 int8_t sp_status(uint8_t dest, uint8_t statcode);
 int8_t sp_control(uint8_t dest, uint8_t ctrlcode);
 int8_t sp_read(uint8_t dest, uint16_t len);
-uint8_t sp_init();
+int8_t sp_init();
+int8_t sp_find_fuji();
 
 uint8_t network_status_no_clr(char *devicespec, uint16_t *bw, uint8_t *c, uint8_t *err);
 uint8_t network_unit(char *devicespec);

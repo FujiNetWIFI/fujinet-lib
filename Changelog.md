@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+- Start adding fn_io routines to Apple2
+  - fn_io_get_adapter_config
+  - fn_io_get_adapter_config_extended
+- Add find methods for clock, cpm, modem, printer
+
 ## [2.2.1] - 2024-02-21
 
 - Renamed libs and archives to reflect name change from "fujinet-network" to "fujinet-lib"

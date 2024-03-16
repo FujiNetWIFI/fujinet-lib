@@ -4,8 +4,8 @@
 #include "fujinet-io.h"
 #include "fujinet-network-apple2.h"
 
-// do status call to FN with code 0xe8, payload[0] = 0
-void fn_io_get_adapter_config(AdapterConfig *ac)
+// do status call to FN with code 0xC4
+void fn_io_get_adapter_config_extended(AdapterConfigExtended *acx)
 {
 	int8_t err = 0;
 	err = sp_find_fuji();
@@ -13,10 +13,10 @@ void fn_io_get_adapter_config(AdapterConfig *ac)
 		return;
 	}
 
-	err = sp_status(sp_fuji_id, 0xE8);
+	err = sp_status(sp_fuji_id, 0xC4);
 	if (err != 0) {
 		return;
 	}
 
-	memcpy(ac, &sp_payload[0], sizeof(AdapterConfig));
+	memcpy(acx, &sp_payload[0], sizeof(AdapterConfigExtended));
 }
