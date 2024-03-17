@@ -1,5 +1,8 @@
         .export         _fn_io_put_host_slots
-        .import         copy_io_cmd_data, _bus
+
+        .import         _bus
+        .import         _fn_io_success
+        .import         copy_io_cmd_data
 
         .include        "zp.inc"
         .include        "macros.inc"

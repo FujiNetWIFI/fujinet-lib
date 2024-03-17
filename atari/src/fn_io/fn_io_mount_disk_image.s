@@ -1,5 +1,9 @@
         .export         _fn_io_mount_disk_image
-        .import         copy_io_cmd_data, popa, _bus
+        .import         _bus
+        .import         copy_io_cmd_data
+        .import         popa
+        .import         return0
+        .import         return1
 
         .include        "zp.inc"
         .include        "macros.inc"

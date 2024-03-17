@@ -8,7 +8,7 @@
 ###############################################################################
 
 # Space or comma separated list of cc65 supported target platforms to build for.
-TARGETS := atari apple2 commodore
+TARGETS := atari apple2
 
 # Name of the final, single-file library.
 PROGRAM := fujinet.lib

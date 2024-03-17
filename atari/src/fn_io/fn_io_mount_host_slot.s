@@ -1,5 +1,9 @@
         .export         _fn_io_mount_host_slot
-        .import         copy_io_cmd_data, fn_io_hostslots, _bus
+
+        .import         _bus
+        .import         _fn_io_success
+        .import         copy_io_cmd_data
+        .import         fn_io_hostslots
         .import         popa
 
         .include        "zp.inc"

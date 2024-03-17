@@ -1,7 +1,8 @@
         .export     _fn_io_open_directory
 
-        .import     _fn_io_error
-        .import     copy_io_cmd_data, _bus
+        .import     _bus
+        .import     _fn_io_success
+        .import     copy_io_cmd_data
         .import     popa, return0
 
         .include    "zp.inc"
