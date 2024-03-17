@@ -3,10 +3,10 @@
         .import     _bus
         .import     _fn_device_error
         .import     _fn_error
-        .import     _io_status
+        .import     _bus_status
         .import     _network_unit
         .import     addysp
-        .import     copy_nw_cmd_data
+        .import     copy_network_cmd_data
         .import     popa
         .import     popax
         .import     return1
@@ -59,7 +59,7 @@
 
         jsr     _bus
         lda     IO_DCB::dunit
-        jmp     _io_status              ; set return to the status
+        jmp     _bus_status              ; set return to the status
 
 @args_error:
         ; increase SP by Y to clear the params we received, and return error

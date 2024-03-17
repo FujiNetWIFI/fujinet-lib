@@ -2,9 +2,9 @@
 
         .import     _bus
         .import     _fn_device_error
-        .import     _io_status
+        .import     _bus_status
         .import     _network_unit
-        .import     copy_nw_cmd_data
+        .import     copy_network_cmd_data
         .import     fn_open_mode_table
         .import     fn_open_trans_table
         .import     popa
@@ -22,7 +22,7 @@
         sty     _fn_device_error
 
         setax   #t_network_open
-        jsr     copy_nw_cmd_data
+        jsr     copy_network_cmd_data
 
         jsr     popa                    ; mode
         sta     IO_DCB::daux1
@@ -49,7 +49,7 @@
 
         jsr     _bus
         pla
-        jmp     _io_status
+        jmp     _bus_status
 .endproc
 
 .rodata

@@ -1,10 +1,10 @@
         .export     _network_write
 
         .import     _bus
-        .import     _io_status
+        .import     _bus_status
         .import     _fn_device_error
         .import     _network_unit
-        .import     copy_nw_cmd_data
+        .import     copy_network_cmd_data
         .import     popax
 
         .include    "device.inc"
@@ -20,7 +20,7 @@ _network_write:
 
         setax   #t_network_write
 
-        jsr     copy_nw_cmd_data
+        jsr     copy_network_cmd_data
 
         jsr     popax                   ; buf
         sta     IO_DCB::dbuflo
@@ -40,7 +40,7 @@ _network_write:
         jsr     _bus
 
         lda     tmp6                    ; restore the unit
-        jmp     _io_status
+        jmp     _bus_status
 
 t_network_write:
         .byte 'W', $80, $ff, $ff, $ff, $ff

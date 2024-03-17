@@ -1,1 +1,0 @@
-char response[1024];

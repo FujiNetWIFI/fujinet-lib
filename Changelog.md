@@ -2,9 +2,8 @@
 
 ## [Unreleased]
 
-- Start adding fn_io routines to Apple2
-  - fn_io_get_adapter_config
-  - fn_io_get_adapter_config_extended
+- The great rename fn_io to fn_fuji to reflect device in FN being used, version bump to 3.0.0 to reflect huge name changes
+- Start adding fn_fuji (nee: fn_io) routines to Apple2
 - Add find methods for clock, cpm, modem, printer
 
 ## [2.2.1] - 2024-02-21

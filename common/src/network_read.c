@@ -3,15 +3,17 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "../../fujinet-network.h"
+#include "fujinet-network.h"
 
 #ifdef BUILD_ATARI
-#include "../../fujinet-lib-atari.h"
+#include "fujinet-network-atari.h"
+#include "fujinet-bus-atari.h"
 #endif
 
 #ifdef BUILD_APPLE2
-#include "../../fujinet-lib-apple2.h"
-#include "../../apple2/src/fn_fuji/inc/sp.h"
+#include "fujinet-network-apple2.h"
+#include "fujinet-bus-apple2.h"
+#include "apple2/src/bus/inc/sp.h"
 #endif
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))

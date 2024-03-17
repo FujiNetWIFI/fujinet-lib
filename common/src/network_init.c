@@ -4,8 +4,8 @@
 #include "../../fujinet-network.h"
 
 #ifdef BUILD_APPLE2
-#include "../../fujinet-lib-apple2.h"
-#include "../../apple2/src/fn_fuji/inc/sp.h"
+#include "fujinet-bus-apple2.h"
+#include "apple2/src/bus/inc/sp.h"
 #endif
 
 uint8_t network_init()
