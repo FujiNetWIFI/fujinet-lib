@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include "fujinet-fuji.h"
 
-bool fuji_get_host_prefix(uint8_t hs, char *prefix)
+bool fuji_get_hsio_index(uint8_t *index)
 {
 	// Not implemented in A2
 	return false;

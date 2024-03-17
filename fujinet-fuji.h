@@ -5,12 +5,15 @@
 
 // In general, bools return the "success" status, so true is good, false is bad.
 
-#include <stdint.h>
+#include <stddef.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #define FILE_MAXLEN 36
 #define SSID_MAXLEN 33 /* 32 + NULL */
-#define MAX_APPKEY_LEN 64
+#define MAX_APPKEY_LEN    64
+#define MAX_PASSWORD_LEN  64
+
 
 enum WifiStatus {
     no_ssid_available   = 1,
@@ -27,7 +30,7 @@ typedef struct {
 typedef struct
 {
   char ssid[SSID_MAXLEN];
-  char password[64];
+  char password[MAX_PASSWORD_LEN];
 } NetConfig;
 
 typedef struct
@@ -134,14 +137,36 @@ enum HashType {
     SHA512
 };
 
-void fuji_close_directory(void);
-void fuji_copy_file(uint8_t src_slot, uint8_t dst_slot, char *copy_spec);
-void fuji_create_new(NewDisk *new_disk);
-void fuji_disable_device(uint8_t d);
-bool fuji_error();
-void fuji_enable_device(uint8_t d);
-void fuji_enable_udpstream(uint16_t port, char *host);
 
+/*
+ * Closes the currently open directory
+ * @return Success status, true if all OK.
+ */
+bool fuji_close_directory(void);
+
+/*
+ * Copies a file from given src to dst, with supplied path in copy_spec
+ * @return Success status, true if all OK.
+ */
+bool fuji_copy_file(uint8_t src_slot, uint8_t dst_slot, char *copy_spec);
+
+/*
+ * Creates a new disk from the given structure.
+ * @return Success status, true if all OK.
+ */
+bool fuji_create_new(NewDisk *new_disk);
+
+bool fuji_disable_device(uint8_t d);
+bool fuji_enable_device(uint8_t d);
+
+// TODO: document and fix atari
+bool fuji_enable_udpstream(uint16_t port, char *host);
+
+/*
+ * Returns true if last operation had an error.
+ * @return ERROR status, true if there was an error in last operation.
+ */
+bool fuji_error();
 /*
  * Gets adapter config information from FN, e.g. IP, MAC, BSSID etc.
  * Raw version that returns bytes for all IP etc related values.
@@ -157,17 +182,73 @@ bool fuji_get_adapter_config(AdapterConfig *ac);
 bool fuji_get_adapter_config_extended(AdapterConfigExtended *ac);
 
 
+/*
+ * THIS IS BOGUS. Apple and Atari both just return "true" for any device.
+ * TODO: remove this if it isn't going to be properly implemented on FN.
+ *       which I think it could be by looking on FN side by looking at Config
+ * @return the enabled status of the given device: NOTE: ALWAYS RETURNS TRUE AT MOMENT
+ */
 bool fuji_get_device_enabled_status(uint8_t d);
-void fuji_get_device_filename(uint8_t ds, char *buffer);
-void fuji_get_device_slots(DeviceSlot *d);
-uint16_t fuji_get_directory_position();
-void fuji_get_host_slots(HostSlot *h);
-void fuji_get_host_prefix(uint8_t hs, char *prefix);
-uint8_t fuji_get_hsio_index();
-void fuji_get_scan_result(uint8_t n, SSIDInfo *ssid_info);
-void fuji_get_ssid(NetConfig *net_config);
+
+/*
+ * Sets the buffer to the device's filename in device id `ds`
+ * @return Success status, true if all OK.
+ */
+bool fuji_get_device_filename(uint8_t ds, char *buffer);
+
+/*
+ * Sets ALL device slot information into pointer d.
+ * `size` is the receiving array size, and the returned data size is checked against this before copying.
+ * If it doesn't match, no data is copied, and false is returned.
+ * @return Success status, true if all OK.
+ */
+bool fuji_get_device_slots(DeviceSlot *d, size_t size);
+
+/*
+ * Fetch the current directory position for paging through directories into pos.
+ * @return success status of request
+ */
+bool fuji_get_directory_position(uint16_t *pos);
+
+/*
+ * Fetch the host prefix for given host slot id.
+ * @return success status of request
+ */
+bool fuji_get_host_prefix(uint8_t hs, char *prefix);
+
+/*
+ * Sets ALL host slot information into pointer h.
+ * `size` is the receiving array size, and the returned data size is checked against this before copying.
+ * If it doesn't match, no data is copied, and false is returned.
+ * @return Success status, true if all OK.
+ */
+bool fuji_get_host_slots(HostSlot *h, size_t size);
+
+/*
+ * Fills ssid_info with wifi scan results for bssid index n.
+ * No data copied if there is an error.
+ * @return Success status, true if all OK.
+ */
+bool fuji_get_scan_result(uint8_t n, SSIDInfo *ssid_info);
+
+/*
+ * Fills net_config with current SSID/password values.
+ * No data copied if there is an error.
+ * @return Success status, true if all OK.
+ */
+bool fuji_get_ssid(NetConfig *net_config);
+
+/*
+ * @return Checks if WIFI is enabled or not. Any device errors will return false also.
+ */
 bool fuji_get_wifi_enabled(void);
-uint8_t fuji_get_wifi_status(void);
+
+/*
+ * @return Sets status to the wifi status value.
+ * WL_CONNECTED (3), WL_DISCONNECTED (6) are set if there are no underyling errors in FN.
+ * @return Success status, true if all OK.
+ */
+bool fuji_get_wifi_status(uint8_t *status);
 
 /*
  * Mount all devices
@@ -180,7 +261,6 @@ bool fuji_mount_all(void);
  * @return true if successful, false otherwise
  */
 bool fuji_mount_disk_image(uint8_t ds, uint8_t mode);
-
 
 /*
  * Mount specific host slot
@@ -195,18 +275,22 @@ bool fuji_mount_host_slot(uint8_t hs);
 bool fuji_open_directory(uint8_t hs, char *path_filter);
 
 /*
- * Save all device slots to FN
+ * Save `size` device slots to FN
  * @return true if successful, false if there was an error from FN
  */
-bool fuji_put_device_slots(DeviceSlot *d);
+bool fuji_put_device_slots(DeviceSlot *d, size_t size);
 
 /*
- * Save all hosts slots to FN
+ * Save `size` hosts slots to FN
  * @return true if successful, false if there was an error from FN
  */
-bool fuji_put_host_slots(HostSlot *h);
+bool fuji_put_host_slots(HostSlot *h, size_t size);
 
-char *fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer);
+/*
+ * Fill buffer with directory information.
+ * @return success status of request
+ */
+bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer);
 
 /*
  * Reset FN
@@ -214,18 +298,86 @@ char *fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer);
  */
 bool fuji_reset(void);
 
-uint8_t fuji_scan_for_networks(void);
-void fuji_set_boot_config(uint8_t toggle);
-void fuji_set_boot_mode(uint8_t mode);
-void fuji_set_device_filename(uint8_t mode, uint8_t hs, uint8_t ds, char *buffer);
-void fuji_set_sio_external_clock(uint16_t rate);
-void fuji_set_directory_position(uint16_t pos);
-void fuji_set_hsio_index(bool save, uint8_t index);
-void fuji_set_host_prefix(uint8_t hs, char *prefix);
-void fuji_set_ssid(NetConfig *nc);
-void fuji_status(FNStatus *status);
-void fuji_unmount_disk_image(uint8_t ds);
-void fuji_unmount_host_slot(uint8_t hs);
+/*
+ * Scans network for SSIDs and sets count accordingly.
+ * @return success status of request.
+ */
+bool fuji_scan_for_networks(uint8_t *count);
+
+/*
+ * Scans network for SSIDs and sets count accordingly.
+ * @return success status of request.
+ */
+bool fuji_set_boot_config(uint8_t toggle);
+
+/*
+ * Sets the booting mode of the FN device (e.g. lobby).
+ * @return success status of request.
+ */
+bool fuji_set_boot_mode(uint8_t mode);
+
+/*
+ * Sends the device/host/mode information for devices to FN
+ * @return success status of request.
+ */
+bool fuji_set_device_filename(uint8_t mode, uint8_t hs, uint8_t ds, char *buffer);
+
+/*
+ * Sets current directory position
+ * @return success status of request.
+ */
+bool fuji_set_directory_position(uint16_t pos);
+
+#ifdef BUILD_ATARI
+/*
+ * Fetch the current HSIO index value.
+ * @return success status of request
+ */
+bool fuji_get_hsio_index(uint8_t *index);
+
+/*
+ * Sets HSIO speed index
+ * @return success status of request.
+ */
+bool fuji_set_hsio_index(bool save, uint8_t index);
+
+/*
+ * Sets SIO external clock speed
+ * @return success status of request.
+ */
+bool fuji_set_sio_external_clock(uint16_t rate);
+
+#endif
+
+/*
+ * Set the host prefix for given host slot id for platforms that support it.
+ * @return success status of request
+ */
+bool fuji_set_host_prefix(uint8_t hs, char *prefix);
+
+/*
+ * Set the SSID information from NetConfig structure
+ * @return success status of request
+ */
+bool fuji_set_ssid(NetConfig *nc);
+
+/*
+ * Gets the FNStatus information from FUJI device.
+ * @return success status of request
+ */
+bool fuji_status(FNStatus *status);
+
+/*
+ * Unmounts the device in slot ds
+ * @return success status of request
+ */
+bool fuji_unmount_disk_image(uint8_t ds);
+
+/*
+ * Unmounts the host in slot hs
+ * @return success status of request
+ */
+bool fuji_unmount_host_slot(uint8_t hs);
 
 // app key
 uint8_t fuji_appkey_open(AppKeyOpen *buffer);

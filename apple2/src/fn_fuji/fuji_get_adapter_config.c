@@ -4,7 +4,6 @@
 #include "fujinet-fuji.h"
 #include "fujinet-bus-apple2.h"
 
-// do status call to FN with code 0xe8
 bool fuji_get_adapter_config(AdapterConfig *ac)
 {
 	sp_error = sp_get_fuji_id();

@@ -3,6 +3,7 @@
 #include "fujinet-bus-apple2.h"
 
 // Stupidly complex, the FN ALWAYS returns "1" for IWM, and ignores the device id.
+// However, if it is implemented on FN, this will not need changing.
 bool fuji_get_device_enabled_status(uint8_t d)
 {
 	int8_t err = 0;

@@ -1,7 +1,8 @@
 #include <stdint.h>
 #include "fujinet-fuji.h"
 
-void fuji_disable_device(uint8_t d)
+bool fuji_disable_device(uint8_t d)
 {
-	return;
+	// not supported on apple2
+	return false;
 }

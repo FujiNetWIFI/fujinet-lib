@@ -3,18 +3,18 @@
 #include "fujinet-fuji.h"
 #include "fujinet-bus-apple2.h"
 
-bool fuji_put_host_slots(HostSlot *h)
+bool fuji_put_host_slots(HostSlot *h, size_t size)
 {
+	uint16_t payload_size = sizeof(HostSlot) * size;
 	sp_error = sp_get_fuji_id();
 	if (sp_error <= 0) {
 		return false;
 	}
 
-	// payload size is 256 = 0x0100 (8 * sizeof(HostSlot))
-	sp_payload[0] = 0x00;
-	sp_payload[1] = 0x01;
+	sp_payload[0] = payload_size & 0xFF;
+	sp_payload[1] = (payload_size & 0xFF00) >> 8;
 
-	memcpy(&sp_payload[2], h, 0x0100);
+	memcpy(&sp_payload[2], h, payload_size);
 	sp_error = sp_control(sp_fuji_id, 0xF3);
 	return sp_error == 0;
 

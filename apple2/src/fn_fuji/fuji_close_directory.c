@@ -2,13 +2,13 @@
 #include "fujinet-fuji.h"
 #include "fujinet-bus-apple2.h"
 
-void fuji_close_directory(void)
+bool fuji_close_directory(void)
 {
-	int8_t err = 0;
-	err = sp_get_fuji_id();
-	if (err <= 0) {
-		return;
+	sp_error = sp_get_fuji_id();
+	if (sp_error <= 0) {
+		return false;
 	}
 
-	sp_control(sp_fuji_id, 0xF5);
+	sp_error = sp_control(sp_fuji_id, 0xF5);
+	return sp_error == 0;
 }

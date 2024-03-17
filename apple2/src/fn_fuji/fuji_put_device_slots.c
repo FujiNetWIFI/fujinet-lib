@@ -3,18 +3,18 @@
 #include "fujinet-fuji.h"
 #include "fujinet-bus-apple2.h"
 
-bool fuji_put_device_slots(DeviceSlot *d)
+bool fuji_put_device_slots(DeviceSlot *d, size_t size)
 {
+	uint16_t payload_size = sizeof(DeviceSlot) * size;
 	sp_error = sp_get_fuji_id();
 	if (sp_error <= 0) {
 		return false;
 	}
 
-	// payload size is 304 = 0x0130 (8 * sizeof(DeviceSlot))
-	sp_payload[0] = 0x30;
-	sp_payload[1] = 0x01;
+	sp_payload[0] = payload_size & 0xFF;
+	sp_payload[1] = (payload_size & 0xFF00) >> 8;
 
-	memcpy(&sp_payload[2], d, 0x0130);
+	memcpy(&sp_payload[2], d, payload_size);
 	sp_error = sp_control(sp_fuji_id, 0xF1);
 	return sp_error == 0;
 }
