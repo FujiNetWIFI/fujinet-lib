@@ -4,7 +4,7 @@
 #include "../../fujinet-network.h"
 
 #ifdef BUILD_APPLE2
-#include "../../fujinet-network-apple2.h"
+#include "../../fujinet-lib-apple2.h"
 #include "../../apple2/src/fn_fuji/inc/sp.h"
 #endif
 

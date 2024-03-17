@@ -2,22 +2,29 @@
 
         .import         _bus
         .import         copy_io_cmd_data
+        .import         return0
+        .import         return1
 
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "device.inc"
 
-; uint8_t fn_io_mount_all(void)
+; bool fn_io_mount_all(void)
+; returns true for success
 ;
-; 1 = success, otherwise error
 .proc _fn_io_mount_all
         setax   #t_io_mount_all
         jsr     copy_io_cmd_data
         jsr     _bus
 
-        ldx     #$00
         lda     IO_DCB::dstats
-        rts
+        cmp     #$01
+        beq     ok
+
+        jmp     return0
+ok:
+        jmp     return1
+
 .endproc
 
 .rodata

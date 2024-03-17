@@ -7,7 +7,7 @@
         .include        "device.inc"
         .include        "fujinet-io.inc"
 
-; void _fn_io_put_device_slots(DeviceSlot *device_slots)
+; bool _fn_io_put_device_slots(DeviceSlot *device_slots)
 .proc _fn_io_put_device_slots
         axinto  tmp7
 
@@ -15,7 +15,8 @@
         jsr     copy_io_cmd_data
 
         mwa     tmp7, IO_DCB::dbuflo
-        jmp     _bus
+        jsr     _bus
+        jmp     _fn_io_success
 .endproc
 
 .rodata

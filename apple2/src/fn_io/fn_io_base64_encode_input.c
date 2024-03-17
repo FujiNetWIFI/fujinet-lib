@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "fujinet-io.h"
-#include "fujinet-network-apple2.h"
+#include "fujinet-lib-apple2.h"
 
 uint8_t fn_io_base64_encode_input(char *s, uint16_t len)
 {

@@ -48,6 +48,7 @@
     data        .res 32
 .endstruct
 
+; this is only used by Atari in asm, the C version has ifdef for apple2
 .struct NewDisk
     numSectors  .res 2
     sectorSize  .res 2

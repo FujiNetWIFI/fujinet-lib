@@ -8,9 +8,9 @@
         .include    "macros.inc"
         .include    "device.inc"
 
-; int fn_io_open_directory(uint8_t host_slot, char *path_filter)
+; bool fn_io_open_directory(uint8_t host_slot, char *path_filter)
 ;
-; returns the error status, 0 for no error, 1 for error
+; returns the success status, true for ok, false for error
 .proc _fn_io_open_directory
         axinto  tmp7            ; save location of path+filter buffer
 
@@ -22,7 +22,7 @@
         mwa     tmp7, IO_DCB::dbuflo
 
         jsr     _bus
-        jmp     _fn_io_error
+        jmp     _fn_io_success
 
 .endproc
 

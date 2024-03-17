@@ -3,6 +3,8 @@
 
 // TODO: this header file needs documenting
 
+// In general, bools return the "success" status, so true is good, false is bad.
+
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -68,6 +70,7 @@ typedef struct {
   uint8_t file[FILE_MAXLEN];
 } DeviceSlot;
 
+#ifdef BUILD_ATARI
 typedef struct
 {
   uint16_t numSectors;
@@ -76,6 +79,19 @@ typedef struct
   uint8_t deviceSlot;
   char filename[256];
 } NewDisk;
+#endif
+
+#ifdef BUILD_APPLE2
+typedef struct
+{
+  uint8_t hostSlot;
+  uint8_t deviceSlot;
+  uint8_t createType;
+  uint32_t numBlocks;
+  char filename[256];
+} NewDisk;
+
+#endif
 
 typedef struct
 {
@@ -135,14 +151,52 @@ void fn_io_get_scan_result(uint8_t n, SSIDInfo *ssid_info);
 void fn_io_get_ssid(NetConfig *net_config);
 bool fn_io_get_wifi_enabled(void);
 uint8_t fn_io_get_wifi_status(void);
-uint8_t fn_io_mount_all(void);
-uint8_t fn_io_mount_disk_image(uint8_t ds, uint8_t mode);
-uint8_t fn_io_mount_host_slot(uint8_t hs);
-void fn_io_open_directory(uint8_t hs, char *path_filter);
-void fn_io_put_device_slots(DeviceSlot *d);
-void fn_io_put_host_slots(HostSlot *h);
+
+/*
+ * Mount all devices
+ * @return true if successful, false otherwise
+ */
+bool fn_io_mount_all(void);
+
+/*
+ * Mount specific device slot
+ * @return true if successful, false otherwise
+ */
+bool fn_io_mount_disk_image(uint8_t ds, uint8_t mode);
+
+
+/*
+ * Mount specific host slot
+ * @return true if successful, false otherwise
+ */
+bool fn_io_mount_host_slot(uint8_t hs);
+
+/*
+ * Open the given directory on the given host slot
+ * @return true if successful, false otherwise
+ */
+bool fn_io_open_directory(uint8_t hs, char *path_filter);
+
+/*
+ * Save all device slots to FN
+ * @return true if successful, false if there was an error from FN
+ */
+bool fn_io_put_device_slots(DeviceSlot *d);
+
+/*
+ * Save all hosts slots to FN
+ * @return true if successful, false if there was an error from FN
+ */
+bool fn_io_put_host_slots(HostSlot *h);
+
 char *fn_io_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer);
-void fn_io_reset(void);
+
+/*
+ * Reset FN
+ * @return true if successful, false if there was an error from FN
+ */
+bool fn_io_reset(void);
+
 uint8_t fn_io_scan_for_networks(void);
 void fn_io_set_boot_config(uint8_t toggle);
 void fn_io_set_boot_mode(uint8_t mode);

@@ -6,14 +6,15 @@
         .include        "fujinet-io.inc"
         .include        "device.inc"
 
-; void _fn_io_put_host_slots(HostSlot *h)
+; bool _fn_io_put_host_slots(HostSlot *h)
 .proc _fn_io_put_host_slots
         axinto  tmp7
         setax   #t_io_put_host_slots
         jsr     copy_io_cmd_data
 
         mwa     tmp7, IO_DCB::dbuflo
-        jmp     _bus
+        jsr     _bus
+        jmp     _fn_io_success
 .endproc
 
 .rodata

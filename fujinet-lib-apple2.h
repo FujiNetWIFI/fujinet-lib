@@ -4,8 +4,8 @@
  * @license gpl v. 3, see LICENSE for details.
  */
 
-#ifndef FUJINET_NETWORK_APPLE2_H
-#define FUJINET_NETWORK_APPLE2_H
+#ifndef FUJINET_LIB_APPLE2_H
+#define FUJINET_LIB_APPLE2_H
 
 #include <stdint.h>
 
@@ -34,12 +34,16 @@ extern uint8_t sp_dispatch_fn[2];
 // count of bytes the status request returned
 extern uint16_t sp_count;
 
+// global sp error value set by various routines
+extern int8_t sp_error;
+
 void sp_clr_payload();
 int8_t sp_status(uint8_t dest, uint8_t statcode);
 int8_t sp_control(uint8_t dest, uint8_t ctrlcode);
 int8_t sp_read(uint8_t dest, uint16_t len);
 int8_t sp_init();
 int8_t sp_find_fuji();
+int8_t sp_get_fuji_id();
 
 uint8_t network_status_no_clr(char *devicespec, uint16_t *bw, uint8_t *c, uint8_t *err);
 uint8_t network_unit(char *devicespec);

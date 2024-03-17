@@ -1,7 +1,14 @@
 #include <stdint.h>
 #include "fujinet-io.h"
+#include "fujinet-lib-apple2.h"
 
-uint8_t fn_io_mount_all(void)
+bool fn_io_mount_all(void)
 {
-	return 0;
+	sp_error = sp_get_fuji_id();
+	if (sp_error <= 0) {
+		return false;
+	}
+
+	sp_error = sp_control(sp_fuji_id, 0xD7);
+	return sp_error == 0;
 }

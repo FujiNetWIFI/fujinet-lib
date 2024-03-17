@@ -6,11 +6,11 @@
 #include "../../fujinet-network.h"
 
 #ifdef BUILD_ATARI
-#include "../../fujinet-network-atari.h"
+#include "../../fujinet-lib-atari.h"
 #endif
 
 #ifdef BUILD_APPLE2
-#include "../../fujinet-network-apple2.h"
+#include "../../fujinet-lib-apple2.h"
 #include "../../apple2/src/fn_fuji/inc/sp.h"
 #endif
 
