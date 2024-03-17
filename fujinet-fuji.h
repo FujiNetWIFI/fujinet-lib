@@ -134,116 +134,116 @@ enum HashType {
     SHA512
 };
 
-void fn_fuji_close_directory(void);
-void fn_fuji_copy_file(uint8_t src_slot, uint8_t dst_slot, char *copy_spec);
-void fn_fuji_create_new(NewDisk *new_disk);
-void fn_fuji_disable_device(uint8_t d);
-bool fn_fuji_error();
-void fn_fuji_enable_device(uint8_t d);
-void fn_fuji_enable_udpstream(uint16_t port, char *host);
+void fuji_close_directory(void);
+void fuji_copy_file(uint8_t src_slot, uint8_t dst_slot, char *copy_spec);
+void fuji_create_new(NewDisk *new_disk);
+void fuji_disable_device(uint8_t d);
+bool fuji_error();
+void fuji_enable_device(uint8_t d);
+void fuji_enable_udpstream(uint16_t port, char *host);
 
 /*
  * Gets adapter config information from FN, e.g. IP, MAC, BSSID etc.
  * Raw version that returns bytes for all IP etc related values.
  * @return Success status, true if all OK.
  */
-bool fn_fuji_get_adapter_config(AdapterConfig *ac);
+bool fuji_get_adapter_config(AdapterConfig *ac);
 
 
-void fn_fuji_get_adapter_config_extended(AdapterConfigExtended *ac);
+void fuji_get_adapter_config_extended(AdapterConfigExtended *ac);
 
 
 
-bool fn_fuji_get_device_enabled_status(uint8_t d);
-void fn_fuji_get_device_filename(uint8_t ds, char *buffer);
-void fn_fuji_get_device_slots(DeviceSlot *d);
-uint16_t fn_fuji_get_directory_position();
-void fn_fuji_get_host_slots(HostSlot *h);
-void fn_fuji_get_host_prefix(uint8_t hs, char *prefix);
-uint8_t fn_fuji_get_hsio_index();
-void fn_fuji_get_scan_result(uint8_t n, SSIDInfo *ssid_info);
-void fn_fuji_get_ssid(NetConfig *net_config);
-bool fn_fuji_get_wifi_enabled(void);
-uint8_t fn_fuji_get_wifi_status(void);
+bool fuji_get_device_enabled_status(uint8_t d);
+void fuji_get_device_filename(uint8_t ds, char *buffer);
+void fuji_get_device_slots(DeviceSlot *d);
+uint16_t fuji_get_directory_position();
+void fuji_get_host_slots(HostSlot *h);
+void fuji_get_host_prefix(uint8_t hs, char *prefix);
+uint8_t fuji_get_hsio_index();
+void fuji_get_scan_result(uint8_t n, SSIDInfo *ssid_info);
+void fuji_get_ssid(NetConfig *net_config);
+bool fuji_get_wifi_enabled(void);
+uint8_t fuji_get_wifi_status(void);
 
 /*
  * Mount all devices
  * @return true if successful, false otherwise
  */
-bool fn_fuji_mount_all(void);
+bool fuji_mount_all(void);
 
 /*
  * Mount specific device slot
  * @return true if successful, false otherwise
  */
-bool fn_fuji_mount_disk_image(uint8_t ds, uint8_t mode);
+bool fuji_mount_disk_image(uint8_t ds, uint8_t mode);
 
 
 /*
  * Mount specific host slot
  * @return true if successful, false otherwise
  */
-bool fn_fuji_mount_host_slot(uint8_t hs);
+bool fuji_mount_host_slot(uint8_t hs);
 
 /*
  * Open the given directory on the given host slot
  * @return true if successful, false otherwise
  */
-bool fn_fuji_open_directory(uint8_t hs, char *path_filter);
+bool fuji_open_directory(uint8_t hs, char *path_filter);
 
 /*
  * Save all device slots to FN
  * @return true if successful, false if there was an error from FN
  */
-bool fn_fuji_put_device_slots(DeviceSlot *d);
+bool fuji_put_device_slots(DeviceSlot *d);
 
 /*
  * Save all hosts slots to FN
  * @return true if successful, false if there was an error from FN
  */
-bool fn_fuji_put_host_slots(HostSlot *h);
+bool fuji_put_host_slots(HostSlot *h);
 
-char *fn_fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer);
+char *fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer);
 
 /*
  * Reset FN
  * @return true if successful, false if there was an error from FN
  */
-bool fn_fuji_reset(void);
+bool fuji_reset(void);
 
-uint8_t fn_fuji_scan_for_networks(void);
-void fn_fuji_set_boot_config(uint8_t toggle);
-void fn_fuji_set_boot_mode(uint8_t mode);
-void fn_fuji_set_device_filename(uint8_t mode, uint8_t hs, uint8_t ds, char *buffer);
-void fn_fuji_set_sio_external_clock(uint16_t rate);
-void fn_fuji_set_directory_position(uint16_t pos);
-void fn_fuji_set_hsio_index(bool save, uint8_t index);
-void fn_fuji_set_host_prefix(uint8_t hs, char *prefix);
-void fn_fuji_set_ssid(NetConfig *nc);
-void fn_fuji_status(FNStatus *status);
-void fn_fuji_unmount_disk_image(uint8_t ds);
-void fn_fuji_unmount_host_slot(uint8_t hs);
+uint8_t fuji_scan_for_networks(void);
+void fuji_set_boot_config(uint8_t toggle);
+void fuji_set_boot_mode(uint8_t mode);
+void fuji_set_device_filename(uint8_t mode, uint8_t hs, uint8_t ds, char *buffer);
+void fuji_set_sio_external_clock(uint16_t rate);
+void fuji_set_directory_position(uint16_t pos);
+void fuji_set_hsio_index(bool save, uint8_t index);
+void fuji_set_host_prefix(uint8_t hs, char *prefix);
+void fuji_set_ssid(NetConfig *nc);
+void fuji_status(FNStatus *status);
+void fuji_unmount_disk_image(uint8_t ds);
+void fuji_unmount_host_slot(uint8_t hs);
 
 // app key
-uint8_t fn_fuji_appkey_open(AppKeyOpen *buffer);
-uint8_t fn_fuji_appkey_read(AppKeyRead *buffer);
-uint8_t fn_fuji_appkey_write(uint16_t count, AppKeyWrite *buffer);
+uint8_t fuji_appkey_open(AppKeyOpen *buffer);
+uint8_t fuji_appkey_read(AppKeyRead *buffer);
+uint8_t fuji_appkey_write(uint16_t count, AppKeyWrite *buffer);
 
 // Base64
-uint8_t fn_fuji_base64_decode_compute();
-uint8_t fn_fuji_base64_decode_input(char *s, uint16_t len);
-uint8_t fn_fuji_base64_decode_length(unsigned long *len);
-uint8_t fn_fuji_base64_decode_output(char *s, uint16_t len);
+uint8_t fuji_base64_decode_compute();
+uint8_t fuji_base64_decode_input(char *s, uint16_t len);
+uint8_t fuji_base64_decode_length(unsigned long *len);
+uint8_t fuji_base64_decode_output(char *s, uint16_t len);
 
-uint8_t fn_fuji_base64_encode_compute();
-uint8_t fn_fuji_base64_encode_input(char *s, uint16_t len);
-uint8_t fn_fuji_base64_encode_length(unsigned long *len);
-uint8_t fn_fuji_base64_encode_output(char *s, uint16_t len);
+uint8_t fuji_base64_encode_compute();
+uint8_t fuji_base64_encode_input(char *s, uint16_t len);
+uint8_t fuji_base64_encode_length(unsigned long *len);
+uint8_t fuji_base64_encode_output(char *s, uint16_t len);
 
 // Hash
-uint8_t fn_fuji_hash_compute(uint8_t type);
-uint8_t fn_fuji_hash_input(char *s, uint16_t len);
-uint8_t fn_fuji_hash_length(uint8_t mode);
-uint8_t fn_fuji_hash_output(uint8_t output_type, char *s, uint16_t len);
+uint8_t fuji_hash_compute(uint8_t type);
+uint8_t fuji_hash_input(char *s, uint16_t len);
+uint8_t fuji_hash_length(uint8_t mode);
+uint8_t fuji_hash_output(uint8_t output_type, char *s, uint16_t len);
 
 #endif /* FN_FUJI_H */
