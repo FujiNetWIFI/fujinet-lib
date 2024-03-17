@@ -2,8 +2,12 @@
 
 ## [Unreleased]
 
-- The great rename fn_io to fn_fuji to reflect device in FN being used, version bump to 3.0.0 to reflect huge name changes
-- Start adding fn_fuji (nee: fn_io) routines to Apple2
+## [3.0.0] - 2024-03-17
+
+This is a pre-release version, testing applications with it, and may overwrite the release zips, so don't use until this note changes.
+
+- The great rename fn_io_ to fuji_ to reflect device in FN being used, version bump to 3.0.0 to reflect huge name changes
+- fuji routines to Apple2
 - Add find methods for clock, cpm, modem, printer
 
 ## [2.2.1] - 2024-02-21
