@@ -6,8 +6,7 @@
 int8_t sp_get_fuji_id()
 {
 	if (sp_fuji_id != 0) {
-		// no error to return, id is already set
-		return 0;
+		return sp_fuji_id;
 	} else {
 		return sp_find_fuji();
 	}

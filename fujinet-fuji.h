@@ -149,9 +149,12 @@ void fuji_enable_udpstream(uint16_t port, char *host);
  */
 bool fuji_get_adapter_config(AdapterConfig *ac);
 
-
-void fuji_get_adapter_config_extended(AdapterConfigExtended *ac);
-
+/*
+ * Gets extended adapter config information from FN, e.g. IP, MAC, BSSID etc.
+ * Extended version that returns strings in addition to raw for all IP etc related values.
+ * @return Success status, true if all OK.
+ */
+bool fuji_get_adapter_config_extended(AdapterConfigExtended *ac);
 
 
 bool fuji_get_device_enabled_status(uint8_t d);
