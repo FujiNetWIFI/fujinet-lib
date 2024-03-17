@@ -1,5 +1,8 @@
         .export         _fuji_set_device_filename
-        .import         copy_fuji_cmd_data, _bus
+
+        .import         _bus
+        .import         _fuji_success
+        .import         copy_fuji_cmd_data
         .import         popa
 
         .include        "zp.inc"
@@ -7,11 +10,11 @@
         .include        "device.inc"
 
 
-; void _fuji_set_device_filename(uint8_t mode, uint8_t hs, uint8_t ds, char *buffer)
+; bool _fuji_set_device_filename(uint8_t mode, uint8_t hs, uint8_t ds, char *buffer)
 .proc _fuji_set_device_filename
         axinto  tmp7    ; buffer
 
-        setax   #t_io_set_device_filename
+        setax   #t_fuji_set_device_filename
         jsr     copy_fuji_cmd_data
 
         jsr     popa            ; device slot
@@ -32,9 +35,10 @@
         sta     IO_DCB::daux2
 
         mwa     tmp7, IO_DCB::dbuflo
-        jmp     _bus
+        jsr     _bus
+        jmp     _fuji_success
 .endproc
 
 .rodata
-t_io_set_device_filename:
+t_fuji_set_device_filename:
         .byte $e2, $80, $00, $01, $ff, $00

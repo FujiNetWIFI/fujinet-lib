@@ -1,21 +1,25 @@
         .export     _fuji_set_boot_config
-        .import     copy_fuji_cmd_data, _bus
+
+        .import     _bus
+        .import     _fuji_success
+        .import     copy_fuji_cmd_data
 
         .include    "zp.inc"
         .include    "macros.inc"
         .include    "device.inc"
 
-; void fuji_set_boot_config(uint8_t toggle)
+; bool fuji_set_boot_config(uint8_t toggle)
 .proc _fuji_set_boot_config
         sta     tmp7
 
-        setax   #t_io_set_boot_config
+        setax   #t_fuji_set_boot_config
         jsr     copy_fuji_cmd_data
 
         mva     tmp7, IO_DCB::daux1
-        jmp     _bus
+        jsr     _bus
+        jmp     _fuji_success
 .endproc
 
 .rodata
-t_io_set_boot_config:
+t_fuji_set_boot_config:
         .byte $d9, $00, $00, $00, $ff, $00

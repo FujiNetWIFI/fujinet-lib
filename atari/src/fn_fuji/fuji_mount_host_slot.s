@@ -15,7 +15,7 @@
 .proc _fuji_mount_host_slot
         sta     tmp8
 
-        setax   #t_io_mount_host_slot
+        setax   #t_fuji_mount_host_slot
         jsr     copy_fuji_cmd_data
 
         mva     tmp8, IO_DCB::daux1
@@ -25,5 +25,5 @@
 .endproc
 
 .rodata
-t_io_mount_host_slot:
+t_fuji_mount_host_slot:
         .byte $f9, $00, $00, $00, $ff, $00

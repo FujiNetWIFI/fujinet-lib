@@ -1,24 +1,26 @@
         .export         _fuji_get_directory_position
 
-        .import         copy_fuji_cmd_data
         .import         _bus
-        .import         popa, popax
+        .import         _fuji_success
+        .import         copy_fuji_cmd_data
+        .import         popa
+        .import         popax
 
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "device.inc"
 
-; uint16_t fuji_get_directory_position();
+; bool fuji_get_directory_position(uint16_t *pos);
 ;
 .proc _fuji_get_directory_position
+        axinto  tmp7            ; pos pointer
+
         setax   #t_fuji_get_directory_position
         jsr     copy_fuji_cmd_data
 
-        mwa     #tmp7, IO_DCB::dbuflo
+        mwa     tmp7, IO_DCB::dbuflo
         jsr     _bus
-        ldx     tmp8
-        lda     tmp7
-        rts
+        jmp     _fuji_success
 .endproc
 
 .rodata

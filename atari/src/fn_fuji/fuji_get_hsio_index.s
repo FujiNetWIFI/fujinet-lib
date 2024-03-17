@@ -1,25 +1,25 @@
         .export         _fuji_get_hsio_index
 
-        .import         copy_fuji_cmd_data
         .import         _bus
-        .import         popa, popax
+        .import         _fuji_success
+        .import         copy_fuji_cmd_data
+        .import         popa
+        .import         popax
 
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "device.inc"
 
-; uint8_t fuji_get_hsio_index();
+; bool fuji_get_hsio_index(uint8_t *index);
 ;
 .proc _fuji_get_hsio_index
+        axinto  tmp7
         setax   #t_fuji_get_hsio_index
-        jsr    copy_fuji_cmd_data
+        jsr     copy_fuji_cmd_data
 
-        ; give tmp7/8 as the location of the address to store HSIO index into
-        mwa     #tmp7, IO_DCB::dbuflo
+        mwa     tmp7, IO_DCB::dbuflo
         jsr     _bus
-        ldx     #$00
-        lda     tmp7
-        rts
+        jmp     _fuji_success
 .endproc
 
 .rodata

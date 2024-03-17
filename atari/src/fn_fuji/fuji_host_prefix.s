@@ -1,15 +1,17 @@
         .export         _fuji_get_host_prefix
         .export         _fuji_set_host_prefix
 
-        .import         copy_fuji_cmd_data
         .import         _bus
-        .import         popa, popax
+        .import         _fuji_success
+        .import         copy_fuji_cmd_data
+        .import         popa
+        .import         popax
 
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "device.inc"
 
-; void fuji_get_host_prefix(uint8_t hs, char *prefix);
+; bool fuji_get_host_prefix(uint8_t hs, char *prefix);
 ;
 _fuji_get_host_prefix:
         axinto  tmp7                    ; string memory location to read into
@@ -22,7 +24,8 @@ hp_common:
         jsr     popa                    ; host slot
         sta     IO_DCB::daux1
 
-        jmp     _bus
+        jsr     _bus
+        jmp     _fuji_success
 
 
 ; void fuji_set_host_prefix(uint8_t hs, char *prefix);

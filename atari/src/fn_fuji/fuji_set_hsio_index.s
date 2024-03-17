@@ -1,14 +1,15 @@
         .export         _fuji_set_hsio_index
 
-        .import         copy_fuji_cmd_data
         .import         _bus
-        .import         popa, popax
+        .import         _fuji_success
+        .import         copy_fuji_cmd_data
+        .import         popa
 
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "device.inc"
 
-; void fuji_set_hsio_index(bool save, uint8_t index);
+; bool fuji_set_hsio_index(bool save, uint8_t index);
 ;
 .proc _fuji_set_hsio_index
         sta     tmp7                    ; HSIO index to set
@@ -19,7 +20,8 @@
         jsr     popa                    ; should we save? 0 = no, 1 = yes
         sta     IO_DCB::daux2
 
-        jmp     _bus
+        jsr     _bus
+        jmp     _fuji_success
 .endproc
 
 .rodata

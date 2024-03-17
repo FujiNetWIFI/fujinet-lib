@@ -1,26 +1,26 @@
         .export         _fuji_scan_for_networks
 
-        .import         copy_fuji_cmd_data, _bus
+        .import         _bus
+        .import         _fuji_success
+        .import         copy_fuji_cmd_data
 
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "device.inc"
 
-; int fuji_scan_for_networks()
+; int fuji_scan_for_networks(uint8_t *count)
 ;
 ; returns count of networks scanned
-; Uses tmp1-4 as the 4 byte buffer for scan data
 .proc _fuji_scan_for_networks
-        setax   #t_io_scan_for_networks
+        axinto  tmp7
+        setax   #t_fuji_scan_for_networks
         jsr     copy_fuji_cmd_data
-        mwa     #tmp9, IO_DCB::dbuflo
+        mwa     tmp7, IO_DCB::dbuflo
         jsr     _bus
+        jmp     _fuji_success
 
-        lda     tmp9
-        ldx     #$00
-        rts
 .endproc
 
 .rodata
-t_io_scan_for_networks:
+t_fuji_scan_for_networks:
         .byte $fd, $40, $04, $00, $00, $00

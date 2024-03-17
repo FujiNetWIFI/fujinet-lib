@@ -1,11 +1,14 @@
         .export         _fuji_get_wifi_status
-        .import         copy_fuji_cmd_data, _bus
+
+        .import         _bus
+        .import         _fuji_success
+        .import         copy_fuji_cmd_data
 
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "device.inc"
 
-; int fuji_get_wifi_status()
+; bool fuji_get_wifi_status(uint8_t *status)
 ;
 ; Return values are:
 ;  1: No SSID available
@@ -13,16 +16,14 @@
 ;  4: Connect Failed
 ;  5: Connection lost
 .proc _fuji_get_wifi_status
-        setax   #t_io_get_wifi_status
+        axinto  tmp7
+        setax   #t_fuji_get_wifi_status
         jsr     copy_fuji_cmd_data
-        mwa     #tmp9, IO_DCB::dbuflo
+        mwa     tmp7, IO_DCB::dbuflo
         jsr     _bus
-
-        ldx     #$00
-        lda     tmp9
-        rts
+        jmp     _fuji_success
 .endproc
 
 .rodata
-t_io_get_wifi_status:
+t_fuji_get_wifi_status:
         .byte $fa, $40, $01, $00, $00, $00

@@ -2,13 +2,13 @@
 
         .import         copy_fuji_cmd_data
         .import         _bus
-        .import         popa, popax
+        .import         _fuji_success
 
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "device.inc"
 
-; void fuji_status(FNStatus *status);
+; bool fuji_status(FNStatus *status);
 ;
 .proc _fuji_status
         axinto  tmp7                    ; 4 byte buffer location
@@ -17,7 +17,8 @@
 
         mwa     tmp7, IO_DCB::dbuflo
 
-        jmp     _bus
+        jsr     _bus
+        jmp     _fuji_success
 .endproc
 
 .rodata

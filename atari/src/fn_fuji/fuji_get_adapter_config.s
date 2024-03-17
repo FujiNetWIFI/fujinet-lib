@@ -1,29 +1,33 @@
         .export         _fuji_get_adapter_config
-        .export         t_io_get_adapter_config
-        .import         copy_fuji_cmd_data, _bus
+        .export         t_fuji_get_adapter_config
+
+        .import         _bus
+        .import         _fuji_success
+        .import         copy_fuji_cmd_data
 
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "device.inc"
         .include        "fujinet-fuji.inc"
 
-; void fuji_get_adapter_config(void *adapter_config)
+; bool fuji_get_adapter_config(void *adapter_config)
 ;
 .proc _fuji_get_adapter_config
         ; store the memory location of the adapter config
         axinto  tmp7            ; adapter config location
 
-        setax   #t_io_get_adapter_config
+        setax   #t_fuji_get_adapter_config
         jsr     copy_fuji_cmd_data
 
         ; set the memory address for DCB to write to and call BUS
         mwa     tmp7, IO_DCB::dbuflo
-        jmp     _bus
+        jsr     _bus
+        jmp     _fuji_success
 
 .endproc
 
 .rodata
 .define ACsz .sizeof(AdapterConfig)
 
-t_io_get_adapter_config:
+t_fuji_get_adapter_config:
         .byte $e8, $40, <ACsz, >ACsz, $00, $00

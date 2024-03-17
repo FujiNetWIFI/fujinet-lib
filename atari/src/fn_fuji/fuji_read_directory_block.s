@@ -13,7 +13,7 @@
         axinto  tmp7    ; 7/8 = buffer location
 
         ; setup DCB basic data
-        setax   #t_io_read_directory_block
+        setax   #t_fuji_read_directory_block
         jsr     copy_fuji_cmd_data
         mwa     tmp7, IO_DCB::dbuflo
 
@@ -45,5 +45,5 @@
 .endproc
 
 .rodata
-t_io_read_directory_block:
+t_fuji_read_directory_block:
         .byte $f6, $40, $00, $ff, $ff, $ff

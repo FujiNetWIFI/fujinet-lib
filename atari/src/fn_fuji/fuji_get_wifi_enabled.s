@@ -1,6 +1,10 @@
         .export         _fuji_get_wifi_enabled
-        .import         copy_fuji_cmd_data, _bus
-        .import         return0, return1
+
+        .import         _bus
+        .import         _fuji_success
+        .import         copy_fuji_cmd_data
+        .import         return0
+        .import         return1
 
         .include        "zp.inc"
         .include        "macros.inc"
@@ -10,7 +14,7 @@
 ;
 ; sets A=1 if wifi is enabled. 0 otherwise, X=0 in both cases for calling convention
 .proc _fuji_get_wifi_enabled
-        setax   #t_io_get_wifi_enabled
+        setax   #t_fuji_get_wifi_enabled
         jsr     copy_fuji_cmd_data
         mwa     #tmp9, IO_DCB::dbuflo
         jsr     _bus
@@ -29,5 +33,5 @@
 .endproc
 
 .rodata
-t_io_get_wifi_enabled:
+t_fuji_get_wifi_enabled:
         .byte $ea, $40, $01, $00, $00, $00

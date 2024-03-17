@@ -1,14 +1,14 @@
         .export         _fuji_set_sio_external_clock
 
-        .import         copy_fuji_cmd_data
         .import         _bus
-        .import         popa, popax
+        .import         _fuji_success
+        .import         copy_fuji_cmd_data
 
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "device.inc"
 
-; void fuji_set_sio_external_clock(uint16_t rate);
+; bool fuji_set_sio_external_clock(uint16_t rate);
 ;
 .proc _fuji_set_sio_external_clock
         axinto  tmp7
@@ -17,7 +17,8 @@
 
         mwa     tmp7, IO_DCB::daux1
 
-        jmp     _bus
+        jsr     _bus
+        jmp     _fuji_success
 .endproc
 
 .rodata

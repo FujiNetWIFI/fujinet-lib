@@ -1,14 +1,16 @@
         .export         _fuji_enable_udpstream
 
-        .import         copy_fuji_cmd_data
         .import         _bus
-        .import         popa, popax
+        .import         _fuji_success
+        .import         copy_fuji_cmd_data
+        .import         popa
+        .import         popax
 
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "device.inc"
 
-; void fuji_enable_udpstream(uint16_t port, char *host);
+; bool fuji_enable_udpstream(uint16_t port, char *host);
 ;
 .proc _fuji_enable_udpstream
         axinto  tmp7                    ; host
@@ -20,7 +22,8 @@
         sta     IO_DCB::daux1
         stx     IO_DCB::daux2
 
-        jmp     _bus
+        jsr     _bus
+        jmp     _fuji_success
 .endproc
 
 .rodata

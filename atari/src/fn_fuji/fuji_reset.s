@@ -1,19 +1,21 @@
         .export         _fuji_reset
 
         .import         _bus
+        .import         _fuji_success
         .import         copy_fuji_cmd_data
 
         .include        "macros.inc"
 
-; void  _fuji_reset()
+; bool _fuji_reset()
 ; resets FN. Up to the caller to pause afterwards
 .proc _fuji_reset
-        setax   #t_io_reset
+        setax   #t_fuji_reset
         jsr     copy_fuji_cmd_data
-        jmp     _bus
+        jsr     _bus
+        jmp     _fuji_success
 .endproc
 
 .rodata
 
-t_io_reset:
+t_fuji_reset:
         .byte $ff, $40, $00, $00, $00, $00

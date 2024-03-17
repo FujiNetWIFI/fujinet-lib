@@ -13,7 +13,7 @@
 .proc _fuji_put_device_slots
         axinto  tmp7
 
-        setax   #t_io_put_device_slots
+        setax   #t_fuji_put_device_slots
         jsr     copy_fuji_cmd_data
 
         mwa     tmp7, IO_DCB::dbuflo
@@ -25,5 +25,5 @@
 .define DS8zL .lobyte(.sizeof(DeviceSlot)*8)
 .define DS8zH .hibyte(.sizeof(DeviceSlot)*8)
 
-t_io_put_device_slots:
+t_fuji_put_device_slots:
         .byte $f1, $80, DS8zL, DS8zH, $00, $00

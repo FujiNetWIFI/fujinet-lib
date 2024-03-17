@@ -1,21 +1,25 @@
         .export     _fuji_unmount_disk_image
-        .import     copy_fuji_cmd_data, _bus
+
+        .import     _bus
+        .import     _fuji_success
+        .import     copy_fuji_cmd_data
 
         .include    "zp.inc"
         .include    "macros.inc"
         .include    "device.inc"
 
-; void _fuji_unmount_disk_image(uint8_t ds)
+; bool _fuji_unmount_disk_image(uint8_t ds)
 .proc _fuji_unmount_disk_image
         sta     tmp8    ; save device slot
 
-        setax   #t_io_unmount_disk_image
+        setax   #t_fuji_unmount_disk_image
         jsr     copy_fuji_cmd_data
 
         mva     tmp8, IO_DCB::daux1
-        jmp     _bus
+        jsr     _bus
+        jmp     _fuji_success
 .endproc
 
 .rodata
-t_io_unmount_disk_image:
+t_fuji_unmount_disk_image:
         .byte $e9, $00, $00, $00, $ff, $00

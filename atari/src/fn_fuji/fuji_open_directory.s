@@ -3,7 +3,7 @@
         .import     _bus
         .import     _fuji_success
         .import     copy_fuji_cmd_data
-        .import     popa, return0
+        .import     popa
 
         .include    "zp.inc"
         .include    "macros.inc"
@@ -15,7 +15,7 @@
 .proc _fuji_open_directory
         axinto  tmp7            ; save location of path+filter buffer
 
-        setax   #t_io_open_directory
+        setax   #t_fuji_open_directory
         jsr     copy_fuji_cmd_data
 
         jsr     popa            ; host slot
@@ -28,5 +28,5 @@
 .endproc
 
 .rodata
-t_io_open_directory:
+t_fuji_open_directory:
         .byte $f7, $80, $00, $01, $ff, $00

@@ -1,4 +1,5 @@
         .export         _fuji_mount_disk_image
+
         .import         _bus
         .import         copy_fuji_cmd_data
         .import         popa
@@ -13,7 +14,7 @@
 .proc _fuji_mount_disk_image
         sta     tmp8    ; save mode
 
-        setax   #t_io_mount_disk_image
+        setax   #t_fuji_mount_disk_image
         jsr     copy_fuji_cmd_data
 
         mva     tmp8, IO_DCB::daux2
@@ -34,5 +35,5 @@ ok:
 .endproc
 
 .rodata
-t_io_mount_disk_image:
+t_fuji_mount_disk_image:
         .byte $f8, $00, $00, $00, $ff, $ff

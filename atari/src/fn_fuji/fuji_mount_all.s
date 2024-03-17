@@ -13,10 +13,11 @@
 ; returns true for success
 ;
 .proc _fuji_mount_all
-        setax   #t_io_mount_all
+        setax   #t_fuji_mount_all
         jsr     copy_fuji_cmd_data
         jsr     _bus
 
+        ; not sure about this, we're testing dstats == 1 for success :thinking:
         lda     IO_DCB::dstats
         cmp     #$01
         beq     ok
@@ -29,5 +30,5 @@ ok:
 
 .rodata
 
-t_io_mount_all:
+t_fuji_mount_all:
         .byte $d7, $00, $00, $00, $00, $00
