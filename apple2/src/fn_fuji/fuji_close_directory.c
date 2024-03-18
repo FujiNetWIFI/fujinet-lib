@@ -9,6 +9,9 @@ bool fuji_close_directory(void)
 		return false;
 	}
 
+	sp_payload[0] = 0x00;
+	sp_payload[1] = 0x00;
+
 	sp_error = sp_control(sp_fuji_id, 0xF5);
 	return sp_error == 0;
 }

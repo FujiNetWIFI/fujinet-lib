@@ -9,6 +9,11 @@ bool fuji_mount_disk_image(uint8_t ds, uint8_t mode)
 		return false;
 	}
 
+	sp_payload[0] = 2;
+	sp_payload[1] = 0;
+	sp_payload[2] = ds;
+	sp_payload[3] = mode;
+
 	sp_error = sp_control(sp_fuji_id, 0xF8);
 	return sp_error == 0;
 }

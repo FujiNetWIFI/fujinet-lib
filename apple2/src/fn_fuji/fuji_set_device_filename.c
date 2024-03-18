@@ -15,7 +15,7 @@ bool fuji_set_device_filename(uint8_t mode, uint8_t hs, uint8_t ds, char *buffer
 		return false;
 	}
 
-	sp_payload[0] = (filename_len + 2) & 0xFF;
+	sp_payload[0] = (filename_len + 4) & 0xFF; // 3 params, plus file length + 1 for nul
 	sp_payload[1] = 0;
 	sp_payload[2] = ds;
 	sp_payload[3] = hs;

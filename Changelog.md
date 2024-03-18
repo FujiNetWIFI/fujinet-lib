@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [3.0.1] - 2024-03-19
+
+Complete Apple2 fuji device support for CONFIG.
+
+- [apple2] fixes for mount_host_slot and mount_disk_image
+- [apple2] don't call FN for get_device_enabled_status, as it's broken
+- [apple2] add fuji_disable_device and fuji_enable_device implementations
+- [apple2] fix control commands that were not setting the payload parameters
+- [apple2] fix fuji_set_device_filename payload length
+
 ## [3.0.0] - 2024-03-18
 
 - The great rename fn_io_ to fuji_ to reflect device in FN being used, version bump to 3.0.0 to reflect huge name changes
