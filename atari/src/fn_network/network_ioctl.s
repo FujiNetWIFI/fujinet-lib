@@ -2,11 +2,9 @@
 
         .import     _bus
         .import     _fn_device_error
-        .import     _fn_error
         .import     _bus_status
         .import     _network_unit
         .import     addysp
-        .import     copy_network_cmd_data
         .import     popa
         .import     popax
         .import     return1

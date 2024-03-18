@@ -1,7 +1,6 @@
         .export     _sp_find_network
         .export     _sp_network
 
-        .import     _fn_error
         .import     _sp_find_device
 
         .include    "macros.inc"

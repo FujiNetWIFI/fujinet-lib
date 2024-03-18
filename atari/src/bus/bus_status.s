@@ -22,7 +22,6 @@
 
         ldx     #$00                    ; high byte of return
         lda     IO_DCB::dstats
-        sta     _fn_device_error        ; keep the raw status value
         cmp     #DERROR
         beq     @extended
         jmp     _fn_error

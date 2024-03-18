@@ -3,15 +3,18 @@
         .import         _bus
         .import         _fuji_success
         .import         copy_fuji_cmd_data
+        .import         popax
 
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "fujinet-fuji.inc"
         .include        "device.inc"
 
-; bool fuji_get_host_slots(struct HostSlot *host_slots)
+; bool fuji_get_host_slots(struct HostSlot *host_slots, size_t size)
 .proc _fuji_get_host_slots
-        axinto  tmp7
+        ; we can ignore the size param, it's more for the C world as a check. For now, leaving atari as hardcoded to 8
+        ; axinto  ptr1                    ; size
+        popax   tmp7                    ; host_slots
         setax   #t_fuji_get_host_slots
         jsr     copy_fuji_cmd_data
 

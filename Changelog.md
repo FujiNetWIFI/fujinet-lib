@@ -2,13 +2,15 @@
 
 ## [Unreleased]
 
-## [3.0.0] - 2024-03-17
+## [3.0.0] - 2024-03-18
 
 This is a pre-release version, testing applications with it, and may overwrite the release zips, so don't use until this note changes.
 
 - The great rename fn_io_ to fuji_ to reflect device in FN being used, version bump to 3.0.0 to reflect huge name changes
-- fuji routines to Apple2
+- Made most fuji_ functions return success status rather than void.
+- fuji routines to Apple2 - all but hashing/base64 and appkey stuff
 - Add find methods for clock, cpm, modem, printer
+- Clean up atari error handling
 
 ## [2.2.1] - 2024-02-21
 

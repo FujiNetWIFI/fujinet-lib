@@ -5,10 +5,10 @@
 
 ; bool fuji_success()
 ;
-; returns 1 for success, 0 for error, which is opposite of the value in dstats, which is 0 for OK, 0x80 for error
+; returns 1 for success, 0 for error
 .proc _fuji_success
         lda     IO_DCB::dstats
-        and     #$80
+        cmp     #$01
         beq     ok
         jmp     return0
 ok:

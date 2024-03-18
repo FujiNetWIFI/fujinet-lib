@@ -25,8 +25,8 @@
 
         ; add our specifics, and call SIO
         mva     tmp8, IO_DCB::dunit
-        mva     #$00, IO_DCB::dbuflo
-        sta     IO_DCB::dbufhi
+        ; mva     #$00, IO_DCB::dbuflo
+        ; sta     IO_DCB::dbufhi
         jsr     _bus
 
         lda     tmp8

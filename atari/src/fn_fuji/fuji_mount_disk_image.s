@@ -1,10 +1,9 @@
         .export         _fuji_mount_disk_image
 
         .import         _bus
+        .import         _fuji_success
         .import         copy_fuji_cmd_data
         .import         popa
-        .import         return0
-        .import         return1
 
         .include        "zp.inc"
         .include        "macros.inc"
@@ -23,14 +22,7 @@
         sta     IO_DCB::daux1
         mva     #$fe, IO_DCB::dtimlo
         jsr     _bus
-
-        lda     IO_DCB::dstats
-        cmp     #$01
-        beq     ok
-
-        jmp     return0
-ok:
-        jmp     return1
+        jsr     _fuji_success
 
 .endproc
 

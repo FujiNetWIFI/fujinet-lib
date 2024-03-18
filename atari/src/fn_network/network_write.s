@@ -22,9 +22,7 @@ _network_write:
 
         jsr     copy_network_cmd_data
 
-        jsr     popax                   ; buf
-        sta     IO_DCB::dbuflo
-        stx     IO_DCB::dbufhi
+        popax   IO_DCB::dbuflo          ; buf
 
         jsr     popax                   ; devicespec
         jsr     _network_unit           ; would be nice to skip this within the library if it's already done

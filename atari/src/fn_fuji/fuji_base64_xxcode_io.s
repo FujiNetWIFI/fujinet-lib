@@ -4,7 +4,6 @@
         .export         _fuji_base64_encode_output
 
         .import         _bus
-        .import         copy_fuji_cmd_data
         .import         io_common
         .import         popa, popax
 
