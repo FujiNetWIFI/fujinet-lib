@@ -3,16 +3,17 @@
         .import         _bus
         .import         _fuji_success
         .import         copy_fuji_cmd_data
+        .import         popax
 
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "device.inc"
         .include        "fujinet-fuji.inc"
 
-; bool _fuji_put_device_slots(DeviceSlot *device_slots)
+; bool _fuji_put_device_slots(DeviceSlot *device_slots, size_t size)
 .proc _fuji_put_device_slots
-        axinto  tmp7
-
+        ; ignore size param for now, it's always 8 for atari and hardcoded into the size below, but would need to process it if we change the slot count.
+        popax  tmp7     ; DeviceSlot address
         setax   #t_fuji_put_device_slots
         jsr     copy_fuji_cmd_data
 

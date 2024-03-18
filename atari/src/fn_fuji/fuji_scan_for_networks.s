@@ -8,7 +8,7 @@
         .include        "macros.inc"
         .include        "device.inc"
 
-; int fuji_scan_for_networks(uint8_t *count)
+; bool fuji_scan_for_networks(uint8_t *count)
 ;
 ; returns count of networks scanned
 .proc _fuji_scan_for_networks
