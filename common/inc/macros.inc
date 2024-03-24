@@ -61,12 +61,12 @@
 ; use CA65 function calling conventions, passing values into SP via pushax
 .macro pushax arg1
     .if (.match (.left (1, {arg1}), #))
-        lda     #<(.right (.tcount ({arg1})-1, {arg1}))
         ldx     #>(.right (.tcount ({arg1})-1, {arg1}))
+        lda     #<(.right (.tcount ({arg1})-1, {arg1}))
         jsr     pushax
     .else
-        lda     arg1
         ldx     1+(arg1)
+        lda     arg1
         jsr     pushax
     .endif
 .endmacro
@@ -78,20 +78,21 @@
 .endmacro
 
 ; same as pushax, but without the push to SP, preparing the args directly for consumption
+; always set X first, then A so flags are set based on A
 .macro setax arg1
     .if (.match (.left (1, {arg1}), #))
-        lda     #<(.right (.tcount ({arg1})-1, {arg1}))
         ldx     #>(.right (.tcount ({arg1})-1, {arg1}))
+        lda     #<(.right (.tcount ({arg1})-1, {arg1}))
     .else
-        lda     arg1
         ldx     1+(arg1)
+        lda     arg1
     .endif
 .endmacro
 
 .macro popax arg1
     jsr     popax
-    sta     arg1
     stx     1+(arg1)
+    sta     arg1
 .endmacro
 
 .macro popa arg1
@@ -100,8 +101,8 @@
 .endmacro
 
 .macro axinto arg1
-    sta     arg1
     stx     1+(arg1)
+    sta     arg1
 .endmacro
 
 ; adw: adds word values together, or immediate bytes.

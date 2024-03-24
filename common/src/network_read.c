@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -22,7 +21,7 @@
 #define MAX_READ_SIZE 512
 
 
-uint8_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
+int16_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
 {
     uint8_t r = 0;
     uint16_t fetch_size = 0;
@@ -55,7 +54,6 @@ uint8_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
     unit = network_unit(devicespec);
 #endif
 
-
     while (1) {
         // exit condition
         if (amount_left == 0) break;
@@ -67,12 +65,14 @@ uint8_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
         r = network_status_no_clr(devicespec, &fn_network_bw, &fn_network_conn, &fn_network_error);
 #endif
 
-        if (r != 0) return r;
+        // check if the status failed
+        if (r != 0) return -r;
 
         // EOF hit, exit reading
         if (fn_network_error == 136) break;
 
-        // we are waiting for bytes to become available while still connected. Causes tight loop if there's a long delay reading from network into FN
+        // we are waiting for bytes to become available while still connected.
+        // Causes tight loop if there's a long delay reading from network into FN, so we may see lots of status requests
         if (fn_network_bw == 0 && fn_network_conn == 1) {
             continue;
         }
@@ -100,5 +100,5 @@ uint8_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
 
     // do this here at the end, not in the loop so sio_read for atari can continue to set fn_bytes_read for short reads.
     fn_bytes_read = total_read;
-    return 0;
+    return total_read;
 }

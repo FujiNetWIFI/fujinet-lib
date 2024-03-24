@@ -6,11 +6,8 @@
         .import     _fn_error
         .import     _network_unit
         .import     copy_network_cmd_data
-        .import     incsp4
         .import     popa
         .import     popax
-        .import     return0
-        .import     return1
 
         .include    "atari.inc"
         .include    "device.inc"

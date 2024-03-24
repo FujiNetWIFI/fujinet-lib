@@ -2,7 +2,19 @@
 
 ## [Unreleased]
 
+## [3.0.2] - 2024-03-24
+
+This should be considered the BASE 3 release.
+
+- network_read signature changed to indicate the bytes fetched instead of status, and errors returned as negative
+- network_json_query signature similarly changed
+- added network_read_nb for non-blocking reads that only fetch up to the amount available in the buffer.
+  It is up to the client to loop to fetch the total required rather than the library.
+
 ## [3.0.1] - 2024-03-19
+
+This release has been removed, as starting with 3.0.2 the network_read signature has changed and I didn't want to bump to 4.0
+given noone has used 3 yet. Sorry purists!
 
 Complete Apple2 fuji device support for CONFIG.
 
@@ -14,6 +26,12 @@ Complete Apple2 fuji device support for CONFIG.
 
 ## [3.0.0] - 2024-03-18
 
+This release has been removed, as starting with 3.0.2 the network_read signature has changed and I didn't want to bump to 4.0
+given noone has used 3 yet. Sorry purists!
+
+- Contains signature breaking changes for:
+  - network_read, fuji_scan_for_networks, fuji_get_hsio_index, fuji_get_wifi_status, fuji_get_directory_position,
+  - fuji_get_device_slots, fuji_get_host_slots
 - The great rename fn_io_ to fuji_ to reflect device in FN being used, version bump to 3.0.0 to reflect huge name changes
 - Made most fuji_ functions return success status rather than void.
 - fuji routines to Apple2 - all but hashing/base64 and appkey stuff

@@ -21,7 +21,7 @@
         .include    "macros.inc"
         .include    "zp.inc"
 
-; uint8_t network_json_query(char *devicespec, char *query, char *s);
+; int16_t network_json_query(char *devicespec, char *query, char *s);
 ;
 ; TODO: how do we deal with very large json results? Maybe interface with network_read, which can handle them.
 ; Or does sio_read work with any max size?
@@ -82,14 +82,20 @@
 
 no_data:
         jsr     add_nul
-        jmp     return0         ; FN_ERR_OK
+        ; return the byte count
+        ldx     _fn_bytes_read+1
+        lda     _fn_bytes_read
+        rts
 
 error:
         sta     tmp1            ; save error code
-        jsr     add_nul
+        jsr     add_nul         ; sets the string to empty
+        ; make the error negative
+        ldx     #$00
         lda     tmp1
-        ; error already gone through standardisation, so just return
-        ; The caller should check error codes, and ignore any changes to string that may have happened
+        eor     #$ff
+        clc
+        adc     #$01
         rts
 
 add_nul:

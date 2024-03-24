@@ -8,6 +8,7 @@
 #define FUJINET_NETWORK_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 /**
  * The number of bytes read in the last call to network_read().
@@ -68,13 +69,31 @@ uint8_t network_close(char* devicespec);
 uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans);
 
 /**
- * @brief  Read from channel
+ * @brief  Non-blocking read from channel
+ * 
+ * The read will grab whatever is waiting in the FujiNet buffer. If fewer than the requested len, the return count will reflect this.
+ * Errors are returned as the negative value of the error.
+ * 
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  buf Buffer
  * @param  len length
- * @return fujinet-network error code (See FN_ERR_* values)
+ * @return Bytes read, or negative value of fujinet-network error code (See FN_ERR_* values)
  */
-uint8_t network_read(char* devicespec, uint8_t *buf, uint16_t len);
+int16_t network_read_nb(char* devicespec, uint8_t *buf, uint16_t len);
+
+/**
+ * @brief  Read from channel
+ * 
+ * The read will block until it has read all the bytes requested from the device, or the EOF is hit.
+ * This will block waiting for as much data as it can, so that the client does not need to handle counting.
+ * Errors are returned as the negative value of the error.
+ * 
+ * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
+ * @param  buf Buffer
+ * @param  len length
+ * @return Bytes read, or negative value of fujinet-network error code (See FN_ERR_* values)
+ */
+int16_t network_read(char* devicespec, uint8_t *buf, uint16_t len);
 
 /**
  * @brief  Write to network 
@@ -109,12 +128,12 @@ uint8_t network_json_parse(char *devicespec);
  * @brief  Perform JSON query
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  query pointer to string containing json path to query, e.g. "/path/field". No need to add device drive.
- * @param  s pointer to receiving string, nul terminated, if no data was retrieved, returns empty string
- * @return fujinet-network error code (See FN_ERR_* values)
+ * @param  s pointer to receiving string, nul terminated, if no data was retrieved, sets it to an empty string
+ * @return Bytes read, or negative values represent fujinet-network error code (See FN_ERR_* values)
  * 
  * Assumes an open and parsed json.
  */
-uint8_t network_json_query(char *devicespec, char *query, char *s);
+int16_t network_json_query(char *devicespec, char *query, char *s);
 
 /**
  * @brief  Sets the channel mode.

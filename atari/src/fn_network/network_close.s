@@ -1,8 +1,8 @@
         .export     _network_close
 
         .import     _bus
-        .import     _fn_device_error
         .import     _bus_status
+        .import     _fn_device_error
         .import     _network_unit
         .import     copy_network_cmd_data
         .import     popax

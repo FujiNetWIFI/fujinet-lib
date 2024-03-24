@@ -57,7 +57,7 @@
 
         jsr     _bus
         lda     IO_DCB::dunit
-        jmp     _bus_status              ; set return to the status
+        jmp     _bus_status             ; set return to the status
 
 @args_error:
         ; increase SP by Y to clear the params we received, and return error

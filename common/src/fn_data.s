@@ -4,6 +4,9 @@
         .export     _fn_network_bw
         .export     _fn_network_conn
 
+; -------------------------------------------------
+; BSS
+; -------------------------------------------------
 .bss
 
 ; device specific error value, e.g. SmartPort specific errors

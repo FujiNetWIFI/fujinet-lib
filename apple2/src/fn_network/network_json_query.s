@@ -25,7 +25,7 @@
         .include    "macros.inc"
         .include    "zp.inc"
 
-; uint8_t network_json_query(char *devicespec, char *query, char *s);
+; int16_t network_json_query(char *devicespec, char *query, char *s);
 ;
 .proc _network_json_query
         axinto  tmp5            ; save string output location
@@ -41,7 +41,13 @@
 
         ; remove 2 word args on stack, and return an error
         jsr     incsp4
-        jmp     _bad_unit
+        jsr     _bad_unit
+        ; make A negative for an error code. X already 0.
+        eor     #$ff
+        clc
+        adc     #$01
+        rts
+
 
         ; ----------------------------------------------------------------------------------
         ; Query
@@ -90,7 +96,7 @@
         ora     ptr4
         bne     not_empty
 
-        ; there was 0 data to read for this query
+        ; there was 0 data to read for this query, return 0 length
         jsr     add_nul
         jmp     return0
 
@@ -100,7 +106,13 @@ error:
         sta     ptr4            ; store error while we deal with nulling string
         jsr     add_nul
         lda     ptr4
-        jmp     _fn_error
+        jsr     _fn_error
+        ; make it negative
+        eor     #$ff
+        clc
+        adc     #$01
+        rts
+
 
 add_nul:
         ; tmp5 points to current target string, send back an empty string
@@ -168,5 +180,8 @@ not_empty:
         tya
         sta     (tmp5), y
 
-        jmp     return0         ; FN_ERR_OK
+        ; return the length held in ptr4 - does this need adjusting for 9b/0d/0a?
+        setax   ptr4
+        rts
+
 .endproc
