@@ -76,7 +76,7 @@ typedef struct {
 
 // Disks have different structures / parameters
 
-#ifdef BUILD_ATARI
+#ifdef __ATARI__
 typedef struct
 {
   uint16_t numSectors;
@@ -87,7 +87,7 @@ typedef struct
 } NewDisk;
 #endif
 
-#ifdef BUILD_APPLE2
+#ifdef __APPLE2__
 typedef struct
 {
   uint8_t hostSlot;
@@ -328,7 +328,7 @@ bool fuji_set_device_filename(uint8_t mode, uint8_t hs, uint8_t ds, char *buffer
  */
 bool fuji_set_directory_position(uint16_t pos);
 
-#ifdef BUILD_ATARI
+#ifdef __ATARI__
 /*
  * Fetch the current HSIO index value.
  * @return success status of request

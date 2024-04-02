@@ -56,19 +56,20 @@ have_network:
         jsr     _sp_status
         pha                     ; save the error until we've dealt with the function args
 
-        ldy     #$00
-
         ; process the device error
         lda     _sp_payload+3
+        ldy     #$00
         sta     (ptr4), y       ; *err = sp_payload[3]
 
         ; process the connection status param
         popax   ptr4
         lda     _sp_payload+2
+        ldy     #$00            ; popax destroys y, so reset it
         sta     (ptr4), y       ; *c = sp_payload[2]
 
         ; process the bytes waiting (bw) param
         popax   ptr4
+        ldy     #$00
         mway    _sp_payload, {(ptr4), y}
 
         ; remove the devicespec parameter from stack, it isn't used

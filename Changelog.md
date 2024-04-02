@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [3.0.3] - 2024-04-02
+
+Bugfix release:
+
+- [apple2] fix network_status on apple2enh by setting y specifically
+- replaced BUILD_APPLE2 and BUILD_ATARI in favour of cc65 macros __APPLE2__ and __ATARI__
+
 ## [3.0.2] - 2024-03-24
 
 This should be considered the BASE 3 release.

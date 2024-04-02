@@ -3,7 +3,7 @@
 
 #include "../../fujinet-network.h"
 
-#ifdef BUILD_APPLE2
+#ifdef __APPLE2__
 #include "fujinet-bus-apple2.h"
 #include "apple2/src/bus/inc/sp.h"
 #endif
@@ -12,7 +12,7 @@ uint8_t network_init()
 {
   int8_t err = 0;
 
-#ifdef BUILD_APPLE2
+#ifdef __APPLE2__
   err = sp_init();
   if (err == 0) {
     return FN_ERR_NO_DEVICE;
