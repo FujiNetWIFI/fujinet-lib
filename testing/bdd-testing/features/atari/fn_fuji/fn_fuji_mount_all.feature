@@ -2,15 +2,15 @@ Feature: IO library test - fn_fuji_mount_all
 
   This tests FN-FUJI fn_fuji_mount_all
 
-  Scenario: execute _fn_fuji_mount_all successfully
+  Scenario: execute _fuji_mount_all successfully
     Given atari-fn-fuji application test setup
       And I add common atari-io files
-      And I add atari src file "fn_fuji/fn_fuji_mount_all.s"
+      And I add atari src file "fn_fuji/fuji_mount_all.s"
       And I add file for compiling "features/atari/fn_fuji/test-apps/test_no_args.s"
       And I add file for compiling "features/atari/fn_fuji/stubs/bus-simple.s"
       And I create and load atari application
       And I write memory at $80 with $ff
-      And I write word at t_fn with address _fn_fuji_mount_all
+      And I write word at t_fn with address _fuji_mount_all
      When I execute the procedure at _init for no more than 70 instructions
 
     # check the DCB values were set correctly
@@ -33,16 +33,16 @@ Feature: IO library test - fn_fuji_mount_all
     # check BUS was called
     Then I expect to see $80 equal $01
 
-  Scenario: execute _fn_fuji_mount_all with error
+  Scenario: execute _fuji_mount_all with error
     Given atari-fn-fuji application test setup
       And I add common atari-io files
-      And I add atari src file "fn_fuji/fn_fuji_mount_all.s"
+      And I add atari src file "fn_fuji/fuji_mount_all.s"
       And I add file for compiling "features/atari/fn_fuji/test-apps/test_no_args.s"
       And I add file for compiling "features/atari/fn_fuji/stubs/bus-simple-err.s"
       And I create and load atari application
       And I write memory at $80 with $ff
       And I write memory at t_bus_err with $69
-      And I write word at t_fn with address _fn_fuji_mount_all
+      And I write word at t_fn with address _fuji_mount_all
      When I execute the procedure at _init for no more than 80 instructions
 
     # check the DCB values were set correctly (with error in DSTATS)

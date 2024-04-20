@@ -2,18 +2,18 @@ Feature: IO library test - fn_fuji_get_adapter_config
 
   This tests FN-FUJI fn_fuji_get_adapter_config
 
-  Scenario: execute _fn_fuji_get_adapter_config_extended
+  Scenario: execute _fuji_get_adapter_config_extended
     Given atari-fn-fuji simple test setup
       And I add common atari-io files
-      And I add atari src file "fn_fuji/fn_fuji_get_adapter_config_extended.s"
-      And I add atari src file "fn_fuji/fn_fuji_get_adapter_config.s"
+      And I add atari src file "fn_fuji/fuji_get_adapter_config_extended.s"
+      And I add atari src file "fn_fuji/fuji_get_adapter_config.s"
       And I add file for compiling "features/atari/fn_fuji/stubs/bus-adapter-config-ext.s"
       And I create and load simple atari application
       And I set register A to $00
       And I set register X to $A0
       And I write memory at $80 with $00
 
-     When I execute the procedure at _fn_fuji_get_adapter_config_extended for no more than 1900 instructions
+     When I execute the procedure at _fuji_get_adapter_config_extended for no more than 1900 instructions
       And I print ascii from $A000 to $A000+244
 
     # check the DCB values were set correctly

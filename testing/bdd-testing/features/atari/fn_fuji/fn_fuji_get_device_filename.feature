@@ -2,10 +2,10 @@ Feature: IO library test - fn_fuji_get_device_filename
 
   This tests FN-FUJI fn_fuji_get_device_filename
 
-  Scenario Outline: execute _fn_fuji_get_device_filename
+  Scenario Outline: execute _fuji_get_device_filename
     Given atari-fn-fuji application test setup
       And I add common atari-io files
-      And I add atari src file "fn_fuji/fn_fuji_get_device_filename.s"
+      And I add atari src file "fn_fuji/fuji_get_device_filename.s"
       And I add file for compiling "features/atari/fn_fuji/test-apps/test_bw.s"
       And I add file for compiling "features/atari/fn_fuji/stubs/bus-simple.s"
       And I create and load atari application
@@ -13,9 +13,9 @@ Feature: IO library test - fn_fuji_get_device_filename
 
       And I write memory at t_b1 with <slot_offset>
       And I write word at t_w2 with hex a000
-      And I write word at t_fn with address _fn_fuji_get_device_filename
+      And I write word at t_fn with address _fuji_get_device_filename
 
-     When I execute the procedure at _init for no more than 90 instructions
+     When I execute the procedure at _init for no more than 100 instructions
 
     # check the DCB values were set correctly
     Then I expect to see DDEVIC equal $70

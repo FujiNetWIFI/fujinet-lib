@@ -75,14 +75,18 @@ Given I add common atari-nw-io files
   # The test implementation of BUS
   And I add atari/stubs test-setup file "bus.s"
   # Others for compiling
-  And I add common src file "bss_data.s"
-  And I add atari src file "fn_fuji/copy_cmd_data.s"
-  And I add atari src file "fn_network/fn_error.s"
+  And I add common src file "fn_data.s"
+  And I add atari src file "bus/copy_cmd_data.s"
+  And I add atari src file "bus/fn_error.s"
   And I add atari src file "fn_network/network_data.s"
+  And I add atari src file "fn_fuji/fuji_error.s"
 
 Given I add common atari-io files
   # The test implementation of BUS
   And I add atari/stubs test-setup file "bus.s"
   # Others for compiling
-  And I add atari src file "fn_fuji/copy_cmd_data.s"
-  And I add atari src file "fn_fuji/fn_fuji_error.s"
+  And I add common src file "fn_data.s"
+  And I add atari src file "bus/copy_cmd_data.s"
+  And I add atari src file "bus/fn_error.s"
+  And I add atari src file "fn_fuji/fuji_error.s"
+  And I add atari src file "fn_fuji/fuji_success.s"

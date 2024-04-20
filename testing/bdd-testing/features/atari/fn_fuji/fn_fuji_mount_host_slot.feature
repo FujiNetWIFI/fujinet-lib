@@ -2,16 +2,16 @@ Feature: IO library test - fn_fuji_mount_host_slot
 
   This tests FN-FUJI fn_fuji_mount_host_slot
 
-  Scenario Outline: execute _fn_fuji_mount_host_slot successfully
+  Scenario Outline: execute _fuji_mount_host_slot successfully
     Given atari-fn-fuji application test setup
       And I add common atari-io files
-      And I add atari src file "fn_fuji/fn_fuji_mount_host_slot.s"
+      And I add atari src file "fn_fuji/fuji_mount_host_slot.s"
       And I add file for compiling "features/atari/fn_fuji/test-apps/test_b.s"
       And I add file for compiling "features/atari/fn_fuji/stubs/bus-simple.s"
       And I create and load atari application
       And I write memory at $80 with $00
       And I write memory at t_b1 with <slot>
-      And I write word at t_fn with address _fn_fuji_mount_host_slot
+      And I write word at t_fn with address _fuji_mount_host_slot
      When I execute the procedure at _init for no more than 80 instructions
 
     # check the DCB values were set correctly
@@ -41,17 +41,17 @@ Feature: IO library test - fn_fuji_mount_host_slot
     | 1    |
     | 2    |
 
-  Scenario: execute _fn_fuji_mount_host_slot with error
+  Scenario: execute _fuji_mount_host_slot with error
     Given atari-fn-fuji application test setup
       And I add common atari-io files
-      And I add atari src file "fn_fuji/fn_fuji_mount_host_slot.s"
+      And I add atari src file "fn_fuji/fuji_mount_host_slot.s"
       And I add file for compiling "features/atari/fn_fuji/test-apps/test_b.s"
       And I add file for compiling "features/atari/fn_fuji/stubs/bus-simple-err.s"
       And I create and load atari application
       And I write memory at $80 with $00
       And I write memory at t_bus_err with $69
       And I write memory at t_b1 with $01
-      And I write word at t_fn with address _fn_fuji_mount_host_slot
+      And I write word at t_fn with address _fuji_mount_host_slot
      When I execute the procedure at _init for no more than 80 instructions
 
     # check the DCB values were set correctly

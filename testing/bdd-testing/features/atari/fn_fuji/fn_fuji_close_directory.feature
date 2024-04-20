@@ -5,11 +5,11 @@ Feature: IO library test - fn_fuji_close_directory
   Scenario: execute fn_fuji_close_directory
     Given atari-fn-fuji simple test setup
       And I add common atari-io files
-      And I add atari src file "fn_fuji/fn_fuji_close_directory.s"
+      And I add atari src file "fn_fuji/fuji_close_directory.s"
       And I add file for compiling "features/atari/fn_fuji/stubs/bus-simple.s"
       And I create and load simple atari application
       And I write memory at $80 with $ff
-     When I execute the procedure at _fn_fuji_close_directory for no more than 60 instructions
+     When I execute the procedure at _fuji_close_directory for no more than 100 instructions
 
     # check the DCB values were set correctly
     Then I expect to see DDEVIC equal $70

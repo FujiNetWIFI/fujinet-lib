@@ -2,17 +2,17 @@ Feature: IO library test - fn_fuji_get_host_prefix
 
   This tests FN-FUJI fn_fuji_get_host_prefix
 
-  Scenario: execute _fn_fuji_get_host_prefix
+  Scenario: execute _fuji_get_host_prefix
     Given atari-fn-fuji application test setup
       And I add common atari-io files
-      And I add atari src file "fn_fuji/fn_fuji_host_prefix.s"
+      And I add atari src file "fn_fuji/fuji_host_prefix.s"
       And I add file for compiling "features/atari/fn_fuji/test-apps/test_bw.s"
       And I add file for compiling "features/atari/fn_fuji/stubs/bus-simple.s"
       And I create and load atari application
       And I write memory at $80 with $ff
       And I write memory at t_b1 with $02
       And I write word at t_w2 with hex 1234
-      And I write word at t_fn with address _fn_fuji_get_host_prefix
+      And I write word at t_fn with address _fuji_get_host_prefix
      When I execute the procedure at _init for no more than 130 instructions
 
     # check the DCB values were set correctly

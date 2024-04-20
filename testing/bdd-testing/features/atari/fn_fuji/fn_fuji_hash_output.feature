@@ -2,10 +2,10 @@ Feature: IO library test - fn_fuji_hash_output
 
   This tests FN-FUJI fn_fuji_hash_output
 
-  Scenario: execute _fn_fuji_hash_output
+  Scenario: execute _fuji_hash_output
     Given atari-fn-fuji application test setup
       And I add common atari-io files
-      And I add atari src file "fn_fuji/fn_fuji_hash_output.s"
+      And I add atari src file "fn_fuji/fuji_hash_output.s"
       And I add file for compiling "features/atari/fn_fuji/test-apps/test_bww.s"
       And I add file for compiling "features/atari/fn_fuji/stubs/bus-simple.s"
       And I create and load atari application
@@ -13,7 +13,7 @@ Feature: IO library test - fn_fuji_hash_output
       And I write memory at t_b1 with $02
       And I write word at t_w2 with hex 1234
       And I write word at t_w3 with hex abcd
-      And I write word at t_fn with address _fn_fuji_hash_output
+      And I write word at t_fn with address _fuji_hash_output
      When I execute the procedure at _init for no more than 130 instructions
 
     # check the DCB values were set correctly

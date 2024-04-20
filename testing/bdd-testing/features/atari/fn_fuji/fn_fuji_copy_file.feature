@@ -2,10 +2,10 @@ Feature: IO library test - fn_fuji_copy_file
 
   This tests FN-FUJI fn_fuji_copy_file
 
-  Scenario: execute _fn_fuji_copy_file
+  Scenario: execute _fuji_copy_file
     Given atari-fn-fuji application test setup
       And I add common atari-io files
-      And I add atari src file "fn_fuji/fn_fuji_copy_file.s"
+      And I add atari src file "fn_fuji/fuji_copy_file.s"
       And I add file for compiling "features/atari/fn_fuji/test-apps/test_bbw.s"
       And I add file for compiling "features/atari/fn_fuji/stubs/bus-simple.s"
       And I create and load atari application
@@ -14,7 +14,7 @@ Feature: IO library test - fn_fuji_copy_file
       And I write memory at t_b1 with $01
       And I write memory at t_b2 with $02
       And I write word at t_w3 with hex a000
-      And I write word at t_fn with address _fn_fuji_copy_file
+      And I write word at t_fn with address _fuji_copy_file
      When I execute the procedure at _init for no more than 120 instructions
 
     # check the DCB values were set correctly

@@ -13,7 +13,7 @@ Feature: library test - apple2 network_close
       And I write word at t_devicespec with hex $a012
       And I write memory at _sp_network with $02
       And I ignore cc65-noise
-     When I execute the procedure at _init for no more than 2150 instructions
+     When I execute the procedure at _init for no more than 2000 instructions
 
     Then I expect register A equal 0
      And I expect register X equal 0
@@ -34,9 +34,10 @@ Feature: library test - apple2 network_close
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
-      And I write memory at _sp_network with $00
+      # ensure _sp_network is reset to 0 so we can test what happens when it is
+      And I write memory at t_sp_network with $00
       And I ignore cc65-noise
-     When I execute the procedure at _init for no more than 2020 instructions
+     When I execute the procedure at _init for no more than 1850 instructions
 
     Then I expect register A equal FN_ERR_BAD_CMD
      And I expect register X equal 0

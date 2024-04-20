@@ -2,15 +2,15 @@ Feature: IO library test - fn_fuji_reset
 
   This tests FN-FUJI fn_fuji_reset
 
-  Scenario: execute _fn_fuji_reset
+  Scenario: execute _fuji_reset
     Given atari-fn-fuji application test setup
       And I add common atari-io files
-      And I add atari src file "fn_fuji/fn_fuji_reset.s"
+      And I add atari src file "fn_fuji/fuji_reset.s"
       And I add file for compiling "features/atari/fn_fuji/test-apps/test_no_args.s"
       And I add file for compiling "features/atari/fn_fuji/stubs/bus-simple.s"
       And I create and load atari application
       And I write memory at $80 with $ff
-      And I write word at t_fn with address _fn_fuji_reset
+      And I write word at t_fn with address _fuji_reset
      When I execute the procedure at _init for no more than 70 instructions
 
     # check the DCB values were set correctly

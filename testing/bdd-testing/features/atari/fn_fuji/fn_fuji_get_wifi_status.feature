@@ -2,15 +2,15 @@ Feature: IO library test - fn_fuji_get_wifi_status
 
   This tests FN-FUJI fn_fuji_get_wifi_status
 
-  Scenario Outline: execute _fn_fuji_get_wifi_status
+  Scenario Outline: execute _fuji_get_wifi_status
     Given atari-fn-fuji simple test setup
       And I add common atari-io files
-      And I add atari src file "fn_fuji/fn_fuji_get_wifi_status.s"
+      And I add atari src file "fn_fuji/fuji_get_wifi_status.s"
       And I add file for compiling "features/atari/fn_fuji/stubs/bus-dbuflo1.s"
       And I create and load simple atari application
 
     When I write memory at t_v with <sio_ret>
-     And I execute the procedure at _fn_fuji_get_wifi_status for no more than 65 instructions
+     And I execute the procedure at _fuji_get_wifi_status for no more than 65 instructions
 
     # check the DCB values were set correctly
     Then I expect to see DDEVIC equal $70

@@ -19,7 +19,7 @@ _sio_read:
         axinto  _fn_bytes_read
 
         setax   #t_network_read
-        jsr     copy_network_cmd_data           ; setup DCB
+        jsr     copy_network_cmd_data   ; setup DCB
 
         popax   IO_DCB::dbuflo          ; buffer arg
         popa    IO_DCB::dunit           ; unit arg

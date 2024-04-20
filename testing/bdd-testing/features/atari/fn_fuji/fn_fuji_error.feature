@@ -4,11 +4,11 @@ Feature: IO library test - fn_fuji_error
 
   Scenario Outline: execute fn_fuji_error should return appropriate values depending on DSTATS
     Given atari-fn-fuji simple test setup
-      And I add atari src file "fn_fuji/fn_fuji_error.s"
+      And I add atari src file "fn_fuji/fuji_error.s"
       And I create and load simple atari application
 
      When I write memory at DSTATS with <init>
-      And I execute the procedure at _fn_fuji_error for no more than 10 instructions
+      And I execute the procedure at _fuji_error for no more than 10 instructions
      Then I expect register A equal <A>
      Then I expect register X equal <X>
 

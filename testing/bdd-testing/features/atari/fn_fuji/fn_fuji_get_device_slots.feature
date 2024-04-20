@@ -2,10 +2,10 @@ Feature: IO library test - fn_fuji_get_device_slots
 
   This tests FN-FUJI fn_fuji_get_device_slots
 
-  Scenario: execute _fn_fuji_get_device_slots
+  Scenario: execute _fuji_get_device_slots
     Given atari-fn-fuji simple test setup
       And I add common atari-io files
-      And I add atari src file "fn_fuji/fn_fuji_get_device_slots.s"
+      And I add atari src file "fn_fuji/fuji_get_device_slots.s"
       And I add file for compiling "features/atari/fn_fuji/stubs/bus-simple.s"
       And I create and load simple atari application
       And I write memory at $80 with $00
@@ -13,7 +13,7 @@ Feature: IO library test - fn_fuji_get_device_slots
       And I set register X to $a0
 
      # set the slot_offset
-     When I execute the procedure at _fn_fuji_get_device_slots for no more than 60 instructions
+     When I execute the procedure at _fuji_get_device_slots for no more than 60 instructions
 
     # check the DCB values were set correctly
     Then I expect to see DDEVIC equal $70

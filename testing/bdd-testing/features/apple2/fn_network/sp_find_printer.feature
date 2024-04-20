@@ -6,7 +6,7 @@ Feature: library test - apple2 sp_find_printer
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add file for compiling "features/apple2/fn_network/invokers/test_sp_find_printer.s"
-      And I add apple2 src file "fn_fuji/sp_find_printer.s"
+      And I add apple2 src file "bus/sp_find_printer.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
      When I execute the procedure at _init for no more than 1020 instructions
 

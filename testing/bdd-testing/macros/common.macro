@@ -5,12 +5,13 @@ Given I add * test-setup file "*"
   And I add file for compiling "features/$1/$2"
 
 Given I ignore cc65-noise
+  And ignore address incsp2 to incsp2+14 for trace
+  And ignore address popa to popa+11 for trace
+  And ignore address popax to popax+12 for trace
+  And ignore address pusha to pusha+18 for trace
+  And ignore address pushax to pushax+22 for trace
+  And ignore address addysp to addysp+13 for trace
+  And ignore address _memcpy to _memcpy+44 for trace
   # And ignore address _bzero to _bzero+93 for trace
-  # And ignore address addysp to addysp+13 for trace
-  # And ignore address incsp2 to incsp2+14 for trace
   # And ignore address incsp6 to incsp6+4 for trace
-  # And ignore address popa to popa+11 for trace
-  # And ignore address popax to popax+12 for trace
-  # And ignore address pusha to pusha+18 for trace
-  # And ignore address pushax to pushax+22 for trace
   # And ignore address popptr1 to popptr1+13 for trace

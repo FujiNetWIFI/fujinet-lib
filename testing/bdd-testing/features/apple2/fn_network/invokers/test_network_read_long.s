@@ -8,6 +8,7 @@
 
         .export     t_cb_executed
         .export     _network_status
+        .export     _network_status_no_clr
 
         .import     _fn_network_bw
         .import     _fn_network_conn
@@ -58,7 +59,7 @@ r1:
         lda     t_return_code
         rts
 
-        ; round 2 READ $69
+        ; round 2 READ value $69
 r2:
         mva     #$69, _sp_payload
         lda     #$00
@@ -70,7 +71,7 @@ r2:
         lda     t_return_code
         rts
 
-        ; round 2 READ $69
+        ; round 3 READ value $96
 r3:
         mva     #$96, _sp_payload
         lda     #$00
@@ -91,6 +92,12 @@ r3:
 
         rts
 .endproc
+
+.proc _network_status_no_clr
+        jmp     _network_status
+.endproc
+
+
 
 .bss
 t_devicespec:   .res 2

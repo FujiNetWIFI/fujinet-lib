@@ -7,6 +7,8 @@
         .export     t_cb_codes
         .export     t_cb_executed
 
+        .export     t_sp_network
+
         .export     t_r1_cmd
         .export     t_r1_unit
         .export     t_r1_error
@@ -18,6 +20,7 @@
 
         .import     _network_json_parse
         .import     _sp_init
+        .import     _sp_network
         .import     _sp_payload
         .import     pushax
         .import     return0
@@ -36,8 +39,14 @@
         ; would have been called by open normally. in this test, we haven't done it yet
         jsr     _sp_init
 
+        ; should we unset the sp_network value?
+        lda     t_sp_network
+        bne     :+              ; no
+
+        mva     #$00, _sp_network
+
         ; call function under test
-        setax   t_devicespec
+:       setax   t_devicespec
         jmp     _network_json_parse
 .endproc
 
@@ -131,5 +140,9 @@ t_r2_payload:   .res 20
 ; some control variables to force error conditions, and track which call we're processing
 t_cb_executed:  .byte 0
 
-t_r1_error:  .byte 0
-t_r2_error:  .byte 0
+t_r1_error:     .byte 0
+t_r2_error:     .byte 0
+
+; used to force _sp_network to 0 after init, so we can test what happens when it's not set
+; if it's not 0, it will not be changed. if it is 0, it will set the real _sp_network to 0
+t_sp_network:   .byte 1

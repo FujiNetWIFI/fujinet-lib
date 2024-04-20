@@ -2,10 +2,10 @@ Feature: IO library test - fn_fuji_set_device_filename
 
   This tests FN-FUJI fn_fuji_set_device_filename
 
-  Scenario Outline: execute _fn_fuji_set_device_filename
+  Scenario Outline: execute _fuji_set_device_filename
     Given atari-fn-fuji application test setup
       And I add common atari-io files
-      And I add atari src file "fn_fuji/fn_fuji_set_device_filename.s"
+      And I add atari src file "fn_fuji/fuji_set_device_filename.s"
       And I add file for compiling "features/atari/fn_fuji/test-apps/test_bbbw.s"
       And I add file for compiling "features/atari/fn_fuji/stubs/bus-simple.s"
       And I create and load atari application
@@ -14,7 +14,7 @@ Feature: IO library test - fn_fuji_set_device_filename
       And I write memory at t_b2 with <host_slot>
       And I write memory at t_b3 with <device_slot>
       And I write word at t_w4 with hex a000
-      And I write word at t_fn with address _fn_fuji_set_device_filename
+      And I write word at t_fn with address _fuji_set_device_filename
 
      When I execute the procedure at _init for no more than 130 instructions
 

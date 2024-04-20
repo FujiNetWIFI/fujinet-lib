@@ -8,13 +8,13 @@ Feature: library test - apple2 network_read
       And I add common apple2-sp files
       And I add common src file "network_read.c"
       And I add apple2 src file "fn_network/network_status.s"
-      And I add apple2 src file "fn_fuji/sp_read.s"
+      And I add apple2 src file "bus/sp_read.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_read.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write word at t_devicespec with hex $a012
       And I write word at t_buffer with hex $b000
       And I write word at t_len with hex $000A
-      And I write memory at _sp_network with 0
+      And I write memory at t_sp_network with 0
       And I ignore cc65-noise
      When I execute the procedure at _init for no more than 2075 instructions
 
@@ -28,14 +28,14 @@ Feature: library test - apple2 network_read
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add common src file "network_read.c"
-      And I add apple2 src file "fn_fuji/sp_read.s"
+      And I add apple2 src file "bus/sp_read.s"
+      And I add apple2 src file "fn_network/network_status.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_read.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write word at t_buffer with hex $b000
       And I write word at t_len with hex $0000
-      And I write memory at _sp_network with 1
       And I ignore cc65-noise
      When I execute the procedure at _init for no more than 2300 instructions
 
@@ -45,11 +45,12 @@ Feature: library test - apple2 network_read
      And I expect to see t_cb_executed equal 0
 
   # -----------------------------------------------------------------------------------------------------------------
-  Scenario: execute apple2 _network_read for under 512 bytes with no errors copies data to buffer
+  Scenario: execute apple2 _network_read for under 512 bytes with no errors copies data to buffer and returns count of bytes read
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add common src file "network_read.c"
-      And I add apple2 src file "fn_fuji/sp_read.s"
+      And I add apple2 src file "bus/sp_read.s"
+      And I add apple2 src file "fn_network/network_status.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_read.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
@@ -61,7 +62,7 @@ Feature: library test - apple2 network_read
       And I ignore cc65-noise
      When I execute the procedure at _init for no more than 4600 instructions
 
-    Then I expect register A equal 0
+    Then I expect register A equal $0A
      And I expect register X equal 0
      And I expect to see t_cb_executed equal 2
      And I expect to see _fn_device_error equal 0
@@ -70,24 +71,25 @@ Feature: library test - apple2 network_read
      And I expect to see t_cb_a+0 equal 83
      And I expect to see t_cb_codes+0 equal 83
      And I expect to see t_r1_cmd equal SP_CMD_STATUS
-     And I expect to see t_r1_unit equal 1
-     When I hex+ dump ascii between t_r1_payload and t_r1_payload+8
-     Then property "test.BDD6502.lastHexDump" must contain string ": 00 00 00 00 00 00 00 00 :"
+     And I expect to see t_r1_unit equal 2
+     # We don't clear payload anymore
+     # When I hex+ dump ascii between t_r1_payload and t_r1_payload+8
+     # Then property "test.BDD6502.lastHexDump" must contain string ": 00 00 00 00 00 00 00 00 :"
 
      # READ
      And I expect to see t_cb_a+1 equal SP_CMD_READ
      And I expect to see t_r2_cmd equal SP_CMD_READ
-     And I expect to see t_r2_unit equal 1
-     When I hex+ dump ascii between t_r2_payload and t_r2_payload+8
-     Then property "test.BDD6502.lastHexDump" must contain string ": 0a 00 00 00 00 00 00 00 :"
+     And I expect to see t_r2_unit equal 2
+     When I hex+ dump ascii between t_r2_payload and t_r2_payload+1
+     Then property "test.BDD6502.lastHexDump" must contain string ": 0a :"
 
     # check the data was copied to buffer, should only be 10 bytes
     When I hex+ dump ascii between $b000 and $b010
     Then property "test.BDD6502.lastHexDump" must contain string "b000: 31 32 33 34 35 36 37 38  39 30 00 00 00 00 00 00 :"
     Then property "test.BDD6502.lastHexDump" must contain string "1234567890"
 
-     When I hex+ dump ascii between _sp_payload and _sp_payload+16
-     Then property "test.BDD6502.lastHexDump" must contain string ": 31 32 33 34 35 36 37 38  39 30 00 00 00 00 00 00 :"
+     When I hex+ dump ascii between _sp_payload and _sp_payload+10
+     Then property "test.BDD6502.lastHexDump" must contain string ": 31 32 33 34 35 36 37 38  39 30 :"
      
       And I expect to see _fn_bytes_read equal 10
       And I expect to see _fn_bytes_read+1 equal 0
@@ -97,22 +99,23 @@ Feature: library test - apple2 network_read
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add common src file "network_read.c"
-      And I add apple2 src file "fn_fuji/sp_read.s"
+      And I add apple2 src file "bus/sp_read.s"
+      And I add apple2 src file "fn_network/network_status.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_read.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write word at t_buffer with hex $b000
       And I write word at t_len with hex $000A
-      And I write memory at _sp_network with 1
       # simulate SP_ERR_BUS_ERR error when read called
       And I write memory at t_r1_error with SP_ERR_BUS_ERR
       And I write string "12345678901234567890" as ascii to memory address _sp_payload
       And I ignore cc65-noise
      When I execute the procedure at _init for no more than 2350 instructions
 
-    Then I expect register A equal FN_ERR_IO_ERROR
-     And I expect register X equal 0
+    # the returned error from network_read is negative value of fn_error, so FN_ERR_IO_ERROR = 1, thus -1 is returned which is 0xFFFF in 16 bits (A/X)
+    Then I expect register A equal 0xFF
+     And I expect register X equal 0xFF
      And I expect to see t_cb_executed equal 1
      And I expect to see _fn_device_error equal SP_ERR_BUS_ERR
 
@@ -125,14 +128,13 @@ Feature: library test - apple2 network_read
     Given apple2-fn-nw application test setup
       And I add common apple2-sp files
       And I add common src file "network_read.c"
-      And I add apple2 src file "fn_fuji/sp_read.s"
+      And I add apple2 src file "bus/sp_read.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_read_long.s"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
       And I write string "n5:foo" as ascii to memory address $a012
       And I write word at t_devicespec with hex $a012
       And I write word at t_buffer with hex $b000
       And I write word at t_len with hex $0201
-      And I write memory at _sp_network with 1
       And I ignore cc65-noise
      When I execute the procedure at _init for no more than 4500 instructions
 

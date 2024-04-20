@@ -99,9 +99,11 @@ Feature: library test - apple2 network_ioctl
       And I add apple2 src file "fn_network/network_ioctl.s"
       And I add file for compiling "features/apple2/fn_network/invokers/test_network_ioctl1.c"
       And I create and load apple-single application using crt-file "features/apple2/fn_network/stubs/crt0.s"
-      And I write memory at _sp_network with 0
+      # Pretend we have done an "init" and that the network id was not found
+      And I write memory at _t_sp_is_init with 1
+      And I write memory at _t_sp_network with 0
       And I ignore cc65-noise
-     When I execute the procedure at _init for no more than 300 instructions
+     When I execute the procedure at _init for no more than 200 instructions
 
     Then I expect register A equal FN_ERR_BAD_CMD
      And I expect register X equal 0

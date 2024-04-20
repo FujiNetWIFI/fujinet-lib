@@ -5,6 +5,8 @@
         .export     t_cb_codes
         .export     t_cb_executed
 
+        .export     t_sp_network
+
         .export     t_devicespec
         .export     t_buffer
         .export     t_len
@@ -25,6 +27,7 @@
         .import     _fn_network_error
         .import     _network_read
         .import     _sp_init
+        .import     _sp_network
         .import     _sp_payload
 
         .import     incsp6
@@ -46,8 +49,13 @@
         ; would have been called by open normally. in this test, we haven't done it yet
         jsr     _sp_init
 
+        ; should we unset the sp_network value?
+        lda     t_sp_network
+        bne     :+              ; no
+
+        mva     #$00, _sp_network
         ; call function under test
-        pushax  t_devicespec
+:       pushax  t_devicespec
         pushax  t_buffer
         setax   t_len
         jmp     _network_read
@@ -148,3 +156,7 @@ t_cb_codes:     .res 5
 t_cb_executed:  .byte 0
 t_r1_error:     .byte 0
 t_r2_error:     .byte 0
+
+; used to force _sp_network to 0 after init, so we can test what happens when it's not set
+; if it's not 0, it will not be changed. if it is 0, it will set the real _sp_network to 0
+t_sp_network:   .byte 1
