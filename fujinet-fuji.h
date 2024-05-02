@@ -9,6 +9,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#ifdef __CBM__
+#include <cbm.h>
+#define FUJI_CBM_DEV 30
+#endif // __CBM__
+
 #define FILE_MAXLEN 36
 #define SSID_MAXLEN 33 /* 32 + NULL */
 #define MAX_APPKEY_LEN    64
@@ -97,6 +102,20 @@ typedef struct
   char filename[256];
 } NewDisk;
 
+
+#endif
+
+#ifdef __CBM__
+// TODO: what is this for commodore?
+typedef struct
+{
+  uint16_t numSectors;
+  uint16_t sectorSize;
+  uint8_t hostSlot;
+  uint8_t deviceSlot;
+  char filename[256];
+
+} NewDisk;
 #endif
 
 typedef struct

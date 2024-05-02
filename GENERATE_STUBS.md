@@ -22,13 +22,13 @@ Create the initial directories for the new platform
 
 ```shell
 NEW_PLATFORM=commodore
-mkdir ${NEW_PLATFORM}/src/{bus,fn_fuji,fn_network}
+mkdir -p ${NEW_PLATFORM}/src/{bus,fn_fuji,fn_network}
 ```
 
 ## fuji
 
 ```shell
-grep '^[buiv].*(' fujinet-fuji.h | while read f; do FILE_NAME=$(echo $f | cut -d\( -f1 | awk '{print $2}').cpp;  echo $f | awk '{
+grep '^[buiv].*(' fujinet-fuji.h | while read f; do FILE_NAME=$(echo $f | cut -d\( -f1 | awk '{print $2}').c;  echo $f | awk '{
   LINE=gsub(/;/, "")
   printf("#include <stdbool.h>\n#include <stdint.h>\n#include \"fujinet-fuji.h\"\n\n%s\n{\n", $0)
   if ($1 == "bool") {
@@ -44,7 +44,7 @@ grep '^[buiv].*(' fujinet-fuji.h | while read f; do FILE_NAME=$(echo $f | cut -d
 ## network
 
 ```shell
-grep '^[buiv].*(' fujinet-network.h | while read f; do FILE_NAME=$(echo $f | cut -d\( -f1 | awk '{print $2}').cpp;  echo $f | awk '{
+grep '^[buiv].*(' fujinet-network.h | while read f; do FILE_NAME=$(echo $f | cut -d\( -f1 | awk '{print $2}').c;  echo $f | awk '{
   LINE=gsub(/;/, "")
   printf("#include <stdbool.h>\n#include <stdint.h>\n#include \"fujinet-network.h\"\n\n%s\n{\n", $0)
   if ($1 == "bool") {
