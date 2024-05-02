@@ -142,7 +142,7 @@ enum HashType {
  * Closes the currently open directory
  * @return Success status, true if all OK.
  */
-bool fuji_close_directory(void);
+bool fuji_close_directory();
 
 /*
  * Copies a file from given src to dst, with supplied path in copy_spec
@@ -241,7 +241,7 @@ bool fuji_get_ssid(NetConfig *net_config);
 /*
  * @return Checks if WIFI is enabled or not. Any device errors will return false also.
  */
-bool fuji_get_wifi_enabled(void);
+bool fuji_get_wifi_enabled();
 
 /*
  * @return Sets status to the wifi status value.
@@ -254,7 +254,7 @@ bool fuji_get_wifi_status(uint8_t *status);
  * Mount all devices
  * @return true if successful, false otherwise
  */
-bool fuji_mount_all(void);
+bool fuji_mount_all();
 
 /*
  * Mount specific device slot
@@ -296,7 +296,7 @@ bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer);
  * Reset FN
  * @return true if successful, false if there was an error from FN
  */
-bool fuji_reset(void);
+bool fuji_reset();
 
 /*
  * Scans network for SSIDs and sets count accordingly.

@@ -3,7 +3,7 @@
 # - recursive dirs for src
 # - final files go into build/ directory instead of root folder (e.g. lbl, com file etc)
 
-TARGETS := atari apple2
+TARGETS := atari apple2 commodore
 PROGRAM := fujinet.lib
 LIBS    :=
 CONFIG  :=
