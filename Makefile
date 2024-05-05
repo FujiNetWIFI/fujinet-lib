@@ -3,7 +3,8 @@
 # - recursive dirs for src
 # - final files go into build/ directory instead of root folder (e.g. lbl, com file etc)
 
-TARGETS := atari apple2 apple2enh c64
+#TARGETS := atari apple2 apple2enh c64
+TARGETS := c64
 PROGRAM := fujinet.lib
 LIBS    :=
 CONFIG  :=
@@ -103,10 +104,35 @@ FN_NW_INC = fujinet-network.inc
 FN_FUJI_HEADER = fujinet-fuji.h
 FN_FUJI_INC = fujinet-fuji.inc
 
+define _listing_
+  CFLAGS += --listing $$(@:.o=.lst)
+  ASFLAGS += --listing $$(@:.o=.lst)
+endef
+
+define _mapfile_
+  LDFLAGS += --mapfile $$@.map
+endef
+
+define _labelfile_
+  LDFLAGS += -Ln $$@.lbl
+endef
+
 .SUFFIXES:
 .PHONY: all clean dist fujinet.lib.$(TARGETLIST)
 
 all: fujinet.lib.$(TARGETLIST)
+
+STATEFILE := Makefile.options
+-include $(DEPENDS)
+-include $(STATEFILE)
+
+ifeq ($(origin _OPTIONS_),file)
+OPTIONS = $(_OPTIONS_)
+$(eval $(OBJECTS): $(STATEFILE))
+endif
+
+# Transform the abstract OPTIONS to the actual cc65 options.
+$(foreach o,$(subst $(COMMA),$(SPACE),$(OPTIONS)),$(eval $(_$o_)))
 
 $(OBJDIR):
 	$(call MKDIR,$@)
