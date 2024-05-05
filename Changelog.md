@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [3.0.4] - 2024-05-05
+
+- [apple2] Add appkey support (thanks Eric Carr)
+- [cbm] Start of commodore support in fujinet
+- [coco] Start of coco support
+
 ## [3.0.3] - 2024-04-02
 
 Bugfix release:
