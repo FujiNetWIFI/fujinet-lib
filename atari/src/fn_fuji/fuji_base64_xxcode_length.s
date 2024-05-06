@@ -3,14 +3,14 @@
 
         .import         copy_fuji_cmd_data
         .import         _bus
-        .import         _fuji_error
+        .import         _fuji_success
         .import         popa, popax
 
         .include        "zp.inc"
         .include        "macros.inc"
         .include        "device.inc"
 
-; uint8_t fuji_base64_decode_length(unsigned long *len);
+; bool fuji_base64_decode_length(unsigned long *len);
 ;
 _fuji_base64_decode_length:
         axinto   tmp7                   ; pointer to len in tmp7/8
@@ -22,9 +22,9 @@ de_common:
         mwa     tmp7, IO_DCB::dbuflo
         mva     #$03, IO_DCB::dtimlo
         jsr     _bus
-        jmp     _fuji_error
+        jmp     _fuji_success
 
-; uint8_t fuji_base64_encode_length(unsigned long *len);
+; bool fuji_base64_encode_length(unsigned long *len);
 ;
 _fuji_base64_encode_length:
         axinto  tmp7                   ; pointer to len in tmp7/8

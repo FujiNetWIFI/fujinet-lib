@@ -6,7 +6,7 @@
         .include        "zp.inc"
         .include        "macros.inc"
 
-; uint8_t fuji_hash_input(char *s, uint16_t len);
+; bool fuji_hash_input(char *s, uint16_t len);
 ;
 .proc _fuji_hash_input
         axinto  tmp7                    ; len in tmp7/8

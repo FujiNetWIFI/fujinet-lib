@@ -2,7 +2,7 @@
         .export         _fuji_appkey_read
 
         .import         _bus
-        .import         _fuji_error
+        .import         _fuji_success
         .import         copy_fuji_cmd_data
         .import         popa, popax
 
@@ -11,7 +11,7 @@
         .include        "device.inc"
         .include        "fujinet-fuji.inc"
 
-; uint8_t fuji_appkey_open(AppKeyOpen *buffer);
+; bool fuji_appkey_open(AppKeyOpen *buffer);
 ;
 _fuji_appkey_open:
         axinto  tmp7
@@ -23,10 +23,10 @@ ak_common:
         mwa     tmp7, IO_DCB::dbuflo
 
         jsr     _bus
-        jmp     _fuji_error
+        jmp     _fuji_success
 
 
-; uint8_t fuji_appkey_read(AppKeyRead *buffer);
+; bool fuji_appkey_read(AppKeyRead *buffer);
 ;
 _fuji_appkey_read:
         axinto  tmp7                    ; buffer location

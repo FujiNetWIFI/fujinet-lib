@@ -1,7 +1,7 @@
         .export         _fuji_hash_output
 
         .import         _bus
-        .import         _fuji_error
+        .import         _fuji_success
         .import         copy_fuji_cmd_data
         .import         popa, popax
 
@@ -9,7 +9,7 @@
         .include        "macros.inc"
         .include        "device.inc"
 
-; uint8_t fuji_hash_output(uint8_t output_type, char *s, uint16_t len);
+; bool fuji_hash_output(uint8_t output_type, char *s, uint16_t len);
 ;
 .proc _fuji_hash_output
         axinto  tmp7                    ; len pointer
@@ -28,7 +28,7 @@
         sta     IO_DCB::daux1
 
         jsr     _bus
-        jmp     _fuji_error
+        jmp     _fuji_success
 .endproc
 
 .rodata

@@ -4,7 +4,7 @@
 #include "fujinet-fuji.h"
 #include "fujinet-bus-apple2.h"
 
-uint8_t fuji_base64_encode_input(char *s, uint16_t len)
+bool fuji_base64_encode_input(char *s, uint16_t len)
 {
     // send CTRL command: 0xD0
     // PAYLOAD:
@@ -13,6 +13,6 @@ uint8_t fuji_base64_encode_input(char *s, uint16_t len)
 
     if (len > MAX_DATA_LEN) return 1;
     strncpy(sp_payload, s, len);
-    return sp_control(0, 0xD0);
+    return sp_control(0, 0xD0) == 0;
 
 }

@@ -398,26 +398,41 @@ bool fuji_unmount_disk_image(uint8_t ds);
  */
 bool fuji_unmount_host_slot(uint8_t hs);
 
-// app key
-uint8_t fuji_appkey_open(AppKeyOpen *buffer);
-uint8_t fuji_appkey_read(AppKeyRead *buffer);
-uint8_t fuji_appkey_write(uint16_t count, AppKeyWrite *buffer);
+/*
+ * Opens the appkey ready for reading/writing from details in buffer
+ * @return ERROR status of request (i.e. true means there was an error)
+ */
+bool fuji_appkey_open(AppKeyOpen *buffer);
+
+/*
+ * Reads the appkey specified previously in open call.
+ * @return ERROR status of request (i.e. true means there was an error)
+ */
+bool fuji_appkey_read(AppKeyRead *buffer);
+
+/*
+ * Writes to the appkey specified previously in open call.
+ * @return ERROR status of request (i.e. true means there was an error)
+ */
+bool fuji_appkey_write(uint16_t count, AppKeyWrite *buffer);
 
 // Base64
-uint8_t fuji_base64_decode_compute();
-uint8_t fuji_base64_decode_input(char *s, uint16_t len);
-uint8_t fuji_base64_decode_length(unsigned long *len);
-uint8_t fuji_base64_decode_output(char *s, uint16_t len);
+// ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success 
+bool fuji_base64_decode_compute();
+bool fuji_base64_decode_input(char *s, uint16_t len);
+bool fuji_base64_decode_length(unsigned long *len);
+bool fuji_base64_decode_output(char *s, uint16_t len);
 
-uint8_t fuji_base64_encode_compute();
-uint8_t fuji_base64_encode_input(char *s, uint16_t len);
-uint8_t fuji_base64_encode_length(unsigned long *len);
-uint8_t fuji_base64_encode_output(char *s, uint16_t len);
+bool fuji_base64_encode_compute();
+bool fuji_base64_encode_input(char *s, uint16_t len);
+bool fuji_base64_encode_length(unsigned long *len);
+bool fuji_base64_encode_output(char *s, uint16_t len);
 
 // Hash
-uint8_t fuji_hash_compute(uint8_t type);
-uint8_t fuji_hash_input(char *s, uint16_t len);
-uint8_t fuji_hash_length(uint8_t mode);
-uint8_t fuji_hash_output(uint8_t output_type, char *s, uint16_t len);
+// ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success 
+bool fuji_hash_compute(uint8_t type);
+bool fuji_hash_input(char *s, uint16_t len);
+bool fuji_hash_length(uint8_t mode);
+bool fuji_hash_output(uint8_t output_type, char *s, uint16_t len);
 
 #endif /* FN_FUJI_H */

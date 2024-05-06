@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## [4.0.0] - 2024-05-06
+
+Breaking Changes
+
+- [appkey] Update signature of appkey functions to return bool instead of uint8_t
+- [appkey] Change return values of appkey to indicate SUCCESS status to be consistent with other functions
+- [hashing] All hashing/base64 functions have been updated similarly to return bool status of success instead of error
+
 ## [3.0.4] - 2024-05-05
 
 - [apple2] Add appkey support (thanks Eric Carr)

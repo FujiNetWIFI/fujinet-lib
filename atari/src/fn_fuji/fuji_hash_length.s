@@ -1,7 +1,7 @@
         .export         _fuji_hash_length
 
         .import         _bus
-        .import         _fuji_error
+        .import         _fuji_success
         .import         copy_fuji_cmd_data
         .import         popa, popax
 
@@ -9,7 +9,7 @@
         .include        "macros.inc"
         .include        "device.inc"
 
-; uint8_t fuji_hash_length(uint8_t type);
+; bool fuji_hash_length(uint8_t type);
 ;
 .proc _fuji_hash_length
         sta     tmp7                            ; hash type, one of HashType. No validation done though
@@ -20,7 +20,7 @@
         mva     #$03, IO_DCB::dtimlo
 
         jsr     _bus
-        jmp     _fuji_error
+        jmp     _fuji_success
 .endproc
 
 .rodata

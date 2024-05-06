@@ -3,7 +3,8 @@
 #include "fujinet-fuji.h"
 #include "fujinet-bus-apple2.h"
 
-uint8_t fuji_appkey_read(AppKeyRead *buffer)
+// reads the app-key, returns error status
+bool fuji_appkey_read(AppKeyRead *buffer)
 {
 	sp_error = sp_get_fuji_id();
 	if (sp_error <= 0) {

@@ -1,7 +1,7 @@
         .export         _fuji_appkey_write
 
         .import         _bus
-        .import         _fuji_error
+        .import         _fuji_success
         .import         copy_fuji_cmd_data
         .import         popa, popax
 
@@ -10,8 +10,9 @@
         .include        "device.inc"
         .include        "fujinet-fuji.inc"
 
-; uint8_t fuji_appkey_write(uint16_t count, AppKeyWrite *buffer);
+; bool fuji_appkey_write(uint16_t count, AppKeyWrite *buffer);
 ;
+; NOTE: in other implementations there's a check to keep count maxed at 64 bytes
 .proc _fuji_appkey_write
         axinto  tmp7                    ; save buffer address
 
@@ -24,7 +25,7 @@
         stx     IO_DCB::daux2
 
         jsr     _bus
-        jmp     _fuji_error
+        jmp     _fuji_success
 .endproc
 
 .rodata

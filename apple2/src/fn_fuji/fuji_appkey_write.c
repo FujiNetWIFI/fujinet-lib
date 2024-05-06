@@ -3,10 +3,10 @@
 #include "fujinet-bus-apple2.h"
 #include <string.h>
 
-uint8_t fuji_appkey_write(uint16_t count, AppKeyWrite *buffer)
+// writes app-key, returns error status
+bool fuji_appkey_write(uint16_t count, AppKeyWrite *buffer)
 {
 	sp_error = sp_get_fuji_id();
-
 	if (sp_error <= 0) {
 		return false;
 	}

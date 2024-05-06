@@ -11,28 +11,28 @@
         .include        "macros.inc"
         .include        "device.inc"
 
-; uint8_t fuji_base64_decode_input(char *s, uint16_t len);
+; bool fuji_base64_decode_input(char *s, uint16_t len);
 ;
 _fuji_base64_decode_input:
         axinto  tmp7                    ; len in tmp7/8
         setax   #t_fuji_base64_decode_input
         jmp     io_common
 
-; uint8_t fuji_base64_decode_output(char *s, uint16_t len);
+; bool fuji_base64_decode_output(char *s, uint16_t len);
 ;
 _fuji_base64_decode_output:
         axinto  tmp7                    ; len in tmp7/8
         setax   #t_fuji_base64_decode_output
         jmp     io_common
 
-; uint8_t fuji_base64_encode_input(char *s, uint16_t len);
+; bool fuji_base64_encode_input(char *s, uint16_t len);
 ;
 _fuji_base64_encode_input:
         axinto  tmp7                    ; len in tmp7/8
         setax   #t_fuji_base64_encode_input
         jmp     io_common
 
-; uint8_t fuji_base64_encode_output(char *s, uint16_t len);
+; bool fuji_base64_encode_output(char *s, uint16_t len);
 ;
 _fuji_base64_encode_output:
         axinto  tmp7                    ; len in tmp7/8

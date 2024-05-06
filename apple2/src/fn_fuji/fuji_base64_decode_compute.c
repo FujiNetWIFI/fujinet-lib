@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include "fujinet-fuji.h"
 
-uint8_t fuji_base64_decode_compute()
+bool fuji_base64_decode_compute()
 {
-    return 1;
+    return true;
 }
