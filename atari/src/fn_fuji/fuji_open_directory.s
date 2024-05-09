@@ -2,7 +2,7 @@
 
         .import     _bus
         .import     _fuji_success
-        .import     copy_fuji_cmd_data
+        .import     _copy_fuji_cmd_data
         .import     popa
 
         .include    "zp.inc"
@@ -16,7 +16,7 @@
         axinto  tmp7            ; save location of path+filter buffer
 
         setax   #t_fuji_open_directory
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         jsr     popa            ; host slot
         sta     IO_DCB::daux1

@@ -2,7 +2,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
 
         .include        "zp.inc"
         .include        "macros.inc"
@@ -16,7 +16,7 @@
         axinto  tmp7
 
         setax   #t_fuji_get_adapter_config_ext
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         ; set the memory address, new size, and aux1 for DCB
         mwa     tmp7, IO_DCB::dbuflo

@@ -1,5 +1,5 @@
-        .export         copy_network_cmd_data
-        .export         copy_fuji_cmd_data
+        .export         _copy_network_cmd_data
+        .export         _copy_fuji_cmd_data
 
         .include        "device.inc"
         .include        "macros.inc"
@@ -10,14 +10,14 @@
 ;
 ; Sets DCB data from given table address
 ; Trashes tmp9/10 as only ZP location
-copy_network_cmd_data:
+_copy_network_cmd_data:
         ; the table of dcb bytes to insert
         axinto  tmp9
 
         mva     #$71, IO_DCB::ddevic
         bne     common
 
-copy_fuji_cmd_data:
+_copy_fuji_cmd_data:
         ; the table of dcb bytes to insert
         axinto  tmp9
 

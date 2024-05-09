@@ -2,7 +2,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
         .import         return0
         .import         return1
 
@@ -15,7 +15,7 @@
 ; sets A=1 if wifi is enabled. 0 otherwise, X=0 in both cases for calling convention
 .proc _fuji_get_wifi_enabled
         setax   #t_fuji_get_wifi_enabled
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
         mwa     #tmp9, IO_DCB::dbuflo
         jsr     _bus
 

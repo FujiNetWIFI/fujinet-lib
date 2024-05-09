@@ -2,7 +2,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
 
         .include        "zp.inc"
         .include        "macros.inc"
@@ -15,7 +15,7 @@
         axinto  tmp7
 
         setax   #t_fuji_set_ssid
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         ; copy mem location to DCB, and call bus
         mwa     tmp7, IO_DCB::dbuflo

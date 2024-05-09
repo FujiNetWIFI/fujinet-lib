@@ -2,7 +2,7 @@
 
         .import     _bus
         .import     _fuji_success
-        .import     copy_fuji_cmd_data
+        .import     _copy_fuji_cmd_data
 
         .include    "zp.inc"
         .include    "macros.inc"
@@ -13,7 +13,7 @@
         sta     tmp8    ; save device slot
 
         setax   #t_fuji_unmount_disk_image
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         mva     tmp8, IO_DCB::daux1
         jsr     _bus

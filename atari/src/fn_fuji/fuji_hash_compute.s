@@ -2,7 +2,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
         .import         popa, popax
 
         .include        "zp.inc"
@@ -15,7 +15,7 @@
         sta     tmp7                    ; hash type, one of HashType. No validation done though
 
         setax   #t_fuji_hash_compute
-        jsr    copy_fuji_cmd_data
+        jsr    _copy_fuji_cmd_data
 
         mva     tmp7, IO_DCB::daux1
         mva     #$03, IO_DCB::dtimlo

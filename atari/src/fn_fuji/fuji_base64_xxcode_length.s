@@ -1,7 +1,7 @@
         .export         _fuji_base64_decode_length
         .export         _fuji_base64_encode_length
 
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
         .import         _bus
         .import         _fuji_success
         .import         popa, popax
@@ -17,7 +17,7 @@ _fuji_base64_decode_length:
         setax   #t_fuji_base64_decode_length
 
 de_common:
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         mwa     tmp7, IO_DCB::dbuflo
         mva     #$03, IO_DCB::dtimlo

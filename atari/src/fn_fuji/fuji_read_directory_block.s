@@ -1,5 +1,5 @@
         .export     _fuji_read_directory_block
-        .import     copy_fuji_cmd_data, popa, _bus
+        .import     _copy_fuji_cmd_data, popa, _bus
 
         .include    "zp.inc"
         .include    "macros.inc"
@@ -14,7 +14,7 @@
 
         ; setup DCB basic data
         setax   #t_fuji_read_directory_block
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
         mwa     tmp7, IO_DCB::dbuflo
 
         popa    tmp10   ; extended mode, 1 = on, 0 = off

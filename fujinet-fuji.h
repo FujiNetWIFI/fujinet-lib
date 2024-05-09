@@ -118,31 +118,10 @@ typedef struct
 } NewDisk;
 #endif
 
-typedef struct
-{
-    unsigned int creator;
-    unsigned char app;
-    unsigned char key;
-    unsigned char mode;
-    unsigned char reserved;
-} AppKeyOpen;
-
-typedef struct
-{
-    unsigned int length;
-    unsigned char value[MAX_APPKEY_LEN];
-} AppKeyRead;
-
-typedef struct
-{
-    unsigned char value[MAX_APPKEY_LEN];
-} AppKeyWrite;
-
-typedef union {
-    AppKeyOpen open;
-    AppKeyRead read;
-    AppKeyWrite write;
-} AppKeyDataBlock;
+enum AppKeySize {
+    DEFAULT,  // 64 original size
+    SIZE_256
+};
 
 typedef struct
 {
@@ -155,7 +134,6 @@ enum HashType {
     SHA256,
     SHA512
 };
-
 
 /*
  * Closes the currently open directory
@@ -399,22 +377,26 @@ bool fuji_unmount_disk_image(uint8_t ds);
 bool fuji_unmount_host_slot(uint8_t hs);
 
 /*
- * Opens the appkey ready for reading/writing from details in buffer
- * @return ERROR status of request (i.e. true means there was an error)
+ * @brief  Opens and reads from appkey using the provided details
+ * @param  creator_id the id of the creator of the appkey
+ * @param  app_id the id of the application from the creator
+ * @param  key_id the specific key id of this application
+ * @param  count a pointer to an int for the number of bytes that were read
+ * @param  data a pointer to the memory to write the data back to.
+ * @param  keysize type: AppKeySize, set to DEFAULT for 64 byte appkeys, or SIZE_256 for 256 byte keys
+ * @return success status of the call. If either the initial OPEN or subsequent READ fail, will return false.
  */
-bool fuji_appkey_open(AppKeyOpen *buffer);
-
+bool fuji_read_appkey(uint16_t creator_id, uint8_t app_id, uint8_t key_id, uint16_t *count, uint8_t *data, enum AppKeySize keysize);
 /*
- * Reads the appkey specified previously in open call.
- * @return ERROR status of request (i.e. true means there was an error)
+ * @brief  Opens and writes to an appkey using the provided details
+ * @param  creator_id the id of the creator of the appkey
+ * @param  app_id the id of the application from the creator
+ * @param  key_id the specific key id of this application
+ * @param  count the number of bytes in the buffer to write to the appkey.
+ * @param  data a pointer to the memory to write from.
+ * @return success status of the call. If either the initial OPEN or subsequent WRITE fail, will return false.
  */
-bool fuji_appkey_read(AppKeyRead *buffer);
-
-/*
- * Writes to the appkey specified previously in open call.
- * @return ERROR status of request (i.e. true means there was an error)
- */
-bool fuji_appkey_write(uint16_t count, AppKeyWrite *buffer);
+bool fuji_write_appkey(uint16_t creator_id, uint8_t app_id, uint8_t key_id, uint16_t count, uint8_t *data);
 
 // Base64
 // ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success 

@@ -2,7 +2,7 @@
 
         .import     _bus
         .import     _fuji_success
-        .import     copy_fuji_cmd_data
+        .import     _copy_fuji_cmd_data
 
         .include    "zp.inc"
         .include    "macros.inc"
@@ -13,7 +13,7 @@
         axinto  tmp7        ; save the directory pos to tmp7/8
 
         setax   #t_fuji_set_directory_position
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         mwa     tmp7, IO_DCB::daux1
         jsr     _bus

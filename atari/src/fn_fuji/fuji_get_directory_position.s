@@ -2,7 +2,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
         .import         popa
         .import         popax
 
@@ -16,7 +16,7 @@
         axinto  tmp7            ; pos pointer
 
         setax   #t_fuji_get_directory_position
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         mwa     tmp7, IO_DCB::dbuflo
         jsr     _bus

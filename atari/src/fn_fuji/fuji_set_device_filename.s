@@ -2,7 +2,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
         .import         popa
 
         .include        "zp.inc"
@@ -15,7 +15,7 @@
         axinto  tmp7    ; buffer
 
         setax   #t_fuji_set_device_filename
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         jsr     popa            ; device slot
         sta     IO_DCB::daux1

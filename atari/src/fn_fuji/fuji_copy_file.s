@@ -2,7 +2,7 @@
 
         .import     _bus
         .import     _fuji_success
-        .import     copy_fuji_cmd_data
+        .import     _copy_fuji_cmd_data
         .import     popa
 
         .include    "zp.inc"
@@ -17,7 +17,7 @@
         axinto  tmp7    ; copyspec write location
 
         setax   #t_fuji_copy_file
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         ;  fujinet tracks 1-8, we do 0-7, so need to increment both values
         jsr     popa            ; dst slot -> daux2

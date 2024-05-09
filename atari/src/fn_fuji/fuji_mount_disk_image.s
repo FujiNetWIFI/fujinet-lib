@@ -2,7 +2,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
         .import         popa
 
         .include        "zp.inc"
@@ -14,7 +14,7 @@
         sta     tmp8    ; save mode
 
         setax   #t_fuji_mount_disk_image
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         mva     tmp8, IO_DCB::daux2
 

@@ -2,14 +2,14 @@
 
         .import     _bus
         .import     _fuji_success
-        .import     copy_fuji_cmd_data
+        .import     _copy_fuji_cmd_data
 
         .include    "macros.inc"
 
 ; bool fuji_close_directory(void)
 .proc _fuji_close_directory
         setax   #t_fuji_close_directory
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
         jsr     _bus
         jmp     _fuji_success
 .endproc

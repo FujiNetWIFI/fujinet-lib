@@ -2,9 +2,19 @@
 
 ## [Unreleased]
 
-## [4.0.0] - 2024-05-06
+## [4.1.0] - 2024-05-08
 
-Breaking Changes
+### AppKey Redesign
+
+Appkeys have been redesigned for simpler usecases. There is now only "fuji_appkey_read" and "fuji_appkey_write"
+with no need to call open first, this is done for you.
+
+The mode value has been removed, now a read request specifies in its data structure the key size it wants, the default
+being 64 bytes as normal, but now a keysize of 256 is also supported.
+
+Clients must provide a buffer/pointer for the read/write data.
+
+## [4.0.0] - 2024-05-06
 
 - [appkey] Update signature of appkey functions to return bool instead of uint8_t
 - [appkey] Change return values of appkey to indicate SUCCESS status to be consistent with other functions

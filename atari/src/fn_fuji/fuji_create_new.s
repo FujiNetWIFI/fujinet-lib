@@ -2,7 +2,7 @@
 
         .import     _bus
         .import     _fuji_success
-        .import     copy_fuji_cmd_data
+        .import     _copy_fuji_cmd_data
 
         .include    "zp.inc"
         .include    "macros.inc"
@@ -16,7 +16,7 @@
         axinto  tmp7                    ; buffer to NewDisk
 
         setax   #t_fuji_create_new
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
         mwa     tmp7, IO_DCB::dbuflo
         mva     #$fe, IO_DCB::dtimlo    ; high for ATX. could check the filename end and reduce this if it isn't atx
         jsr     _bus

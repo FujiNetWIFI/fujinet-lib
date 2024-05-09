@@ -78,16 +78,12 @@ LIBS += $(wildcard $(TARGETLIST)/$(SRCDIR)/*.lib)
 
 ASFLAGS += \
 	--asm-include-dir common/inc \
-	--asm-include-dir $(TARGETLIST)/$(SRCDIR)/fn_network/inc \
-	--asm-include-dir $(TARGETLIST)/$(SRCDIR)/fn_fuji/inc \
-	--asm-include-dir $(TARGETLIST)/$(SRCDIR)/bus/inc \
+	--asm-include-dir $(TARGETLIST)/$(SRCDIR)/include \
 	--asm-include-dir .
 
 CFLAGS += \
 	--include-dir common/inc \
-	--include-dir $(TARGETLIST)/$(SRCDIR)/fn_network/inc \
-	--include-dir $(TARGETLIST)/$(SRCDIR)/fn_fuji/inc \
-	--include-dir $(TARGETLIST)/$(SRCDIR)/bus/inc \
+	--include-dir $(TARGETLIST)/$(SRCDIR)/include \
 	--include-dir .
 
 # Add -DBUILD_(TARGET) to all args for the current name. This allows some level of cross platform code

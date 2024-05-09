@@ -2,7 +2,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
 
         .include        "zp.inc"
         .include        "macros.inc"
@@ -18,7 +18,7 @@
 .proc _fuji_get_wifi_status
         axinto  tmp7
         setax   #t_fuji_get_wifi_status
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
         mwa     tmp7, IO_DCB::dbuflo
         jsr     _bus
         jmp     _fuji_success

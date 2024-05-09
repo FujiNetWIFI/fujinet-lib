@@ -2,7 +2,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
 
         .include        "zp.inc"
         .include        "macros.inc"
@@ -13,7 +13,7 @@
 ;
 .proc _fuji_mount_all
         setax   #t_fuji_mount_all
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
         jsr     _bus
         jmp     _fuji_success
 .endproc

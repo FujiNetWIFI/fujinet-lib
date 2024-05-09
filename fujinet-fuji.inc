@@ -64,25 +64,28 @@
     connection_lost     = 5
 .endenum
 
-.struct AppKeyOpen
+.enum AppKeySize
+    DEFAULT         ; 64 original size
+    SIZE_256
+.endenum
+
+.struct AppKeyDataRead
     creator     .res 2
     app         .res 1
     key         .res 1
-    mode        .res 1
     reserved    .res 1
+    keysize     .res 1          ; AppKeySize
+    length      .res 1          ; returned length
+    data        .res 2          ; pointer to data to write to
 .endstruct
 
-.struct AppKeyRead
-    length      .res 2
-    values      .res 64
-.endstruct
-
-.struct AppKeyWrite
-    value       .res 64
-.endstruct
-
-.struct AppKeyDataBlock
-    data        .res 66     ; this is the size of the largest of Open/Read/Write
+.struct AppKeyDataWrite
+    creator     .res 2
+    app         .res 1
+    key         .res 1
+    reserved    .res 1
+    length      .res 1          ; returned length
+    data        .res 2          ; pointer to data to write to
 .endstruct
 
 .struct FNStatus

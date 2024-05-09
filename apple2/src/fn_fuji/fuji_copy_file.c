@@ -16,7 +16,7 @@ bool fuji_copy_file(uint8_t src_slot, uint8_t dst_slot, char *copy_spec)
 
 	sp_payload[2] = src_slot;
 	sp_payload[3] = dst_slot;
-	strcpy(&sp_payload[4], copy_spec);
+	strcpy((char *) &sp_payload[4], copy_spec);
 
 	sp_error = sp_control(sp_fuji_id, 0xD8);
 	return sp_error == 0;

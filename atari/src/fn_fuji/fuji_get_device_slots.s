@@ -3,7 +3,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
         .import         popax
 
         .include        "zp.inc"
@@ -18,7 +18,7 @@
         ; axinto  ptr1                    ; size
         popax   tmp7
         setax   #t_fuji_get_device_slots
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         mwa     tmp7, IO_DCB::dbuflo
         jsr     _bus

@@ -2,7 +2,7 @@
 
         .import     _bus
         .import     _fuji_success
-        .import     copy_fuji_cmd_data
+        .import     _copy_fuji_cmd_data
         .import     popax
 
         .include    "zp.inc"
@@ -10,7 +10,7 @@
         .include    "device.inc"
 
 .proc io_common
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         setax   tmp7
         sta     IO_DCB::dbytlo

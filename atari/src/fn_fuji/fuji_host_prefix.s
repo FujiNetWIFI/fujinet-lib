@@ -3,7 +3,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
         .import         popa
         .import         popax
 
@@ -18,7 +18,7 @@ _fuji_get_host_prefix:
         setax   #t_fuji_get_host_prefix
 
 hp_common:
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         mwa     tmp7, IO_DCB::dbuflo
         jsr     popa                    ; host slot

@@ -2,7 +2,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
         .import         popa
 
         .include        "zp.inc"
@@ -13,7 +13,7 @@
 .proc _fuji_get_device_filename
         axinto  tmp7            ; save the buffer pointer
         setax   #t_fuji_get_device_filename
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         jsr     popa            ; device_slot
         sta     IO_DCB::daux1

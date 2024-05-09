@@ -12,7 +12,7 @@
 #ifdef __APPLE2__
 #include "fujinet-network-apple2.h"
 #include "fujinet-bus-apple2.h"
-#include "apple2/src/bus/inc/sp.h"
+#include "sp.h"
 #endif
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))

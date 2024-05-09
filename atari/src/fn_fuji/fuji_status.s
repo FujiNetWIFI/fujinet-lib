@@ -1,6 +1,6 @@
         .export         _fuji_status
 
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
         .import         _bus
         .import         _fuji_success
 
@@ -13,7 +13,7 @@
 .proc _fuji_status
         axinto  tmp7                    ; 4 byte buffer location
         setax   #t_fuji_status
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         mwa     tmp7, IO_DCB::dbuflo
 

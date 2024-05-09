@@ -2,7 +2,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
         .import         popa, popax
 
         .include        "zp.inc"
@@ -15,7 +15,7 @@
         axinto  tmp7                    ; len pointer
 
         setax   #t_fuji_hash_output
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         setax   tmp7
         sta     IO_DCB::dbytlo

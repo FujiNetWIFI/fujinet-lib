@@ -3,7 +3,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
 
         .include        "zp.inc"
         .include        "macros.inc"
@@ -17,7 +17,7 @@
         axinto  tmp7            ; adapter config location
 
         setax   #t_fuji_get_adapter_config
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         ; set the memory address for DCB to write to and call BUS
         mwa     tmp7, IO_DCB::dbuflo

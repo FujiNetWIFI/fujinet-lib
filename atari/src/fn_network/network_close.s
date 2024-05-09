@@ -4,7 +4,7 @@
         .import     _bus_status
         .import     _fn_device_error
         .import     _network_unit
-        .import     copy_network_cmd_data
+        .import     _copy_network_cmd_data
         .import     popax
 
         .include    "device.inc"
@@ -21,7 +21,7 @@
         sta     tmp8                    ; save the UNIT
 
         setax   #t_network_close
-        jsr     copy_network_cmd_data
+        jsr     _copy_network_cmd_data
 
         ; add our specifics, and call SIO
         mva     tmp8, IO_DCB::dunit

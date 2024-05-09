@@ -2,7 +2,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
         .import         popa
 
         .include        "zp.inc"
@@ -14,7 +14,7 @@
 .proc _fuji_set_hsio_index
         sta     tmp7                    ; HSIO index to set
         setax   #t_fuji_set_hsio_index
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         mva     tmp7, IO_DCB::daux1
         jsr     popa                    ; should we save? 0 = no, 1 = yes

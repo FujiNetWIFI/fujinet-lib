@@ -2,7 +2,7 @@
 
         .import         _bus
         .import         _fuji_success
-        .import         copy_fuji_cmd_data
+        .import         _copy_fuji_cmd_data
         .import         popa
         .import         popax
 
@@ -15,7 +15,7 @@
 .proc _fuji_enable_udpstream
         axinto  tmp7                    ; host
         setax   #t_fuji_enable_udpstream
-        jsr     copy_fuji_cmd_data
+        jsr     _copy_fuji_cmd_data
 
         mwa     tmp7, IO_DCB::dbuflo
         jsr     popax                   ; port
