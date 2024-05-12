@@ -3,7 +3,7 @@
 # - recursive dirs for src
 # - final files go into build/ directory instead of root folder (e.g. lbl, com file etc)
 
-TARGETS := atari apple2 commodore
+TARGETS := atari apple2 apple2enh c64
 PROGRAM := fujinet.lib
 LIBS    :=
 CONFIG  :=
@@ -15,9 +15,14 @@ OBJDIR := obj
 EMUCMD :=
 BUILD_DIR = build
 
-CC65_TARGET_apple2     := apple2
-CC65_TARGET_atari      := atari
-CC65_TARGET_commodore  := c64
+# The subfolder src directory to use to build the particular target
+# cl65 will get the "TARGET" name, but the src folder will be the "PLATFORM"
+PLATFORM_apple2        := apple2
+PLATFORM_apple2enh     := apple2
+PLATFORM_atari         := atari
+PLATFORM_atarixl       := atari
+PLATFORM_pet           := commodore
+PLATFORM_c64           := commodore
 
 TARGETOBJDIR := $(OBJDIR)/$(TARGETS)
 
@@ -50,15 +55,14 @@ TARGETLIST := $(subst $(COMMA),$(SPACE),$(TARGETS))
 
 ifeq ($(words $(TARGETLIST)),1)
 
-# Strip potential variant suffix from the actual cc65 target.
-CC65TARGET := $(firstword $(subst .,$(SPACE),$(TARGETLIST)))
+PLATFORM_SRC_DIR := $(PLATFORM_$(TARGETLIST))/$(SRCDIR)
 
 # Set PROGRAM to something like 'myprog.c64'.
 override PROGRAM := $(PROGRAM).$(TARGETLIST)
 
 # Recursive files
-SOURCES += $(call rwildcard,$(TARGETLIST)/$(SRCDIR)/,*.s)
-SOURCES += $(call rwildcard,$(TARGETLIST)/$(SRCDIR)/,*.c)
+SOURCES += $(call rwildcard,$(PLATFORM_SRC_DIR)/,*.s)
+SOURCES += $(call rwildcard,$(PLATFORM_SRC_DIR)/,*.c)
 SOURCES += $(call rwildcard,common/$(SRCDIR)/,*.s)
 SOURCES += $(call rwildcard,common/$(SRCDIR)/,*.c)
 
@@ -69,28 +73,23 @@ SOURCES := $(strip $(SOURCES))
 OBJ1 := $(SOURCES:.c=.o)
 OBJECTS := $(OBJ1:.s=.o)
 # change from atari/src/ -> obj/atari/
-OBJECTS := $(OBJECTS:$(TARGETLIST)/$(SRCDIR)/%=$(OBJDIR)/$(TARGETLIST)/%)
+OBJECTS := $(OBJECTS:$(PLATFORM_SRC_DIR)/%=$(OBJDIR)/$(TARGETLIST)/%)
 OBJECTS := $(OBJECTS:common/$(SRCDIR)/%=$(OBJDIR)/common/%)
 
 DEPENDS := $(OBJECTS:.o=.d)
 
-LIBS += $(wildcard $(TARGETLIST)/$(SRCDIR)/*.lib)
+LIBS += $(wildcard $(PLATFORM_SRC_DIR)/*.lib)
 
 ASFLAGS += \
 	--asm-include-dir common/inc \
-	--asm-include-dir $(TARGETLIST)/$(SRCDIR)/include \
+	--asm-include-dir $(PLATFORM_SRC_DIR)/include \
 	--asm-include-dir .
 
 CFLAGS += \
+    -Osir \
 	--include-dir common/inc \
-	--include-dir $(TARGETLIST)/$(SRCDIR)/include \
+	--include-dir $(PLATFORM_SRC_DIR)/include \
 	--include-dir .
-
-# Add -DBUILD_(TARGET) to all args for the current name. This allows some level of cross platform code
-UPPER_TARGETLIST := $(shell echo $(TARGETLIST) | tr a-z A-Z)
-CFLAGS += -DBUILD_$(UPPER_TARGETLIST)
-ASFLAGS += -DBUILD_$(UPPER_TARGETLIST)
-LDFLAGS += -DBUILD_$(UPPER_TARGETLIST)
 
 CHANGELOG = Changelog.md
 
@@ -119,7 +118,7 @@ $(BUILD_DIR):
 	$(call MKDIR,$@)
 
 SRC_INC_DIRS := \
-	$(sort $(dir $(wildcard $(TARGETLIST)/$(SRCDIR)/*))) \
+	$(sort $(dir $(wildcard $(PLATFORM_SRC_DIR)/*))) \
 	$(sort $(dir $(wildcard common/$(SRCDIR)/*)))
 
 # $(info $$SOURCES = ${SOURCES})
@@ -133,21 +132,21 @@ vpath %.c $(SRC_INC_DIRS)
 
 obj/common/%.o: %.c | $(TARGETOBJDIR)
 	@$(call MKDIR,$(dir $@))
-	$(CC) -t $(CC65_TARGET_$(TARGETLIST)) -c --create-dep $(@:.o=.d) $(CFLAGS) -o $@ $<
+	$(CC) -t $(TARGETLIST) -c --create-dep $(@:.o=.d) $(CFLAGS) -o $@ $<
 
 $(TARGETOBJDIR)/%.o: %.c | $(TARGETOBJDIR)
 	@$(call MKDIR,$(dir $@))
-	$(CC) -t $(CC65_TARGET_$(TARGETLIST)) -c --create-dep $(@:.o=.d) $(CFLAGS) -o $@ $<
+	$(CC) -t $(TARGETLIST) -c --create-dep $(@:.o=.d) $(CFLAGS) -o $@ $<
 
 vpath %.s $(SRC_INC_DIRS)
 
 obj/common/%.o: %.s | $(TARGETOBJDIR)
 	@$(call MKDIR,$(dir $@))
-	$(CC) -t $(CC65_TARGET_$(TARGETLIST)) -c --create-dep $(@:.o=.d) $(ASFLAGS) -o $@ $<
+	$(CC) -t $(TARGETLIST) -c --create-dep $(@:.o=.d) $(ASFLAGS) -o $@ $<
 
 $(TARGETOBJDIR)/%.o: %.s | $(TARGETOBJDIR)
 	@$(call MKDIR,$(dir $@))
-	$(CC) -t $(CC65_TARGET_$(TARGETLIST)) -c --create-dep $(@:.o=.d) $(ASFLAGS) -o $@ $<
+	$(CC) -t $(TARGETLIST) -c --create-dep $(@:.o=.d) $(ASFLAGS) -o $@ $<
 
 $(BUILD_DIR)/$(PROGRAM): $(OBJECTS) | $(BUILD_DIR)
 	ar65 a $@ $(OBJECTS)

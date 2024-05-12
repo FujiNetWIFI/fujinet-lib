@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Enhance build to produce target specific versions of the library, e.g. apple2enh from apple2 src.
+  The appkey application was failing in apple2enh without the specific version of the library.
+
 ## [4.1.0] - 2024-05-12
 
 ### AppKeys Changes
