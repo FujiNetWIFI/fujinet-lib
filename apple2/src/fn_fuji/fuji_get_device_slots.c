@@ -8,8 +8,7 @@
 // d points to start of an array of device slots with length size
 bool fuji_get_device_slots(DeviceSlot *d, size_t size)
 {
-	sp_error = sp_get_fuji_id();
-	if (sp_error <= 0) {
+	if (sp_get_fuji_id() == 0) {
 		return false;
 	}
 

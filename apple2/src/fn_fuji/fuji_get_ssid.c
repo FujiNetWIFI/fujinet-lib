@@ -5,8 +5,7 @@
 
 bool fuji_get_ssid(NetConfig *net_config)
 {
-	sp_error = sp_get_fuji_id();
-	if (sp_error <= 0) {
+	if (sp_get_fuji_id() == 0) {
 		return false;
 	}
 

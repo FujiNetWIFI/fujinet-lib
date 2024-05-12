@@ -6,8 +6,7 @@
 
 bool fuji_create_new(NewDisk *new_disk)
 {
-	sp_error = sp_get_fuji_id();
-	if (sp_error <= 0) {
+	if (sp_get_fuji_id() == 0) {
 		return false;
 	}
 

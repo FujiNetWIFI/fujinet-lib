@@ -19,9 +19,6 @@ uint8_t network_init()
   } else if (err > 0) {
     // The device was initialised correctly, and we found a network device
     return FN_ERR_OK;
-  } else {
-    // -ve value is the inverse of the SP error from sp_find_device
-    return fn_error(-err);
   }
 #endif
 

@@ -6,8 +6,7 @@
 bool fuji_put_device_slots(DeviceSlot *d, size_t size)
 {
 	uint16_t payload_size = sizeof(DeviceSlot) * size;
-	sp_error = sp_get_fuji_id();
-	if (sp_error <= 0) {
+	if (sp_get_fuji_id() == 0) {
 		return false;
 	}
 

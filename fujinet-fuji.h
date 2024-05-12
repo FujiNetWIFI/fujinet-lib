@@ -118,9 +118,10 @@ typedef struct
 } NewDisk;
 #endif
 
+// WIP, only 64 fully supported at the moment.
 enum AppKeySize {
-    DEFAULT,  // 64 original size
-    SIZE_256
+    DEFAULT  // 64 original size
+    // SIZE_256
 };
 
 typedef struct
@@ -378,25 +379,29 @@ bool fuji_unmount_host_slot(uint8_t hs);
 
 /*
  * @brief  Opens and reads from appkey using the provided details
- * @param  creator_id the id of the creator of the appkey
- * @param  app_id the id of the application from the creator
  * @param  key_id the specific key id of this application
  * @param  count a pointer to an int for the number of bytes that were read
  * @param  data a pointer to the memory to write the data back to.
- * @param  keysize type: AppKeySize, set to DEFAULT for 64 byte appkeys, or SIZE_256 for 256 byte keys
  * @return success status of the call. If either the initial OPEN or subsequent READ fail, will return false.
  */
-bool fuji_read_appkey(uint16_t creator_id, uint8_t app_id, uint8_t key_id, uint16_t *count, uint8_t *data, enum AppKeySize keysize);
+bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data);
+
 /*
- * @brief  Opens and writes to an appkey using the provided details
- * @param  creator_id the id of the creator of the appkey
- * @param  app_id the id of the application from the creator
+ * @brief  Writes to an appkey using the provided details previously setup with fuji_set_appkey_details
  * @param  key_id the specific key id of this application
  * @param  count the number of bytes in the buffer to write to the appkey.
  * @param  data a pointer to the memory to write from.
  * @return success status of the call. If either the initial OPEN or subsequent WRITE fail, will return false.
  */
-bool fuji_write_appkey(uint16_t creator_id, uint8_t app_id, uint8_t key_id, uint16_t count, uint8_t *data);
+bool fuji_write_appkey(uint8_t key_id, uint16_t count, uint8_t *data);
+
+/*
+ * @brief  Sets the base details for appkeys. This must be called before using read or write operations on appkeys.
+ * @param  creator_id the id of the creator of the appkey
+ * @param  app_id the id of the application from the creator
+ * @param  keysize type: AppKeySize, set to DEFAULT for 64 byte appkeys, or SIZE_256 for 256 byte keys
+ */
+void fuji_set_appkey_details(uint16_t creator_id, uint8_t app_id, enum AppKeySize keysize);
 
 // Base64
 // ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success 

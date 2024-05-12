@@ -8,8 +8,7 @@ bool fuji_get_device_filename(uint8_t ds, char *buffer)
 {
 	uint8_t stat = ds + 0xA0;
 
-	sp_error = sp_get_fuji_id();
-	if (sp_error <= 0) {
+	if (sp_get_fuji_id() == 0) {
 		return false;
 	}
 

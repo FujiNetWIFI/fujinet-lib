@@ -2,17 +2,28 @@
 
 ## [Unreleased]
 
-## [4.1.0] - 2024-05-08
+## [4.1.0] - 2024-05-12
 
-### AppKey Redesign
+### AppKeys Changes
 
-Appkeys have been redesigned for simpler usecases. There is now only "fuji_appkey_read" and "fuji_appkey_write"
-with no need to call open first, this is done for you.
+Appkeys have been redesigned for simpler usecases.
+Using appkeys now involves first calling `fuji_set_appkey_details` to define the creator, appid, and key size.
 
-The mode value has been removed, now a read request specifies in its data structure the key size it wants, the default
-being 64 bytes as normal, but now a keysize of 256 is also supported.
+Then you call either "fuji_appkey_read" and "fuji_appkey_write".
+The old "open" phase is done internally by the API and not exposed.
 
-Clients must provide a buffer/pointer for the read/write data.
+Clients must provide a pointer for the read/write data buffer to read from and write to.
+All structs have been removed in preference of calling functions with parameters directly.
+
+There is a paramter for the appkey size, which is a placeholder for future changes to support larger key sizes
+than just 64 bytes.
+
+### [apple2] Asm to C
+
+I've replaced most of the SmartPort asm bus code with C versions.
+
+This makes it way easier to support. The ASM was getting quite tricky to follow, and I wrote the bloody thing.
+The only one that shouldn't change to C is sp_dispatch, as it uses self modifying code techniques.
 
 ## [4.0.0] - 2024-05-06
 

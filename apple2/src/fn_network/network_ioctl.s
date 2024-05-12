@@ -45,9 +45,11 @@ args_error:
         ; this is one function that may be called outside an open/etc, so check if init is done
 :       lda     _sp_is_init
         bne     :+
-        sty     tmp10                   ; need to keep the args count incase there's no network
+        tya
+        pha                             ; need to keep the args count incase there's no network
         jsr     _sp_init
-        ldy     tmp10                   ; restore y, may be needed if there's no network
+        pla                             ; restore y, may be needed if there's no network
+        tay
 
 :       lda     _sp_network             ; check the network id is not 0
         beq     args_error
