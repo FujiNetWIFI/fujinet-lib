@@ -15,5 +15,5 @@ int8_t sp_read(uint8_t dest, uint16_t len) {
 	sp_cmdlist[2] = payload_address & 0xFF;
 	sp_cmdlist[3] = (payload_address >> 8) & 0xFF;
 
-	return sp_dispatch(SP_CMD_OPEN);
+	return sp_dispatch(SP_CMD_READ);
 }

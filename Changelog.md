@@ -2,8 +2,16 @@
 
 ## [Unreleased]
 
+## [4.1.1] - 2024-05-14
+
 - Enhance build to produce target specific versions of the library, e.g. apple2enh from apple2 src.
   The appkey application was failing in apple2enh without the specific version of the library.
+
+- [apple2] convert network_open src from asm to c
+
+Bugfix:
+
+- [apple] sp_read was incorrectly calling sp_open :scream:
 
 ## [4.1.0] - 2024-05-12
 

@@ -82,6 +82,7 @@ void sp_clr_payload();
 int8_t sp_status(uint8_t dest, uint8_t statcode);
 int8_t sp_control(uint8_t dest, uint8_t ctrlcode);
 int8_t sp_read(uint8_t dest, uint16_t len);
+int8_t sp_open(uint8_t dest);
 
 // initilises the dispatch funciton and returns the network device id if found, else returns 0.
 uint8_t sp_init();
