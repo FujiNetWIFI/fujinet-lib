@@ -48,7 +48,7 @@ int sp_find_device(char *name) {
 
     for (id = 1; id <= deviceCount; id++) {
         err = sp_status(id, 3);
-		if (err != 0) return -err;
+		if (err != 0) continue;
 
         if (compare_padded_string((const char *)&sp_payload[5], name) == 0) {
             return id;

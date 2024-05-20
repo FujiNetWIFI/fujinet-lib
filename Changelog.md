@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [4.1.2] - 2024-05-20
+
+Bugfix:
+
+- [apple2] fix sp_find_device to not stop on error devices when finding names (thanks Eric Carr)
+
 ## [4.1.1] - 2024-05-14
 
 - Enhance build to produce target specific versions of the library, e.g. apple2enh from apple2 src.
