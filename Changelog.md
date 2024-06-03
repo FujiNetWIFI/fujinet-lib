@@ -2,12 +2,13 @@
 
 ## [Unreleased]
 
-## [4.2.0] - 2024-XX-YY
-
 - Implement commodore fujinet-lib functions
-
 - Add fuji_open_directory2 prototype for applications to send path and
   filter separately rather than in fixed 256 byte buffer with \0 delimiter. Used by CBM.
+
+## [4.1.3] - 2024-06-03
+
+- Fix sp_init to find any SP device with network device, skipping past any higher cards if they don't have it
 
 ## [4.1.2] - 2024-05-20
 
