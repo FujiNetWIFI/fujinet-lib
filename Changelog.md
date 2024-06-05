@@ -6,6 +6,10 @@
 - Add fuji_open_directory2 prototype for applications to send path and
   filter separately rather than in fixed 256 byte buffer with \0 delimiter. Used by CBM.
 
+## [4.1.4] - 2024-06-05
+
+- Fix sp_init again! Thanks again to @shunkita for noticing I'd broken their update.
+
 ## [4.1.3] - 2024-06-03
 
 - Fix sp_init to find any SP device with network device, skipping past any higher cards if they don't have it
