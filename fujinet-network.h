@@ -9,15 +9,10 @@
 
 #ifdef _CMOC_VERSION_
 #include <cmoc.h>
+#include <coco.h>
 #else
 #include <stdint.h>
 #include <stdbool.h>
-#endif /* _CMOC_VERSION_ */
-
-#ifdef _CMOC_VERSION_
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
-typedef int int16_t;
 #endif /* _CMOC_VERSION_ */
 
 /**

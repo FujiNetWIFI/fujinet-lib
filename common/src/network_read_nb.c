@@ -1,7 +1,11 @@
+#ifdef _CMOC_VERSION_
+#include <cmoc.h>
+#else
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#endif /* _CMOC_VERSION_ */
 
 #include "fujinet-network.h"
 

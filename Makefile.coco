@@ -163,18 +163,18 @@ $(TARGETOBJDIR)/%.o: %.c | $(TARGETOBJDIR)
 	@$(call MKDIR,$(dir $@))
 	$(CC) -c --deps $(CFLAGS) -o $@ $<
 
-vpath %.s $(SRC_INC_DIRS)
+# vpath %.s $(SRC_INC_DIRS)
 
-obj/common/%.o: %.s | $(TARGETOBJDIR)
-	@$(call MKDIR,$(dir $@))
-	$(AS) -c --deps $(ASFLAGS) -o $@ $<
+# obj/common/%.o: %.s | $(TARGETOBJDIR)
+# 	@$(call MKDIR,$(dir $@))
+# 	$(AS) -c --deps $(ASFLAGS) -o $@ $<
 
 $(TARGETOBJDIR)/%.o: %.s | $(TARGETOBJDIR)
 	@$(call MKDIR,$(dir $@))
 	$(CC) -c --deps $(@:.o=.d) $(ASFLAGS) -o $@ $<
 
 $(BUILD_DIR)/$(PROGRAM): $(OBJECTS) | $(BUILD_DIR)
-	$(AR) a $@ $(OBJECTS)
+	$(AR) $@ -a $(OBJECTS)
 
 $(PROGRAM): $(BUILD_DIR)/$(PROGRAM) | $(BUILD_DIR)
 

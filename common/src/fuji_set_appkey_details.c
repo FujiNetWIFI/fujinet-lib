@@ -1,6 +1,10 @@
+#ifdef _CMOC_VERSION_
+#include <cmoc.h>
+#include <coco.h>
+#else
 #include <stdint.h>
 #include "fujinet-fuji.h"
-
+#endif /* CMOC_VERSION_ */
 extern uint16_t ak_creator_id;
 extern uint8_t ak_app_id;
 extern enum AppKeySize ak_appkey_size;

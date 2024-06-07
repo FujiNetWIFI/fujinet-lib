@@ -1,7 +1,11 @@
+#ifdef _CMOC_VERSION_
+#include <cmoc.h>
+#else
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#endif /* _CMOC_VERSION_ */
 
 void hd(void* data, int size) {
     int i = 0;

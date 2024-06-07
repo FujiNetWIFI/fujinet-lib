@@ -1,5 +1,9 @@
+#ifdef _CMOC_VERSION_
+#include <cmoc.h>
+#else
 #include <stdint.h>
 #include <string.h>
+#endif /* _CMOC_VERSION_ */
 #include "fujinet-network.h"
 
 uint8_t network_http_post(char *devicespec, char *data) {
