@@ -12,7 +12,7 @@ bool fuji_unmount_disk_image(uint8_t ds)
 	sp_payload[1] = 0;
 	sp_payload[2] = ds;
 
-	sp_error = sp_control(sp_fuji_id, 0xE9);
+	sp_error = sp_control(sp_fuji_id, FUJICMD_UNMOUNT_IMAGE);
 	return sp_error == 0;
 
 }

@@ -9,7 +9,7 @@ extern uint16_t ak_creator_id;
 extern uint8_t ak_app_id;
 extern enum AppKeySize ak_appkey_size;
 
-uint8_t t_fuji_write_appkey[7] = { 0xde, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00 };
+uint8_t t_fuji_write_appkey[7] = { FUJICMD_WRITE_APPKEY, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 bool fuji_write_appkey(uint8_t key_id, uint16_t count, uint8_t *data)
 {

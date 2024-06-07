@@ -14,6 +14,6 @@ bool fuji_put_device_slots(DeviceSlot *d, size_t size)
 	sp_payload[1] = (payload_size & 0xFF00) >> 8;
 
 	memcpy(&sp_payload[2], d, payload_size);
-	sp_error = sp_control(sp_fuji_id, 0xF1);
+	sp_error = sp_control(sp_fuji_id, FUJICMD_WRITE_DEVICE_SLOTS);
 	return sp_error == 0;
 }

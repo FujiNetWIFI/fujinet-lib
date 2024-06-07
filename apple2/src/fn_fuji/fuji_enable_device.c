@@ -12,6 +12,6 @@ bool fuji_enable_device(uint8_t d)
 	sp_payload[1] = 0;
 	sp_payload[2] = d;
 
-	sp_error = sp_control(sp_fuji_id, 0xD5);
+	sp_error = sp_control(sp_fuji_id, FUJICMD_ENABLE_DEVICE);
 	return sp_error == 0;
 }

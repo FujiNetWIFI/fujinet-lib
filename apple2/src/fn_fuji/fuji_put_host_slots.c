@@ -14,7 +14,7 @@ bool fuji_put_host_slots(HostSlot *h, size_t size)
 	sp_payload[1] = (payload_size & 0xFF00) >> 8;
 
 	memcpy(&sp_payload[2], h, payload_size);
-	sp_error = sp_control(sp_fuji_id, 0xF3);
+	sp_error = sp_control(sp_fuji_id, FUJICMD_WRITE_HOST_SLOTS);
 	return sp_error == 0;
 
 }

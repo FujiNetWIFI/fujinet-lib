@@ -11,7 +11,7 @@ extern uint16_t ak_creator_id;
 extern uint8_t ak_app_id;
 extern enum AppKeySize ak_appkey_size;
 
-uint8_t t_fuji_read_appkey[7] = { 0xdd, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00 };
+uint8_t t_fuji_read_appkey[7] = { FUJICMD_READ_APPKEY, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
 {

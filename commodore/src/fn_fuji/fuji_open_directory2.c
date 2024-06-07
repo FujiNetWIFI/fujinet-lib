@@ -27,7 +27,7 @@ bool fuji_open_directory2(uint8_t hs, char *path, char *filter)
 	data = malloc(data_size);
 	memset(data, 0, data_size);
 
-	data[0] = 0xF7;
+	data[0] = FUJICMD_OPEN_DIRECTORY;
 	data[1] = hs;
 	memcpy(&data[2], path, path_len);
 	if (filter != NULL) {

@@ -6,7 +6,7 @@
 bool fuji_mount_host_slot(uint8_t hs)
 {
 	uint8_t pl[2];
-	pl[0] = 0xF9;
+	pl[0] = FUJICMD_MOUNT_HOST;
 	pl[1] = hs;
 
 	if (fuji_cbm_open(FUJI_CMD_CHANNEL, FUJI_CBM_DEV, FUJI_CMD_CHANNEL, 2, (uint8_t *) pl) != 0) {

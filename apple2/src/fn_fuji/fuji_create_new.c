@@ -19,6 +19,6 @@ bool fuji_create_new(NewDisk *new_disk)
 	memcpy(&sp_payload[5], &new_disk->numBlocks, sizeof(uint32_t));
 	memcpy(&sp_payload[9], &new_disk->filename[0], sizeof(new_disk->filename));
 
-	sp_error = sp_control(sp_fuji_id, 0xE7);
+	sp_error = sp_control(sp_fuji_id, FUJICMD_NEW_DISK);
 	return sp_error == 0;
 }

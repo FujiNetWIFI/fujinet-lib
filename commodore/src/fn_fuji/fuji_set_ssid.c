@@ -20,7 +20,7 @@ bool fuji_set_ssid(NetConfig *nc)
 	data = malloc(data_size);
 	memset(data, 0, data_size);
 
-	data[0] = 0xFB;
+	data[0] = FUJICMD_SET_SSID;
 	memcpy(&data[1], nc->ssid, ssid_len);
 	memcpy(&data[2 + ssid_len], nc->password, pass_len);
 
