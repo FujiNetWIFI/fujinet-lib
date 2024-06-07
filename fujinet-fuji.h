@@ -5,9 +5,16 @@
 
 // In general, bools return the "success" status, so true is good, false is bad.
 
+#ifdef _CMOC_VERSION_
+#include <cmoc.h>
+typedef unsigned char bool;
+#define true 1
+#define false 0
+#else
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
+#endif /* _CMOC_VERSION_ */
 
 #ifdef __CBM__
 #include <cbm.h>
@@ -107,9 +114,17 @@ typedef struct
   uint32_t numBlocks;
   char filename[256];
 } NewDisk;
-
-
 #endif
+
+#ifdef _CMOC_VERSION_
+typedef struct
+{
+    uint8_t numDisks;
+    uint8_t hostSlot;
+    uint8_t deviceSlot;
+    char filename[256];
+} NewDisk;
+#endif /* _CMOC_VERSION_ */
 
 #ifdef __CBM__
 // TODO: what is this for commodore?
