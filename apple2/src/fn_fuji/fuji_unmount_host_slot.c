@@ -12,6 +12,6 @@ bool fuji_unmount_host_slot(uint8_t hs)
 	sp_payload[1] = 0;
 	sp_payload[2] = hs;
 
-	sp_error = sp_control(sp_fuji_id, 0xE6);
+	sp_error = sp_control(sp_fuji_id, FUJICMD_UNMOUNT_HOST);
 	return sp_error == 0;
 }

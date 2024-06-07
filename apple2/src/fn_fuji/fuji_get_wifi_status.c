@@ -10,7 +10,7 @@ bool fuji_get_wifi_status(uint8_t *status)
 
 	// IWM only currently returns either 3 (WL_CONNECTED), or 6 (WL_DISCONNECTED), but there are other codes.
 	// If that changes in Firmware, nothing to do here, it'll automatically return new values.
-	sp_error = sp_status(sp_fuji_id, 0xFA);
+	sp_error = sp_status(sp_fuji_id, FUJICMD_GET_WIFISTATUS);
 	if (sp_error == 0) {
 		*status = sp_payload[0];
 	}

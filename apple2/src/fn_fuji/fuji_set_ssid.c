@@ -16,7 +16,7 @@ bool fuji_set_ssid(NetConfig *nc)
 	sp_payload[1] = 0;
 	memcpy(&sp_payload[2], nc, nc_len);
 
-	sp_error = sp_control(sp_fuji_id, 0xFB);
+	sp_error = sp_control(sp_fuji_id, FUJICMD_SET_SSID);
 	return sp_error == 0;
 
 }

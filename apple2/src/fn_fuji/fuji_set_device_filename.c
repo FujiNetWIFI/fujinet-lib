@@ -22,7 +22,7 @@ bool fuji_set_device_filename(uint8_t mode, uint8_t hs, uint8_t ds, char *buffer
 	sp_payload[4] = mode;
 	strcpy((char *) &sp_payload[5], buffer);
 
-	sp_error = sp_control(sp_fuji_id, 0xE2);
+	sp_error = sp_control(sp_fuji_id, FUJICMD_SET_DEVICE_FULLPATH);
 	return sp_error == 0;
 
 }

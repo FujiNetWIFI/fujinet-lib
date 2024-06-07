@@ -12,7 +12,7 @@ bool fuji_get_device_slots(DeviceSlot *d, size_t size)
 		return false;
 	}
 
-	sp_error = sp_status(sp_fuji_id, 0xF2);
+	sp_error = sp_status(sp_fuji_id, FUJICMD_READ_DEVICE_SLOTS);
 	if (sp_error == 0) {
 		if (sp_count != sizeof(DeviceSlot) * size) {
 			// didn't receive the correct amount of data for array we are filling

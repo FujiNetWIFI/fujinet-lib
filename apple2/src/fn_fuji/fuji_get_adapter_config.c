@@ -10,7 +10,7 @@ bool fuji_get_adapter_config(AdapterConfig *ac)
 		return false;
 	}
 
-	sp_error = sp_status(sp_fuji_id, 0xE8);
+	sp_error = sp_status(sp_fuji_id, FUJICMD_GET_ADAPTERCONFIG);
 	if (sp_error == 0) {
 		memcpy(ac, &sp_payload[0], sizeof(AdapterConfig));
 	}

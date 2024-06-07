@@ -13,7 +13,7 @@ bool fuji_set_boot_mode(uint8_t mode)
 	sp_payload[1] = 0;
 	sp_payload[2] = mode;
 
-	sp_error = sp_control(sp_fuji_id, 0xD6);
+	sp_error = sp_control(sp_fuji_id, FUJICMD_SET_BOOT_MODE);
 	return sp_error == 0;
 
 }

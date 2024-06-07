@@ -11,7 +11,7 @@ bool fuji_get_host_slots(HostSlot *h, size_t size)
 		return false;
 	}
 
-	sp_error = sp_status(sp_fuji_id, 0xF4);
+	sp_error = sp_status(sp_fuji_id, FUJICMD_READ_HOST_SLOTS);
 	if (sp_error == 0) {
 		if (sp_count != sizeof(HostSlot) * size) {
 			// didn't receive the correct amount of data for array we are filling

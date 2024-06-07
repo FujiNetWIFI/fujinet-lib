@@ -17,102 +17,154 @@ typedef unsigned char bool;
 #endif /* _CMOC_VERSION_ */
 
 #ifdef __CBM__
-#include <cbm.h>
-#define FUJI_CBM_DEV 30
-#define FUJI_CMD_CHANNEL 15
+    #include <cbm.h>
+    #define FUJI_CBM_DEV     30
+    #define FUJI_CMD_CHANNEL 15
 #endif // __CBM__
 
-#define FILE_MAXLEN 36
-#define SSID_MAXLEN 33 /* 32 + NULL */
-#define MAX_APPKEY_LEN    64
+#define FILE_MAXLEN    36
+#define SSID_MAXLEN    33 /* 32 + NULL */
+#define MAX_APPKEY_LEN 64
 
 #ifdef __CBM__
-#define MAX_PASSWORD_LEN  65
+    #define MAX_PASSWORD_LEN 65
 #else
-#define MAX_PASSWORD_LEN  64
+    #define MAX_PASSWORD_LEN 64
 #endif
 
+#define FUJICMD_RESET                  0xFF
+#define FUJICMD_GET_SSID               0xFE
+#define FUJICMD_SCAN_NETWORKS          0xFD
+#define FUJICMD_GET_SCAN_RESULT        0xFC
+#define FUJICMD_SET_SSID               0xFB
+#define FUJICMD_GET_WIFISTATUS         0xFA
+#define FUJICMD_MOUNT_HOST             0xF9
+#define FUJICMD_MOUNT_IMAGE            0xF8
+#define FUJICMD_OPEN_DIRECTORY         0xF7
+#define FUJICMD_READ_DIR_ENTRY         0xF6
+#define FUJICMD_CLOSE_DIRECTORY        0xF5
+#define FUJICMD_READ_HOST_SLOTS        0xF4
+#define FUJICMD_WRITE_HOST_SLOTS       0xF3
+#define FUJICMD_READ_DEVICE_SLOTS      0xF2
+#define FUJICMD_WRITE_DEVICE_SLOTS     0xF1
+#define FUJICMD_GET_WIFI_ENABLED       0xEA
+#define FUJICMD_UNMOUNT_IMAGE          0xE9
+#define FUJICMD_GET_ADAPTERCONFIG      0xE8
+#define FUJICMD_NEW_DISK               0xE7
+#define FUJICMD_UNMOUNT_HOST           0xE6
+#define FUJICMD_GET_DIRECTORY_POSITION 0xE5
+#define FUJICMD_SET_DIRECTORY_POSITION 0xE4
+#define FUJICMD_SET_DEVICE_FULLPATH    0xE2
+#define FUJICMD_WRITE_APPKEY           0xDE
+#define FUJICMD_READ_APPKEY            0xDD
+#define FUJICMD_OPEN_APPKEY            0xDC
+#define FUJICMD_CLOSE_APPKEY           0xDB
+#define FUJICMD_GET_DEVICE_FULLPATH    0xDA
+#define FUJICMD_CONFIG_BOOT            0xD9
+#define FUJICMD_COPY_FILE              0xD8
+#define FUJICMD_MOUNT_ALL              0xD7
+#define FUJICMD_SET_BOOT_MODE          0xD6
+#define FUJICMD_STATUS                 0x53
+#define FUJICMD_ENABLE_DEVICE          0xD5
+#define FUJICMD_DISABLE_DEVICE         0xD4
+#define FUJICMD_RANDOM_NUMBER          0xD3
+#define FUJICMD_GET_TIME               0xD2
+#define FUJICMD_DEVICE_ENABLE_STATUS   0xD1
+#define FUJICMD_BASE64_ENCODE_INPUT    0xD0
+#define FUJICMD_BASE64_ENCODE_COMPUTE  0xCF
+#define FUJICMD_BASE64_ENCODE_LENGTH   0xCE
+#define FUJICMD_BASE64_ENCODE_OUTPUT   0xCD
+#define FUJICMD_BASE64_DECODE_INPUT    0xCC
+#define FUJICMD_BASE64_DECODE_COMPUTE  0xCB
+#define FUJICMD_BASE64_DECODE_LENGTH   0xCA
+#define FUJICMD_BASE64_DECODE_OUTPUT   0xC9
+#define FUJICMD_HASH_INPUT             0xC8
+#define FUJICMD_HASH_COMPUTE           0xC7
+#define FUJICMD_HASH_LENGTH            0xC6
+#define FUJICMD_HASH_OUTPUT            0xC5
 
-enum WifiStatus {
-    no_ssid_available   = 1,
-    connected           = 3,
-    connect_failed      = 4,
-    connection_lost     = 5
+enum WifiStatus
+{
+    no_ssid_available = 1,
+    connected = 3,
+    connect_failed = 4,
+    connection_lost = 5
 };
 
-typedef struct {
-  char ssid[SSID_MAXLEN];
-  signed char rssi;
+typedef struct
+{
+    char ssid[SSID_MAXLEN];
+    signed char rssi;
 } SSIDInfo;
 
 typedef struct
 {
-  char ssid[SSID_MAXLEN];
-  char password[MAX_PASSWORD_LEN];
+    char ssid[SSID_MAXLEN];
+    char password[MAX_PASSWORD_LEN];
 } NetConfig;
 
 typedef struct
 {
-  char ssid[SSID_MAXLEN];
-  char hostname[64];
-  uint8_t localIP[4];
-  uint8_t gateway[4];
-  uint8_t netmask[4];
-  uint8_t dnsIP[4];
-  uint8_t macAddress[6];
-  uint8_t bssid[6];
-  char fn_version[15];
+    char ssid[SSID_MAXLEN];
+    char hostname[64];
+    uint8_t localIP[4];
+    uint8_t gateway[4];
+    uint8_t netmask[4];
+    uint8_t dnsIP[4];
+    uint8_t macAddress[6];
+    uint8_t bssid[6];
+    char fn_version[15];
 } AdapterConfig;
 
 typedef struct
 {
-  char ssid[SSID_MAXLEN];
-  char hostname[64];
-  uint8_t localIP[4];
-  uint8_t gateway[4];
-  uint8_t netmask[4];
-  uint8_t dnsIP[4];
-  uint8_t macAddress[6];
-  uint8_t bssid[6];
-  char fn_version[15];
-  char sLocalIP[16];
-  char sGateway[16];
-  char sNetmask[16];
-  char sDnsIP[16];
-  char sMacAddress[18];
-  char sBssid[18];
+    char ssid[SSID_MAXLEN];
+    char hostname[64];
+    uint8_t localIP[4];
+    uint8_t gateway[4];
+    uint8_t netmask[4];
+    uint8_t dnsIP[4];
+    uint8_t macAddress[6];
+    uint8_t bssid[6];
+    char fn_version[15];
+    char sLocalIP[16];
+    char sGateway[16];
+    char sNetmask[16];
+    char sDnsIP[16];
+    char sMacAddress[18];
+    char sBssid[18];
 } AdapterConfigExtended;
 
 typedef uint8_t HostSlot[32];
 
-typedef struct {
-  uint8_t hostSlot;
-  uint8_t mode;
-  uint8_t file[FILE_MAXLEN];
+typedef struct
+{
+    uint8_t hostSlot;
+    uint8_t mode;
+    uint8_t file[FILE_MAXLEN];
 } DeviceSlot;
-
 
 // Disks have different structures / parameters
 
 #ifdef __ATARI__
 typedef struct
 {
-  uint16_t numSectors;
-  uint16_t sectorSize;
-  uint8_t hostSlot;
-  uint8_t deviceSlot;
-  char filename[256];
+    uint16_t numSectors;
+    uint16_t sectorSize;
+    uint8_t hostSlot;
+    uint8_t deviceSlot;
+    char filename[256];
 } NewDisk;
 #endif
 
 #ifdef __APPLE2__
 typedef struct
 {
-  uint8_t hostSlot;
-  uint8_t deviceSlot;
-  uint8_t createType;
-  uint32_t numBlocks;
-  char filename[256];
+    uint8_t hostSlot;
+    uint8_t deviceSlot;
+    uint8_t createType;
+    uint32_t numBlocks;
+    char filename[256];
 } NewDisk;
 #endif
 
@@ -130,18 +182,19 @@ typedef struct
 // TODO: what is this for commodore?
 typedef struct
 {
-  uint16_t numSectors;
-  uint16_t sectorSize;
-  uint8_t hostSlot;
-  uint8_t deviceSlot;
-  char filename[256];
+    uint16_t numSectors;
+    uint16_t sectorSize;
+    uint8_t hostSlot;
+    uint8_t deviceSlot;
+    char filename[256];
 
 } NewDisk;
 #endif
 
 // WIP, only 64 fully supported at the moment.
-enum AppKeySize {
-    DEFAULT  // 64 original size
+enum AppKeySize
+{
+    DEFAULT // 64 original size
     // SIZE_256
 };
 
@@ -150,7 +203,8 @@ typedef struct
     unsigned char value[4];
 } FNStatus;
 
-enum HashType {
+enum HashType
+{
     MD5,
     SHA1,
     SHA256,
@@ -199,7 +253,6 @@ bool fuji_get_adapter_config(AdapterConfig *ac);
  * @return Success status, true if all OK.
  */
 bool fuji_get_adapter_config_extended(AdapterConfigExtended *ac);
-
 
 /*
  * THIS IS BOGUS. Apple and Atari both just return "true" for any device.
@@ -433,7 +486,7 @@ bool fuji_write_appkey(uint8_t key_id, uint16_t count, uint8_t *data);
 void fuji_set_appkey_details(uint16_t creator_id, uint8_t app_id, enum AppKeySize keysize);
 
 // Base64
-// ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success 
+// ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success
 bool fuji_base64_decode_compute();
 bool fuji_base64_decode_input(char *s, uint16_t len);
 bool fuji_base64_decode_length(unsigned long *len);
@@ -445,7 +498,7 @@ bool fuji_base64_encode_length(unsigned long *len);
 bool fuji_base64_encode_output(char *s, uint16_t len);
 
 // Hash
-// ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success 
+// ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success
 bool fuji_hash_compute(uint8_t type);
 bool fuji_hash_input(char *s, uint16_t len);
 bool fuji_hash_length(uint8_t mode);

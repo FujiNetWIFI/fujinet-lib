@@ -7,7 +7,7 @@ bool fuji_get_scan_result(uint8_t n, SSIDInfo *ssid_info)
 {
 	int bytes_read;
 	uint8_t pl[3];
-	pl[0] = 0xFC;
+	pl[0] = FUJICMD_GET_SCAN_RESULT;
 	pl[1] = n;
 	pl[2] = 0x00;
 

@@ -36,10 +36,10 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
 	sp_payload[6] = mode;
 	sp_payload[7] = 0;			// reserved
 	
-	sp_error = sp_control(sp_fuji_id, 0xDC);
+	sp_error = sp_control(sp_fuji_id, FUJICMD_OPEN_APPKEY);
 	if (sp_error != 0) return false;
 
-	sp_error = sp_status(sp_fuji_id, 0xDD);
+	sp_error = sp_status(sp_fuji_id, FUJICMD_READ_APPKEY);
 	if (sp_error == 0) {
 		memset(data, 0, buffer_size);
 		*count = sp_count;

@@ -21,7 +21,7 @@ bool fuji_write_appkey(uint8_t key_id, uint16_t count, uint8_t *data)
 		return false;
 	}
 
-	pl[0] = 0xDC;
+	pl[0] = FUJICMD_OPEN_APPKEY;
 	pl[1] = ak_creator_id & 0xFF;
 	pl[2] = ak_creator_id >> 8;
 	pl[3] = ak_app_id;
@@ -39,7 +39,7 @@ bool fuji_write_appkey(uint8_t key_id, uint16_t count, uint8_t *data)
 	memset(out_data, 0, data_size);
 
 	// now do a write of the key data, on IEC we don't need to send the count, as the write doesn't have to be a fixed size
-	out_data[0] = 0xDE;
+	out_data[0] = FUJICMD_WRITE_APPKEY;
 	memcpy(&out_data[1], data, count);
 
 	err = fuji_cbm_open(FUJI_CMD_CHANNEL, FUJI_CBM_DEV, FUJI_CMD_CHANNEL, data_size, out_data);

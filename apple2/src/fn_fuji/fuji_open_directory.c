@@ -18,7 +18,7 @@ bool fuji_open_directory(uint8_t hs, char *path_filter)
 	sp_payload[2] = hs;
 	memcpy(&sp_payload[3], path_filter, 255);
 
-	sp_error = sp_control(sp_fuji_id, 0xf7);
+	sp_error = sp_control(sp_fuji_id, FUJICMD_OPEN_DIRECTORY);
 	return sp_error == 0;
 
 }

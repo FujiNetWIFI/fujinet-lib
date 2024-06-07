@@ -11,6 +11,6 @@ bool fuji_close_directory()
 	sp_payload[0] = 0x00;
 	sp_payload[1] = 0x00;
 
-	sp_error = sp_control(sp_fuji_id, 0xF5);
+	sp_error = sp_control(sp_fuji_id, FUJICMD_CLOSE_DIRECTORY);
 	return sp_error == 0;
 }

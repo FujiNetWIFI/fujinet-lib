@@ -11,6 +11,6 @@ bool fuji_mount_all(void)
 	sp_payload[0] = 0x00;
 	sp_payload[1] = 0x00;
 
-	sp_error = sp_control(sp_fuji_id, 0xD7);
+	sp_error = sp_control(sp_fuji_id, FUJICMD_MOUNT_ALL);
 	return sp_error == 0;
 }

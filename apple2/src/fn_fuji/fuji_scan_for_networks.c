@@ -8,7 +8,7 @@ bool fuji_scan_for_networks(uint8_t *count)
 		return false;
 	}
 
-	sp_error = sp_status(sp_fuji_id, 0xFD);
+	sp_error = sp_status(sp_fuji_id, FUJICMD_SCAN_NETWORKS);
 	if (sp_error == 0) {
 		*count = sp_payload[0];
 	}

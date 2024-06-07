@@ -18,7 +18,7 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
 		return false;
 	}
 
-	pl[0] = 0xDC;
+	pl[0] = FUJICMD_OPEN_APPKEY;
 	pl[1] = ak_creator_id & 0xFF;
 	pl[2] = ak_creator_id >> 8;
 	pl[3] = ak_app_id;
@@ -33,7 +33,7 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
 	cbm_close(FUJI_CMD_CHANNEL);
 
 	// now do a read of the key
-	pl[0] = 0xDD;
+	pl[0] = FUJICMD_READ_APPKEY;
 	if (fuji_cbm_open(FUJI_CMD_CHANNEL, FUJI_CBM_DEV, FUJI_CMD_CHANNEL, 1, (uint8_t *) pl) != 0) {
 		return false;
 	}

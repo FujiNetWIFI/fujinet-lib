@@ -27,7 +27,7 @@ bool fuji_write_appkey(uint8_t key_id, uint16_t count, uint8_t *data)
 	sp_payload[6] = 0x01; 			// WRITE mode
 	sp_payload[7] = 0x00;			// reserved
 
-	sp_error = sp_control(sp_fuji_id, 0xDC);
+	sp_error = sp_control(sp_fuji_id, FUJICMD_OPEN_APPKEY);
 	if (sp_error != 0) {
 		return false;
 	}
@@ -37,6 +37,6 @@ bool fuji_write_appkey(uint8_t key_id, uint16_t count, uint8_t *data)
 
 	memcpy(&sp_payload[2], data, count);
 
-	sp_error = sp_control(sp_fuji_id, 0xDE);
+	sp_error = sp_control(sp_fuji_id, FUJICMD_WRITE_APPKEY);
 	return sp_error == 0;
 }

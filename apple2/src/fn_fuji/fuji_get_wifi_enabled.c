@@ -8,7 +8,7 @@ bool fuji_get_wifi_enabled(void)
 		return false;
 	}
 
-	sp_error = sp_status(sp_fuji_id, 0xEA);
+	sp_error = sp_status(sp_fuji_id, FUJICMD_GET_WIFI_ENABLED);
 	if (sp_error == 0) {
 		return sp_payload[0] != 0;
 	}

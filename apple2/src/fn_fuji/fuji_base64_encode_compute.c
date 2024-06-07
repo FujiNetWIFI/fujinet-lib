@@ -5,8 +5,8 @@
 
 bool fuji_base64_encode_compute()
 {
-    // send CTRL command: 0xCF
+    // send CTRL command: FUJICMD_BASE64_ENCODE_COMPUTE
     // PAYLOAD: N/A
 
-    return sp_control(0, 0xCF) == 0;
+    return sp_control(0, FUJICMD_BASE64_ENCODE_COMPUTE) == 0;
 }

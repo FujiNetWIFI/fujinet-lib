@@ -9,7 +9,7 @@ bool fuji_get_directory_position(uint16_t *pos)
 		return false;
 	}
 
-	sp_error = sp_status(sp_fuji_id, 0xE5);
+	sp_error = sp_status(sp_fuji_id, FUJICMD_GET_DIRECTORY_POSITION);
     if (sp_error == 0) {
         *pos = sp_payload[0] + (sp_payload[1] << 8);
     }
