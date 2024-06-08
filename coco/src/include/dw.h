@@ -5,6 +5,12 @@
 #include <coco.h>
 
 /**
+ * @brief Drivewire Opcodes we added for FujiNet.
+ */
+#define OP_FUJI 0xE2
+#define OP_NET 0xE3
+
+/**
  * @brief Read string to s from DriveWire with expected length l
  * @param s pointer to string buffer
  * @param l expected length of string (0-65535 bytes)
