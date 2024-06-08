@@ -1,8 +1,24 @@
 #include <cmoc.h>
 #include <coco.h>
 #include "fujinet-fuji.h"
+#include <dw.h>
+#include <fujinet-fuji-coco.h>
 
 bool fuji_get_directory_position(uint16_t *pos)
 {
-	return true;
+    struct _gdp
+    {
+        uint8_t opcode;
+        uint8_t cmd;
+    } gdp;
+
+    gdp.opcode = OP_FUJI;
+    gdp.cmd = FUJICMD_GET_DIRECTORY_POSITION;
+
+    bus_ready();
+
+    dwwrite((uint8_t *)&gdp, sizeof(gdp));
+    dwread((uint8_t *)pos, sizeof(uint16_t));
+    
+    return bus_error(OP_FUJI) == BUS_SUCCESS;
 }

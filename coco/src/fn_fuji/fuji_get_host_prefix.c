@@ -4,5 +4,6 @@
 
 bool fuji_get_host_prefix(uint8_t hs, char *prefix)
 {
-	return true;
+    // TODO: not implemented in firmware.
+    return true;
 }
