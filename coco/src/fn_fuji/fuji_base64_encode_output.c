@@ -1,8 +1,24 @@
 #include <cmoc.h>
 #include <coco.h>
 #include "fujinet-fuji.h"
+#include <dw.h>
+#include <fujinet-fuji-coco.h>
 
 bool fuji_base64_encode_output(char *s, uint16_t len)
 {
-	return true;
+    struct _beo
+    {
+        uint8_t opcode;
+        uint8_t cmd;
+    } beo;
+
+    beo.opcode = OP_FUJI;
+    beo.cmd = FUJICMD_BASE64_ENCODE_OUTPUT;
+
+    bus_ready();
+
+    dwwrite((uint8_t *)&beo, sizeof(beo));
+    dwread((uint8_t *)s, len);
+    
+    return bus_error(OP_FUJI) == BUS_SUCCESS;
 }
