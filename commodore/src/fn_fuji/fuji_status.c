@@ -5,5 +5,7 @@
 
 bool fuji_status(FNStatus *status)
 {
-	return true;
+	uint8_t pl[1];
+	pl[0] = FUJICMD_STATUS;
+	return open_read_close(1, pl, sizeof(FNStatus), (uint8_t *) status);
 }
