@@ -10,10 +10,12 @@ bool fuji_base64_decode_input(char *s, uint16_t len)
     {
         uint8_t opcode;
         uint8_t cmd;
+        uint16_t len;
     } bdi;
 
     bdi.opcode = OP_FUJI;
     bdi.cmd = FUJICMD_BASE64_DECODE_INPUT;
+    bdi.len = len;
     
     bus_ready();
     dwwrite((uint8_t *)&bdi, sizeof(bdi));

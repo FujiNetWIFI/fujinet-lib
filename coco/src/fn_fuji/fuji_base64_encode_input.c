@@ -10,10 +10,12 @@ bool fuji_base64_encode_input(char *s, uint16_t len)
     {
         uint8_t opcode;
         uint8_t cmd;
+        uint16_t len;
     } bei;
 
     bei.opcode = OP_FUJI;
     bei.cmd = FUJICMD_BASE64_ENCODE_INPUT;
+    bei.len = len;
 
     bus_ready();
 
