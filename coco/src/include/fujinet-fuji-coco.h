@@ -15,4 +15,13 @@
 #define FUJICMD_READY 0x00
 void bus_ready(void);
 
+/**
+ * @brief Get most recent response
+ * @param opcode OP_FUJI or OP_NET
+ * @param buf Target buffer
+ * @param len length of bytes to get
+ */
+#define FUJICMD_GET_RESPONSE 0x01
+uint8_t io_get_response(uint8_t opcode, uint8_t *buf, int len);
+
 #endif /* FUJINET_FUJI_COCO_H */
