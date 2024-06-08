@@ -4,5 +4,6 @@
 
 bool fuji_enable_device(uint8_t d)
 {
-	return true;
+    // TODO: implement in firmware.
+    return true;
 }
