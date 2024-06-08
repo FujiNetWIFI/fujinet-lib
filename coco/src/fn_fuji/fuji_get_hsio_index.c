@@ -4,5 +4,6 @@
 
 bool fuji_get_hsio_index(uint8_t *index)
 {
-	return true;
+    // Not needed.
+    return true;
 }
