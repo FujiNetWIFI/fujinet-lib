@@ -15,7 +15,7 @@ bool fuji_base64_decode_length(unsigned long *len)
     bus_ready();
     
     dwwrite((uint8_t *)&bdl, sizeof(bdl));
-    dwread((uint8_t *)len, sizeof(unsigned long));
+    bus_get_response(OP_FUJI,(uint8_t *)len,sizeof(unsigned long));
     
     return bus_error(OP_FUJI) == BUS_SUCCESS;
 }

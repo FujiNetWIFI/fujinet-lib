@@ -18,7 +18,7 @@ bool fuji_base64_decode_output(char *s, uint16_t len)
     bus_ready();
 
     dwwrite((uint8_t *)&bdo, sizeof(bdo));
-    dwread((uint8_t *)s, len);
+    bus_get_response(OP_FUJI,(uint8_t *)s, len);
     
     return bus_error(OP_FUJI) == BUS_SUCCESS;
 }

@@ -20,7 +20,7 @@ bool fuji_get_device_filename(uint8_t ds, char *buffer)
     bus_ready();
 
     dwwrite((uint8_t *)&gdf, sizeof(gdf));
-    dwread((uint8_t *)buffer, 256);
+    bus_get_response(OP_FUJI,(uint8_t *)buffer, 256);
     
     return bus_error(OP_FUJI) == BUS_SUCCESS;
 }
