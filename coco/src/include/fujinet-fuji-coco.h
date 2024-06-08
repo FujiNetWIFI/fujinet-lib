@@ -24,4 +24,10 @@ void bus_ready(void);
 #define FUJICMD_GET_RESPONSE 0x01
 uint8_t io_get_response(uint8_t opcode, uint8_t *buf, int len);
 
+/**
+ * @brief command to send previous error
+ */
+#define FUJICMD_SEND_ERROR 0x02
+uint8_t bus_error(uint8_t opcode);
+
 #endif /* FUJINET_FUJI_COCO_H */
