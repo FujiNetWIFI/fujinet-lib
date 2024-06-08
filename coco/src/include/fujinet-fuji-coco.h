@@ -15,6 +15,11 @@
 #define BUS_SUCCESS 1
 
 /**
+ * @brief error code for error
+ */
+#define BUS_ERROR 144
+
+/**
  * @brief Is FujiNet ready?
  */
 #define FUJICMD_READY 0x00
