@@ -10,6 +10,11 @@
 #define FUJINET_FUJI_COCO_H
 
 /**
+ * @brief Error code for success
+ */
+#define BUS_SUCCESS 1
+
+/**
  * @brief Is FujiNet ready?
  */
 #define FUJICMD_READY 0x00
