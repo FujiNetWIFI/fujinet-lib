@@ -32,7 +32,7 @@ void bus_ready(void);
  * @param len length of bytes to get
  */
 #define FUJICMD_GET_RESPONSE 0x01
-uint8_t io_get_response(uint8_t opcode, uint8_t *buf, int len);
+uint8_t bus_get_response(uint8_t opcode, uint8_t *buf, int len);
 
 /**
  * @brief command to send previous error
