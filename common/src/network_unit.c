@@ -3,6 +3,12 @@
 #include <cmoc.h>
 #include <coco.h>
 
+#else
+
+#include <stdint.h>
+
+#endif /* _CMOC_VERSION_ */
+
 /**
  * @brief return network unit number given devicespec string
  * @param devicespec A string containing device spec.
@@ -22,4 +28,3 @@ uint8_t network_unit(char *devicespec)
     return devicespec[1];
 }
 
-#endif /* _CMOC_VERSION_ */
