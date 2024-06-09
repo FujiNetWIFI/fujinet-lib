@@ -5,5 +5,6 @@
 
 bool fuji_get_hsio_index(uint8_t *index)
 {
-	return true;
+	// not implemented on CBM
+	return false;
 }
