@@ -6,14 +6,14 @@
 // In general, bools return the "success" status, so true is good, false is bad.
 
 #ifdef _CMOC_VERSION_
-#include <cmoc.h>
+    #include <cmoc.h>
 typedef unsigned char bool;
-#define true 1
-#define false 0
+    #define true  1
+    #define false 0
 #else
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdint.h>
+    #include <stddef.h>
+    #include <stdbool.h>
+    #include <stdint.h>
 #endif /* _CMOC_VERSION_ */
 
 #ifdef __CBM__
@@ -32,56 +32,57 @@ typedef unsigned char bool;
     #define MAX_PASSWORD_LEN 64
 #endif
 
-#define FUJICMD_RESET                  0xFF
-#define FUJICMD_GET_SSID               0xFE
-#define FUJICMD_SCAN_NETWORKS          0xFD
-#define FUJICMD_GET_SCAN_RESULT        0xFC
-#define FUJICMD_SET_SSID               0xFB
-#define FUJICMD_GET_WIFISTATUS         0xFA
-#define FUJICMD_MOUNT_HOST             0xF9
-#define FUJICMD_MOUNT_IMAGE            0xF8
-#define FUJICMD_OPEN_DIRECTORY         0xF7
-#define FUJICMD_READ_DIR_ENTRY         0xF6
-#define FUJICMD_CLOSE_DIRECTORY        0xF5
-#define FUJICMD_READ_HOST_SLOTS        0xF4
-#define FUJICMD_WRITE_HOST_SLOTS       0xF3
-#define FUJICMD_READ_DEVICE_SLOTS      0xF2
-#define FUJICMD_WRITE_DEVICE_SLOTS     0xF1
-#define FUJICMD_GET_WIFI_ENABLED       0xEA
-#define FUJICMD_UNMOUNT_IMAGE          0xE9
-#define FUJICMD_GET_ADAPTERCONFIG      0xE8
-#define FUJICMD_NEW_DISK               0xE7
-#define FUJICMD_UNMOUNT_HOST           0xE6
-#define FUJICMD_GET_DIRECTORY_POSITION 0xE5
-#define FUJICMD_SET_DIRECTORY_POSITION 0xE4
-#define FUJICMD_SET_DEVICE_FULLPATH    0xE2
-#define FUJICMD_WRITE_APPKEY           0xDE
-#define FUJICMD_READ_APPKEY            0xDD
-#define FUJICMD_OPEN_APPKEY            0xDC
-#define FUJICMD_CLOSE_APPKEY           0xDB
-#define FUJICMD_GET_DEVICE_FULLPATH    0xDA
-#define FUJICMD_CONFIG_BOOT            0xD9
-#define FUJICMD_COPY_FILE              0xD8
-#define FUJICMD_MOUNT_ALL              0xD7
-#define FUJICMD_SET_BOOT_MODE          0xD6
-#define FUJICMD_STATUS                 0x53
-#define FUJICMD_ENABLE_DEVICE          0xD5
-#define FUJICMD_DISABLE_DEVICE         0xD4
-#define FUJICMD_RANDOM_NUMBER          0xD3
-#define FUJICMD_GET_TIME               0xD2
-#define FUJICMD_DEVICE_ENABLE_STATUS   0xD1
-#define FUJICMD_BASE64_ENCODE_INPUT    0xD0
-#define FUJICMD_BASE64_ENCODE_COMPUTE  0xCF
-#define FUJICMD_BASE64_ENCODE_LENGTH   0xCE
-#define FUJICMD_BASE64_ENCODE_OUTPUT   0xCD
-#define FUJICMD_BASE64_DECODE_INPUT    0xCC
-#define FUJICMD_BASE64_DECODE_COMPUTE  0xCB
-#define FUJICMD_BASE64_DECODE_LENGTH   0xCA
-#define FUJICMD_BASE64_DECODE_OUTPUT   0xC9
-#define FUJICMD_HASH_INPUT             0xC8
-#define FUJICMD_HASH_COMPUTE           0xC7
-#define FUJICMD_HASH_LENGTH            0xC6
-#define FUJICMD_HASH_OUTPUT            0xC5
+#define FUJICMD_RESET                      0xFF
+#define FUJICMD_GET_SSID                   0xFE
+#define FUJICMD_SCAN_NETWORKS              0xFD
+#define FUJICMD_GET_SCAN_RESULT            0xFC
+#define FUJICMD_SET_SSID                   0xFB
+#define FUJICMD_GET_WIFISTATUS             0xFA
+#define FUJICMD_MOUNT_HOST                 0xF9
+#define FUJICMD_MOUNT_IMAGE                0xF8
+#define FUJICMD_OPEN_DIRECTORY             0xF7
+#define FUJICMD_READ_DIR_ENTRY             0xF6
+#define FUJICMD_CLOSE_DIRECTORY            0xF5
+#define FUJICMD_READ_HOST_SLOTS            0xF4
+#define FUJICMD_WRITE_HOST_SLOTS           0xF3
+#define FUJICMD_READ_DEVICE_SLOTS          0xF2
+#define FUJICMD_WRITE_DEVICE_SLOTS         0xF1
+#define FUJICMD_GET_WIFI_ENABLED           0xEA
+#define FUJICMD_UNMOUNT_IMAGE              0xE9
+#define FUJICMD_GET_ADAPTERCONFIG          0xE8
+#define FUJICMD_NEW_DISK                   0xE7
+#define FUJICMD_UNMOUNT_HOST               0xE6
+#define FUJICMD_GET_DIRECTORY_POSITION     0xE5
+#define FUJICMD_SET_DIRECTORY_POSITION     0xE4
+#define FUJICMD_SET_DEVICE_FULLPATH        0xE2
+#define FUJICMD_WRITE_APPKEY               0xDE
+#define FUJICMD_READ_APPKEY                0xDD
+#define FUJICMD_OPEN_APPKEY                0xDC
+#define FUJICMD_CLOSE_APPKEY               0xDB
+#define FUJICMD_GET_DEVICE_FULLPATH        0xDA
+#define FUJICMD_CONFIG_BOOT                0xD9
+#define FUJICMD_COPY_FILE                  0xD8
+#define FUJICMD_MOUNT_ALL                  0xD7
+#define FUJICMD_SET_BOOT_MODE              0xD6
+#define FUJICMD_STATUS                     0x53
+#define FUJICMD_ENABLE_DEVICE              0xD5
+#define FUJICMD_DISABLE_DEVICE             0xD4
+#define FUJICMD_RANDOM_NUMBER              0xD3
+#define FUJICMD_GET_TIME                   0xD2
+#define FUJICMD_DEVICE_ENABLE_STATUS       0xD1
+#define FUJICMD_BASE64_ENCODE_INPUT        0xD0
+#define FUJICMD_BASE64_ENCODE_COMPUTE      0xCF
+#define FUJICMD_BASE64_ENCODE_LENGTH       0xCE
+#define FUJICMD_BASE64_ENCODE_OUTPUT       0xCD
+#define FUJICMD_BASE64_DECODE_INPUT        0xCC
+#define FUJICMD_BASE64_DECODE_COMPUTE      0xCB
+#define FUJICMD_BASE64_DECODE_LENGTH       0xCA
+#define FUJICMD_BASE64_DECODE_OUTPUT       0xC9
+#define FUJICMD_HASH_INPUT                 0xC8
+#define FUJICMD_HASH_COMPUTE               0xC7
+#define FUJICMD_HASH_LENGTH                0xC6
+#define FUJICMD_HASH_OUTPUT                0xC5
+#define FUJICMD_GET_ADAPTERCONFIG_EXTENDED 0xC4
 
 enum WifiStatus
 {
@@ -179,7 +180,7 @@ typedef struct
 #endif /* _CMOC_VERSION_ */
 
 #ifdef __CBM__
-// TODO: what is this for commodore?
+// TODO: what is this for commodore? IEC firmware does not support new disk yet
 typedef struct
 {
     uint16_t numSectors;
@@ -264,6 +265,7 @@ bool fuji_get_device_enabled_status(uint8_t d);
 
 /*
  * Sets the buffer to the device's filename in device id `ds`
+ * Note: BUFFER MUST BE ABLE TO ACCEPT UP TO 256 BYTE STRING
  * @return Success status, true if all OK.
  */
 bool fuji_get_device_filename(uint8_t ds, char *buffer);
@@ -290,7 +292,7 @@ bool fuji_get_host_prefix(uint8_t hs, char *prefix);
 
 /*
  * Sets ALL host slot information into pointer h.
- * `size` is the receiving array size, and the returned data size is checked against this before copying.
+ * `size` is the number of host slots, and the returned data size is checked against this multiple of HostSlot structs before copying.
  * If it doesn't match, no data is copied, and false is returned.
  * @return Success status, true if all OK.
  */
