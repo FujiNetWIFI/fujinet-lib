@@ -15,6 +15,8 @@ bool fuji_put_device_slots(DeviceSlot *d, size_t size)
     pds.opcode = OP_FUJI;
     pds.cmd = FUJICMD_WRITE_DEVICE_SLOTS;
 
+    bus_ready();
+    
     dwwrite((uint8_t *)&pds, sizeof(pds));
     dwwrite((uint8_t *)d, size);
     

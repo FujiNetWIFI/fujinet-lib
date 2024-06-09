@@ -21,6 +21,8 @@ bool fuji_open_directory2(uint8_t hs, char *path, char *filter)
     strcpy(od2.path,path);
     strcpy(&od2.path[strlen(od2.path)+1],filter);
 
+    bus_ready();
+
     dwwrite((uint8_t *)&od2,sizeof(od2));
     
     return bus_error(OP_FUJI) == BUS_SUCCESS;
