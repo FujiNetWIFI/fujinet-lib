@@ -5,5 +5,6 @@
 
 bool fuji_enable_udpstream(uint16_t port, char *host)
 {
-	return true;
+	// not supported on CBM
+	return false;
 }
