@@ -4,6 +4,7 @@
 #include "fujinet-bus-apple2.h"
 
 // send (ds + $a0) as status code, as the status code to read a device goes from A0 to A7.
+// ASSUMPTION: The buffer can hold up to a 256 byte string
 bool fuji_get_device_filename(uint8_t ds, char *buffer)
 {
 	uint8_t stat = ds + 0xA0;

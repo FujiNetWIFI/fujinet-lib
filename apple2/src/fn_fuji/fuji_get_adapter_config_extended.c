@@ -10,7 +10,7 @@ bool fuji_get_adapter_config_extended(AdapterConfigExtended *acx)
 		return false;
 	}
 
-	sp_error = sp_status(sp_fuji_id, 0xC4);
+	sp_error = sp_status(sp_fuji_id, FUJICMD_GET_ADAPTERCONFIG_EXTENDED);
 	if (sp_error == 0) {
 		memcpy(acx, &sp_payload[0], sizeof(AdapterConfigExtended));
 	}
