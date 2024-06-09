@@ -14,4 +14,3 @@ bool open_read_close(uint8_t out_size, uint8_t *out, uint16_t in_size, uint8_t *
 	cbm_close(FUJI_CMD_CHANNEL);
 	return bytes_read > 0;
 }
-

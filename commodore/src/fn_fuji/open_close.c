@@ -12,4 +12,3 @@ bool open_close(uint8_t size, uint8_t *data)
 	cbm_close(FUJI_CMD_CHANNEL);
 	return true;
 }
-
