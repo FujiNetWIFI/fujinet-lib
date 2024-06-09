@@ -5,5 +5,6 @@
 
 bool fuji_create_new(NewDisk *new_disk)
 {
-	return true;
+	// Not implemented in FN firmware for IEM
+	return false;
 }
