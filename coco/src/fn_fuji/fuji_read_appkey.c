@@ -14,7 +14,7 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
     } ra;
 
     ra.opcode = OP_FUJI;
-    ra.cmd = FUJICMD_READ_APP_KEY;
+    ra.cmd = FUJICMD_READ_APPKEY;
     ra.key_id = key_id;
 
     bus_ready();
