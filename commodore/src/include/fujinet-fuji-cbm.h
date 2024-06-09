@@ -11,6 +11,6 @@ uint8_t __fastcall__ fuji_cbm_open(uint8_t lfn, uint8_t device, uint8_t sec_addr
 bool __fastcall__ open_close(uint8_t size, uint8_t *data);
 
 // helper that just does an open/read/close returning data via in, setup data is in out
-bool fuji_open_read_close(uint8_t out_size, uint8_t *out, uint16_t in_size, uint8_t *in);
+bool open_read_close(uint8_t out_size, uint8_t *out, uint16_t in_size, uint8_t *in);
 
 #endif // FUJINET_FUJI_CBM_H
