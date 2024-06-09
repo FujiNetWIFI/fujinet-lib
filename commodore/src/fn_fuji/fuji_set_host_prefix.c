@@ -5,5 +5,6 @@
 
 bool fuji_set_host_prefix(uint8_t hs, char *prefix)
 {
-	return true;
+	// Not implemented in IEM fuji firmware
+	return false;
 }
