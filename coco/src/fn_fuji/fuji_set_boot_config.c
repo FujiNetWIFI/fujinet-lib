@@ -14,7 +14,7 @@ bool fuji_set_boot_config(uint8_t toggle)
     } sbc;
 
     sbc.opcode = OP_FUJI;
-    sbc.cmd = FUJICMD_SET_BOOT_MODE;
+    sbc.cmd = FUJICMD_CONFIG_BOOT;
     sbc.toggle = toggle;
 
     bus_ready();
