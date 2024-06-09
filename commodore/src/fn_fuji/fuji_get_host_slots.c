@@ -1,5 +1,7 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #include "fujinet-fuji.h"
 #include "fujinet-fuji-cbm.h"
 
@@ -8,7 +10,6 @@ bool fuji_get_host_slots(HostSlot *h, size_t size)
 	uint8_t *hs_data;
 	int bytes_read;
 	int max_hs_data_size = 8 * sizeof(HostSlot); // 1 page, as 8 * 32 = 256
-	bool ret;
 	uint8_t pl[1];
 
 	pl[0] = FUJICMD_READ_HOST_SLOTS;
