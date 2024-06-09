@@ -27,10 +27,10 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
 	pl[6] = 0;
 
 	// send the creator / app / mode values
-	if (fuji_cbm_open(FUJI_CMD_CHANNEL, FUJI_CBM_DEV, FUJI_CMD_CHANNEL, sizeof(pl), (uint8_t *) pl) != 0) {
+	if (!open_close(7, pl)) {
+		// something went wrong, abort
 		return false;
 	}
-	cbm_close(FUJI_CMD_CHANNEL);
 
 	// now do a read of the key
 	pl[0] = FUJICMD_READ_APPKEY;
