@@ -5,5 +5,7 @@
 
 bool fuji_mount_all()
 {
-	return true;
+	uint8_t pl[1];
+	pl[0] = FUJICMD_MOUNT_ALL;
+	return open_close(1, pl);
 }
