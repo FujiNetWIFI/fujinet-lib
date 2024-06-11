@@ -10,40 +10,32 @@ extern enum AppKeySize ak_appkey_size;
 bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
 {
 	uint8_t mode = 0;
-	uint16_t buffer_size = 64;
+	uint16_t buffer_size = 64; // TODO: key sizes overhaul
 	int bytes_read;
-	uint8_t pl[7];
+	bool is_success;
+	uint8_t pl[6];
 
 	if (ak_creator_id == 0) {
 		return false;
 	}
 
-	pl[0] = FUJICMD_OPEN_APPKEY;
-	pl[1] = ak_creator_id & 0xFF;
-	pl[2] = ak_creator_id >> 8;
-	pl[3] = ak_app_id;
-	pl[4] = key_id;
-	pl[5] = mode;
-	pl[6] = 0;
+	pl[0] = ak_creator_id & 0xFF;
+	pl[1] = ak_creator_id >> 8;
+	pl[2] = ak_app_id;
+	pl[3] = key_id;
+	pl[4] = mode;
+	pl[5] = 0;
 
 	// send the creator / app / mode values
-	if (!open_close(7, pl)) {
-		// something went wrong, abort
-		return false;
-	}
-
-	// now do a read of the key
-	pl[0] = FUJICMD_READ_APPKEY;
-	if (fuji_cbm_open(FUJI_CMD_CHANNEL, FUJI_CBM_DEV, FUJI_CMD_CHANNEL, 1, (uint8_t *) pl) != 0) {
-		return false;
-	}
-
-	bytes_read = cbm_read(FUJI_CMD_CHANNEL, data, buffer_size);
-	if (bytes_read <= 0) {
+	if (!open_close_data(FUJICMD_OPEN_APPKEY, 6, pl)) {
 		*count = 0;
-	} else {
-		*count = bytes_read;
+		return false;
 	}
-	cbm_close(FUJI_CMD_CHANNEL);
-	return bytes_read > 0;
+
+	// creator data sent fine, read the key
+	is_success = open_read_close(FUJICMD_READ_APPKEY, &bytes_read, buffer_size, data);
+	// a bit shitty, cbm_read returns an int, so +/- 32k, we want just uint16_t, so check for negative.
+	// keys are really small anyway, so not an issue on >32k, but negative values are errors we have catered for in the iec_status values
+	*count = (bytes_read >= 0) ? bytes_read : 0;
+	return is_success;
 }

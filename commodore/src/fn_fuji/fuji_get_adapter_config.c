@@ -5,7 +5,6 @@
 
 bool fuji_get_adapter_config(AdapterConfig *ac)
 {
-	uint8_t pl[1];
-	pl[0] = FUJICMD_GET_ADAPTERCONFIG;
-	return open_read_close(1, pl, sizeof(AdapterConfig), (uint8_t *) ac);
+	int bytes_read;
+	return open_read_close(FUJICMD_GET_ADAPTERCONFIG, &bytes_read, sizeof(AdapterConfig), (uint8_t *) ac);
 }

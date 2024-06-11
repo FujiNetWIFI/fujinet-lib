@@ -6,7 +6,5 @@
 bool fuji_scan_for_networks(uint8_t *count)
 {
 	int bytes_read;
-	uint8_t pl[1];
-	pl[0] = FUJICMD_SCAN_NETWORKS;
-	return open_read_close(1, pl, 1, count);
+	return open_read_close(FUJICMD_SCAN_NETWORKS, &bytes_read, 1, count);
 }

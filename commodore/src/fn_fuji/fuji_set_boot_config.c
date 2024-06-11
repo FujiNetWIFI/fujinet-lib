@@ -5,8 +5,5 @@
 
 bool fuji_set_boot_config(uint8_t toggle)
 {
-	uint8_t pl[2];
-	pl[0] = FUJICMD_CONFIG_BOOT;
-	pl[1] = toggle;
-	return open_close(2, pl);
+	return open_close_data_1(FUJICMD_CONFIG_BOOT, toggle);
 }

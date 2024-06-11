@@ -5,9 +5,6 @@
 
 bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer)
 {
-	uint8_t pl[3];
-	pl[0] = FUJICMD_GET_ADAPTERCONFIG;
-	pl[1] = maxlen;
-	pl[2] = aux2;
-	return open_read_close(3, pl, maxlen, (uint8_t *) buffer);
+	int bytes_read;
+	return open_read_close_data_2(FUJICMD_GET_ADAPTERCONFIG, &bytes_read, maxlen, aux2, maxlen, (uint8_t *) buffer);
 }

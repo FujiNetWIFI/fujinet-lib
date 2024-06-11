@@ -6,7 +6,5 @@
 
 bool fuji_reset()
 {
-	uint8_t pl[1];
-	pl[0] = 0xFF;
-	return open_close(1, pl);
+	return open_close(FUJICMD_RESET);
 }

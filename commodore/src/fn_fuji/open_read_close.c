@@ -3,14 +3,23 @@
 #include "fujinet-fuji.h"
 #include "fujinet-fuji-cbm.h"
 
-bool open_read_close(uint8_t out_size, uint8_t *out, uint16_t in_size, uint8_t *in)
+extern char cmd_args[2];
+
+// no parameters in this version, we just fetch results after it's executed
+bool open_read_close(uint8_t cmd, int *bytes_read, uint16_t result_size, uint8_t *result_data)
 {
-	int bytes_read;
-	if (fuji_cbm_open(FUJI_CMD_CHANNEL, FUJI_CBM_DEV, FUJI_CMD_CHANNEL, out_size, out) != 0) {
+	cmd_args[1] = cmd;
+
+	if (fuji_cbm_open(FUJI_CMD_CHANNEL, FUJI_CBM_DEV, FUJI_CMD_CHANNEL, 2, cmd_args) != 0) {
+		*bytes_read = 0;
+		status_error();
 		return false;
 	}
 
-	bytes_read = cbm_read(FUJI_CMD_CHANNEL, in, in_size);
+	// get result from the command
+	*bytes_read = cbm_read(FUJI_CMD_CHANNEL, result_data, result_size);
 	cbm_close(FUJI_CMD_CHANNEL);
-	return bytes_read > 0;
+
+	// finally return the status of the command
+	return get_fuji_status();
 }

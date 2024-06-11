@@ -5,7 +5,6 @@
 
 bool fuji_get_wifi_status(uint8_t *status)
 {
-	uint8_t pl[1];
-	pl[0] = FUJICMD_GET_WIFISTATUS;
-	return open_read_close(1, pl, 1, status);
+	int bytes_read;
+	return open_read_close(FUJICMD_GET_WIFISTATUS, &bytes_read, 1, status);
 }

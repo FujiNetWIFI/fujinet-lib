@@ -5,7 +5,6 @@
 
 bool fuji_get_ssid(NetConfig *net_config)
 {
-	uint8_t pl[1];
-	pl[0] = FUJICMD_GET_SSID;
-	return open_read_close(1, pl, sizeof(NetConfig), (uint8_t *) net_config);
+	int bytes_read;
+	return open_read_close(FUJICMD_GET_SSID, &bytes_read, sizeof(NetConfig), (uint8_t *) net_config);
 }

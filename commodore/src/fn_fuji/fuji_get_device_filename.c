@@ -7,9 +7,9 @@
 
 bool fuji_get_device_filename(uint8_t ds, char *buffer)
 {
-	uint8_t pl[2];
 	uint8_t *filename;
 	bool is_success;
+	int bytes_read;
 
 	filename = malloc(256);
 	if (filename == NULL) {
@@ -17,10 +17,7 @@ bool fuji_get_device_filename(uint8_t ds, char *buffer)
 	}
 	memset(filename, 0, 256);
 
-	pl[0] = FUJICMD_GET_DEVICE_FULLPATH;
-	pl[1] = ds;
-
-	is_success = open_read_close(2, pl, 256, (uint8_t *) filename);
+	is_success = open_read_close_data_1(FUJICMD_GET_DEVICE_FULLPATH, &bytes_read, ds, 256, (uint8_t *) filename);
 	if (is_success) {
 		strcpy(buffer, filename);
 	}
