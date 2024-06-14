@@ -22,10 +22,7 @@ bool open_read_close_data_1(uint8_t cmd, int *bytes_read, uint8_t param1, uint16
 bool open_read_close_data_2(uint8_t cmd, int *bytes_read, uint8_t param1, uint8_t param2, uint16_t result_size, uint8_t *result_data);
 
 // iec status values
-extern uint8_t iec_error;
-extern uint8_t iec_channel;
-extern bool iec_connected;
-extern char *iec_message;
+extern FNStatus _fuji_status;
 
 void status_error();
 bool get_fuji_status();

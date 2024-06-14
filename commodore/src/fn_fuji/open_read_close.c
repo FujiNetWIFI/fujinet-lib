@@ -20,6 +20,10 @@ bool open_read_close(uint8_t cmd, int *bytes_read, uint16_t result_size, uint8_t
 	*bytes_read = cbm_read(FUJI_CMD_CHANNEL, result_data, result_size);
 	cbm_close(FUJI_CMD_CHANNEL);
 
-	// finally return the status of the command
-	return get_fuji_status();
+	// finally return the status of the command, if we're not the status command ourselves
+	if (cmd != FUJICMD_STATUS) {
+		return get_fuji_status();
+	} else {
+		return true;
+	}
 }

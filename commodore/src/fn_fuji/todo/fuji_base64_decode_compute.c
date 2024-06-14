@@ -5,5 +5,6 @@
 
 bool fuji_base64_decode_compute()
 {
-	return 0;
+	// return open_close(FUJICMD_BASE64_DECODE_COMPUTE);
+	return true;
 }

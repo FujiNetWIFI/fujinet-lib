@@ -28,6 +28,7 @@ bool fuji_write_appkey(uint8_t key_id, uint16_t count, uint8_t *data)
 
 	// send the creator / app / mode values
 	if (!open_close_data(FUJICMD_OPEN_APPKEY, 6, pl)) {
+		status_error();
 		return false;
 	}
 

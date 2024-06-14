@@ -4,18 +4,15 @@
 #include "fujinet-fuji.h"
 #include "fujinet-fuji-cbm.h"
 
-// This one gets called a lot, so we save some instructions by preparing its command data
 uint8_t status_cmd[2] = { 0x01, 0x53 };
 
-// allow for up to 41 char message (including the null terminator), plus 3 bytes for error/connected/channel
-uint8_t status_data[44];
-
+// Fetch the status, and act on its value directly
 bool get_fuji_status()
 {
 	int bytes_read;
 
 	// ensure there are no old strings in the buffer
-	memset(status_data, 0, sizeof(status_data));
+	memset(&_fuji_status.raw[0], 0, sizeof(FNStatus));
 
 	// do a status call to find out if anything went wrong
 	if (fuji_cbm_open(FUJI_CMD_CHANNEL, FUJI_CBM_DEV, FUJI_CMD_CHANNEL, 2, status_cmd) != 0) {
@@ -23,13 +20,10 @@ bool get_fuji_status()
 		return false;
 	}
 
-	bytes_read = cbm_read(FUJI_CMD_CHANNEL, status_data, 80);
+	bytes_read = cbm_read(FUJI_CMD_CHANNEL, &_fuji_status.raw[0], sizeof(FNStatus));
 	cbm_close(FUJI_CMD_CHANNEL);
 
-	iec_error = status_data[0];
-	iec_connected = status_data[1] != 0; // 0 is false, anything else is true
-	iec_channel = status_data[2]; // this may always simply be 15
-	iec_message = (char *) &status_data[3]; // message is always null terminated, so can be treated as a string.
+	// return true if the error is 0 (i.e. no error)
+	return _fuji_status.value.error == 0;
 
-	return true;
 }

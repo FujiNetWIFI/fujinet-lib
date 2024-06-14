@@ -83,6 +83,7 @@ typedef unsigned char bool;
 #define FUJICMD_HASH_LENGTH                0xC6
 #define FUJICMD_HASH_OUTPUT                0xC5
 #define FUJICMD_GET_ADAPTERCONFIG_EXTENDED 0xC4
+#define FUJICMD_SET_STATUS                 0x81
 
 enum WifiStatus
 {
@@ -199,10 +200,30 @@ enum AppKeySize
     // SIZE_256
 };
 
+#ifndef __CBM__
 typedef struct
 {
     unsigned char value[4];
 } FNStatus;
+#else
+typedef struct
+{
+    // needs some thought, at the moment it's just values from iecStatus, but could be made generic
+    // the Atari/Apple2 versions aren't being set with anything in firmware
+    union {
+        struct {
+            uint8_t error;
+            uint8_t connected;
+            uint8_t channel;
+            char msg[41]; // 40 + null
+        } value;
+        uint8_t raw[44];
+    };
+} FNStatus;
+
+#endif
+
+extern FNStatus _fuji_status;
 
 enum HashType
 {
@@ -445,9 +466,15 @@ bool fuji_set_ssid(NetConfig *nc);
 
 /*
  * Gets the FNStatus information from FUJI device.
- * @return success status of request
+ * @return success status of the status request
+ * NOTE: The actual status VALUE is in 'status', the return is just whether the command to fetch the status succeeded, it could succeed, but the status value holds an error.
  */
 bool fuji_status(FNStatus *status);
+
+#ifdef __CBM__
+// DEBUGGING
+bool fuji_set_status();
+#endif
 
 /*
  * Unmounts the device in slot ds

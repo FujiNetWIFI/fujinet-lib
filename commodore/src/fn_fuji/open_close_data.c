@@ -9,6 +9,8 @@ uint8_t cmd_args[2] = { 0x01, 0x00 };
 // this is a command that has no return data, so just push command, its data, and read the status
 bool open_close_data(uint8_t cmd, uint16_t params_size, uint8_t *cmd_params)
 {
+	int bytes_written;
+	bool is_success;
 	cmd_args[1] = cmd;
 
 	if (fuji_cbm_open(FUJI_CMD_CHANNEL, FUJI_CBM_DEV, FUJI_CMD_CHANNEL, 2, cmd_args) != 0) {
@@ -17,11 +19,19 @@ bool open_close_data(uint8_t cmd, uint16_t params_size, uint8_t *cmd_params)
 	}
 
 	// write the cmd parameters
-	cbm_write(FUJI_CMD_CHANNEL, cmd_params, params_size);
-	cbm_close(FUJI_CMD_CHANNEL);
+	bytes_written = cbm_write(FUJI_CMD_CHANNEL, cmd_params, params_size);
 
-	// finally return the status of the command
-	return get_fuji_status();
+	// we only use is_success if the write succeeded. We have to close the channel and get the status either way.
+	// so just store the is_success value and then decide whether to use it or not.
+	cbm_close(FUJI_CMD_CHANNEL);
+	is_success = get_fuji_status();
+
+	if (bytes_written != params_size) {
+		// write failed, this is an out and out failure. The _fuji_status values will hold error strings etc.
+		return false;
+	}
+	return is_success;
+
 }
 
 bool open_close_data_1(uint8_t cmd, uint8_t param1)
