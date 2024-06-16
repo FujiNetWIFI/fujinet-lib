@@ -212,12 +212,13 @@ typedef struct
     // the Atari/Apple2 versions aren't being set with anything in firmware
     union {
         struct {
-            uint8_t error;
-            uint8_t connected;
-            uint8_t channel;
-            char msg[41]; // 40 + null
+            uint8_t error;          // the error code from FN
+            uint8_t cmd;            // the cmd that was being run
+            uint8_t connected;      // the connected status
+            uint8_t channel;        // the channel that was being used
+            char msg[41];           // error message: 40 + null
         } value;
-        uint8_t raw[44];
+        uint8_t raw[45];
     };
 } FNStatus;
 

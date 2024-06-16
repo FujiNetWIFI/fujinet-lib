@@ -23,7 +23,7 @@ bool fuji_set_ssid(NetConfig *nc)
 	memcpy(&data[0], nc->ssid, ssid_len);
 	memcpy(&data[1 + ssid_len], nc->password, pass_len);
 
-	is_success = open_close_data(FUJICMD_SET_SSID, data_size, data);
+	is_success = open_close_data(FUJICMD_SET_SSID, true, data_size, data);
 	free(data);
 	return is_success;
 }

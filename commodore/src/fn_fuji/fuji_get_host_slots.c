@@ -17,11 +17,11 @@ bool fuji_get_host_slots(HostSlot *h, size_t size)
 	// limit to be anything we want in FN (e.g. 100 hosts!) and not affect the hosts memory because we "get all hosts" here
 	hs_data = malloc(max_hs_data_size);
 	if (hs_data == NULL) {
-		status_error();
+		status_error(ERROR_MALLOC_FAILED, FUJICMD_READ_HOST_SLOTS);
 		return false;
 	}
 
-	is_success = open_read_close(FUJICMD_READ_HOST_SLOTS, &bytes_read, max_hs_data_size, hs_data);
+	is_success = open_read_close(FUJICMD_READ_HOST_SLOTS, true, &bytes_read, max_hs_data_size, hs_data);
 	if (!is_success || (bytes_read != (sizeof(HostSlot) * size))) {
 		// we didn't get the right amount of data back.
 		// frankly this whole thing is a bit shit, we're using fixed sized strings because 'atari'.

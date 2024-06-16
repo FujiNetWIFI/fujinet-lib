@@ -1,5 +1,7 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #include "fujinet-fuji.h"
 #include "fujinet-fuji-cbm.h"
 
@@ -13,11 +15,11 @@ bool fuji_get_device_slots(DeviceSlot *d, size_t size)
 	// see comments in fuji_get_host_slots().
 	ds_data = malloc(max_ds_data_size);
 	if (ds_data == NULL) {
-		status_error();
+		status_error(ERROR_MALLOC_FAILED, FUJICMD_READ_DEVICE_SLOTS);
 		return false;
 	}
 
-	is_success = open_read_close(FUJICMD_READ_DEVICE_SLOTS, &bytes_read, max_ds_data_size, ds_data);
+	is_success = open_read_close(FUJICMD_READ_DEVICE_SLOTS, true, &bytes_read, max_ds_data_size, ds_data);
 	if (!is_success || (bytes_read != (sizeof(DeviceSlot) * size))) {
 		// we didn't get the right amount of data back.
 		free(ds_data);

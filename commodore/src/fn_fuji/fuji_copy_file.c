@@ -23,7 +23,7 @@ bool fuji_copy_file(uint8_t src_slot, uint8_t dst_slot, char *copy_spec)
 	strcpy((char *) &pl[2], copy_spec);
 	pl[pl_len - 1] = '\0';
 
-	ret = open_close_data(FUJICMD_COPY_FILE, pl_len, pl);
+	ret = open_close_data(FUJICMD_COPY_FILE, true, pl_len, pl);
 	free(pl);
 
 	return ret;

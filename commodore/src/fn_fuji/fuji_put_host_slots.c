@@ -13,13 +13,13 @@ bool fuji_put_host_slots(HostSlot *h, size_t size)
 
 	hs_data = malloc(payload_size);
 	if (hs_data == NULL) {
-		status_error();
+		status_error(ERROR_MALLOC_FAILED, FUJICMD_WRITE_HOST_SLOTS);
 		return false;
 	}
 
 	memcpy(hs_data, (uint8_t *) h, payload_size);
 
-	ret = open_close_data(FUJICMD_WRITE_HOST_SLOTS, payload_size, hs_data);
+	ret = open_close_data(FUJICMD_WRITE_HOST_SLOTS, true, payload_size, hs_data);
 	free(hs_data);
 	return ret;
 }

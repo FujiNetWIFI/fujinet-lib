@@ -15,7 +15,7 @@ bool fuji_set_device_filename(uint8_t mode, uint8_t hs, uint8_t ds, char *buffer
 
 	pl = malloc(pl_len);
 	if (pl == NULL) {
-		status_error();
+		status_error(ERROR_MALLOC_FAILED, FUJICMD_SET_DEVICE_FULLPATH);
 		return false;
 	}
 
@@ -25,7 +25,7 @@ bool fuji_set_device_filename(uint8_t mode, uint8_t hs, uint8_t ds, char *buffer
 	strcpy((char *) &pl[3], buffer);
 	pl[pl_len - 1] = '\0';
 
-	ret = open_close_data(FUJICMD_SET_DEVICE_FULLPATH, pl_len, pl);
+	ret = open_close_data(FUJICMD_SET_DEVICE_FULLPATH, true, pl_len, pl);
 	free(pl);
 	return ret;
 }

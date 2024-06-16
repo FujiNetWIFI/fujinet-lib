@@ -8,10 +8,11 @@
 char *status_error_message = "status error";
 #define STATUS_ERR_MESSAGE_LENGTH 12
 
-// indicate we were perform comms with FN in the last command
-void status_error()
+// indicate we were unable to perform comms with FN in the last command
+void status_error(uint8_t err_code, uint8_t cmd)
 {
-	_fuji_status.value.error = 1;
+	_fuji_status.value.error = err_code;
+	_fuji_status.value.cmd = cmd;
 	_fuji_status.value.channel = 0;
 	_fuji_status.value.connected = 0;
 	strcpy(&_fuji_status.value.msg[0], status_error_message);

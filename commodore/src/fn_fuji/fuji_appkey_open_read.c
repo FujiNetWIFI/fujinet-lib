@@ -27,13 +27,13 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
 	pl[5] = 0;
 
 	// send the creator / app / mode values
-	if (!open_close_data(FUJICMD_OPEN_APPKEY, 6, pl)) {
+	if (!open_close_data(FUJICMD_OPEN_APPKEY, false, 6, pl)) {
 		*count = 0;
 		return false;
 	}
 
 	// creator data sent fine, read the key
-	is_success = open_read_close(FUJICMD_READ_APPKEY, &bytes_read, buffer_size, data);
+	is_success = open_read_close(FUJICMD_READ_APPKEY, true, &bytes_read, buffer_size, data);
 	// a bit shitty, cbm_read returns an int, so +/- 32k, we want just uint16_t, so check for negative.
 	// keys are really small anyway, so not an issue on >32k, but negative values are errors we have catered for in the _fuji_status values
 	*count = (bytes_read >= 0) ? bytes_read : 0;

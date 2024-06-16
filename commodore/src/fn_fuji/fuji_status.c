@@ -8,11 +8,6 @@
 bool fuji_status(FNStatus *status)
 {
 	int bytes_read;
-	bool is_success;
 	memset(status, 0, sizeof(FNStatus));
-	is_success = open_read_close(FUJICMD_STATUS, &bytes_read, sizeof(FNStatus), (uint8_t *) status);
-	if (!is_success) {
-		status_error();
-	}
-	return is_success;
+	return open_read_close(FUJICMD_STATUS, true, &bytes_read, sizeof(FNStatus), (uint8_t *) status);
 }

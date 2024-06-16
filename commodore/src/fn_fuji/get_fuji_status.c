@@ -1,27 +1,37 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include "fujinet-fuji.h"
 #include "fujinet-fuji-cbm.h"
 
 uint8_t status_cmd[2] = { 0x01, 0x53 };
 
-// Fetch the status, and act on its value directly
-bool get_fuji_status()
+// An internal version of fuji_status called at the end of the open_ commands
+// which uses the currently open connection to write the status command to.
+// This function also closes the connection if requested to, which allows multi stage commands to do them all on single open to reduce transfers
+bool get_fuji_status(bool should_close)
 {
 	int bytes_read;
+	int bytes_written;
 
 	// ensure there are no old strings in the buffer
 	memset(&_fuji_status.raw[0], 0, sizeof(FNStatus));
 
-	// do a status call to find out if anything went wrong
-	if (fuji_cbm_open(FUJI_CMD_CHANNEL, FUJI_CBM_DEV, FUJI_CMD_CHANNEL, 2, status_cmd) != 0) {
-		status_error();
+	// do a status call to find out if anything went wrong. Using the current open channel, so just write our bytes
+	bytes_written = cbm_write(FUJI_CMD_CHANNEL, status_cmd, 2);
+	if (bytes_written != 2) {
+		// always close on an error
+		cbm_close(FUJI_CMD_CHANNEL);
+		status_error(ERROR_STATUS_FAILED_TO_WRITE, 0x53);
 		return false;
 	}
 
 	bytes_read = cbm_read(FUJI_CMD_CHANNEL, &_fuji_status.raw[0], sizeof(FNStatus));
-	cbm_close(FUJI_CMD_CHANNEL);
+	if (should_close) {
+		cbm_close(FUJI_CMD_CHANNEL);
+		is_open = false;
+	}
 
 	// return true if the error is 0 (i.e. no error)
 	return _fuji_status.value.error == 0;
