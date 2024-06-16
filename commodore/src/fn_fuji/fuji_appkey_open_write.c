@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include "fujinet-fuji.h"
 #include "fujinet-fuji-cbm.h"
 
@@ -36,7 +35,6 @@ bool fuji_write_appkey(uint8_t key_id, uint16_t count, uint8_t *data)
 
 	// send the creator / app / mode values
 	if (!open_close_data(FUJICMD_OPEN_APPKEY, false, 6, pl)) {
-		printf("ERROR! not sending appkey data\n");
 		return false;
 	}
 

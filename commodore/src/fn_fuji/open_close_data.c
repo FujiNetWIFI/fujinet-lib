@@ -1,6 +1,5 @@
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
 #include "fujinet-fuji.h"
 #include "fujinet-fuji-cbm.h"
 
@@ -29,7 +28,6 @@ bool open_close_data(uint8_t cmd, bool should_close, uint16_t params_size, uint8
 	is_success = get_fuji_status(should_close);
 
 	if (bytes_written != params_size) {
-		printf("\nE %d != %d (s: %d)\n", bytes_written, params_size, is_success);
 		// write failed, this is an out and out failure. The _fuji_status values will hold error strings etc.
 		// force a close if it wouldn't have happened in the status
 		if (!should_close) cbm_close(FUJI_CMD_CHANNEL);
@@ -37,9 +35,6 @@ bool open_close_data(uint8_t cmd, bool should_close, uint16_t params_size, uint8
 		return false;
 	}
 
-	// if (!is_success) {
-	// 	printf("\nerr: %d\ncmd: %d\n%s\n", _fuji_status.value.error, _fuji_status.value.cmd, _fuji_status.value.msg);
-	// }
 	return is_success;
 
 }

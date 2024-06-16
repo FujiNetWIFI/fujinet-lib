@@ -1,6 +1,5 @@
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
 #include "fujinet-fuji.h"
 #include "fujinet-fuji-cbm.h"
 
