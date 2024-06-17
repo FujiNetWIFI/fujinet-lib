@@ -3,12 +3,15 @@
 #include "fujinet-fuji.h"
 #include "fujinet-fuji-cbm.h"
 
-extern char cmd_args[2];
+// All commands are <01><cmd>, we reuse this buffer to send all data, and only have to set 2nd byte
+uint8_t cmd_args[2] = { 0x01, 0x00 };
 
 bool open_or_write(uint8_t cmd)
 {
 	int bytes_written;
 	uint8_t err_code = 0;
+
+	cmd_args[1] = cmd;
 	if (is_open) {
 		// this is a continuation, so use the existing channel and write the data instead of 
 		bytes_written = cbm_write(FUJI_CMD_CHANNEL, cmd_args, 2);
@@ -33,7 +36,6 @@ bool open_or_write(uint8_t cmd)
 bool open_read_close(uint8_t cmd, bool should_close, int *bytes_read, uint16_t result_size, uint8_t *result_data)
 {
 	int bytes_written;
-	cmd_args[1] = cmd;
 
 	if (!open_or_write(cmd)) {
 		*bytes_read = 0;

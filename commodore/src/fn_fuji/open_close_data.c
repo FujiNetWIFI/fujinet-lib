@@ -3,15 +3,11 @@
 #include "fujinet-fuji.h"
 #include "fujinet-fuji-cbm.h"
 
-// All commands are <01><cmd>, we reuse this buffer to send all data, and only have to set 2nd byte
-uint8_t cmd_args[2] = { 0x01, 0x00 };
-
 // this is a command that has no return data, so just push command, its data, and read the status
 bool open_close_data(uint8_t cmd, bool should_close, uint16_t params_size, uint8_t *cmd_params)
 {
 	int bytes_written;
 	bool is_success;
-	cmd_args[1] = cmd;
 
 	if (!open_or_write(cmd)) {
 		return false;
@@ -24,7 +20,6 @@ bool open_close_data(uint8_t cmd, bool should_close, uint16_t params_size, uint8
 
 	// we only use is_success if the write succeeded. We have to get the status either way.
 	// so just store the is_success value and then decide whether to use it or not.
-	// cbm_close(FUJI_CMD_CHANNEL);
 	is_success = get_fuji_status(should_close);
 
 	if (bytes_written != params_size) {

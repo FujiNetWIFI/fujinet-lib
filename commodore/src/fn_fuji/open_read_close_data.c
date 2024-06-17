@@ -3,7 +3,6 @@
 #include "fujinet-fuji.h"
 #include "fujinet-fuji-cbm.h"
 
-extern char cmd_args[2];
 extern uint8_t __oserror;
 
 // All the things, it has data to write with the command, and reads a value back, and a status
@@ -11,7 +10,6 @@ bool open_read_close_data(uint8_t cmd, bool should_close, int *bytes_read, uint1
 {
 	int bytes_written;
 	bool is_success;
-	cmd_args[1] = cmd;
 
 	if (!open_or_write(cmd)) {
 		return false;
@@ -29,12 +27,11 @@ bool open_read_close_data(uint8_t cmd, bool should_close, int *bytes_read, uint1
 		*bytes_read = cbm_read(FUJI_CMD_CHANNEL, result_data, result_size);
 	}
 
-	// cbm_close(FUJI_CMD_CHANNEL);
 	is_success = get_fuji_status(should_close);
 
 	if (bytes_written != params_size) {
-		// failure sending command, e.g. wrong parameters sent. status string etc will be in _fuji_status
-		// force a close if it wouldn't have happened in the status
+		// Failure sending command, e.g. wrong parameters sent. status string etc will be in _fuji_status.
+		// Force a close if it wouldn't have happened in the status. We definitely want to close, but if "should_close" was false we need to manually do it here
 		if (!should_close) cbm_close(FUJI_CMD_CHANNEL);
 		is_open = false;
 		return false;
