@@ -12,6 +12,9 @@ bool fuji_get_device_slots(DeviceSlot *d, size_t size)
         uint8_t cmd;
     } gds;
 
+    gds.opcode = OP_FUJI;
+    gds.cmd = FUJICMD_READ_DEVICE_SLOTS;
+
     bus_ready();
 
     dwwrite((uint8_t *)&gds, sizeof(gds));

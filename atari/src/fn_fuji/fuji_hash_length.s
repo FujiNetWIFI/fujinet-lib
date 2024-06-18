@@ -9,6 +9,7 @@
         .include        "macros.inc"
         .include        "device.inc"
 
+; THIS IS DEPRECATED IN FAVOUR OF LIBRARY VERSION THAT DOES THE CALCULATION, AS IT IS SIMPLE
 ; bool fuji_hash_length(uint8_t type);
 ;
 .proc _fuji_hash_length

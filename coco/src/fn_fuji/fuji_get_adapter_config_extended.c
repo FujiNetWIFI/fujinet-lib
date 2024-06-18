@@ -12,6 +12,9 @@ bool fuji_get_adapter_config_extended(AdapterConfigExtended *ac)
         uint8_t cmd;
     } gace;
 
+    gace.opcode = OP_FUJI;
+    gace.cmd = FUJICMD_GET_ADAPTERCONFIG_EXTENDED;
+
     bus_ready();
 
     dwwrite((uint8_t *)&gace, sizeof(gace));

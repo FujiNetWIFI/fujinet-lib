@@ -1,4 +1,4 @@
-        .export         _fuji_mount_all
+        .export         _fuji_hash_clear
 
         .import         _bus
         .import         _fuji_success
@@ -7,17 +7,15 @@
         .include        "zp.inc"
         .include        "macros.inc"
 
-; bool fuji_mount_all(void)
-; returns true for success
+; bool fuji_hash_clear();
 ;
-.proc _fuji_mount_all
-        setax   #t_fuji_mount_all
+.proc _fuji_hash_clear
+        setax   #t_fuji_hash_clear
         jsr     _copy_fuji_cmd_data
         jsr     _bus
         jmp     _fuji_success
 .endproc
 
 .rodata
-
-t_fuji_mount_all:
-        .byte $d7, $00, $00, $00, $00, $00
+t_fuji_hash_clear:
+        .byte $c2, $00, $00, $00, $00, $00

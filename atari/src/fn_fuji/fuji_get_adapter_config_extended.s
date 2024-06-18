@@ -29,4 +29,4 @@
 .define ACEsz .sizeof(AdapterConfigExtended)
 
 t_fuji_get_adapter_config_ext:
-        .byte $e8, $40, <ACEsz, >ACEsz, $01, $00
+        .byte $c4, $40, <ACEsz, >ACEsz, $00, $00
