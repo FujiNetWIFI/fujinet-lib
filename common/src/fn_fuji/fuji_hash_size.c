@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include "fujinet-fuji.h"
 
-uint16_t fuji_hash_size(_hash_type hash_type, bool is_hex)
+uint16_t fuji_hash_size(hash_alg_t hash_type, bool is_hex)
 {
     uint16_t len = 0; // acts as default if hashing algorithm is unknown. Allow for a full word in case we extend to longer hash algorithms
     switch(hash_type)

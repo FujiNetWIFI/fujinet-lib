@@ -12,7 +12,7 @@
 
 #include "fujinet-fuji.h"
 
-bool fuji_hash_data(_hash_type hash_type, uint8_t *input, uint16_t length, bool as_hex, uint8_t *output)
+bool fuji_hash_data(hash_alg_t hash_type, uint8_t *input, uint16_t length, bool as_hex, uint8_t *output)
 {
 	uint8_t hash_len;
 	bool is_success;

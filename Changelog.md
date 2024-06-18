@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [4.2.0] - 2024-06-19
+
 - Implement commodore fujinet-lib functions
 - Add fuji_open_directory2 prototype for applications to send path and
   filter separately rather than in fixed 256 byte buffer with \0 delimiter. Used by CBM.

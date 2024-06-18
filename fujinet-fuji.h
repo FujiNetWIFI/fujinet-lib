@@ -547,27 +547,27 @@ enum HashType
     SHA512
 };
 
-typedef enum HashType _hash_type;
+typedef enum HashType hash_alg_t;
 
 /**
  * @brief  Returns the size of the hash that will be produced for the given hash_type and whether hex output is required or not. This should be used to calculate the memory needed for the output of \ref fuji_hash_data
- * @param  hash_type The \ref _hash_type "type of hash" to use: MD5, SHA1, SHA256, SHA512
+ * @param  hash_type The \ref hash_alg_t "type of hash" to use: MD5, SHA1, SHA256, SHA512
  * @param  as_hex True if the returned data should be a hex string, false if it should be binary. Hex has twice the length as binary in the output.
  * @return the length of the hash that will be computed for this algorithm depending on whether hex is being returned or not.
  */
-uint16_t fuji_hash_size(_hash_type hash_type, bool as_hex);
+uint16_t fuji_hash_size(hash_alg_t hash_type, bool as_hex);
 
 /**
  * @brief  Computes the hash of the given input data in a single operation. This is a simpler interface than using \ref fuji_hash_clear, \ref fuji_hash_add, \ref fuji_hash_calculate, and can be used instead of those 3 operations if there is only 1 piece of data to hash.
  *         This will also clear any data previously add using fuji_hash_add, and also clears any memory associated with hashing in the FujiNet at the end of the operation. It is the one stop shop, if you use it with the other 3 functions, you must sequence them correctly so this function doesn't clear the existing sent data.
- * @param  hash_type The \ref _hash_type "type of hash" to use: MD5, SHA1, SHA256, SHA512
+ * @param  hash_type The \ref hash_alg_t "type of hash" to use: MD5, SHA1, SHA256, SHA512
  * @param  input The binary data that requires hash computed on
  * @param  length The length of binary data in "input" to compute a hash on
  * @param  as_hex True if the returned data should be a hex string, false if it should be binary. Hex has twice the length as binary in the output.
  * @param  output The buffer to write the hash value to. This must be allocated by the application itself, it is not done in the library. \ref fuji_hash_value "fuji_hash_value()".
  * @returns sucess status of the operation
  */
-bool fuji_hash_data(_hash_type hash_type, uint8_t *input, uint16_t length, bool as_hex, uint8_t *output);
+bool fuji_hash_data(hash_alg_t hash_type, uint8_t *input, uint16_t length, bool as_hex, uint8_t *output);
 
 /**
  * @brief  Clear any data associated with hashing in the Fujinet. Should be called before calculating new hashes when using \ref fuji_hash_add and \ref fuji_hash_calculate. Can also be called to discard any data previously sent to free memory on the FujiNet used for any previous data sent with \ref fuji_hash_add.
@@ -585,12 +585,12 @@ bool fuji_hash_add(uint8_t *data, uint16_t length);
 
 /**
  * @brief  Calculates the hash of the accumulated data. Can be called multiple times with different hash_type values on the same data if discard_data is false. If different data is required to be hashed, call \ref fuji_hash_clear to start over, then add data with \ref fuji_hash_add again.
- * @param  hash_type The \ref _hash_type "type of hash" to use: MD5, SHA1, SHA256, SHA512
+ * @param  hash_type The \ref hash_alg_t "type of hash" to use: MD5, SHA1, SHA256, SHA512
  * @param  as_hex True if the returned data should be a hex string, false if it should be binary. Hex has twice the length as binary in the output.
  * @param  discard_data If true the data will be freed from FujiNet memory after the hash is calculated. Use false if you are calculating more than one hash type on the data, and end with discard_data is true, or call \ref fuji_hash_clear to also clean up.
  * @param  output The buffer to write the hash to. The caller is responsible for allocating enough memory for this (based on \ref fuji_hash_length)
  * @return the success status of the operation.
  */
-bool fuji_hash_calculate(_hash_type hash_type, bool as_hex, bool discard_data, uint8_t *output);
+bool fuji_hash_calculate(hash_alg_t hash_type, bool as_hex, bool discard_data, uint8_t *output);
 
 #endif /* FN_FUJI_H */
