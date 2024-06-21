@@ -5,5 +5,5 @@
 
 bool fuji_hash_compute(uint8_t type)
 {
-	return 0;
+	return open_close_data_1(FUJICMD_HASH_COMPUTE, type);
 }

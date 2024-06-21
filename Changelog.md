@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [4.3.0] - 2024-06-21
+
+- [cbm] Implement hash functions in commodore.
+- Remove fuji-hash-length implementations from all platforms (they just), as it doesn't work. fuji-hash-size is its replacement.
+
 ## [4.2.0] - 2024-06-19
 
 - Implement commodore fujinet-lib functions

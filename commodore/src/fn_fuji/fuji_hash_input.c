@@ -5,5 +5,5 @@
 
 bool fuji_hash_input(char *s, uint16_t len)
 {
-	return 0;
+	return open_close_data(FUJICMD_HASH_INPUT, true, len, (uint8_t *) s);
 }

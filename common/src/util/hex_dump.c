@@ -7,12 +7,12 @@
 #include <ctype.h>
 #endif /* _CMOC_VERSION_ */
 
-void hd(void* data, int size) {
-    int i = 0;
-    int j = 0;
-    int p = 0;
-    int start = 0;
-    int padding = 0;
+void hd(void* data, unsigned int size) {
+    unsigned int i = 0;
+    unsigned int j = 0;
+    unsigned int p = 0;
+    unsigned int start = 0;
+    unsigned int padding = 0;
     unsigned char c;
 
     for (i = 0; i < size; i++) {

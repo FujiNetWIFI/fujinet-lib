@@ -532,9 +532,15 @@ bool fuji_hash_compute(uint8_t type);
 bool fuji_hash_compute_no_clear(uint8_t type);
 bool fuji_hash_input(char *s, uint16_t len);
 // this requires compute to have been called to set the hashing algorithm - don't use!
-bool fuji_hash_length(uint8_t mode);
+// ALSO, there is no way to get the return value with this signature
+
 // output_type is 1 for hex, 0 of binary. the len is the length of data, which currently is only up to 128 if hex, but future proofing with word.
 bool fuji_hash_output(uint8_t output_type, char *s, uint16_t len);
+
+/**
+ * \deprecated Use fuji_hash_size instead, as this function is broken.
+ */
+bool fuji_hash_length(uint8_t mode);
 
 ///////////////////////////////////////////////////////
 // New hashing interface

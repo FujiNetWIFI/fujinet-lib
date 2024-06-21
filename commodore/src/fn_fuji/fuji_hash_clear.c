@@ -3,7 +3,7 @@
 #include "fujinet-fuji.h"
 #include "fujinet-fuji-cbm.h"
 
-bool fuji_hash_output(uint8_t output_type, char *s, uint16_t len)
+bool fuji_hash_clear()
 {
-	return 0;
+	return open_close(FUJICMD_HASH_CLEAR);
 }

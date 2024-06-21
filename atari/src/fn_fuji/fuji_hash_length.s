@@ -1,29 +1,32 @@
         .export         _fuji_hash_length
 
-        .import         _bus
-        .import         _fuji_success
-        .import         _copy_fuji_cmd_data
-        .import         popa, popax
+        ; .import         _bus
+        ; .import         _fuji_success
+        ; .import         _copy_fuji_cmd_data
+        ; .import         popa, popax
+        .import         return0
 
-        .include        "zp.inc"
-        .include        "macros.inc"
-        .include        "device.inc"
+        ; .include        "zp.inc"
+        ; .include        "macros.inc"
+        ; .include        "device.inc"
 
-; THIS IS DEPRECATED IN FAVOUR OF LIBRARY VERSION THAT DOES THE CALCULATION, AS IT IS SIMPLE
+; deprecated!
 ; bool fuji_hash_length(uint8_t type);
 ;
 .proc _fuji_hash_length
-        sta     tmp7                            ; hash type, one of HashType. No validation done though
-        setax   #t_fuji_hash_length
-        jsr    _copy_fuji_cmd_data
+        jmp     return0
 
-        mva     tmp7, IO_DCB::daux1
-        mva     #$03, IO_DCB::dtimlo
+        ; sta     tmp7                            ; hash type, one of HashType. No validation done though
+        ; setax   #t_fuji_hash_length
+        ; jsr    _copy_fuji_cmd_data
 
-        jsr     _bus
-        jmp     _fuji_success
+        ; mva     tmp7, IO_DCB::daux1
+        ; mva     #$03, IO_DCB::dtimlo
+
+        ; jsr     _bus
+        ; jmp     _fuji_success
 .endproc
 
-.rodata
-t_fuji_hash_length:
-        .byte $c6, $40, 1, 0, $ff, 0
+; .rodata
+; t_fuji_hash_length:
+;         .byte $c6, $40, 1, 0, $ff, 0

@@ -4,27 +4,27 @@
 #include <dw.h>
 #include <fujinet-fuji-coco.h>
 
-// THIS IS DEPRECATED IN FAVOUR OF LIBRARY VERSION THAT DOES THE CALCULATION, AS IT IS SIMPLE
-
+// This function is broken in the API (no capability to get the response value), use \ref fuji_hash_size instead
 bool fuji_hash_length(uint8_t mode)
 {
-    uint8_t len = 0;
+    return false;
+    // uint8_t len = 0;
     
-    struct _hl
-    {
-        uint8_t opcode;
-        uint8_t cmd;
-        uint8_t mode;
-    } hl;
+    // struct _hl
+    // {
+    //     uint8_t opcode;
+    //     uint8_t cmd;
+    //     uint8_t mode;
+    // } hl;
 
-    hl.opcode = OP_FUJI;
-    hl.cmd = FUJICMD_HASH_LENGTH;
-    hl.mode = mode;
+    // hl.opcode = OP_FUJI;
+    // hl.cmd = FUJICMD_HASH_LENGTH;
+    // hl.mode = mode;
 
-    bus_ready();
+    // bus_ready();
 
-    dwwrite((uint8_t *)&hl, sizeof(hl));
-    bus_get_response(OP_FUJI,&len, sizeof(uint8_t));
+    // dwwrite((uint8_t *)&hl, sizeof(hl));
+    // bus_get_response(OP_FUJI,&len, sizeof(uint8_t));
     
-    return bus_error(OP_FUJI) == BUS_SUCCESS;
+    // return bus_error(OP_FUJI) == BUS_SUCCESS;
 }
