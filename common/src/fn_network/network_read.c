@@ -1,5 +1,9 @@
 #ifdef _CMOC_VERSION_
 #include <cmoc.h>
+#include <coco.h>
+#include <fujinet-network-coco.h>
+#include <fujinet-fuji-coco.h>
+#include <dw.h>
 #else
 #include <stdint.h>
 #include <string.h>
@@ -40,6 +44,9 @@ int16_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
 #endif
 #ifdef __APPLE2__
         return fn_error(SP_ERR_BAD_CMD);
+#endif
+#ifdef _CMOC_VERSION_
+        return fn_error(132); // invalid command
 #endif
     }
 
