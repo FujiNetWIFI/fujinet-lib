@@ -17,6 +17,7 @@ _sp_is_init:        .byte 0
 _sp_dest:           .res 1
 _sp_error:          .res 1
 _sp_count:          .res 2
+.align              2
 _sp_dispatch_fn:    .res 2
 _sp_cmdlist:        .res 10
 
