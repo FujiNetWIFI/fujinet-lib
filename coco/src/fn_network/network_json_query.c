@@ -20,7 +20,6 @@ int16_t network_json_query(char *devicespec, char *query, char *s)
     jq.opcode = OP_NET;
     jq.unit = network_unit(devicespec);
     jq.cmd = 'Q';
-    jq
     
     return bus_error(OP_NET) == BUS_SUCCESS;
 }
