@@ -109,15 +109,15 @@ $(OBJDIR)/$(CURRENT_TARGET)/common/%.o: %.c | $(TARGETOBJDIR)
 ifeq ($(CC),cl65)
 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(CFLAGS) --listing $(@:.o=.lst) -Ln $@.lbl -o $@ $<
 else
-	$(CC) -c --deps $(CFLAGS) -o $@ $< 2>/dev/null
+	$(CC) -c --deps $(CFLAGS) -o $@ $<
 endif
 
 $(OBJDIR)/$(CURRENT_TARGET)/%.o: %.c $(VERSION_FILE) | $(OBJDIR)
 	@$(call MKDIR,$(dir $@))
 ifeq ($(CC),cl65)
-	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(CFLAGS) -o $@ $<
+	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(CFLAGS) --listing $(@:.o=.lst) -Ln $@.lbl -o $@ $<
 else
-	$(CC) -c --deps $(CFLAGS) -o $@ $< 2>/dev/null
+	$(CC) -c --deps $(CFLAGS) -o $@ $<
 endif
 
 vpath %.s $(SRC_INC_DIRS)
