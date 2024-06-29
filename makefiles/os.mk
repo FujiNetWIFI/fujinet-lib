@@ -8,17 +8,20 @@ endif
 
 CURRENT_PLATFORM_apple2 := apple2
 CURRENT_PLATFORM_apple2enh := apple2
+
 CURRENT_PLATFORM_atari := atari
 CURRENT_PLATFORM_atarixl := atari
+
 CURRENT_PLATFORM_c64 := commodore
 CURRENT_PLATFORM_c128 := commodore
 CURRENT_PLATFORM_c16 := commodore
 CURRENT_PLATFORM_pet := commodore
 CURRENT_PLATFORM_plus4 := commodore
-#CURRENT_PLATFORM_x16 := commodore
 CURRENT_PLATFORM_cbm510 := commodore
 CURRENT_PLATFORM_cbm610 := commodore
 CURRENT_PLATFORM_vic20 := commodore
+
+CURRENT_PLATFORM_coco := coco
 
 CURRENT_PLATFORM = $(CURRENT_PLATFORM_$(CURRENT_TARGET))
 

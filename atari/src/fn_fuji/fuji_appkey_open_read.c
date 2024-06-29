@@ -41,7 +41,7 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
 	open_data[4] = mode;
 	open_data[5] = 0; 		// reserved byte
 
-	copy_fuji_cmd_data(&t_fuji_open_appkey[0]);
+	copy_fuji_cmd_data(t_fuji_open_appkey);
 	OS.dcb.dbuf = open_data;
 	bus();
 	if (!fuji_success()) {
@@ -49,7 +49,7 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
 		return false;
 	}
 
-	copy_fuji_cmd_data(&t_fuji_read_appkey[0]);
+	copy_fuji_cmd_data(t_fuji_read_appkey);
 	OS.dcb.dbuf = buffer;
 	OS.dcb.dbyt = buffer_size + 2; // add 2 for count bytes
 	bus();

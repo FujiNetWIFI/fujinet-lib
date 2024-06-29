@@ -34,12 +34,12 @@ bool fuji_write_appkey(uint8_t key_id, uint16_t count, uint8_t *data)
 	open_data[4] = 1;		// WRITE mode
 	open_data[5] = 0; 		// reserved byte
 
-	copy_fuji_cmd_data((uint8_t *) &t_fuji_open_appkey[0]);
+	copy_fuji_cmd_data(t_fuji_open_appkey);
 	OS.dcb.dbuf = open_data;
 	bus();
 	if (!fuji_success()) return false;
 
-	copy_fuji_cmd_data(&t_fuji_write_appkey[0]);
+	copy_fuji_cmd_data(t_fuji_write_appkey);
 	OS.dcb.dbuf = data;
 	OS.dcb.dbyt = keysize;		// we have to specify the 64/256/... value in dbyt
 	OS.dcb.daux = count;		// ... but the count can be less in daux to tell the FN how much of the buffer needs to be written

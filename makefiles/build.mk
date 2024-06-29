@@ -9,8 +9,9 @@ ALL_TASKS =
 DISK_TASKS =
 
 -include ./makefiles/os.mk
+-include ./makefiles/compiler.mk
 
-CC := cl65
+# CC := cl65
 
 SRCDIR := src
 BUILD_DIR := build
@@ -43,14 +44,14 @@ OBJECTS := $(OBJECTS:common/$(SRCDIR)/%=$(OBJDIR)/$(CURRENT_TARGET)/common/%)
 DEPENDS := $(OBJECTS:.o=.d)
 
 ASFLAGS += \
-	--asm-include-dir common/inc \
-	--asm-include-dir $(PLATFORM_SRC_DIR)/include \
-	--asm-include-dir .
+	$(INCS_ARG) common/inc \
+	$(INCS_ARG) $(PLATFORM_SRC_DIR)/include \
+	$(INCS_ARG) .
 
 CFLAGS += \
-	--include-dir common/inc \
-	--include-dir $(PLATFORM_SRC_DIR)/include \
-	--include-dir .
+	$(INCC_ARG) common/inc \
+	$(INCC_ARG) $(PLATFORM_SRC_DIR)/include \
+	$(INCC_ARG) .
 
 FN_NW_HEADER = fujinet-network.h
 FN_NW_INC = fujinet-network.inc
@@ -65,35 +66,12 @@ CHANGELOG = Changelog.md
 # allow for application specific config
 -include ./application.mk
 
-define _listing_
-  CFLAGS += --listing $$(@:.o=.lst)
-  ASFLAGS += --listing $$(@:.o=.lst)
-endef
-
-define _mapfile_
-  LDFLAGS += --mapfile $$@.map
-endef
-
-define _labelfile_
-  LDFLAGS += -Ln $$@.lbl
-endef
-
 .SUFFIXES:
-.PHONY: all clean release $(DISK_TASKS) $(BUILD_TASKS) $(PROGRAM_TGT) $(ALL_TASKS)
+.PHONY: all clean release $(PROGRAM_TGT) $(ALL_TASKS)
 
 all: $(ALL_TASKS) $(PROGRAM_TGT)
 
-STATEFILE := Makefile.options
 -include $(DEPENDS)
--include $(STATEFILE)
-
-ifeq ($(origin _OPTIONS_),file)
-OPTIONS = $(_OPTIONS_)
-$(eval $(OBJECTS): $(STATEFILE))
-endif
-
-# Transform the abstract OPTIONS to the actual cc65 options.
-$(foreach o,$(subst $(COMMA),$(SPACE),$(OPTIONS)),$(eval $(_$o_)))
 
 ifeq ($(BUILD_DIR),)
 BUILD_DIR := build
@@ -128,25 +106,44 @@ vpath %.c $(SRC_INC_DIRS)
 
 $(OBJDIR)/$(CURRENT_TARGET)/common/%.o: %.c | $(TARGETOBJDIR)
 	@$(call MKDIR,$(dir $@))
-	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(CFLAGS) -o $@ $<
+ifeq ($(CC),cl65)
+	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(CFLAGS) --listing $(@:.o=.lst) -Ln $@.lbl -o $@ $<
+else
+	$(CC) -c --deps $(CFLAGS) -o $@ $< 2>/dev/null
+endif
 
 $(OBJDIR)/$(CURRENT_TARGET)/%.o: %.c $(VERSION_FILE) | $(OBJDIR)
 	@$(call MKDIR,$(dir $@))
+ifeq ($(CC),cl65)
 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(CFLAGS) -o $@ $<
+else
+	$(CC) -c --deps $(CFLAGS) -o $@ $< 2>/dev/null
+endif
 
 vpath %.s $(SRC_INC_DIRS)
 
-$(OBJDIR)/$(CURRENT_TARGET)/common/%.o: %.s | $(TARGETOBJDIR)
-	@$(call MKDIR,$(dir $@))
-	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(ASFLAGS) -o $@ $<
+## For now, no asm in common dirs... as it would be compiler specific
+# $(OBJDIR)/$(CURRENT_TARGET)/common/%.o: %.s | $(TARGETOBJDIR)
+# 	@$(call MKDIR,$(dir $@))
+# ifeq ($(CC),cl65)
+# 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(ASFLAGS) -o $@ $<
+# else
+# endif
 
 $(OBJDIR)/$(CURRENT_TARGET)/%.o: %.s $(VERSION_FILE) | $(OBJDIR)
 	@$(call MKDIR,$(dir $@))
-	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(ASFLAGS) -o $@ $<
-
+ifeq ($(CC),cl65)
+	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(ASFLAGS) --listing $(@:.o=.lst) -Ln $@.lbl -o $@ $<
+else
+	$(CC) -c --deps $(@:.o=.d) $(ASFLAGS) -o $@ $<
+endif
 
 $(BUILD_DIR)/$(PROGRAM_TGT): $(OBJECTS) | $(BUILD_DIR)
-	ar65 a $@ $(OBJECTS)
+ifeq ($(CC),cl65)
+	$(AR) a $@ $(OBJECTS)
+else
+	$(AR) $@ -a $(OBJECTS)
+endif
 
 $(PROGRAM_TGT): $(BUILD_DIR)/$(PROGRAM_TGT) | $(BUILD_DIR)
 
