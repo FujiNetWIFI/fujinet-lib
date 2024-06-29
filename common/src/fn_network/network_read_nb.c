@@ -1,5 +1,9 @@
 #ifdef _CMOC_VERSION_
 #include <cmoc.h>
+#include <coco.h>
+#include <dw.h>
+#include <fujinet-network-coco.h>
+#include <fujinet-fuji-coco.h>
 #else
 #include <stdint.h>
 #include <string.h>
@@ -33,12 +37,19 @@ int16_t network_read_nb(char *devicespec, uint8_t *buf, uint16_t len)
     uint8_t unit = 0;
 #endif
 
+#ifdef _CMOC_VERSION_
+    uint8_t unit = 0;
+#endif
+
     if (len == 0 || buf == NULL) {
 #ifdef __ATARI__
         return -fn_error(132); // invalid command
 #endif
 #ifdef __APPLE2__
         return -fn_error(SP_ERR_BAD_CMD);
+#endif
+#ifdef _CMOC_VERSION_
+        return -fn_error(132); // invalid command
 #endif
     }
 
@@ -56,12 +67,20 @@ int16_t network_read_nb(char *devicespec, uint8_t *buf, uint16_t len)
     unit = network_unit(devicespec);
 #endif
 
+#ifdef _CMOC_VERSION_
+    unit = network_unit(devicespec);
+#endif
+    
 #ifdef __ATARI__
     r = network_status_unit(unit, &fn_network_bw, &fn_network_conn, &fn_network_error);
 #endif
 #ifdef __APPLE2__
     r = network_status_no_clr(devicespec, &fn_network_bw, &fn_network_conn, &fn_network_error);
 #endif
+#ifdef _CMOC_VERSION_
+    r = network_status(devicespec, &fn_network_bw, &fn_network_conn, &fn_network_error); // TODO: fix return value
+#endif
+
     // check if the status failed
     if (r != 0) return -r;
 
@@ -87,6 +106,25 @@ int16_t network_read_nb(char *devicespec, uint8_t *buf, uint16_t len)
 #ifdef __APPLE2__
     sp_read(sp_network, fetch_size);
     memcpy(buf, sp_payload, fetch_size);
+#endif
+
+#ifdef _CMOC_VERSION_
+    struct _r
+    {
+        uint8_t opcode;
+        uint8_t unit;
+        uint8_t cmd;
+        uint16_t len;
+    } rd;
+
+    rd.opcode = OP_NET;
+    rd.unit = network_unit(devicespec);
+    rd.cmd = 'R';
+    rd.len = fetch_size;
+
+    bus_ready();
+    dwwrite((uint8_t *)&rd, sizeof(rd));
+    bus_get_response(OP_NET, (uint8_t *)buf, fetch_size);
 #endif
 
     fn_bytes_read = fetch_size;
