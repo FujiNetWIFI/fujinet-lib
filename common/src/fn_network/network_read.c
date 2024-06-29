@@ -38,6 +38,10 @@ int16_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
     uint8_t unit = 0;
 #endif
 
+#ifdef _CMOC_VERSION_
+    uint8_t unit = 0;
+#endif
+
     if (len == 0 || buf == NULL) {
 #ifdef __ATARI__
         return fn_error(132); // invalid command
@@ -64,6 +68,10 @@ int16_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
     unit = network_unit(devicespec);
 #endif
 
+#ifdef _CMOC_VERSION_
+    unit = network_unit(devicespec);
+#endif
+
     while (1) {
         // exit condition
         if (amount_left == 0) break;
@@ -75,6 +83,10 @@ int16_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
         r = network_status_no_clr(devicespec, &fn_network_bw, &fn_network_conn, &fn_network_error);
 #endif
 
+#ifdef _CMOC_VERSION_
+        r = network_status(devicespec, &fn_network_bw, &fn_network_conn, &fn_network_error); // TODO: Status return needs fixing.
+#endif
+        
         // check if the status failed
         if (r != 0) return -r;
 
@@ -103,6 +115,25 @@ int16_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
         memcpy(buf, sp_payload, fetch_size);
 #endif
 
+#ifdef _CMOC_VERSION_
+        struct _r
+        {
+            uint8_t opcode;
+            uint8_t unit;
+            uint8_t cmd;
+            uint16_t len;
+        } r;
+
+        r.opcode = OP_NET;
+        r.unit = network_unit(devicespec);
+        r.cmd = 'R';
+        r.len = fetch_size;
+
+        bus_ready();
+        dwwrite((uint8_t *)&r, sizeof(r));
+        bus_get_response(OP_NET, (uint8_t *)buf, fetch_size);
+#endif
+        
         buf += fetch_size;
         amount_left -= fetch_size;
         total_read += fetch_size;
