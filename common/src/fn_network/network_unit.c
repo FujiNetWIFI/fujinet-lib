@@ -20,7 +20,7 @@ uint8_t network_unit(char *devicespec)
         return 1;
 
     if (devicespec[2] == ':') {
-        return devicespec[1] - 0x30;
+        return devicespec[1] - '0';
     }
 
     return 1;

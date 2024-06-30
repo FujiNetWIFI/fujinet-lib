@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [4.3.1] - 2024-06-30
+
+- [network] fix network_unit return value
+
 ## [4.3.0] - 2024-06-30
 
 - [cbm] Implement hash functions in commodore.
