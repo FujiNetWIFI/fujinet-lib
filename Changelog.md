@@ -2,10 +2,10 @@
 
 ## [Unreleased]
 
-## [4.3.0] - 2024-06-21
+## [4.3.0] - 2024-06-30
 
 - [cbm] Implement hash functions in commodore.
-- Remove fuji-hash-length implementations from all platforms (they just), as it doesn't work. fuji-hash-size is its replacement.
+- Remove fuji-hash-length implementations from all platforms, as it doesn't work. fuji-hash-size is its replacement.
 - [atari] fix appkey arrays/pointers
 - [make] Use new makefile structure
 - [coco] Use same makefiles as other targets
