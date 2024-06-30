@@ -33,8 +33,8 @@ uint8_t sp_init() {
 			// If a match is found, calculate the dispatch function address
 			offset = read_memory(base + 0xFF);
 			dispatch_address = base + offset + 3;
-			sp_dispatch_fn[0] = dispatch_address & 0xFF;
-			sp_dispatch_fn[1] = dispatch_address >> 8;
+			sp_dispatch_address[0] = dispatch_address & 0xFF;
+			sp_dispatch_address[1] = dispatch_address >> 8;
 
 			// now find and return the network id. it's stored in sp_network after calling sp_get_network_id.
 			// we need to set sp_is_init to 1 to stop sp_get_network_id from calling init again and recursing.
@@ -48,8 +48,6 @@ uint8_t sp_init() {
 		}
 	}
 
-	// If no match is found, ensure dispatch function is cleared, sp_is_init is already 0, then return 0 for network not found.
-	sp_dispatch_fn[0] = 0;
-	sp_dispatch_fn[1] = 0;
+	// no match is found, return 0 for network not found.
 	return 0;
 }

@@ -9,6 +9,7 @@
 - [atari] fix appkey arrays/pointers
 - [make] Use new makefile structure
 - [coco] Use same makefiles as other targets
+- [apple2] change sp_init/sp_dispatch to use self modifying code to fix page boundary issue and replace _sp_dispatch_fn for _sp_dispatch_address
 
 ## [4.2.0] - 2024-06-19
 

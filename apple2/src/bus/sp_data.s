@@ -1,7 +1,6 @@
         .export     _sp_count
         .export     _sp_cmdlist
         .export     _sp_dest
-        .export     _sp_dispatch_fn
         .export     _sp_error
         .export     _sp_is_init
         .export     _sp_payload
@@ -17,8 +16,6 @@ _sp_is_init:        .byte 0
 _sp_dest:           .res 1
 _sp_error:          .res 1
 _sp_count:          .res 2
-.align              2
-_sp_dispatch_fn:    .res 2
 _sp_cmdlist:        .res 10
 
 _sp_payload:        .res SP_PAYLOAD_SIZE

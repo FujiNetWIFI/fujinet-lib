@@ -66,8 +66,8 @@ extern uint8_t sp_payload[];
 // cmd data that is communicated to the SP device
 extern uint8_t sp_cmdlist[10];
 
-// the dispatch function used for doing SP calls for a particular card
-extern uint8_t sp_dispatch_fn[2];
+// the location of the dispatch function to be written by sp_init
+extern uint8_t sp_dispatch_address[2];
 
 // invoke smartport command
 int8_t sp_dispatch(uint8_t cmd);

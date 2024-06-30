@@ -1,8 +1,8 @@
         .export     _sp_dispatch
+        .export     _sp_dispatch_address
 
         .import     _sp_count
         .import     _sp_cmdlist
-        .import     _sp_dispatch_fn
         .import     _sp_error
 
 ; KEEP THIS FILE AS ASM AS IT DOES TRICKS WITH DATA AND INDIRECT CALLS TO DISPATCH FUNCTION
@@ -10,7 +10,7 @@
 ; int8_t sp_dispatch(uint8_t cmd)
 ;
 ; returns any error code from the smart port _sp_dispatch function
-.proc _sp_dispatch
+_sp_dispatch:
         sta     dispatch_data
         lda     #<_sp_cmdlist
         sta     dispatch_data+1
@@ -18,8 +18,11 @@
         sta     dispatch_data+2
         
         ; the SP dispatch alters the return address by 3 bytes to skip the data below.
-        ; it returs with any error codes
-        jsr     do_jmp
+        ; it returs with any error codes.
+        .byte   $20             ; JSR - making this a byte so we can get exact location of address being called
+_sp_dispatch_address:
+        ; overwritten in sp_init to correct address
+        .word   $0000
 
 dispatch_data:
         .byte   $00             ; command
@@ -36,7 +39,3 @@ dispatch_data:
         lda     _sp_error
         rts
 
-do_jmp:
-        jmp     (_sp_dispatch_fn)
-
-.endproc
