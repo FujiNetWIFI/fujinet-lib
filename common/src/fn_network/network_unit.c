@@ -16,15 +16,13 @@
  */
 uint8_t network_unit(char *devicespec)
 {
-    if (devicespec[0]==0)
-        return 0;
-
-    if (devicespec[1]==':')
+    if (devicespec[1] == ':')
         return 1;
 
-    if (devicespec[2]!=':')
-        return 0;
-    
-    return devicespec[1];
+    if (devicespec[2] == ':') {
+        return devicespec[1] - 0x30;
+    }
+
+    return 1;
 }
 
