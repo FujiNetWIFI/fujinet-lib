@@ -35,7 +35,7 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
 	if (!buffer) return false;
 
 	open_data[0] = ak_creator_id & 0xFF;
-	open_data[1] = (ak_creator_id >> 8) & 0xFF;
+	open_data[1] = ak_creator_id >> 8;
 	open_data[2] = ak_app_id;
 	open_data[3] = key_id;
 	open_data[4] = mode;

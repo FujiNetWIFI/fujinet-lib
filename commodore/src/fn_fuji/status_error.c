@@ -4,7 +4,8 @@
 #include "fujinet-fuji.h"
 #include "fujinet-fuji-cbm.h"
 
-// 19 bytes, if you change this, change the define
+// 19 bytes, if you change this, change the define.
+// This will translate to PETSCII locally which is fine, as it is not transmit, but simply displayed on host
 char *status_error_message = "status error";
 #define STATUS_ERR_MESSAGE_LENGTH 12
 

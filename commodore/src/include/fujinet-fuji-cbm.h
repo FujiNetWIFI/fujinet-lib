@@ -4,14 +4,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "fujinet-cbm.h"
+
 // track if we should open or write our commands to FN
-extern bool is_open;
+extern bool fuji_is_open;
 
 // common code for checking if we're a continuation and should use write, or a fresh open
 bool open_or_write(uint8_t cmd);
-
-// Our custom cbm_open that works with binary data by not doing strlen on the name, but instead takes a length parameter
-uint8_t fuji_cbm_open(uint8_t lfn, uint8_t device, uint8_t sec_addr, uint8_t len, uint8_t* name);
 
 // helpers for performing the boiler plate open/write/read/status sequences, depending on if there was any data to send etc.
 bool open_close(uint8_t cmd);

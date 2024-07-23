@@ -15,16 +15,16 @@ bool open_read_close_data(uint8_t cmd, bool should_close, int *bytes_read, uint1
 		return false;
 	}
 
-	is_open = true;
+	fuji_is_open = true;
 
-	bytes_written = cbm_write(FUJI_CMD_CHANNEL, cmd_params, params_size);
+	bytes_written = cbm_write(CBM_CMD_CHANNEL, cmd_params, params_size);
 	if (bytes_written != params_size) {
 		*bytes_read = 0;
 	}
 
 	if (bytes_written == params_size) {
 		// only do the read if the command data was sent successfully
-		*bytes_read = cbm_read(FUJI_CMD_CHANNEL, result_data, result_size);
+		*bytes_read = cbm_read(CBM_CMD_CHANNEL, result_data, result_size);
 	}
 
 	is_success = get_fuji_status(should_close);
@@ -32,8 +32,8 @@ bool open_read_close_data(uint8_t cmd, bool should_close, int *bytes_read, uint1
 	if (bytes_written != params_size) {
 		// Failure sending command, e.g. wrong parameters sent. status string etc will be in _fuji_status.
 		// Force a close if it wouldn't have happened in the status. We definitely want to close, but if "should_close" was false we need to manually do it here
-		if (!should_close) cbm_close(FUJI_CMD_CHANNEL);
-		is_open = false;
+		if (!should_close) cbm_close(CBM_CMD_CHANNEL);
+		fuji_is_open = false;
 		return false;
 	}
 	return is_success;

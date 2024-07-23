@@ -13,10 +13,10 @@ bool open_close_data(uint8_t cmd, bool should_close, uint16_t params_size, uint8
 		return false;
 	}
 
-	is_open = true;
+	fuji_is_open = true;
 
 	// write the cmd parameters
-	bytes_written = cbm_write(FUJI_CMD_CHANNEL, cmd_params, params_size);
+	bytes_written = cbm_write(CBM_CMD_CHANNEL, cmd_params, params_size);
 
 	// we only use is_success if the write succeeded. We have to get the status either way.
 	// so just store the is_success value and then decide whether to use it or not.
@@ -25,8 +25,8 @@ bool open_close_data(uint8_t cmd, bool should_close, uint16_t params_size, uint8
 	if (bytes_written != params_size) {
 		// write failed, this is an out and out failure. The _fuji_status values will hold error strings etc.
 		// force a close if it wouldn't have happened in the status
-		if (!should_close) cbm_close(FUJI_CMD_CHANNEL);
-		is_open = false;
+		if (!should_close) cbm_close(CBM_CMD_CHANNEL);
+		fuji_is_open = false;
 		return false;
 	}
 
