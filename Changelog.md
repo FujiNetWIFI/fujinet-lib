@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [4.4.0] - 2024-07-28
+
+- [cbm] Network Library first release for C64!
+
 ## [4.3.1] - 2024-06-30
 
 - [network] fix network_unit return value
