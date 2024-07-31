@@ -3,6 +3,7 @@
         .export     _sp_dest
         .export     _sp_error
         .export     _sp_is_init
+        .export     _sp_nw_unit
         .export     _sp_payload
 
         .include    "sp.inc"
@@ -10,6 +11,9 @@
 .data
 ; has the init routine been run?
 _sp_is_init:        .byte 0
+
+; the network sub-device id matching Nx: ranging from 1 to 8. 0 means it hasn't been specified in an open.
+_sp_nw_unit:        .byte 0
 
 .bss
 

@@ -6,6 +6,8 @@ int8_t sp_status(uint8_t dest, uint8_t statcode) {
 	uintptr_t payload_address;
 
 	sp_cmdlist[4] = statcode;
+	// add the Network unit
+	sp_cmdlist[5] = sp_nw_unit;
 
 	sp_cmdlist[0] = SP_STATUS_PARAM_COUNT;
 	sp_cmdlist[1] = dest;

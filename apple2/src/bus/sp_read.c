@@ -7,6 +7,9 @@ int8_t sp_read(uint8_t dest, uint16_t len) {
 
 	sp_cmdlist[4] = len & 0xFF;
 	sp_cmdlist[5] = (len >> 8) & 0xFF;
+	// SP READ can technically take an address, certainly it's sent when doing SP over SLIP, but
+	// in network context it isn't used, so we will stuff the UNIT id of the request into byte 7
+	sp_cmdlist[6] = sp_nw_unit;
 
 	sp_cmdlist[0] = SP_READ_PARAM_COUNT;
 	sp_cmdlist[1] = dest;

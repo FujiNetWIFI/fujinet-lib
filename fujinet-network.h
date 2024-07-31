@@ -235,6 +235,14 @@ uint8_t network_http_put(char *devicespec, char *data);
  */
 uint8_t network_http_delete(char *devicespec, uint8_t trans);
 
+/**
+ * @brief  Internal routine to get the network UNIT id from the devicespec, i.e. Nx: find the "x" value
+ * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
+ * @return unit number
+ * 
+ */
+uint8_t network_unit(char *devicespec);
+
 
 #define FN_ERR_OK               (0x00)      /* No error */
 #define FN_ERR_IO_ERROR         (0x01)      /* There was IO error/issue with the device */
@@ -256,6 +264,8 @@ uint8_t network_http_delete(char *devicespec, uint8_t trans);
 #define OPEN_MODE_HTTP_PUT_H    (0x0E)
 #define OPEN_MODE_HTTP_DELETE   (0x05)
 #define OPEN_MODE_HTTP_DELETE_H (0x09)
+
+#define CHANNEL_MODE_JSON       (0xFC)
 
 #define OPEN_TRANS_NONE         (0x00)
 #define OPEN_TRANS_CR           (0x01)

@@ -20,12 +20,14 @@
 #define SP_CMD_CLOSE            (7)
 #define SP_CMD_READ             (8)
 #define SP_CMD_WRITE            (9)
-#define SP_STATUS_PARAM_COUNT   (3)
-#define SP_CONTROL_PARAM_COUNT  (3)
-#define SP_OPEN_PARAM_COUNT     (1)
-#define SP_CLOSE_PARAM_COUNT    (1)
-#define SP_READ_PARAM_COUNT     (4)
-#define SP_WRITE_PARAM_COUNT    (4)
+
+// These were increased by 1 to cater for the extra byte for the sub-device id of the network, i.e. Nx:
+#define SP_STATUS_PARAM_COUNT   (4)
+#define SP_CONTROL_PARAM_COUNT  (4)
+#define SP_OPEN_PARAM_COUNT     (2)
+#define SP_CLOSE_PARAM_COUNT    (2)
+#define SP_READ_PARAM_COUNT     (5)
+#define SP_WRITE_PARAM_COUNT    (5)
 
 #define SP_ERR_OK               (0x00)
 #define SP_ERR_BAD_CMD          (0x01)
@@ -60,6 +62,9 @@ extern uint8_t sp_fuji_id;
 extern uint8_t sp_modem_id;
 extern uint8_t sp_printer_id;
 
+// the sub-device network id, or unit
+extern uint8_t sp_nw_unit;
+
 // the general payload buffer
 extern uint8_t sp_payload[];
 
@@ -83,6 +88,7 @@ int8_t sp_status(uint8_t dest, uint8_t statcode);
 int8_t sp_control(uint8_t dest, uint8_t ctrlcode);
 int8_t sp_read(uint8_t dest, uint16_t len);
 int8_t sp_open(uint8_t dest);
+int8_t sp_write(uint8_t dest, uint16_t len);
 
 // initilises the dispatch funciton and returns the network device id if found, else returns 0.
 uint8_t sp_init();

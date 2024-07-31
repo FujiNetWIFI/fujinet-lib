@@ -23,6 +23,9 @@ uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans) {
 	}
 
 	sp_clr_payload();
+	// store the unit this open is for
+	sp_nw_unit = network_unit(devicespec);
+
 	slen = strlen(devicespec);
 	payload_len = slen + 3;  // 2 for extra control bytes, 1 for NUL string terminator
 	sp_payload[0] = payload_len & 0xFF;
