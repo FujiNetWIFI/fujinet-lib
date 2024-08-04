@@ -84,14 +84,26 @@ extern uint16_t sp_count;
 extern int8_t sp_error;
 
 void sp_clr_payload();
+
+// these are the 'fuji' device versions
 int8_t sp_status(uint8_t dest, uint8_t statcode);
 int8_t sp_control(uint8_t dest, uint8_t ctrlcode);
 int8_t sp_read(uint8_t dest, uint16_t len);
 int8_t sp_open(uint8_t dest);
 int8_t sp_write(uint8_t dest, uint16_t len);
 
+// these versions send a network unit id in contorl data
+int8_t sp_status_nw(uint8_t dest, uint8_t statcode);
+int8_t sp_control_nw(uint8_t dest, uint8_t ctrlcode);
+int8_t sp_read_nw(uint8_t dest, uint16_t len);
+int8_t sp_open_nw(uint8_t dest);
+int8_t sp_write_nw(uint8_t dest, uint16_t len);
+
+
 // initilises the dispatch funciton and returns the network device id if found, else returns 0.
 uint8_t sp_init();
+
+uint8_t read_memory(uint8_t offset, uint16_t address);
 
 // These return the found device id or 0 if not found.
 uint8_t sp_get_fuji_id();

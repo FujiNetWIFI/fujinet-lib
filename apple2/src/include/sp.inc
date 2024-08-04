@@ -6,12 +6,22 @@ SP_CMD_OPEN             := 6
 SP_CMD_CLOSE            := 7
 SP_CMD_READ             := 8
 SP_CMD_WRITE            := 9
+
+; FUJI versions don't send the network unit
 SP_STATUS_PARAM_COUNT   := 3
 SP_CONTROL_PARAM_COUNT  := 3
 SP_OPEN_PARAM_COUNT     := 1
 SP_CLOSE_PARAM_COUNT    := 1
 SP_READ_PARAM_COUNT     := 4
 SP_WRITE_PARAM_COUNT    := 4
+
+; NETWORK versions have an extra byte for the network unit
+SP_STATUS_PARAM_COUNT_NW   := 4
+SP_CONTROL_PARAM_COUNT_NW  := 4
+SP_OPEN_PARAM_COUNT_NW     := 2
+SP_CLOSE_PARAM_COUNT_NW    := 2
+SP_READ_PARAM_COUNT_NW     := 5
+SP_WRITE_PARAM_COUNT_NW    := 5
 
 SP_ERR_OK               := $00
 SP_ERR_BAD_CMD          := $01

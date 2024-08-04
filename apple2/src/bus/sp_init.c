@@ -3,11 +3,6 @@
 #include "fujinet-fuji.h"
 #include "fujinet-bus-apple2.h"
 
-uint8_t read_memory(uint16_t address) {
-	return *((volatile uint8_t *) address);
-}
-
-
 uint8_t sp_init() {
 	const uint8_t sp_markers[] = {0x20, 0x00, 0x03, 0x00};
 	uint16_t base;
@@ -23,7 +18,7 @@ uint8_t sp_init() {
 	for (base = 0xC700; base >= 0xC100; base -= 0x0100) {
 		match = true;
 		for (i = 0; i < 4; i++) {
-			if (read_memory(base + i * 2 + 1) != sp_markers[i]) {
+			if (read_memory(i * 2 + 1, base) != sp_markers[i]) {
 				match = false;
 				break;
 			}
@@ -31,7 +26,7 @@ uint8_t sp_init() {
 
 		if (match) {
 			// If a match is found, calculate the dispatch function address
-			offset = read_memory(base + 0xFF);
+			offset = read_memory(0xFF, base);
 			dispatch_address = base + offset + 3;
 			sp_dispatch_address[0] = dispatch_address & 0xFF;
 			sp_dispatch_address[1] = dispatch_address >> 8;
