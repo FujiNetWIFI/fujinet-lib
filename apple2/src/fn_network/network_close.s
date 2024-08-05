@@ -5,7 +5,7 @@
         .import     _fn_error
         .import     _network_unit
         .import     _sp_clr_payload
-        .import     _sp_control
+        .import     _sp_control_nw
         .import     _sp_network
         .import     _sp_nw_unit
         .import     pusha
@@ -19,7 +19,6 @@
         jsr     _network_unit
         sta     _sp_nw_unit
 
-        ; if params are honoured, they will have to use them before this call which trashes a/x, and p1/2/3
         jsr     _sp_clr_payload
 
         ldy     #$00
@@ -30,7 +29,7 @@
 
         jsr     pusha           ; push network unit into stack to be read by sp_control
         lda     #'C'            ; close
-        jsr     _sp_control
+        jsr     _sp_control_nw
 
         ; convert to fujinet-network error
         jmp     _fn_error

@@ -18,11 +18,11 @@ uint8_t network_json_parse(char *devicespec) {
 	sp_payload[0] = 1;		// len = 1 byte, payload[0] already 0
 	sp_payload[2] = 1; 		// json mode
 	
-	err = sp_control(sp_network, CHANNEL_MODE_JSON);
+	err = sp_control_nw(sp_network, CHANNEL_MODE_JSON);
 	if (err != 0) {
 		return fn_error(err);
 	}
 
 	// do JSON parse
-	return fn_error(sp_control(sp_network, 'P'));
+	return fn_error(sp_control_nw(sp_network, 'P'));
 }

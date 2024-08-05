@@ -69,5 +69,5 @@ uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, char* devicespec,
         memcpy(sp_payload + offset, buffer, len - offset + 2);
     }
 
-    return fn_error(sp_control(sp_network, cmd));
+    return fn_error(sp_control_nw(sp_network, cmd));
 }

@@ -30,7 +30,7 @@ uint8_t network_write(char* devicespec, uint8_t *buf, uint16_t len) {
 		// 	sp_clr_payload();
 		// }
 		memcpy(sp_payload, buf + sent_len, buf_len);
-		err = sp_write(sp_network, buf_len);
+		err = sp_write_nw(sp_network, buf_len);
 		if (err != 0) {
 			return fn_error(err);
 		}
