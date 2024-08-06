@@ -36,7 +36,7 @@ Testing is done with BDD features. See [Testing README](testing/bdd-testing/READ
 | Atari | `[x]`          |  `[x]`          | `[x]`          | `[x]`           | `[x]`            | `[x]`           | `[x]`                | `[x]`                | `[x]`          |
 | Apple2| `[x]`          |  `[x]`          | `[x]`          | `[x]`           | `[x]`            | `[x]`           | `[x]`                | `[x]`                | `[x]`          |
 | ADAM  | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           | `[ ]`                | `[ ]`                | `[ ]`          |
-| CBM   | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           | `[ ]`                | `[ ]`                | `[ ]`          |
+| CBM   | `[x]`          |  `[x]`          | `[x]`          | `[x]`           | `[x]`            | `[ ]`           | `[x]`                | `[x]`                | `[x]`          |
 | Coco  | `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           | `[ ]`                | `[ ]`                | `[ ]`          |
 | rc2014| `[ ]`          |  `[ ]`          | `[ ]`          | `[ ]`           | `[ ]`            | `[ ]`           | `[ ]`                | `[ ]`                | `[ ]`          |
 
@@ -89,14 +89,14 @@ Listed:
 
 ### target: commodore
 
-- [ ] network_open()
-- [ ] network_close()
-- [ ] network_read()
-- [ ] network_write()
-- [ ] network_status()
+- [x] network_open()
+- [x] network_close()
+- [x] network_read()
+- [x] network_write()
+- [x] network_status()
 - [ ] network_ioctl()
-- [ ] network_json_parse()
-- [ ] network_json_query()
+- [x] network_json_parse()
+- [x] network_json_query()
 
 ### target: coco
 

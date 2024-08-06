@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- [apple2] send the network unit number with the payloads for network calls to allow for multiple network sub-devices on a SP network device
+- [apple2] convert apple2 asm files to C for almost all network functions and bus calls
+
 ## [4.4.0] - 2024-07-28
 
 - [cbm] Network Library first release for C64!

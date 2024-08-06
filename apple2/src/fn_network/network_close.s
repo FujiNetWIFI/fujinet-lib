@@ -3,9 +3,11 @@
         .import     _bad_unit
         .import     _fn_device_error
         .import     _fn_error
+        .import     _network_unit
         .import     _sp_clr_payload
-        .import     _sp_control
+        .import     _sp_control_nw
         .import     _sp_network
+        .import     _sp_nw_unit
         .import     pusha
 
 ; uint8_t network_close(char* devicespec);
@@ -13,12 +15,10 @@
 ; returns 0 for ok, error code from control call for anything else.
 ; returns 1 if the sp_network isn't set, e.g. calling before calling _network_open.
 .proc _network_close
-        ; At the moment, we can't handle multiple device specs at the same time on apple, so the
-        ; devicespec parameter is ignored (it's previously been read in "open" and unit was saved in _sp_network).
-        ; so we just close the 1 network device we know about.
-        ; TODO: revisit this when there are multiple network devices for multiple device specs.
+        ; set _sp_nw_unit to the Nx: value, A/X already hold devicespec pointer
+        jsr     _network_unit
+        sta     _sp_nw_unit
 
-        ; if params are honoured, they will have to use them before this call which trashes a/x, and p1/2/3
         jsr     _sp_clr_payload
 
         ldy     #$00
@@ -29,7 +29,7 @@
 
         jsr     pusha           ; push network unit into stack to be read by sp_control
         lda     #'C'            ; close
-        jsr     _sp_control
+        jsr     _sp_control_nw
 
         ; convert to fujinet-network error
         jmp     _fn_error

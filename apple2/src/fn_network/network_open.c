@@ -18,11 +18,15 @@ uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans) {
         }
     }
 
-	if (sp_open(sp_network) != 0) {
-		return fn_error(SP_ERR_IO_ERROR);
-	}
+	// on Apple, sp_open calls SP_CMD_OPEN in dispatch call to the Network Device, but this does nothing in FujiNet
+	// if (sp_open_nw(sp_network) != 0) {
+	// 	return fn_error(SP_ERR_IO_ERROR);
+	// }
 
 	sp_clr_payload();
+	// store the unit this open is for
+	sp_nw_unit = network_unit(devicespec);
+
 	slen = strlen(devicespec);
 	payload_len = slen + 3;  // 2 for extra control bytes, 1 for NUL string terminator
 	sp_payload[0] = payload_len & 0xFF;
@@ -31,5 +35,5 @@ uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans) {
 	sp_payload[3] = trans;
 
 	strncpy(&sp_payload[4], devicespec, slen);
-	return sp_control(sp_network, 'O');
+	return sp_control_nw(sp_network, 'O');
 }

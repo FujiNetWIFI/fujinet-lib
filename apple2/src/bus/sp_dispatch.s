@@ -5,8 +5,6 @@
         .import     _sp_cmdlist
         .import     _sp_error
 
-; KEEP THIS FILE AS ASM AS IT DOES TRICKS WITH DATA AND INDIRECT CALLS TO DISPATCH FUNCTION
-
 ; int8_t sp_dispatch(uint8_t cmd)
 ;
 ; returns any error code from the smart port _sp_dispatch function

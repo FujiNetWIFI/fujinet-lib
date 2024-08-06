@@ -94,7 +94,7 @@ int16_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
 #if defined(__ATARI__)
         r = network_status_unit(unit, &fn_network_bw, &fn_network_conn, &fn_network_error);
 #elif defined(__APPLE2__)
-        r = network_status_no_clr(devicespec, &fn_network_bw, &fn_network_conn, &fn_network_error);
+        r = network_status(devicespec, &fn_network_bw, &fn_network_conn, &fn_network_error);
 #elif defined(__CBM__)
         r = network_status(devicespec, &fn_network_bw, &fn_network_conn, &fn_network_error);
 #elif defined(_CMOC_VERSION_)
