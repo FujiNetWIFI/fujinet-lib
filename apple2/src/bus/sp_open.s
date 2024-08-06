@@ -11,7 +11,7 @@
 ;         return sp_dispatch(SP_CMD_OPEN);
 ; }
 
-; shave off 10 bytes doing it in asm
+; I don't think anything actually calls sp_open (or nw version) as they are not needed for network device
 .proc _sp_open
         sta     _sp_cmdlist+1                   ; sp_cmdlist[1] = dest;
         lda     #SP_OPEN_PARAM_COUNT

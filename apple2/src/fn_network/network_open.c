@@ -18,9 +18,10 @@ uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans) {
         }
     }
 
-	if (sp_open_nw(sp_network) != 0) {
-		return fn_error(SP_ERR_IO_ERROR);
-	}
+	// on Apple, sp_open calls SP_CMD_OPEN in dispatch call to the Network Device, but this does nothing in FujiNet
+	// if (sp_open_nw(sp_network) != 0) {
+	// 	return fn_error(SP_ERR_IO_ERROR);
+	// }
 
 	sp_clr_payload();
 	// store the unit this open is for
