@@ -25,5 +25,7 @@ uint8_t network_init()
   }
 #endif
 
+
+
   return err;
 }
