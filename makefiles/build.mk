@@ -8,6 +8,7 @@ SHELL := /usr/bin/env bash
 ALL_TASKS =
 DISK_TASKS =
 OBJEXT = .o
+ASMEXT = .s
 
 -include ./makefiles/os.mk
 -include ./makefiles/compiler.mk
@@ -27,10 +28,8 @@ PLATFORM_SRC_DIR := $(CURRENT_PLATFORM)/$(SRCDIR)
 PROGRAM_TGT := $(PROGRAM).$(CURRENT_TARGET)
 
 SOURCES := $(call rwildcard,$(PLATFORM_SRC_DIR),*.c)
-ifneq ($(CC),iix compile)
-SOURCES += $(call rwildcard,$(PLATFORM_SRC_DIR),*.s)
-endif
-SOURCES += $(call rwildcard,common/$(SRCDIR)/,*.s)
+SOURCES += $(call rwildcard,$(PLATFORM_SRC_DIR),*$(ASMEXT))
+SOURCES += $(call rwildcard,common/$(SRCDIR)/,*$(ASMEXT))
 SOURCES += $(call rwildcard,common/$(SRCDIR)/,*.c)
 
 # remove trailing and leading spaces.
@@ -39,9 +38,12 @@ SOURCES := $(strip $(SOURCES))
 # convert from src/your/long/path/foo.[c|s] to obj/<target>/your/long/path/foo.o
 # we need the target because compiling for previous target does not pick up potential macro changes
 OBJ1 := $(SOURCES:.c=$(OBJEXT))
-OBJECTS := $(OBJ1:.s=$(OBJEXT)
+OBJECTS := $(OBJ1:$(ASMEXT)=$(OBJEXT))
+OBJECTS_ORCA := $(OBJECTS) $(patsubst %.c,%.a,$(filter %.c,$(SOURCES)))
 OBJECTS := $(OBJECTS:$(PLATFORM_SRC_DIR)/%=$(OBJDIR)/$(CURRENT_TARGET)/%)
 OBJECTS := $(OBJECTS:common/$(SRCDIR)/%=$(OBJDIR)/$(CURRENT_TARGET)/common/%)
+OBJECTS_ORCA := $(OBJECTS_ORCA:$(PLATFORM_SRC_DIR)/%=$(OBJDIR)/$(CURRENT_TARGET)/%)
+OBJECTS_ORCA := $(OBJECTS_ORCA:common/$(SRCDIR)/%=$(OBJDIR)/$(CURRENT_TARGET)/common/%)
 
 # Ensure make recompiles parts it needs to if src files change
 DEPENDS := $(OBJECTS:$(OBJEXT)=.d)
@@ -139,20 +141,22 @@ else
 	$(CC) -c --deps $(CFLAGS) -o $@ $<
 endif
 
-vpath %.s $(SRC_INC_DIRS)
+vpath %$(ASMEXT) $(SRC_INC_DIRS)
 
 ## For now, no asm in common dirs... as it would be compiler specific
-# $(OBJDIR)/$(CURRENT_TARGET)/common/%$(OBJEXT): %.s | $(TARGETOBJDIR)
+# $(OBJDIR)/$(CURRENT_TARGET)/common/%$(OBJEXT): %$(ASMEXT) | $(TARGETOBJDIR)
 # 	@$(call MKDIR,$(dir $@))
 # ifeq ($(CC),cl65)
 # 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(ASFLAGS) -o $@ $<
 # else
 # endif
 
-$(OBJDIR)/$(CURRENT_TARGET)/%$(OBJEXT): %.s $(VERSION_FILE) | $(OBJDIR)
+$(OBJDIR)/$(CURRENT_TARGET)/%$(OBJEXT): %$(ASMEXT) $(VERSION_FILE) | $(OBJDIR)
 	@$(call MKDIR,$(dir $@))
 ifeq ($(CC),cl65)
 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(ASFLAGS) --listing $(@:.o=.lst) -Ln $@.lbl -o $@ $<
+else ifeq ($(CC),iix compile)
+	$(CC) $< $(CFLAGS) keep=$(subst .root,,$@)
 else
 	$(CC) -c --deps $(@:.o=.d) $(ASFLAGS) -o $@ $<
 endif
@@ -161,7 +165,7 @@ $(BUILD_DIR)/$(PROGRAM_TGT): $(OBJECTS) | $(BUILD_DIR)
 ifeq ($(CC),cl65)
 	$(AR) a $@ $(OBJECTS)
 else ifeq ($(CC),iix compile)
-	$(AR) $@ $(sort $(addprefix +,$(addsuffix .root,$(basename $^))) $(addprefix +,$(addsuffix .a,$(basename $^))))
+	$(AR) $@ $(addprefix +,$(sort $(OBJECTS_ORCA)))
 else
 	$(AR) $@ -a $(OBJECTS)
 endif
