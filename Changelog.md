@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [4.5.0] - 2024-08-08
+
 - [apple2] send the network unit number with the payloads for network calls to allow for multiple network sub-devices on a SP network device
 - [apple2] convert apple2 asm files to C for almost all network functions and bus calls
 
