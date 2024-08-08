@@ -1,5 +1,6 @@
+                case    on              Required for C compatibility
+
 sp_data         data
-                case    on
                 copy    apple2:src:include:sp.equ
 
 ; has the init routine been run?
@@ -21,5 +22,11 @@ sp_cmdlist      entry
 
 sp_payload      entry
                 ds SP_PAYLOAD_SIZE
+
+MyID            entry
+                ds 2
+
+sp_handle       entry
+                ds 4                
 
                 end
