@@ -5,11 +5,11 @@ sp_data         data
 
 ; has the init routine been run?
 sp_is_init      entry
-                dc      i1'0'
+                dc i1'0'
 
 ; the network sub-device id matching Nx: ranging from 1 to 8. 0 means it hasn't been specified in an open.
 sp_nw_unit      entry
-                dc      i1'0'
+                dc i1'0'
 
 sp_dest         entry
                 ds 1
@@ -17,8 +17,6 @@ sp_error        entry
                 ds 1
 sp_count        entry
                 ds 2
-sp_cmdlist      entry
-                ds 10
 
 sp_payload      entry
                 ds SP_PAYLOAD_SIZE
@@ -26,7 +24,7 @@ sp_payload      entry
 MyID            entry
                 ds 2
 
-sp_handle       entry
-                ds 4                
+sp_fwdata       entry
+                dc i4'0'                
 
                 end
