@@ -19,7 +19,6 @@ SRCDIR := src
 BUILD_DIR := build
 OBJDIR := obj
 DIST_DIR := dist
-MACDIR := macros
 
 # This allows src to be nested withing sub-directories.
 rwildcard=$(wildcard $(1)$(2))$(foreach d,$(wildcard $1*), $(call rwildcard,$d/,$2))
@@ -115,9 +114,6 @@ $(BUILD_DIR):
 $(DIST_DIR):
 	$(call MKDIR,$@)
 
-$(MACDIR):
-	$(call MKDIR,$@)
-
 SRC_INC_DIRS := \
   $(sort $(dir $(wildcard $(PLATFORM_SRC_DIR)/*))) \
   $(sort $(dir $(wildcard common/$(SRCDIR)/*)))
@@ -160,8 +156,6 @@ $(OBJDIR)/$(CURRENT_TARGET)/%$(OBJEXT): %$(ASMEXT) $(VERSION_FILE) | $(OBJDIR)
 ifeq ($(CC),cl65)
 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(ASFLAGS) --listing $(@:.o=.lst) -Ln $@.lbl -o $@ $<
 else ifeq ($(CC),iix compile)
-	@$(call MKDIR,$(MACDIR))
-	iix macgen $< $(MACDIR)/$(notdir $(subst .asm,.macros,$<)) 13:orcainclude:m= 13:ainclude:m=
 	$(CC) $< $(CFLAGS) keep=$(subst .root,,$@)
 else
 	$(CC) -c --deps $(@:.o=.d) $(ASFLAGS) -o $@ $<
@@ -181,7 +175,7 @@ $(PROGRAM_TGT): $(BUILD_DIR)/$(PROGRAM_TGT) | $(BUILD_DIR)
 # Use "./" in front of all dirs being removed as a simple safety guard to
 # ensure deleting from current dir, and not something like root "/".
 clean:
-	@for d in $(BUILD_DIR) $(OBJDIR) $(DIST_DIR) $(MACDIR); do \
+	@for d in $(BUILD_DIR) $(OBJDIR) $(DIST_DIR); do \
       if [ -d "./$$d" ]; then \
 	    echo "Removing $$d"; \
         rm -rf ./$$d; \
