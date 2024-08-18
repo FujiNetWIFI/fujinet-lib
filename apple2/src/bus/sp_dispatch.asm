@@ -7,15 +7,10 @@
 ;
 ; returns any error code from the smart port _sp_dispatch function
 sp_dispatch     start
-                csubroutine 2:cmd,4          4 bytes direct page space
  
 fwdata_ptr      equ 1                   32-bit ptr
  
-                ldx     sp_fwdata
-                stx     fwdata_ptr
-                stz     fwdata_ptr+2
-                lda     cmd
-                ldy     #$40e           dispatch data offset
+                ldy     #$40d           dispatch data offset
                 sta     [fwdata_ptr],y
                 lda     fwdata_ptr
                 clc
@@ -34,24 +29,23 @@ fwdata_ptr      equ 1                   32-bit ptr
                 ph2     #0              A register on entry
                 ph2     #0              X register on entry
                 ph2     #0              Y register on entry
-                adc     #$0a            JSR offset = $400 + $A
+                lda     fwdata_ptr
+                clc
+                adc     #$40a           JSR offset = $40A
                 pha
                 _FWEntry
                 short   i
-                pla
+                pla                     Y register at exit
                 tax
                 stx     sp_count+1
-                pla
+                pla                     X register at exit
                 tax
                 stx     sp_count
-                pla
+                pla                     Accumulator at exit
                 tax
                 stx     sp_error
-                sta     fwdata_ptr
-                pla
                 long    i
-
-                creturn 2:fwdata_ptr
+                plx                     Processor status at exit
 
                 end
 

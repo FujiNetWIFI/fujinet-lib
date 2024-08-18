@@ -93,7 +93,9 @@ matched_four    lda #$ff
 check_network   lda #$01
                 sta sp_is_init
 
-                jsl sp_get_network_id  
+                long m
+                jsl sp_get_network_id
+                short m  
 
                 bne found_network
 
