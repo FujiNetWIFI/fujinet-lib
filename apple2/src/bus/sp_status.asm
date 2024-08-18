@@ -32,7 +32,7 @@ fwdata_ptr      equ 1                   32-bit ptr
         long    m
 
         lda     #SP_CMD_STATUS
-        jsl     sp_dispatch             return sp_dispatch(SP_CMD_STATUS);
+        jsr     sp_dispatch             return sp_dispatch(SP_CMD_STATUS);
         sta     fwdata_ptr
 
         creturn 2:fwdata_ptr
