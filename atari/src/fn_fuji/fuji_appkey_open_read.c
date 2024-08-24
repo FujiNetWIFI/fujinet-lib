@@ -50,8 +50,9 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
 	}
 
 	copy_fuji_cmd_data(t_fuji_read_appkey);
-	OS.dcb.dbuf = buffer;
-	OS.dcb.dbyt = buffer_size + 2; // add 2 for count bytes
+	OS.dcb.dbuf   = buffer;
+	OS.dcb.dbyt   = buffer_size + 2; 	// add 2 for count bytes
+	OS.dcb.dtimlo = 1;					// make timeout 1 second, as it's an SD read if it exists, if it's no there, we get a double timeout and we really don't want to wait forever
 	bus();
 	if (!fuji_success()) {
 		free(buffer);

@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [4.5.1] - 2024-08-24
+
+- [atari] set dtimlo to 1 for appkey read, 2 for appkey write to reduce timeouts when reading / writing a new appkey
+- [adam] initial implementations of network, no release
+
 ## [4.5.0] - 2024-08-08
 
 - [apple2] send the network unit number with the payloads for network calls to allow for multiple network sub-devices on a SP network device
