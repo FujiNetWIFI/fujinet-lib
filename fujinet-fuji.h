@@ -500,17 +500,17 @@ bool fuji_unmount_disk_image(uint8_t ds);
 bool fuji_unmount_host_slot(uint8_t hs);
 
 /**
- * @brief  Opens and reads from appkey using the provided details
- * @param  key_id the specific key id of this application
- * @param  count a pointer to an int for the number of bytes that were read
- * @param  data a pointer to the memory to write the data back to.
+ * @brief  Opens and reads from appkey using the provided details. Writes to the data buffer, and sets count to the amount of data read if it is less than the full keysize.
+ * @param  key_id the specific key id of this application.
+ * @param  count a pointer to an int for the number of bytes that were read.
+ * @param  data a pointer to the memory to write the data back to. WARNING: The data buffer needs to be at least 2 more bytes larger than the keysize.
  * @return success status of the call. If either the initial OPEN or subsequent READ fail, will return false.
  */
 bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data);
 
 /**
- * @brief  Writes to an appkey using the provided details previously setup with fuji_set_appkey_details
- * @param  key_id the specific key id of this application
+ * @brief  Writes to an appkey using the provided details previously setup with fuji_set_appkey_details.
+ * @param  key_id the specific key id of this application.
  * @param  count the number of bytes in the buffer to write to the appkey.
  * @param  data a pointer to the memory to write from.
  * @return success status of the call. If either the initial OPEN or subsequent WRITE fail, will return false.

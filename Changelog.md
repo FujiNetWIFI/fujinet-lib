@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [4.5.2] - 2024-08-25
+
+- [atari] fuji_read_appkey no longer uses malloc, but requires the data buffer passed in to be at least 2 bytes larger than the keysize to work.
+
 ## [4.5.1] - 2024-08-24
 
 - [atari] set dtimlo to 1 for appkey read, 2 for appkey write to reduce timeouts when reading / writing a new appkey

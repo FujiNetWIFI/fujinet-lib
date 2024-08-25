@@ -18,7 +18,6 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
 	uint8_t open_data[6];
 	uint8_t mode = 0;				// READ with standard 64 byte size
 	uint16_t buffer_size = 64;		// 64 is default, gets adjusted if mode is different
-	uint8_t *buffer;  				// the malloc'd buffer to read into before copying to user's data buffer
 	uint16_t bytes_read;
 
 	if (ak_creator_id == 0) {
@@ -31,9 +30,6 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
 	// 	buffer_size = 256;
 	// }
 
-	buffer = malloc(buffer_size + 2); // 2 for length bytes
-	if (!buffer) return false;
-
 	open_data[0] = ak_creator_id & 0xFF;
 	open_data[1] = ak_creator_id >> 8;
 	open_data[2] = ak_app_id;
@@ -45,27 +41,27 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
 	OS.dcb.dbuf = open_data;
 	bus();
 	if (!fuji_success()) {
-		free(buffer);
 		return false;
 	}
 
 	copy_fuji_cmd_data(t_fuji_read_appkey);
-	OS.dcb.dbuf   = buffer;
+	OS.dcb.dbuf   = data;
 	OS.dcb.dbyt   = buffer_size + 2; 	// add 2 for count bytes
 	OS.dcb.dtimlo = 1;					// make timeout 1 second, as it's an SD read if it exists, if it's no there, we get a double timeout and we really don't want to wait forever
 	bus();
 	if (!fuji_success()) {
-		free(buffer);
 		return false;
 	}
 
-	bytes_read = buffer[0] + (buffer[1] << 8);
+	bytes_read = data[0] + (data[1] << 8);
 	*count = bytes_read;
 	if (bytes_read > 0) {
-		// skip the first 2 bytes, copy buffer data to user's data
-		memcpy(data, &buffer[2], bytes_read);
+		// move the data from data+2 to data, and set everything else to 0 after this. the count is returned via parameter
+		memmove(data, &data[2], bytes_read);
+		if (bytes_read < buffer_size) {
+			memset(&data[bytes_read], 0, buffer_size - bytes_read);
+		}
 	}
-	free(buffer);
 	return true;
 
 }
