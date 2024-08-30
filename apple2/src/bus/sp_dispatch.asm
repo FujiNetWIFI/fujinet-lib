@@ -1,5 +1,4 @@
                 case    on              required for C compatibility
-		mcopy   13/ainclude/m16.cc
 		mcopy   13/orcainclude/m16.orca
                 mcopy   13:ainclude:M16.MiscTool
 
@@ -46,6 +45,8 @@ fwdata_ptr      equ 1                   32-bit ptr
                 stx     sp_error
                 long    i
                 plx                     Processor status at exit
+
+                rts
 
                 end
 
