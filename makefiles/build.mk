@@ -165,7 +165,8 @@ $(BUILD_DIR)/$(PROGRAM_TGT): $(OBJECTS) | $(BUILD_DIR)
 ifeq ($(CC),cl65)
 	$(AR) a $@ $(OBJECTS)
 else ifeq ($(CC),iix compile)
-	$(AR) $@ $(addprefix +,$(sort $(OBJECTS_ORCA)))
+#	$(AR) $@ $(addprefix +,$(sort $(OBJECTS_ORCA)))
+	$(AR) $@ $(addprefix +,$(OBJECTS_ORCA))
 else
 	$(AR) $@ -a $(OBJECTS)
 endif

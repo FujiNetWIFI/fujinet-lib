@@ -53,12 +53,13 @@ fwdata_ptr      equ 7
                 stz sp_is_init
 
 ; setup ptr1 to point to C700, it will decrease as we search cards
-                ldy #$c700
-                sty ptr1
+                lda #$c7
+                sta ptr1+1
                 stz ptr1+2              ptr1 points to databank 0
 
 ; begin the detect loop
-main_loop       ldy #sp_detect_table
+main_loop       stz ptr1
+                ldy #sp_detect_table
                 sty ptr2
 
                 ldy #$01
