@@ -103,12 +103,12 @@ uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans);
  * @brief  Non-blocking read from channel
  * 
  * The read will grab whatever is waiting in the FujiNet buffer. If fewer than the requested len, the return count will reflect this.
- * Errors are returned as the negative value of the error.
+ * Errors are returned as the negative value of the FUJI standard error. fn_network_error contains the device specific error code. fn_bytes_read will be 0 on errors.
  * 
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  buf Buffer
  * @param  len length
- * @return Bytes read, or negative value of fujinet-network error code (See FN_ERR_* values)
+ * @return Bytes read, or negative value of fujinet-network error code (See FN_ERR_* values) with fn_network_error containing real error code
  */
 int16_t network_read_nb(char* devicespec, uint8_t *buf, uint16_t len);
 
@@ -117,12 +117,12 @@ int16_t network_read_nb(char* devicespec, uint8_t *buf, uint16_t len);
  * 
  * The read will block until it has read all the bytes requested from the device, or the EOF is hit.
  * This will block waiting for as much data as it can, so that the client does not need to handle counting.
- * Errors are returned as the negative value of the error.
+ * Errors are returned as the negative value of the error. fn_network_error contains the device specific error code. fn_bytes_read will contain the count of bytes read before error occurred.
  * 
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  buf Buffer
  * @param  len length
- * @return Bytes read, or negative value of fujinet-network error code (See FN_ERR_* values)
+ * @return Bytes read, or negative value of fujinet-network error code (See FN_ERR_* values) with fn_network_error containing real error code
  */
 int16_t network_read(char* devicespec, uint8_t *buf, uint16_t len);
 
