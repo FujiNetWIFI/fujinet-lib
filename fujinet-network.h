@@ -206,14 +206,26 @@ uint8_t network_http_add_header(char *devicespec, char *header);
 
 
 /**
- * @brief  Send POST HTTP request
+ * @brief  Send POST HTTP request - assumes data is a string with nul terminator. This will not be able to send the 00 byte
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
- * @param  data data to post
+ * @param  data text data to post
  * @return fujinet-network error code (See FN_ERR_* values)
  * 
  * Assumes an open connection.
  */
 uint8_t network_http_post(char *devicespec, char *data);
+
+
+/**
+ * @brief  Send POST HTTP request, sends binary data from data location for length len, which allows sending arbitrary binary data
+ * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
+ * @param  data binary data to post
+ * @param  len length of binary data to send
+ * @return fujinet-network error code (See FN_ERR_* values)
+ * 
+ * Assumes an open connection.
+ */
+uint8_t network_http_post_bin(char *devicespec, uint8_t *data, uint16_t len);
 
 /**
  * @brief  Send PUT HTTP request

@@ -2,7 +2,11 @@
 
 ## [Unreleased]
 
-## [4.5.3] - 2024-08-32
+## [4.6.0] - 2024-09-01
+
+- [network] Add network_http_post_bin function to allow sending binary data instead of text, allowing for 00 char to be sent.
+
+## [4.5.3] - 2024-08-30
 
 - network_read and network_read_nb will exit if there is a general error.
   network_read will set fn_bytes_read to the bytes read into the buffer so far, for client to decide what to do.
