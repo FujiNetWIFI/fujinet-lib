@@ -255,6 +255,55 @@ uint8_t network_http_delete(char *devicespec, uint8_t trans);
  */
 uint8_t network_unit(char *devicespec);
 
+/**
+ * @brief Delete file from FS endpoint (e.g. TNFS, FTP, HTTPS, SMB)
+ * @param devicespec Pointer to device specification e.g. "N1:TNFS://TMA-2/foo.txt"
+ * @return fujinet-network error code (see FN_ERR_* values)
+ */
+uint8_t network_fs_delete(char *devicespec);
+
+/**
+ * @brief Rename file on FS endpoint (e.g. TNFS, FTP, HTTPS, SMB)
+ * @param devicespec Pointer to device specification, with new name after comma, e.g. "N1:TNFS://TMA-2/foo.txt,bar.txt"
+ * @return fujinet-network error code (see FN_ERR_* values)
+ */
+uint8_t network_fs_rename(char *devicespec);
+
+/**
+ * @brief Lock file (make read only) on FS (e.g. TNFS, FTP, HTTPS, SMB)
+ * @param devicespec Pointer to device specification "N1:TNFS://TMA-2/foo.txt"
+ * @return fujinet-network error code (see FN_ERR_* values)
+ */
+uint8_t network_fs_lock(char *devicespec);
+
+/**
+ * @brief Unlock file (make read/write) on FS (e.g. TNFS, FTP, HTTPS, SMB)
+ * @param devicespec Pointer to device specification "N1:TNFS://TMA-2/foo.txt"
+ * @return fujinet-network error code (see FN_ERR_* values)
+ */
+uint8_t network_fs_unlock(char *devicespec);
+
+/**
+ * @brief Make directory on FS (e.g. TNFS, FTP, HTTPS, SMB)
+ * @param devicespec pointer to devicespec "N1:TNFS://TMA-2/newdir"
+ * @return fujinet-network error code (see FN_ERR_* values)
+ */
+uint8_t network_fs_mkdir(char *devicespec);
+
+/**
+ * @brief Remove directory on FS (e.g. TNFS, FTP, HTTPS, SMB)
+ * @param devicespec pointer to devicespec "N1:TNFS://TMA-2/newdir"
+ * @return fujinet-network error code (see FN_ERR_* values)
+ * @verbose Directory must be empty!
+ */
+uint8_t network_fs_rmdir(char *devicespec);
+
+/**
+ * @brief Change directory on FS (e.g. TNFS, FTP, HTTPS, SMB)
+ * @param devicespec Pointer to devicespec "N1:TNFS://TMA-2/dir"
+ * @return fujinet-network error code (see FN_ERR_* values)
+ */
+uint8_t network_fs_cd(char *devicespec);
 
 #define FN_ERR_OK               (0x00)      /* No error */
 #define FN_ERR_IO_ERROR         (0x01)      /* There was IO error/issue with the device */
