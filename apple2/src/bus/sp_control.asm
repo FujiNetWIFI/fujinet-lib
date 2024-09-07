@@ -13,6 +13,11 @@ sp_control start
 fwdata_ptr      equ 1                   32-bit ptr
 
 ; copy sp_payload to bank 0
+        ldx     dest
+        lda     ctrlcode
+        jsr     sp_common_params
+
+; prior to calling FWEntry, copy sp_payload to bank 0
         ldy     #0
 loop0   lda     sp_payload,y
         sta     [fwdata_ptr],y
@@ -21,9 +26,6 @@ loop0   lda     sp_payload,y
         cpy     #SP_PAYLOAD_SIZE
         bne     loop0
 
-        ldx     dest
-        lda     ctrlcode
-        jsr     sp_common_params
         lda     #SP_CONTROL_PARAM_COUNT
         ldy     #$400                   cmdlist offset
         short   m
@@ -33,7 +35,7 @@ loop0   lda     sp_payload,y
         jsr     sp_dispatch
         pha
 
-; copy returned bytes from banl 0 to sp_payload
+; copy returned bytes from bank 0 to sp_payload
         ldy     #0
 loop1   lda     [fwdata_ptr],y
         sta     sp_payload,y
