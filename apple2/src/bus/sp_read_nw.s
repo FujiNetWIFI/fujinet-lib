@@ -11,7 +11,7 @@
         .include        "sp.inc"
 
 
-; int8_t sp_read(uint8_t dest, uint16_t len) {
+; int8_t sp_read_nw(uint8_t dest, uint16_t len) {
 ;         uintptr_t payload_address;
 ;
 ;         sp_cmdlist[4] = len & 0xFF;

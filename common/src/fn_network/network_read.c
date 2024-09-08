@@ -101,11 +101,21 @@ int16_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
         r = network_status(devicespec, &fn_network_bw, &fn_network_conn, &fn_network_error); // TODO: Status return needs fixing.
 #endif
 
-        // check if the status failed
-        if (r != 0) return -r;
+        // check if the status failed. The buffer may be partially filled, up to client if they want to use any of it. The count is in fn_bytes_read
+        if (r != 0) {
+            fn_bytes_read = total_read;
+            // r is the FN_ERR code
+            return -r;
+        }
 
         // EOF hit, exit reading
         if (fn_network_error == 136) break;
+
+        // is there another error? The buffer may be partially filled, up to client if they want to use any of it. The count is in fn_bytes_read
+        if (fn_network_error != 1) {
+            fn_bytes_read = total_read;
+            return -FN_ERR_IO_ERROR;
+        }
 
         // we are waiting for bytes to become available while still connected.
         // Causes tight loop if there's a long delay reading from network into FN, so we may see lots of status requests
@@ -122,7 +132,7 @@ int16_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
 #if defined(__ATARI__)
         sio_read(unit, buf, fetch_size);
 #elif defined(__APPLE2__)
-        sp_read(sp_network, fetch_size);
+        sp_read_nw(sp_network, fetch_size);
         memcpy(buf, sp_payload, fetch_size);
 #elif defined(__CBM__)
         cbm_read(unit + CBM_DATA_CHANNEL_0, buf, fetch_size);

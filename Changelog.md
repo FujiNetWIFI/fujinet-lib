@@ -2,6 +2,26 @@
 
 ## [Unreleased]
 
+## [4.6.0] - 2024-09-01
+
+- [network] Add network_http_post_bin function to allow sending binary data instead of text, allowing for 00 char to be sent.
+
+## [4.5.3] - 2024-08-30
+
+- network_read and network_read_nb will exit if there is a general error.
+  network_read will set fn_bytes_read to the bytes read into the buffer so far, for client to decide what to do.
+
+## [4.5.2] - 2024-08-25
+
+- [atari] fuji_read_appkey no longer uses malloc, but requires the data buffer passed in to be at least 2 bytes larger than the keysize to work.
+
+## [4.5.1] - 2024-08-24
+
+- [atari] set dtimlo to 1 for appkey read, 2 for appkey write to reduce timeouts when reading / writing a new appkey
+- [adam] initial implementations of network, no release
+
+## [4.5.0] - 2024-08-08
+
 - [apple2] send the network unit number with the payloads for network calls to allow for multiple network sub-devices on a SP network device
 - [apple2] convert apple2 asm files to C for almost all network functions and bus calls
 

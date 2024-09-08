@@ -43,6 +43,7 @@ bool fuji_write_appkey(uint8_t key_id, uint16_t count, uint8_t *data)
 	OS.dcb.dbuf = data;
 	OS.dcb.dbyt = keysize;		// we have to specify the 64/256/... value in dbyt
 	OS.dcb.daux = count;		// ... but the count can be less in daux to tell the FN how much of the buffer needs to be written
+	OS.dcb.dtimlo = 2;			// make timeout 2 second, as it's an SD write and it is 'local' if it can work, so should be fast.
 	bus();
 	return fuji_success();
 }
