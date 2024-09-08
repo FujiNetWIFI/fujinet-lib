@@ -48,22 +48,17 @@ OBJECTS_ORCA := $(OBJECTS_ORCA:common/$(SRCDIR)/%=$(OBJDIR)/$(CURRENT_TARGET)/co
 # Ensure make recompiles parts it needs to if src files change
 DEPENDS := $(OBJECTS:$(OBJEXT)=.d)
 
-ifeq ($(CC),iix compile)
 ASFLAGS += \
 	$(INCS_ARG) common/inc \
 	$(INCS_ARG) $(PLATFORM_SRC_DIR)/include \
 	$(INCS_ARG) .
 
+ifeq ($(CC),iix compile)
 CFLAGS += \
 	$(INCC_ARG)common/inc \
 	$(INCC_ARG)$(PLATFORM_SRC_DIR)/include \
 	$(INCC_ARG).
 else
-ASFLAGS += \
-	$(INCS_ARG) common/inc \
-	$(INCS_ARG) $(PLATFORM_SRC_DIR)/include \
-	$(INCS_ARG) .
-
 CFLAGS += \
 	$(INCC_ARG) common/inc \
 	$(INCC_ARG) $(PLATFORM_SRC_DIR)/include \
@@ -126,7 +121,7 @@ $(OBJDIR)/$(CURRENT_TARGET)/common/%$(OBJEXT): %.c | $(TARGETOBJDIR)
 ifeq ($(CC),cl65)
 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(CFLAGS) --listing $(@:.o=.lst) -Ln $@.lbl -o $@ $<
 else ifeq ($(CC),iix compile)
-	$(CC) $< $(CFLAGS) keep=$(subst .root,,$@)
+	$(CC) $(CFLAGS) $< keep=$(subst .root,,$@)
 else
 	$(CC) -c --deps $(CFLAGS) -o $@ $<
 endif
@@ -136,7 +131,7 @@ $(OBJDIR)/$(CURRENT_TARGET)/%$(OBJEXT): %.c $(VERSION_FILE) | $(OBJDIR)
 ifeq ($(CC),cl65)
 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(CFLAGS) --listing $(@:.o=.lst) -Ln $@.lbl -o $@ $<
 else ifeq ($(CC),iix compile)
-	$(CC) $< $(CFLAGS) keep=$(subst .root,,$@)
+	$(CC) $(CFLAGS) $< keep=$(subst .root,,$@)
 else
 	$(CC) -c --deps $(CFLAGS) -o $@ $<
 endif
@@ -156,7 +151,7 @@ $(OBJDIR)/$(CURRENT_TARGET)/%$(OBJEXT): %$(ASMEXT) $(VERSION_FILE) | $(OBJDIR)
 ifeq ($(CC),cl65)
 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(ASFLAGS) --listing $(@:.o=.lst) -Ln $@.lbl -o $@ $<
 else ifeq ($(CC),iix compile)
-	$(CC) $< $(CFLAGS) keep=$(subst .root,,$@)
+	$(CC) $(CFLAGS) $< keep=$(subst .root,,$@)
 else
 	$(CC) -c --deps $(@:.o=.d) $(ASFLAGS) -o $@ $<
 endif
@@ -165,7 +160,6 @@ $(BUILD_DIR)/$(PROGRAM_TGT): $(OBJECTS) | $(BUILD_DIR)
 ifeq ($(CC),cl65)
 	$(AR) a $@ $(OBJECTS)
 else ifeq ($(CC),iix compile)
-#	$(AR) $@ $(addprefix +,$(sort $(OBJECTS_ORCA)))
 	$(AR) $@ $(addprefix +,$(OBJECTS_ORCA))
 else
 	$(AR) $@ -a $(OBJECTS)

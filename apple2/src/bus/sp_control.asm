@@ -1,9 +1,6 @@
                 case    on              required for C compatibility
-		mcopy   13/ainclude/m16.cc
-		mcopy   13/orcainclude/m16.orca
-
-; set A to the code to store in sp_cmdlist[4]
-; the dest param is expected to be on s/w stack as 1 byte
+		mcopy   13/ainclude/m16.cc      csubroutine & creturn macros
+		mcopy   13/orcainclude/m16.orca assembler macros (short, long etc.)
 
 sp_control start
         csubroutine (2:dest,2:ctrlcode),4       4 bytes direct page space
