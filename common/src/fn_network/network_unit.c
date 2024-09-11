@@ -12,7 +12,8 @@
 /**
  * @brief return network unit number given devicespec string
  * @param devicespec A string containing device spec.
- * @return Unit number, 0=invalid, >0=valid.
+ * @return Unit number, 1 if nothing specified (e.g. "n:", "x:", "foo"), or the given value (char - '0') if specified (e.g. "n2:", "n9:").
+ * Note there is limited checking here, if you specify "na:" you will get very odd results. 
  */
 uint8_t network_unit(char *devicespec)
 {

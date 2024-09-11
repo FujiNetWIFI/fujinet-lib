@@ -16,7 +16,7 @@
 
 ; uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans);
 .proc _network_open
-        sta     tmp8                    ; save trans
+        pha                             ; save trans
 
         ldy     #$00
         sty     _fn_device_error
@@ -34,21 +34,21 @@
         ; get the network unit for this device
         jsr     _network_unit
         sta     IO_DCB::dunit
-        pha
 
         ; save mode in modes table with offset of unit
         ; this allows other users of this unit to see the mode set
         tax
         mva     IO_DCB::daux1, {fn_open_mode_table-1, x}
 
-        lda     tmp8                    ; trans
+        pla                             ; restore trans
         sta     IO_DCB::daux2
 
         ; store the translation mode for this device
         sta     fn_open_trans_table-1, x
 
         jsr     _bus
-        pla
+        ; restore the unit for the status call
+        lda     IO_DCB::dunit
         jmp     _bus_status
 .endproc
 
