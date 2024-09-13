@@ -17,10 +17,9 @@ _sp_dispatch:
         
         ; the SP dispatch alters the return address by 3 bytes to skip the data below.
         ; it returs with any error codes.
-        .byte   $20             ; JSR - making this a byte so we can get exact location of address being called
-_sp_dispatch_address:
-        ; overwritten in sp_init to correct address
-        .word   $0000
+        ; The dispatch address is altered in sp_init
+        jsr     $0000
+_sp_dispatch_address = *-2
 
 dispatch_data:
         .byte   $00             ; command

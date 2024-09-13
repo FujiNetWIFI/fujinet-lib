@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - [network atari] Small tweak to ensure translation byte not lost when performing open, using stack instead of tmp variable which may get corrupt
+- [fuji apple2] Use "THE_FUJI" for fujinet device lookup instead of old hack for FUJI_DISK_0 - requires updated firmware
 
 ## [4.6.0] - 2024-09-01
 

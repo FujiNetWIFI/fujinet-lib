@@ -6,11 +6,14 @@
 uint8_t sp_fuji_id = 0;
 
 bool sp_find_fuji() {
-	// this is a hack in firmware, the fujinet shares the same device as D0. for now...
-    int r = sp_find_device("FUJINET_DISK_0");
+    int r = sp_find_device("THE_FUJI");
 	if (r <= 0) {
-		sp_fuji_id = 0;
-		return false;
+		// backwards compatible hack check
+		r = sp_find_device("FUJINET_DISK_0");
+		if (r <= 0) {
+			sp_fuji_id = 0;
+			return false;
+		}
 	}
 	sp_fuji_id = (uint8_t) (r & 0xFF);
 	return true;

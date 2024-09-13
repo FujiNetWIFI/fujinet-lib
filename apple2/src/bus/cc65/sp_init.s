@@ -12,12 +12,12 @@
         .include        "zp.inc"
         .macpack        cpu
 
-; C version 246 bytes, this is 104 or 110 bytes (65c02 vs 6502) as hand written asm
+; Find the SmartPort device that has a FujiNet NETWORK adapter on it.
+; Really we should search for the FUJI device on it, but historically that was hacked into the DISK_0 device for reasons I'll never ever understand.
 
 .proc _sp_init
 
 ; ptr1 = base (c701, c601, ...)
-; ptr2 = sp_detect_table
 
 .if (.cpu .bitand ::CPU_ISET_65SC02)
         stz     _sp_network
@@ -31,23 +31,16 @@
 .endif
 
         ; setup ptr1 to point to C700, it will decrease as we search cards
-        ldy     #$00
-        sty     ptr1
-        lda     #$c7
-        sta     ptr1+1
+        ldx     #$c7
+        stx     ptr1+1
 
         ; begin the detect loop
 main_loop:
-        lda     #<sp_detect_table
-        sta     ptr2
-        lda     #>sp_detect_table
-        sta     ptr2+1
-
         ldy     #$01
 
 four_loop:
         lda     (ptr1), y               ; Cn00 + y
-        cmp     (ptr2), y               ; table + y, which has extra bytes to align this loop
+        cmp     sp_detect_table, y      ; table + y, which has extra bytes to align this loop
         bne     no_match
         iny                             ; we look at Cn01, Cn03, Cn05, Cn07, so increment Y by 2
         iny
@@ -67,11 +60,11 @@ matched_four:
         lda     (ptr1), y
 .endif
         ; add 3, then store in dispatch address
-        ; clc - we know C is set because the previous cpy sets it in the comparison, so we can just add 2 here instead of 3 and save a byte
+        ; we know C is set because the previous cpy
         adc     #$02
         sta     _sp_dispatch_address
-        lda     ptr1+1
-        sta     _sp_dispatch_address+1
+        ; x is still Cn
+        stx     _sp_dispatch_address+1
 
 check_network:
         ; we set sp_is_init to stop sp_get_network_id from recursing
@@ -103,9 +96,9 @@ check_network:
 
 no_match:
         ; decrease ptr1+1 high byte of CnXX
-        dec     ptr1+1
-        lda     ptr1+1
-        cmp     #$c0
+        dex
+        stx     ptr1+1
+        cpx     #$c0
         bne     main_loop
 
         ; failed to find a network device on any card
