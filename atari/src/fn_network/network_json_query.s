@@ -11,6 +11,7 @@
         .import     _network_unit
         .import     _sio_read
         .import     fn_open_mode_table
+        .import     negax
         .import     popax
         .import     pusha
         .import     pushax
@@ -93,10 +94,7 @@ error:
         ; make the error negative
         ldx     #$00
         lda     tmp1
-        eor     #$ff
-        clc
-        adc     #$01
-        rts
+        jmp     negax
 
 add_nul:
         ldy     #$00

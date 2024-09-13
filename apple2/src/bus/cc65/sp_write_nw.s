@@ -1,7 +1,7 @@
         .export         _sp_write_nw
 
         .import         _sp_cmdlist
-        .import         _sp_dispatch
+        .import         sp_dispatch
         .import         _sp_nw_unit
 
         .import         sp_rw_common
@@ -38,7 +38,7 @@
         lda     _sp_nw_unit
         sta     _sp_cmdlist+6                   ; sp_cmdlist[6] = sp_nw_unit;
 
-        lda     #SP_CMD_WRITE
-        jmp     _sp_dispatch                    ; return sp_dispatch(SP_CMD_WRITE);
+        ldx     #SP_CMD_WRITE
+        jmp     sp_dispatch                    ; return sp_dispatch(SP_CMD_WRITE);
 
 .endproc

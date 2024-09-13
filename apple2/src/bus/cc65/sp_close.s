@@ -1,7 +1,7 @@
         .export         _sp_close
 
         .import         _sp_cmdlist
-        .import         _sp_dispatch
+        .import         sp_dispatch
 
         .include        "sp.inc"
 
@@ -15,6 +15,6 @@
         sta     _sp_cmdlist+1                   ; sp_cmdlist[1] = dest;
         lda     #SP_CLOSE_PARAM_COUNT
         sta     _sp_cmdlist                     ; sp_cmdlist[0] = SP_CLOSE_PARAM_COUNT;
-        lda     #SP_CMD_CLOSE
-        jmp     _sp_dispatch                    ; return sp_dispatch(SP_CMD_CLOSE);
+        ldx     #SP_CMD_CLOSE
+        jmp     sp_dispatch                    ; return sp_dispatch(SP_CMD_CLOSE);
 .endproc

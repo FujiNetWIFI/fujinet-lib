@@ -1,7 +1,7 @@
         .export         _sp_write
 
         .import         _sp_cmdlist
-        .import         _sp_dispatch
+        .import         sp_dispatch
 
         .import         sp_rw_common
 
@@ -35,6 +35,6 @@
         lda     #SP_WRITE_PARAM_COUNT
         sta     _sp_cmdlist                     ; sp_cmdlist[0] = SP_WRITE_PARAM_COUNT
 
-        lda     #SP_CMD_WRITE
-        jmp     _sp_dispatch                    ; return sp_dispatch(SP_CMD_WRITE);
+        ldx     #SP_CMD_WRITE
+        jmp     sp_dispatch                    ; return sp_dispatch(SP_CMD_WRITE);
 .endproc

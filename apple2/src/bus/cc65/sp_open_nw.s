@@ -1,7 +1,7 @@
         .export         _sp_open_nw
 
         .import         _sp_cmdlist
-        .import         _sp_dispatch
+        .import         sp_dispatch
         .import         _sp_nw_unit
 
         .include        "sp.inc"
@@ -20,6 +20,6 @@
         sta     _sp_cmdlist                     ; sp_cmdlist[0] = SP_OPEN_PARAM_COUNT_NW;
         lda     _sp_nw_unit
         sta     _sp_cmdlist+2                   ; sp_cmdlist[2] = sp_nw_unit;
-        lda     #SP_CMD_OPEN
-        jmp     _sp_dispatch                    ; return sp_dispatch(SP_CMD_OPEN);
+        ldx     #SP_CMD_OPEN
+        jmp     sp_dispatch                    ; return sp_dispatch(SP_CMD_OPEN);
 .endproc

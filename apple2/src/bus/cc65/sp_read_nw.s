@@ -1,7 +1,7 @@
         .export         _sp_read_nw
 
         .import         _sp_cmdlist
-        .import         _sp_dispatch
+        .import         sp_dispatch
         .import         _sp_nw_unit
         .import         _sp_payload
 
@@ -39,6 +39,6 @@
         lda     _sp_nw_unit
         sta     _sp_cmdlist+6                   ; sp_cmdlist[6] = sp_nw_unit;
 
-        lda     #SP_CMD_READ
-        jmp     _sp_dispatch                    ; return sp_dispatch(SP_CMD_READ);
+        ldx     #SP_CMD_READ
+        jmp     sp_dispatch                    ; return sp_dispatch(SP_CMD_READ);
 .endproc

@@ -74,8 +74,8 @@ extern uint8_t sp_cmdlist[10];
 // the location of the dispatch function to be written by sp_init (not for apple2gs)
 extern uint8_t sp_dispatch_address[2];
 
-// invoke smartport command
-int8_t sp_dispatch(uint8_t cmd);
+// invoke smartport command - THIS IS INTERNAL ONLY
+// int8_t sp_dispatch(uint8_t cmd);
 
 // count of bytes the status request returned
 extern uint16_t sp_count;

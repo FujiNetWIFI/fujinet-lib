@@ -13,7 +13,8 @@
         .macpack        cpu
 
 ; Find the SmartPort device that has a FujiNet NETWORK adapter on it.
-; Really we should search for the FUJI device on it, but historically that was hacked into the DISK_0 device for reasons I'll never ever understand.
+; Really we should search for the FUJI device on it, but historically that was
+; hacked into the DISK_0 device for reasons I'll never ever understand.
 
 .proc _sp_init
 
@@ -70,22 +71,34 @@ check_network:
         ; we set sp_is_init to stop sp_get_network_id from recursing
         lda     #$01
         sta     _sp_is_init
-        ; store ptr1 while we go do stuff
+        
+        ; store ptr1, and X while we go do stuff
         lda     ptr1
         pha
         lda     ptr1+1
         pha
-
+.if (.cpu .bitand ::CPU_ISET_65SC02)
+        phx
+.else
+        txa
+        pha
+.endif
         jsr     _sp_get_network_id
 
         bne     found_network
 
         ; failed to find a network device on this card, try the next one
+        ; first restore the loop state
+.if (.cpu .bitand ::CPU_ISET_65SC02)
+        plx
+.else
+        pla
+        tax
+.endif
         pla
         sta     ptr1+1
         pla
         sta     ptr1
-
 
 .if (.cpu .bitand ::CPU_ISET_65SC02)
         stz     _sp_is_init
@@ -106,12 +119,19 @@ no_match:
 
 found_network:
         ; A contains the sp_network_id already
-        tax             ; save the A value
-        ; remove ptr1 stored value from stack
+
+        ; remove ptr1 and X stored values from stack
+.if (.cpu .bitand ::CPU_ISET_65SC02)
+        plx
+        plx
+        plx
+.else
+        tax             ; save the A value, remove 3 values from stack, then restore A
         pla
         pla
-        ; and restore A
+        pla
         txa
+.endif
         ldx     #$00
         rts
 .endproc

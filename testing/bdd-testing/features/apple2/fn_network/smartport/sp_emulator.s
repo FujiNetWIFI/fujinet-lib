@@ -47,7 +47,7 @@ _setup_smartport:
         ldy     #$07
         mva     #$00, {(ptr1), y}
 
-        ; setup _sp_dispatch, if we put CXFF = $06, then CX09 = _sp_dispatch address (CX00+3 + $06).
+        ; setup sp_dispatch, if we put CXFF = $06, then CX09 = sp_dispatch address (CX00+3 + $06).
         ldy     #$ff
         mva     #$06, {(ptr1), y}
 
@@ -62,7 +62,7 @@ _setup_smartport:
         rts
 
 ; -------------------------------------------------------------
-; _sp_dispatch routine for our SmartPort emulator
+; sp_dispatch routine for our SmartPort emulator
 ; which knows about 6 devices, detailed below.
 ;
 sp_emulator:
