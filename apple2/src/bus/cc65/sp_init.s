@@ -133,6 +133,7 @@ found_network:
         txa
 .endif
         ldx     #$00
+        cmp     #$00    ; force the flags to reflect A reg
         rts
 .endproc
 

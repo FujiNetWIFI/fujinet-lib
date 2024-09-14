@@ -1,5 +1,10 @@
         .export         _sp_find_device
 
+        .export         device_type_id
+        .export         device_count
+        .export         device_id_idx
+        .export         tmp_orig_type
+
         .import         _sp_cmdlist
         .import         _sp_init
         .import         _sp_is_init
@@ -29,12 +34,18 @@ _sp_find_device:
         lda     _sp_is_init
         bne     have_init
 
-        ; no, so do it now
+        ; no, so do it now, we first have to save the current type we're searching for, as it gets overwritten searching for network device
+        lda     device_type_id
+        sta     tmp_orig_type
         jsr     _sp_init
-        bne     have_init
+        bne     restore_type
 
-        ; return 0 as the network device, and is an error
+        ; not found, so return 0 as the network device, and is an error
         jmp     return0
+
+restore_type:
+        lda     tmp_orig_type
+        sta     device_type_id
 
 have_init:
         lda     #$00
@@ -96,3 +107,4 @@ not_found_yet:
 device_type_id: .res 1
 device_count:   .res 1
 device_id_idx:  .res 1
+tmp_orig_type:  .res 1

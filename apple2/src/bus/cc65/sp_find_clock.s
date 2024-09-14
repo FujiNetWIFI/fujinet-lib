@@ -1,4 +1,3 @@
-        .export         _sp_find_clock
         .export         _sp_get_clock_id
         .export         _sp_clock_id
 
@@ -9,8 +8,7 @@
 
         .macpack        cpu
 
-; bool sp_find_clock()
-_sp_find_clock:
+sp_find_clock:
         lda     #$13
         jsr     _sp_find_device
 
@@ -21,7 +19,6 @@ _sp_find_clock:
         jmp     return1
 
 not_found:
-
 .if (.cpu .bitand ::CPU_ISET_65SC02)
         stz     _sp_clock_id
 .else
@@ -35,10 +32,15 @@ not_found:
 _sp_get_clock_id:
         ldx     #$00                    ; prep the return hi byte for C callers
         lda     _sp_clock_id
-        beq     _sp_find_clock
+        bne     :+                      ; if it's already set, just exit
 
-        ; A contains the ID > 0, X is 0, so just return
-        rts
+        ; otherwise we need to try and find it from SP
+        jsr     sp_find_clock
+
+        ; return whatever was set in sp_clock
+        ldx     #$00
+        lda     _sp_clock_id
+:       rts
 
 .data
 _sp_clock_id:   .byte $00

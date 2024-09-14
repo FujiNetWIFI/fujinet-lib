@@ -1,4 +1,3 @@
-        .export         _sp_find_network
         .export         _sp_get_network_id
         .export         _sp_network
 
@@ -9,8 +8,7 @@
 
         .macpack        cpu
 
-; bool sp_find_network()
-_sp_find_network:
+sp_find_network:
         lda     #$11
         jsr     _sp_find_device
 
@@ -21,7 +19,6 @@ _sp_find_network:
         jmp     return1
 
 not_found:
-
 .if (.cpu .bitand ::CPU_ISET_65SC02)
         stz     _sp_network
 .else
@@ -35,10 +32,15 @@ not_found:
 _sp_get_network_id:
         ldx     #$00                    ; prep the return hi byte for C callers
         lda     _sp_network
-        beq     _sp_find_network
+        bne     :+                      ; if it's already set, just exit
 
-        ; A contains the ID > 0, X is 0, so just return
-        rts
+        ; otherwise we need to try and find it from SP
+        jsr     sp_find_network
+
+        ; return whatever was set in sp_network
+        ldx     #$00
+        lda     _sp_network
+:       rts
 
 .data
 _sp_network:    .byte $00

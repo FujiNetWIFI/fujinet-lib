@@ -17,7 +17,6 @@
 
 ; int8_t sp_control(uint8_t dest, uint8_t ctrlcode)
 _sp_control:
-        pha
         ldy     #SP_CONTROL_PARAM_COUNT
         ldx     #SP_CMD_CONTROL
         bne     do_common
@@ -27,6 +26,7 @@ _sp_control_nw:
         pha
         lda     _sp_nw_unit
         sta     _sp_cmdlist+5                   ; sp_cmdlist[5] = sp_nw_unit;
+        pla
 
         ldy     #SP_CONTROL_PARAM_COUNT_NW
         ldx     #SP_CMD_CONTROL
@@ -37,6 +37,7 @@ _sp_status_nw:
         pha
         lda     _sp_nw_unit
         sta     _sp_cmdlist+5                   ; sp_cmdlist[5] = sp_nw_unit;
+        pla
 
         ldy     #SP_STATUS_PARAM_COUNT_NW
         ldx     #SP_CMD_STATUS
@@ -45,15 +46,12 @@ _sp_status_nw:
 ; int8_t sp_status(uint8_t dest, uint8_t statcode)
 ; this is called quite often, so make it the fall through case
 _sp_status:
-        pha
         ldy     #SP_STATUS_PARAM_COUNT
         ldx     #SP_CMD_STATUS
         ; fall through
 
 do_common:
         sty     _sp_cmdlist                     ; sp_cmdlist[0] = count for particular command
- 
-        pla                                     ; restore original sp CODE
         sta     _sp_cmdlist+4                   ; sp_cmdlist[4] = <CODE>
 
         jsr     popa                            ; doesn't affect X, get destination value from s/w stack

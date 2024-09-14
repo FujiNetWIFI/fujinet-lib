@@ -1,4 +1,3 @@
-        .export         _sp_find_printer
         .export         _sp_get_printer_id
         .export         _sp_printer_id
 
@@ -9,8 +8,7 @@
 
         .macpack        cpu
 
-; bool sp_find_printer()
-_sp_find_printer:
+sp_find_printer:
         lda     #$14
         jsr     _sp_find_device
 
@@ -21,7 +19,6 @@ _sp_find_printer:
         jmp     return1
 
 not_found:
-
 .if (.cpu .bitand ::CPU_ISET_65SC02)
         stz     _sp_printer_id
 .else
@@ -35,10 +32,15 @@ not_found:
 _sp_get_printer_id:
         ldx     #$00                    ; prep the return hi byte for C callers
         lda     _sp_printer_id
-        beq     _sp_find_printer
+        bne     :+                      ; if it's already set, just exit
 
-        ; A contains the ID > 0, X is 0, so just return
-        rts
+        ; otherwise we need to try and find it from SP
+        jsr     sp_find_printer
+
+        ; return whatever was set in sp_printer
+        ldx     #$00
+        lda     _sp_printer_id
+:       rts
 
 .data
 _sp_printer_id: .byte $00
