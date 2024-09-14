@@ -2,8 +2,12 @@
 
 ## [Unreleased]
 
+## [4.6.1] - 2024-09-14
+
 - [network atari] Small tweak to ensure translation byte not lost when performing open, using stack instead of tmp variable which may get corrupt
-- [fuji apple2] Use "THE_FUJI" for fujinet device lookup instead of old hack for FUJI_DISK_0 - requires updated firmware
+- [fuji apple2] Use "THE_FUJI" for fujinet device lookup instead of old hack for FUJI_DISK_0
+- [SP apple2] Improved and shortened SmartPort apple2 code by going back to assembler, but also looking for devices by TYPE instead of name
+  which removes some quite expensive string functions. Saved 256 bytes on a simple "appkey" application.
 
 ## [4.6.0] - 2024-09-01
 
