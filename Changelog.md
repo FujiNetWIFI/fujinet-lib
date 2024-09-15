@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [4.6.2] - 2024-09-15
+
+- [apple2 bus] refactor all sp_get_xxx functions, moving common code into sp_find_device
+
 ## [4.6.1] - 2024-09-14
 
 - [network atari] Small tweak to ensure translation byte not lost when performing open, using stack instead of tmp variable which may get corrupt
