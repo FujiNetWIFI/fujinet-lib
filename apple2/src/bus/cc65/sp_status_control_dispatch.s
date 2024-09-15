@@ -72,7 +72,7 @@ sp_dispatch:
         ; the SP dispatch alters the return address by 3 bytes to skip the data below.
         ; it returs with any error codes.
         ; The dispatch address is altered in sp_init
-        jsr     $0000
+        jsr     $ffff
 _sp_dispatch_address = *-2
 
 dispatch_data:

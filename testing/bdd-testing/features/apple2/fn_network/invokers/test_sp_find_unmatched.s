@@ -1,6 +1,6 @@
         .export     _main
 
-        .import     _sp_find_device
+        .import     sp_find_device
         .import     _sp_init
         .import     spe_should_fail_device_lookup
 
@@ -9,7 +9,7 @@
 .proc _main
         jsr     _sp_init
         setax   #unmatched_name
-        jmp     _sp_find_device
+        jmp     sp_find_device
 .endproc
 
 .data

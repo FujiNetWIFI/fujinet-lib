@@ -13,6 +13,6 @@ Feature: library test - apple2 sp_find_device
      # number of devices in slot 1 is 6 from emulator
      And I expect to see _sp_payload equal 6
 
-     # return from _sp_find_device is 0 when device does not match
+     # return from sp_find_device is 0 when device does not match
      And I expect register A equal 0
      And I expect register X equal 0

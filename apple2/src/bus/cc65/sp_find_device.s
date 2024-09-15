@@ -1,4 +1,4 @@
-        .export         _sp_find_device
+        .export         sp_find_device_type
 
         .export         device_type_id
         .export         device_count
@@ -15,10 +15,13 @@
         .import         pusha
         .import         negax
         .import         return0
+        .import         return1
 
         .include        "sp.inc"
+        .include        "zp.inc"
 
-; int sp_find_device(uint8_t type_id);
+; bool sp_find_device();
+; device_type_id contains the type id to search for
 ; where type_id is the internal fujinet device type_id:
 ;  $10 = fujinet
 ;  $11 = network
@@ -28,8 +31,7 @@
 ;  $15 = modem
 ;  $01 = floppy disk
 ;  $02 = hard disk
-_sp_find_device:
-        sta     device_type_id          ; save the type_id
+sp_find_device:
         ; check if we've already run sp_init
         lda     _sp_is_init
         bne     have_init
@@ -40,6 +42,7 @@ _sp_find_device:
         jsr     _sp_init
         bne     restore_type
 
+return_error:
         ; not found, so return 0 as the network device, and is an error
         jmp     return0
 
@@ -53,20 +56,12 @@ have_init:
         jsr     _sp_status              ; sp_status(0,0) fetches the device count
 
         beq     status_ok_1
-
-        ; there was an error, negate A/X and return it
-        jmp     negax
-        ; implicit RTS
+        bne     return_error
 
 status_ok_1:
-        ldx     #$00                    ; prep the return value if it's going to be 0
         lda     _sp_payload             ; device count in sp_payload[0]
-        beq     :+                      ; if the count is zero, just return 0, don't touch X as it's already 0
-        bpl     have_count
-
-        ; byte extend the negative value into X, as A is already negative
-        dex
-:       rts
+        beq     return_error            ; if the count is <= 0, just return 0
+        bmi     return_error
 
 have_count:
         ; now repeatedly call sp_status(i, 3) to get the DIB status for the device, which contains name and its device type
@@ -100,7 +95,46 @@ not_found_yet:
         beq     device_loop
 
         ; we have checked all devices, non had the type we were looking for
-        jmp     return0
+        bcs     return_error
+
+; A = device type (e.g. $11 = network)
+; X/Y = location to save the id
+sp_find_device_type:
+        sta     device_type_id          ; the type to search for
+        stx     id_loc1                 ; the low location of the address to save the id at
+        sty     id_loc1 + 1             ; the high location of the address to save the id at
+
+        lda     $ffff                   ; don't use 0000, compiler thinks you want ZP!
+id_loc1 = *-2
+
+        ; is it already set?
+        beq     :+
+
+        ; the id was set in the indicated location, and is now in A, so return it, setting X to 0 for high byte for C callers
+        ldx     #$00
+        cmp     #$00                    ; force status bits for the return
+        rts
+
+        ; no ID set, so fetch it, write x/y to the location the id needs to be saved to
+:       stx     id_loc2
+        sty     id_loc2 + 1
+
+        jsr     sp_find_device
+
+        beq     not_found
+
+        ; found it from searching, so return success after setting the id
+        jsr     set_id
+        jmp     return1
+
+not_found:
+        tax                             ; set x to 0
+
+set_id:
+        sta     $ffff
+id_loc2 = *-2
+
+        rts
 
 
 .bss
