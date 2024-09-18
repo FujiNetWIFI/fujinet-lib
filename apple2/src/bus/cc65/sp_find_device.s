@@ -2,7 +2,7 @@
 
         .export         device_type_id
         .export         device_count
-        .export         device_id_idx
+        .export         _device_id_idx
         .export         tmp_orig_type
 
         .import         _sp_cmdlist
@@ -15,12 +15,11 @@
         .import         pusha
         .import         negax
         .import         return0
-        .import         return1
 
         .include        "sp.inc"
         .include        "zp.inc"
 
-; bool sp_find_device();
+; uint8_t sp_find_device();
 ; device_type_id contains the type id to search for
 ; where type_id is the internal fujinet device type_id:
 ;  $10 = fujinet
@@ -69,7 +68,7 @@ have_count:
         sta     device_count
 
         lda     #$01
-        sta     device_id_idx
+        sta     _device_id_idx
 device_loop:
         jsr     pusha                   ; the current Device ID
         lda     #$03
@@ -84,12 +83,12 @@ device_loop:
 
         ; found it, so return the current index
         ldx     #$00
-        lda     device_id_idx
+        lda     _device_id_idx
         rts
 
 not_found_yet:
-        inc     device_id_idx
-        lda     device_id_idx
+        inc     _device_id_idx
+        lda     _device_id_idx
         cmp     device_count
         bcc     device_loop
         beq     device_loop
@@ -123,9 +122,11 @@ id_loc1 = *-2
 
         beq     not_found
 
-        ; found it from searching, so return success after setting the id
+        ; found it from searching, so return the id after setting it
         jsr     set_id
-        jmp     return1
+        ldx     #$00
+        cmp     #$00                    ; set status registers for the return based on A's id value
+        rts
 
 not_found:
         tax                             ; set x to 0
@@ -136,9 +137,8 @@ id_loc2 = *-2
 
         rts
 
-
 .bss
 device_type_id: .res 1
 device_count:   .res 1
-device_id_idx:  .res 1
+_device_id_idx:  .res 1
 tmp_orig_type:  .res 1

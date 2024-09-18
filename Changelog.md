@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [4.7.0] - 2024-09-20
+
+- [clock] a simple clock library to interface with FujiNet clock device with atari/apple2 (cc65) implementations
+
 ## [4.6.2] - 2024-09-15
 
 - [apple2 bus] refactor all sp_get_xxx functions, moving common code into sp_find_device

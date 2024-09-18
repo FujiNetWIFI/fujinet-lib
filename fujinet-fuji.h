@@ -559,15 +559,13 @@ bool fuji_hash_length(uint8_t mode);
 ///////////////////////////////////////////////////////
 // New hashing interface
 
-enum HashType
+typedef enum HashType
 {
     MD5,
     SHA1,
     SHA256,
     SHA512
-};
-
-typedef enum HashType hash_alg_t;
+} hash_alg_t;
 
 /**
  * @brief  Returns the size of the hash that will be produced for the given hash_type and whether hex output is required or not. This should be used to calculate the memory needed for the output of \ref fuji_hash_data

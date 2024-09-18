@@ -6,14 +6,10 @@
         .import         _sp_payload
         .import         _sp_status
 
-        .import         device_id_idx
+        .import         _device_id_idx
         .import         device_count
 
         .import         pusha
-        .import         return0
-        .import         return1
-
-        .macpack        cpu
 
 ; uint8_t sp_get_fuji_id()
 _sp_get_fuji_id:
@@ -35,7 +31,7 @@ not_found_by_id:
 ; assumes device_count is set from previous search by ID
 try_fallback:
         lda     #$01
-        sta     device_id_idx
+        sta     _device_id_idx
 
 device_loop:
         jsr     pusha                   ; the current Device ID
@@ -63,12 +59,12 @@ device_loop:
 
         ; found it, so return the current index
         ldx     #$00
-        lda     device_id_idx
+        lda     _device_id_idx
         bne     :+
 
 not_found_yet:
-        inc     device_id_idx
-        lda     device_id_idx
+        inc     _device_id_idx
+        lda     _device_id_idx
         cmp     device_count
         bcc     device_loop
         beq     device_loop

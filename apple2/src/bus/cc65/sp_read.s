@@ -2,10 +2,7 @@
 
         .import         _sp_cmdlist
         .import         sp_dispatch
-        .import         _sp_nw_unit
-        .import         _sp_payload
 
-        .import         popa
         .import         sp_rw_common
 
         .include        "sp.inc"
