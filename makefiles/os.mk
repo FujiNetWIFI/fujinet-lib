@@ -26,6 +26,17 @@ CURRENT_PLATFORM_coco := coco
 
 CURRENT_PLATFORM = $(CURRENT_PLATFORM_$(CURRENT_TARGET))
 
+# platform specific src paths (PSP)
+# These allow us to add additional directories (each entry can have space separated list) to a TARGET
+# Used for apple2/enh vs apple2gs, but other platforms if they had different compiled code could use it.
+
+PSP_apple2 := apple2-6502
+PSP_apple2enh := apple2-6502
+PSP_apple2gs := apple2gs
+
+PLATFORM_SPECIFIC_PATHS := $(PSP_$(CURRENT_TARGET))
+
+
 ifeq '$(findstring ;,$(PATH))' ';'
     detected_OS := Windows
 else

@@ -13,8 +13,6 @@ ASMEXT = .s
 -include ./makefiles/os.mk
 -include ./makefiles/compiler.mk
 
-# CC := cl65
-
 SRCDIR := src
 BUILD_DIR := build
 OBJDIR := obj
@@ -27,23 +25,62 @@ PLATFORM_SRC_DIR := $(CURRENT_PLATFORM)/$(SRCDIR)
 
 PROGRAM_TGT := $(PROGRAM).$(CURRENT_TARGET)
 
-SOURCES := $(call rwildcard,$(PLATFORM_SRC_DIR),*.c)
+SOURCES += $(call rwildcard,$(PLATFORM_SRC_DIR),*.c)
 SOURCES += $(call rwildcard,$(PLATFORM_SRC_DIR),*$(ASMEXT))
-SOURCES += $(call rwildcard,common/$(SRCDIR)/,*$(ASMEXT))
 SOURCES += $(call rwildcard,common/$(SRCDIR)/,*.c)
+SOURCES += $(call rwildcard,common/$(SRCDIR)/,*$(ASMEXT))
+
+################################################
+# PLATFORM SPECIFIC PATHS/SOURCES
+
+define ADD_SOURCES
+SOURCES += $(call rwildcard,$(CURRENT_PLATFORM)/$(1),*.c)
+SOURCES += $(call rwildcard,$(CURRENT_PLATFORM)/$(1),*$(ASMEXT))
+endef
+
+define ADD_SRC_INC_DIRS
+SRC_INC_DIRS += $(sort $(dir $(wildcard $(CURRENT_PLATFORM)/$(1)/*)))
+endef
+
+$(foreach path,$(PLATFORM_SPECIFIC_PATHS),$(eval $(call ADD_SOURCES,$(path))))
+$(foreach path,$(PLATFORM_SPECIFIC_PATHS),$(eval $(call ADD_SRC_INC_DIRS,$(path))))
+
+################################################
+# GENERATE OBJECT LIST FROM ALL SOURCES
+
+# convert from src/your/long/path/foo.[c|s] to obj/<target>/your/long/path/foo.o
+OBJ1 := $(SOURCES:.c=$(OBJEXT))
+OBJECTS := $(OBJ1:$(ASMEXT)=$(OBJEXT))
+
+# this needs to undergo all substitutions too, this is the list of files that will be added to the archive (library)
+OBJECTS_ARC := $(OBJECTS)
+
+# add any additional archive objects before doing all the substitutions
+-include ./makefiles/objects-$(CURRENT_TARGET).mk
+
+OBJECTS := $(OBJECTS:$(PLATFORM_SRC_DIR)/%=$(OBJDIR)/$(CURRENT_TARGET)/%)
+OBJECTS := $(OBJECTS:common/$(SRCDIR)/%=$(OBJDIR)/$(CURRENT_TARGET)/common/%)
+
+OBJECTS_ARC := $(OBJECTS_ARC:$(PLATFORM_SRC_DIR)/%=$(OBJDIR)/$(CURRENT_TARGET)/%)
+OBJECTS_ARC := $(OBJECTS_ARC:common/$(SRCDIR)/%=$(OBJDIR)/$(CURRENT_TARGET)/common/%)
+
+################################################
+# PLATFORM SPECIFIC OBJECTS
+
+define SUBSTITUTE_OBJECTS
+$($(1):$(CURRENT_PLATFORM)/$(2)/%=$(OBJDIR)/$(CURRENT_TARGET)/%)
+endef
+
+$(foreach path,$(PLATFORM_SPECIFIC_PATHS),$(eval OBJECTS := $(call SUBSTITUTE_OBJECTS,OBJECTS,$(path))))
+$(foreach path,$(PLATFORM_SPECIFIC_PATHS),$(eval OBJECTS_ARC := $(call SUBSTITUTE_OBJECTS,OBJECTS_ARC,$(path))))
 
 # remove trailing and leading spaces.
 SOURCES := $(strip $(SOURCES))
+OBJECTS := $(strip $(OBJECTS))
+OBJECTS_ARC := $(strip $(OBJECTS_ARC))
 
-# convert from src/your/long/path/foo.[c|s] to obj/<target>/your/long/path/foo.o
-# we need the target because compiling for previous target does not pick up potential macro changes
-OBJ1 := $(SOURCES:.c=$(OBJEXT))
-OBJECTS := $(OBJ1:$(ASMEXT)=$(OBJEXT))
-OBJECTS_ORCA := $(OBJECTS) $(patsubst %.c,%.a,$(filter %.c,$(SOURCES)))
-OBJECTS := $(OBJECTS:$(PLATFORM_SRC_DIR)/%=$(OBJDIR)/$(CURRENT_TARGET)/%)
-OBJECTS := $(OBJECTS:common/$(SRCDIR)/%=$(OBJDIR)/$(CURRENT_TARGET)/common/%)
-OBJECTS_ORCA := $(OBJECTS_ORCA:$(PLATFORM_SRC_DIR)/%=$(OBJDIR)/$(CURRENT_TARGET)/%)
-OBJECTS_ORCA := $(OBJECTS_ORCA:common/$(SRCDIR)/%=$(OBJDIR)/$(CURRENT_TARGET)/common/%)
+# ensure the paths are unique
+# SRC_INC_DIRS := $(sort $(filter-out %/, $(SRC_INC_DIRS)))
 
 # Ensure make recompiles parts it needs to if src files change
 DEPENDS := $(OBJECTS:$(OBJEXT)=.d)
@@ -75,6 +112,7 @@ CHANGELOG = Changelog.md
 
 # allow for additional flags etc
 -include ./makefiles/common.mk
+# global PLATFORM custom settings
 -include ./makefiles/custom-$(CURRENT_PLATFORM).mk
 
 # allow for application specific config
@@ -86,18 +124,6 @@ CHANGELOG = Changelog.md
 all: $(ALL_TASKS) $(PROGRAM_TGT)
 
 -include $(DEPENDS)
-
-ifeq ($(BUILD_DIR),)
-BUILD_DIR := build
-endif
-
-ifeq ($(OBJDIR),)
-OBJDIR := obj
-endif
-
-ifeq ($(DIST_DIR),)
-DIST_DIR := dist
-endif
 
 $(OBJDIR):
 	$(call MKDIR,$@)
@@ -111,12 +137,18 @@ $(BUILD_DIR):
 $(DIST_DIR):
 	$(call MKDIR,$@)
 
-SRC_INC_DIRS := \
+# Add the default paths for the PLATFORM and common
+SRC_INC_DIRS += \
   $(sort $(dir $(wildcard $(PLATFORM_SRC_DIR)/*))) \
   $(sort $(dir $(wildcard common/$(SRCDIR)/*)))
 
-
 vpath %.c $(SRC_INC_DIRS)
+vpath %$(ASMEXT) $(SRC_INC_DIRS)
+
+# $(info SOURCES: $(SOURCES))
+# $(info OBJECTS: $(OBJECTS))
+# $(info OBJECTS_ARC: $(OBJECTS_ARC))
+# $(info SRC_INC_DIRS: $(SRC_INC_DIRS))
 
 $(OBJDIR)/$(CURRENT_TARGET)/common/%$(OBJEXT): %.c | $(TARGETOBJDIR)
 	@$(call MKDIR,$(dir $@))
@@ -138,8 +170,6 @@ else
 	$(CC) -c --deps $(CFLAGS) -o $@ $<
 endif
 
-vpath %$(ASMEXT) $(SRC_INC_DIRS)
-
 ## For now, no asm in common dirs... as it would be compiler specific
 # $(OBJDIR)/$(CURRENT_TARGET)/common/%$(OBJEXT): %$(ASMEXT) | $(TARGETOBJDIR)
 # 	@$(call MKDIR,$(dir $@))
@@ -160,9 +190,19 @@ endif
 
 $(BUILD_DIR)/$(PROGRAM_TGT): $(OBJECTS) | $(BUILD_DIR)
 ifeq ($(CC),cl65)
-	$(AR) a $@ $(OBJECTS)
+	$(AR) a $@ $(OBJECTS_ARC)
 else ifeq ($(CC),iix compile)
-	$(AR) $@ $(addprefix +,$(OBJECTS_ORCA))
+
+ifeq ($(detected_OS),$(filter $(detected_OS),MSYS MINGW))
+	rm -rf $(OBJDIR)/flat; \
+	FILE_LIST=$$(scripts/fix-makelib-path.sh $(OBJDIR)/$(CURRENT_TARGET) $(OBJDIR)/flat); \
+	cd $(OBJDIR)/flat; \
+	for f in $$(echo "$${FILE_LIST}" | tr ' ' '\n'); do $(AR) $(PROGRAM_TGT) $${f}; done; \
+	mv $(PROGRAM_TGT) ../../$(BUILD_DIR)/
+else
+	$(AR) $@ $(addprefix +,$(OBJECTS_ARC))
+endif
+
 else
 	$(AR) $@ -a $(OBJECTS)
 endif

@@ -5,7 +5,7 @@
 #include "fujinet-fuji-cbm.h"
 
 // Use 0x, and NOT string literals to avoid CC65 charmap translations. These are bytes not chars.
-uint8_t status_cmd[2] = { 0x01, 0x53 };
+uint8_t fuji_status_cmd[2] = { 0x01, 0x53 };
 
 // An internal version of fuji_status called at the end of the open_ commands
 // which uses the currently open connection to write the status command to.
@@ -19,7 +19,7 @@ bool get_fuji_status(bool should_close)
 	memset(&_fuji_status.raw[0], 0, sizeof(FNStatus));
 
 	// do a status call to find out if anything went wrong. Using the current open channel, so just write our bytes
-	bytes_written = cbm_write(CBM_CMD_CHANNEL, status_cmd, 2);
+	bytes_written = cbm_write(CBM_CMD_CHANNEL, fuji_status_cmd, 2);
 	if (bytes_written != 2) {
 		// always close on an error
 		cbm_close(CBM_CMD_CHANNEL);

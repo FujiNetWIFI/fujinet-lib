@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [4.7.1] - 2024-09-21
+
+- [clock] add apple2gs clock implementation (untested)
+
 ## [4.7.0] - 2024-09-20
 
 - [clock] a simple clock library to interface with FujiNet clock device with atari/apple2 (cc65) implementations
