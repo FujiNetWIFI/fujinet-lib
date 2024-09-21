@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [4.7.2] - 2024-09-22
+
+- [apple2] fix finding device bug that was breaking network id and not setting correct device id
+- [clock apple2gs] fix clock implementation
+
+I moved the apple2gs C code into the apple2 path, and tested apps against it.
+Adds 160 bytes to the application vs ASM version, but does produce runnable applications.
+This should now work with apple2gs.
+
 ## [4.7.1] - 2024-09-21
 
 - [clock] add apple2gs clock implementation (untested)

@@ -3,7 +3,6 @@
         .export         device_type_id
         .export         device_count
         .export         _device_id_idx
-        .export         tmp_orig_type
 
         .import         _sp_cmdlist
         .import         _sp_init
@@ -35,19 +34,32 @@ sp_find_device:
         lda     _sp_is_init
         bne     have_init
 
-        ; no, so do it now, we first have to save the current type we're searching for, as it gets overwritten searching for network device
+        ; no, so do it now, we first have to save some data about what we're currently searching for, as it gets overwritten searching for network device
         lda     device_type_id
-        sta     tmp_orig_type
+        pha
+        lda     id_loc1
+        pha
+        lda     id_loc1 + 1
+        pha
         jsr     _sp_init
-        bne     restore_type
+        sta     tmp1                    ; save the result
+
+        ; restore the data we stashed
+        pla
+        sta     id_loc1 + 1
+        sta     id_loc2 + 1
+        pla
+        sta     id_loc1
+        sta     id_loc2
+        pla
+        sta     device_type_id
+
+        lda     tmp1                    ; restore the result
+        bne     have_init
 
 return_error:
         ; not found, so return 0 as the network device, and is an error
         jmp     return0
-
-restore_type:
-        lda     tmp_orig_type
-        sta     device_type_id
 
 have_init:
         lda     #$00
@@ -102,6 +114,8 @@ sp_find_device_type:
         sta     device_type_id          ; the type to search for
         stx     id_loc1                 ; the low location of the address to save the id at
         sty     id_loc1 + 1             ; the high location of the address to save the id at
+        stx     id_loc2
+        sty     id_loc2 + 1
 
         lda     $ffff                   ; don't use 0000, compiler thinks you want ZP!
 id_loc1 = *-2
@@ -114,12 +128,8 @@ id_loc1 = *-2
         cmp     #$00                    ; force status bits for the return
         rts
 
-        ; no ID set, so fetch it, write x/y to the location the id needs to be saved to
-:       stx     id_loc2
-        sty     id_loc2 + 1
-
-        jsr     sp_find_device
-
+        ; no ID set, so fetch it
+:       jsr     sp_find_device
         beq     not_found
 
         ; found it from searching, so return the id after setting it
@@ -138,7 +148,9 @@ id_loc2 = *-2
         rts
 
 .bss
+; the type of the device we are looking for
 device_type_id: .res 1
+
+; temp variables
 device_count:   .res 1
-_device_id_idx:  .res 1
-tmp_orig_type:  .res 1
+_device_id_idx: .res 1
