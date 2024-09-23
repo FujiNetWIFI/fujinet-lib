@@ -178,12 +178,14 @@ endif
 # else
 # endif
 
+# below shell part is a hack to make foo.ROOT become foo.root, even though the output name is already foo.root, iix capitalizes the "ROOT" part in the filename, which breaks the linux version of linker
 $(OBJDIR)/$(CURRENT_TARGET)/%$(OBJEXT): %$(ASMEXT) $(VERSION_FILE) | $(OBJDIR)
 	@$(call MKDIR,$(dir $@))
 ifeq ($(CC),cl65)
 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(ASFLAGS) --listing $(@:.o=.lst) -Ln $@.lbl -o $@ $<
 else ifeq ($(CC),iix compile)
 	$(CC) $(CFLAGS) $< keep=$(subst .root,,$@)
+	@OUT_NAME="$@"; CAP_NAME=$${OUT_NAME//.root}.ROOT; if [ -f "$$CAP_NAME" ]; then mv $$CAP_NAME $@; fi
 else
 	$(CC) -c --deps $(@:.o=.d) $(ASFLAGS) -o $@ $<
 endif
