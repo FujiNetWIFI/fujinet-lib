@@ -8,6 +8,12 @@
 
 sp_done         start
 
+                ph2 MyID
+                _DisposeAll
+                ph2 MyID
+                _MMShutDown
+                _MTShutDown
+
                 rtl
 
                 end
