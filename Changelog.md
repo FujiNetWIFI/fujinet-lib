@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [4.7.3] - 2024-09-26
+
+- [orca] Adds sp_find_device_type.asm and sp_find_fuji.asm, ORCA/M refactoring, improved memory usage, plus small enhancements to build.mk for apple2gs target.
+
 ## [4.7.2] - 2024-09-22
 
 - [apple2] fix finding device bug that was breaking network id and not setting correct device id
