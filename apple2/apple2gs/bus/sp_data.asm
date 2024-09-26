@@ -18,6 +18,9 @@ sp_error        entry
 sp_count        entry
                 ds 2
 
+sp_cmdlist      entry
+                ds 10      
+
 sp_payload      entry
                 ds SP_PAYLOAD_SIZE
 

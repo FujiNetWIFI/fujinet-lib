@@ -1,26 +1,20 @@
                 case    on              required for C compatibility
-		mcopy   13/orcainclude/m16.orca
+		mcopy   13:orcainclude:m16.orca assembler macros (short, long etc.)
                 mcopy   13:ainclude:M16.MiscTool
 
 ; int8_t sp_dispatch(uint8_t cmd)
 ;
 ; returns any error code from the smart port _sp_dispatch function
 sp_dispatch     start
+
+                copy    apple2:src:include:sp.equ
+
+fwdata_ptr      equ 1                   long ptr
+error           equ 5
  
-fwdata_ptr      equ 1                   32-bit ptr
- 
-                ldy     #$40d           dispatch data offset
-                sta     [fwdata_ptr],y
-                lda     fwdata_ptr
-                clc
-                adc     #$400           cmdlist offset
-                iny                     dispatch data offset + 1
-                sta     [fwdata_ptr],y
+                ldy     #SP_PAYLOAD_SIZE+$13  command type offset
                 short   m
-                lda     #$60            RTS opcode
-                iny
-                iny                     dispatch data offset + 3
-                sta     [fwdata_ptr],y
+                sta     [fwdata_ptr],y  store command type
                 long    m
 
 ; let's invoque FWEntry
@@ -30,7 +24,7 @@ fwdata_ptr      equ 1                   32-bit ptr
                 ph2     #0              Y register on entry
                 lda     fwdata_ptr
                 clc
-                adc     #$40a           JSR offset = $40A
+                adc     #SP_PAYLOAD_SIZE+$10  JSR offset
                 pha
                 _FWEntry
                 short   i
@@ -41,6 +35,7 @@ fwdata_ptr      equ 1                   32-bit ptr
                 tax
                 stx     sp_count
                 pla                     Accumulator at exit
+                sta     error
                 tax
                 stx     sp_error
                 long    i
