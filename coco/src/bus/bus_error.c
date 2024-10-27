@@ -13,20 +13,40 @@
 
 uint8_t bus_error(uint8_t opcode)
 {
-    struct _senderrorcmd
+    struct _errcmd
     {
         uint8_t opcode;
-        uint8_t cmd;
-    } sec;
+        uint8_t p1;
+        uint8_t p2;
+        uint16_t auxs;
+    } ec;
 
-    uint8_t err = 0;
     
-    sec.opcode = opcode;
-    sec.cmd = FUJICMD_SEND_ERROR;
+    uint8_t z=sizeof(ec);
+
+    ec.opcode = opcode;
+
+    if (opcode == OP_NET) {
+        ec.p1 = 1; // Firmware appears to ignore unit
+        ec.p2 = FUJICMD_SEND_ERROR;
+        ec.auxs = 0;
+    
+    } else { // OP_FUJI
+        ec.p1 = FUJICMD_SEND_ERROR;
+        z=2;   
+    }
 
     bus_ready();
-    dwwrite((uint8_t *)&sec, sizeof(sec));
-    dwread((uint8_t *)&err, sizeof(err));
+    dwwrite((uint8_t *)&ec, z);
+    
+    // Read Error/Status code
+    if (dwread(&z,1)) {
+        // Receiving a 1 means success. Change 1 to 0 since caller expects 0 for success
+        if (z == 1) {
+            z = 0;
+        }
+        return z;
+    }
 
-    return err;
+    return 1; // IO ERROR;
 }

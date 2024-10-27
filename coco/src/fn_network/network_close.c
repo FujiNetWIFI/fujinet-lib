@@ -12,15 +12,17 @@ uint8_t network_close(char* devicespec)
         uint8_t opcode;
         uint8_t unit;
         uint8_t cmd;
+        uint16_t auxs;
     } nc;
 
     nc.opcode = OP_NET;
     nc.unit = network_unit(devicespec);
     nc.cmd = NETCMD_CLOSE;
+    nc.auxs = 0;
 
     bus_ready();
 
     dwwrite((uint8_t *)&nc, sizeof(nc));
     
-    return bus_error(OP_NET) == BUS_SUCCESS;
+    return bus_error(OP_NET);
 }

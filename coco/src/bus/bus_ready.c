@@ -19,7 +19,7 @@ void bus_ready(void)
         uint8_t command;
     } rc;
 
-    uint8_t z=0, r=0;
+    uint8_t z=0, r;
     
     rc.opcode = OP_FUJI;
     rc.command = FUJICMD_READY;

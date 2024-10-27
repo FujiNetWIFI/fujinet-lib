@@ -27,5 +27,5 @@ uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans)
     bus_ready();
     dwwrite((uint8_t *)&o, sizeof(o));
     
-    return bus_error(OP_NET) == BUS_SUCCESS;
+    return bus_error(OP_NET);
 }
