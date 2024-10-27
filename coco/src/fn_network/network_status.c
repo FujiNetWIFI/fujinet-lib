@@ -22,6 +22,8 @@ uint8_t network_status(char *devicespec, uint16_t *bw, uint8_t *c, uint8_t *err)
         uint8_t c;
         uint8_t err;
     } sr;
+    
+    uint8_t status;
 
     s.opcode = OP_NET;
     s.unit = network_unit(devicespec);
@@ -30,11 +32,11 @@ uint8_t network_status(char *devicespec, uint16_t *bw, uint8_t *c, uint8_t *err)
 
     bus_ready();
     dwwrite((uint8_t *)&s, sizeof(s));
-    bus_get_response(OP_NET, (uint8_t *)&sr, sizeof(sr));
+    status = bus_get_response(OP_NET, (uint8_t *)&sr, sizeof(sr));
 
     *bw = sr.bw;
     *c = sr.c;
     *err = sr.err;
     
-    return bus_error(OP_NET) == BUS_SUCCESS;
+    return status;
 }
