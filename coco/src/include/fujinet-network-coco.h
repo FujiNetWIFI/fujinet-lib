@@ -29,6 +29,8 @@
  */
 #define NETCMD_CLOSE 'C'
 
+byte net_get_response(byte devid, byte *buf, int len);
+
 /**
  * @brief Return Network unit, given devicespec
  * @param deivcespec C string containing N: devicespec.

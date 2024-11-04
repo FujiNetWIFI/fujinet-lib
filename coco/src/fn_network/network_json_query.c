@@ -32,7 +32,7 @@ int16_t network_json_query(char *devicespec, char *query, char *s)
     network_status(devicespec, &bw, &c, &err);
 
     if (bw)
-        bus_get_response(OP_NET, (uint8_t *)s, bw);
+	net_get_response(network_unit(devicespec), (uint8_t *)s, bw);
     
     return bus_error(OP_NET) == BUS_SUCCESS;
 }
