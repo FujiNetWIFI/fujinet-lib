@@ -5,7 +5,7 @@
 
 uint8_t sp_printer_id = 0;
 
-bool sp_find_printer() {
+bool sp_find_printer(void) {
     int r = sp_find_device("PRINTER");
 	if (r <= 0) {
 		sp_printer_id = 0;
@@ -15,7 +15,7 @@ bool sp_find_printer() {
 	return true;
 }
 
-uint8_t sp_get_printer_id()
+uint8_t sp_get_printer_id(void)
 {
 	if (sp_printer_id != 0) {
 		return sp_printer_id;

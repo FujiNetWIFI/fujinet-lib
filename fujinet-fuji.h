@@ -246,7 +246,7 @@ extern FNStatus _fuji_status;
  * @brief Closes the currently open directory
  * @return Success status, true if all OK.
  */
-bool fuji_close_directory();
+bool fuji_close_directory(void);
 
 /**
  * @brief Copies a file from given src to dst, with supplied path in copy_spec
@@ -270,7 +270,7 @@ bool fuji_enable_udpstream(uint16_t port, char *host);
  * @brief Returns true if last operation had an error.
  * @return ERROR status, true if there was an error in last operation.
  */
-bool fuji_error();
+bool fuji_error(void);
 
 /**
  * @brief Gets adapter config information from FN, e.g. IP, MAC, BSSID etc.
@@ -347,7 +347,7 @@ bool fuji_get_ssid(NetConfig *net_config);
  * @brief Checks if WIFI is enabled or not. Any device errors will return false also.
  * @return enabled status 
  */
-bool fuji_get_wifi_enabled();
+bool fuji_get_wifi_enabled(void);
 
 /**
  * @brief  Sets status to the wifi status value.
@@ -360,7 +360,7 @@ bool fuji_get_wifi_status(uint8_t *status);
  * @brief Mount all devices
  * @return true if successful, false otherwise
  */
-bool fuji_mount_all();
+bool fuji_mount_all(void);
 
 /**
  * @brief Mount specific device slot
@@ -410,7 +410,7 @@ bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer);
  * @brief Reset FN
  * @return true if successful, false if there was an error from FN
  */
-bool fuji_reset();
+bool fuji_reset(void);
 
 /**
  * @brief Scans network for SSIDs and sets count accordingly.
@@ -484,7 +484,7 @@ bool fuji_status(FNStatus *status);
 
 #ifdef __CBM__
 // DEBUGGING
-bool fuji_set_status();
+bool fuji_set_status(void);
 #endif
 
 /**
@@ -527,12 +527,12 @@ void fuji_set_appkey_details(uint16_t creator_id, uint8_t app_id, enum AppKeySiz
 
 // Base64
 // ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success
-bool fuji_base64_decode_compute();
+bool fuji_base64_decode_compute(void);
 bool fuji_base64_decode_input(char *s, uint16_t len);
 bool fuji_base64_decode_length(unsigned long *len);
 bool fuji_base64_decode_output(char *s, uint16_t len);
 
-bool fuji_base64_encode_compute();
+bool fuji_base64_encode_compute(void);
 bool fuji_base64_encode_input(char *s, uint16_t len);
 bool fuji_base64_encode_length(unsigned long *len);
 bool fuji_base64_encode_output(char *s, uint16_t len);
@@ -591,7 +591,7 @@ bool fuji_hash_data(hash_alg_t hash_type, uint8_t *input, uint16_t length, bool 
  * @brief  Clear any data associated with hashing in the Fujinet. Should be called before calculating new hashes when using \ref fuji_hash_add and \ref fuji_hash_calculate. Can also be called to discard any data previously sent to free memory on the FujiNet used for any previous data sent with \ref fuji_hash_add.
  * @return success status of the operation
  */
-bool fuji_hash_clear();
+bool fuji_hash_clear(void);
 
 /**
  * @brief  Adds data that needs to be hashed.

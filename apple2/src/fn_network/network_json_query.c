@@ -3,7 +3,7 @@
 #include "fujinet-network.h"
 #include "fujinet-bus-apple2.h"
 
-extern uint8_t bad_unit();
+extern uint8_t bad_unit(void);
 
 int16_t network_json_query(char *devicespec, char *query, char *s) {
 	uint8_t err = 0;
@@ -23,7 +23,7 @@ int16_t network_json_query(char *devicespec, char *query, char *s) {
 	sp_payload[0] = query_len & 0xFF;
 	sp_payload[1] = query_len >> 8;
 
-	strncpy(sp_payload + 2, (const char *) query, query_len);
+	strncpy((char *)sp_payload + 2, (const char *) query, query_len);
 	err = sp_control_nw(sp_network, 'Q'); // perform JSON Query
 	if (err != 0) {
 		goto do_sp_error;

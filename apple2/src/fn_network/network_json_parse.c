@@ -3,7 +3,7 @@
 #include "fujinet-network.h"
 #include "fujinet-bus-apple2.h"
 
-extern uint8_t bad_unit();
+extern uint8_t bad_unit(void);
 
 uint8_t network_json_parse(char *devicespec) {
 	uint8_t err = 0;

@@ -5,7 +5,7 @@
 
 uint8_t sp_clock_id = 0;
 
-bool sp_find_clock() {
+bool sp_find_clock(void) {
     int r = sp_find_device("FN_CLOCK");
 	if (r <= 0) {
 		sp_clock_id = 0;
@@ -15,7 +15,7 @@ bool sp_find_clock() {
 	return true;
 }
 
-uint8_t sp_get_clock_id()
+uint8_t sp_get_clock_id(void)
 {
 	if (sp_clock_id != 0) {
 		return sp_clock_id;

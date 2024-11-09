@@ -11,7 +11,7 @@
 #include "sp.h"
 #endif
 
-uint8_t network_init()
+uint8_t network_init(void)
 {
   int8_t err = 0;
 

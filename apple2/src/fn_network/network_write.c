@@ -3,7 +3,7 @@
 #include "fujinet-network.h"
 #include "fujinet-bus-apple2.h"
 
-extern uint8_t bad_unit();
+extern uint8_t bad_unit(void);
 
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))

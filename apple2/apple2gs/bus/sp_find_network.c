@@ -5,7 +5,7 @@
 
 uint8_t sp_network = 0;
 
-bool sp_find_network() {
+bool sp_find_network(void) {
     int r = sp_find_device("NETWORK");
 	if (r <= 0) {
 		sp_network = 0;
@@ -15,7 +15,7 @@ bool sp_find_network() {
 	return true;
 }
 
-uint8_t sp_get_network_id()
+uint8_t sp_get_network_id(void)
 {
 	if (sp_network != 0) {
 		return sp_network;
