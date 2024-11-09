@@ -1,5 +1,5 @@
 /**
- * @brief   Change N: prefix
+ * @brief   Get N: prefix
  * @author  Thomas Cherryhomes
  * @email   thom dot cherryhomes at gmail dot com
  * @license gpl v. 3, see LICENSE for details.
@@ -13,7 +13,7 @@
 #endif /* _CMOC_VERSION_ */
 #include "fujinet-network.h"
 
-uint8_t network_fs_cd(char *devicespec) {
+uint8_t network_fs_pwd(char *devicespec) {
     
-    return network_ioctl(',',0,0,devicespec);
+    return network_ioctl('0',0,0,devicespec);
 }
