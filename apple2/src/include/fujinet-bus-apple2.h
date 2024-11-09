@@ -83,7 +83,7 @@ extern uint16_t sp_count;
 // global sp error value set by various routines
 extern int8_t sp_error;
 
-void sp_clr_payload();
+void sp_clr_payload(void);
 
 // these are the 'fuji' device versions
 int8_t sp_status(uint8_t dest, uint8_t statcode);
@@ -100,18 +100,21 @@ int8_t sp_open_nw(uint8_t dest);
 int8_t sp_write_nw(uint8_t dest, uint16_t len);
 
 
-// initilises the dispatch funciton and returns the network device id if found, else returns 0.
-uint8_t sp_init();
+// initilises the dispatch function and returns the network device id if found, else returns 0.
+uint8_t sp_init(void);
+
+// dispose memory handles and shutdown tools (Apple IIgs only)
+void sp_done(void);
 
 uint8_t read_memory(uint8_t offset, uint16_t address);
 
 // These return the found device id or 0 if not found.
-uint8_t sp_get_fuji_id();
-uint8_t sp_get_network_id();
-uint8_t sp_get_clock_id();
-uint8_t sp_get_cpm_id();
-uint8_t sp_get_modem_id();
-uint8_t sp_get_printer_id();
+uint8_t sp_get_fuji_id(void);
+uint8_t sp_get_network_id(void);
+uint8_t sp_get_clock_id(void);
+uint8_t sp_get_cpm_id(void);
+uint8_t sp_get_modem_id(void);
+uint8_t sp_get_printer_id(void);
 
 int sp_find_device(char *name);
 

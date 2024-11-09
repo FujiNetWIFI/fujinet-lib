@@ -2,7 +2,7 @@
 #include "fujinet-fuji.h"
 #include "fujinet-bus-apple2.h"
 
-bool fuji_close_directory()
+bool fuji_close_directory(void)
 {
 	if (sp_get_fuji_id() == 0) {
 		return false;

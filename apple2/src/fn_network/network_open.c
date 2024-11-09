@@ -34,6 +34,6 @@ uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans) {
 	sp_payload[2] = mode;
 	sp_payload[3] = trans;
 
-	strncpy(&sp_payload[4], devicespec, slen);
+	strncpy((char *)&sp_payload[4], devicespec, slen);
 	return sp_control_nw(sp_network, 'O');
 }

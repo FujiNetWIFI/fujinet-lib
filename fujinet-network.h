@@ -71,7 +71,7 @@ extern uint8_t fn_network_error;
  * exit early if there is a network issue.
  * @return fujinet-network status/error code (See FN_ERR_* values) and set device specific error if there is any
  */
-uint8_t network_init();
+uint8_t network_init(void);
 
 /**
  * @brief  Get Network Device Status byte

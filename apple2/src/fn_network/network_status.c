@@ -3,7 +3,7 @@
 #include "fujinet-network.h"
 #include "fujinet-bus-apple2.h"
 
-extern uint8_t bad_unit();
+extern uint8_t bad_unit(void);
 
 // this is often called in a tight loop, so we won't clear the payload to help performance
 uint8_t network_status(char *devicespec, uint16_t *bw, uint8_t *c, uint8_t *err) {
