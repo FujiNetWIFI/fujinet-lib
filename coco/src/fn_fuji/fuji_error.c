@@ -4,7 +4,7 @@
 #include <dw.h>
 #include <fujinet-fuji-coco.h>
 
-bool fuji_error()
+bool fuji_error(void)
 {
     return bus_error(OP_FUJI) == BUS_SUCCESS;
 }
