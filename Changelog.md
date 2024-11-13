@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [4.7.4] - 2024-11-13
+
+- [coco] fix data size for host/device slots when pushing back to FN
+- [coco] improve CMOC portability, and fix coco build
+- [coco] fixed some issues found while creating election app for coco
+- [apple2/gs] Fixed code linting
+
+Thanks to the contributions from Thom, Eric C and Eric LB for improvements and fixes.
+
 ## [4.7.3] - 2024-09-26
 
 - [orca] Adds sp_find_device_type.asm and sp_find_fuji.asm, ORCA/M refactoring, improved memory usage, plus small enhancements to build.mk for apple2gs target.
