@@ -40,7 +40,7 @@ uint8_t bus_get_response(uint8_t opcode, uint8_t *buf, int len)
     dwwrite((uint8_t *)&grc, z);
 
     // Return 0 on a successful read (dwread returns 1)
-    return !dwread((uint8_t *)buf, len);
+    return !dwread(buf, len);
 }
 /*
  struct _getresponsecmd
