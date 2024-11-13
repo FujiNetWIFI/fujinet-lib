@@ -16,9 +16,9 @@ bool fuji_get_host_slots(HostSlot *h, size_t size)
     ghs.cmd = FUJICMD_READ_HOST_SLOTS;
 
     bus_ready();
-
     dwwrite((uint8_t *)&ghs, sizeof(ghs));
-    bus_get_response(OP_FUJI,(uint8_t *)h, size);
+
+    bus_get_response(OP_FUJI,(uint8_t *)h, sizeof(HostSlot) * size);
     
     return bus_error(OP_FUJI) == BUS_SUCCESS;
 }

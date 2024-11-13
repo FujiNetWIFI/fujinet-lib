@@ -14,13 +14,13 @@ byte dwread(byte *s, int l)
     asm
     {
         pshs x,y
-            ldx :s
-            ldy :l
-            jsr [0xD93F]
-            puls y,x
-            tfr cc,b
-            lsrb
-            lsrb
-            andb #$01
-            }
+        ldx :s
+        ldy :l
+        jsr [0xD93F]
+        puls y,x
+        tfr cc,b
+        lsrb
+        lsrb
+        andb #$01
+    }
 }

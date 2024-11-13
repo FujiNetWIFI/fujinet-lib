@@ -13,10 +13,10 @@ byte dwwrite(byte *s, int l)
     asm
     {
         pshs x,y
-            ldx :s
-            ldy :l
-            jsr [0xD941]
-            tfr cc,d
-            puls y,x
-            }
+        ldx :s
+        ldy :l
+        jsr [0xD941]
+        tfr cc,d
+        puls y,x
+    }
 }
