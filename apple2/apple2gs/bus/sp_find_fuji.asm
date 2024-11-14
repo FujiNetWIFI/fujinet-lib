@@ -29,10 +29,9 @@ device_loop     ph2     #$03
 ; sp_payload[21] = $01 = floppy type
 ; sp_payload[22] = $40 = subtype
 
-                short m
                 lda     sp_payload+18
+                and     #$00ff          mask high byte
                 cmp     #$30            '0' ascii as in "DISK_0"
-                long m
                 bne     not_found_yet
                 lda     sp_payload+21
                 cmp     #$4001          type=$01, subtype=$40

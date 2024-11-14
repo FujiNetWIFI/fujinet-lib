@@ -1,5 +1,5 @@
                 case    on              required for C compatibility
-		mcopy   13/orcainclude/m16.orca assembler macros (short, long etc.)
+                mcopy   13/orcainclude/m16.orca assembler macros (short, long etc.)
 
 ; set X to the unit number
 ; set A to the status or control code

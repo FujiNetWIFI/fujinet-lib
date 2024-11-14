@@ -1,6 +1,6 @@
                 case    on              required for C compatibility
-		mcopy   13/ainclude/m16.cc      csubroutine & creturn macros
-		mcopy   13/orcainclude/m16.orca assembler macros (short, long etc.)
+                mcopy   13/ainclude/m16.cc      csubroutine & creturn macros
+                mcopy   13/orcainclude/m16.orca assembler macros (short, long etc.)
 
 sp_control      start
                 csubroutine (2:dest,2:ctrlcode),6       6 bytes direct page space
@@ -15,13 +15,14 @@ error           equ 5
                 jsr     sp_common_params
 
 ; prior to calling FWEntry, copy sp_payload to bank 0
-                ldy     #0
-loop0           lda     sp_payload,y
-                sta     [fwdata_ptr],y
-                iny
-                iny
-                cpy     #SP_PAYLOAD_SIZE
-                bne     loop0
+; data bank register will be set to 0 (the destination bank) by MVN
+; we need to save and restore it from stack
+                phb                     
+                ldx     #sp_payload
+                ldy     fwdata_ptr
+                lda     #SP_PAYLOAD_SIZE-1
+                mvn     sp_payload,0
+                plb
 
                 lda     #SP_CONTROL_PARAM_COUNT
                 short   m
