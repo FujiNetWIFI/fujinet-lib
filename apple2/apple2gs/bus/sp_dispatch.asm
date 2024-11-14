@@ -1,5 +1,5 @@
                 case    on              required for C compatibility
-		mcopy   13:orcainclude:m16.orca assembler macros (short, long etc.)
+                mcopy   13:orcainclude:m16.orca assembler macros (short, long etc.)
                 mcopy   13:ainclude:M16.MiscTool
 
 ; int8_t sp_dispatch(uint8_t cmd)

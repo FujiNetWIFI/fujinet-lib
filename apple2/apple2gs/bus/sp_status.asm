@@ -1,11 +1,11 @@
                 case    on              required for C compatibility
-		mcopy   13/ainclude/m16.cc      csubroutine & creturn macros
-		mcopy   13/orcainclude/m16.orca assembler macros (short, long etc.)
+                mcopy   13/ainclude/m16.cc      csubroutine & creturn macros
+                mcopy   13/orcainclude/m16.orca assembler macros (short, long etc.)
 
 sp_status start
-        csubroutine (2:dest,2:statcode),6       6 bytes direct page space
+                csubroutine (2:dest,2:statcode),6       6 bytes direct page space
 
-        copy    apple2:src:include:sp.equ
+                copy    apple2:src:include:sp.equ
 
 fwdata_ptr      equ 1                   32-bit ptr
 error           equ 5
@@ -22,13 +22,10 @@ error           equ 5
                 jsr     sp_dispatch
 
 ; copy returned bytes from bank 0 to sp_payload
-               ldy     #0
-loop1   lda     [fwdata_ptr],y
-                sta     sp_payload,y
-                iny
-                iny
-                cpy     #SP_PAYLOAD_SIZE
-                bne     loop1
+                ldx     fwdata_ptr
+                ldy     #sp_payload
+                lda     #SP_PAYLOAD_SIZE-1
+                mvn     0,sp_payload
 
                 creturn 2:error
 

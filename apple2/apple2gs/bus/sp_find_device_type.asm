@@ -42,9 +42,8 @@ have_init       ph2     #$00
                 jsl     sp_status       sp_status(0,0) fetches the device count
                 bne     return_0
 
-status_ok_1     short m
-                lda     sp_payload
-                long m
+status_ok_1     lda     sp_payload
+                and     #$00ff          mask high byte
                 beq     return_error
                 bmi     return_0
 
@@ -60,9 +59,8 @@ device_loop     ph2     #$03
                 bne     not_found_yet   there wasn't a valid DIB for this device index
 
 ; compare sp_payload[21] to device_type_id
-                short   m
                 lda     sp_payload+21
-                long    m
+                and     #$00ff          mask high byte
                 cmp     device_type_id
                 bne     not_found_yet
 
