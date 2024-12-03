@@ -25,6 +25,7 @@ error           equ 5
                 plb
 
                 lda     #SP_CONTROL_PARAM_COUNT
+                ldy     #SP_PAYLOAD_SIZE        cmdlist offset
                 short   m
                 sta     [fwdata_ptr],y
                 long    m
