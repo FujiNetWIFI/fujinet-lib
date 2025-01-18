@@ -8,6 +8,10 @@ else ifeq ($(CURRENT_TARGET),apple2gs)
 
 -include makefiles/compiler-orca.mk
 
+else ifeq ($(CURRENT_TARGET),pmd85)
+
+-include makefiles/compiler-pmd85.mk
+
 else
 
 -include makefiles/compiler-cc65.mk

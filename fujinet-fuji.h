@@ -216,6 +216,17 @@ typedef struct
 } NewDisk;
 #endif
 
+#ifdef __PMD85__
+typedef struct
+{
+    uint16_t numSectors;
+    uint16_t sectorSize;
+    uint8_t hostSlot;
+    uint8_t deviceSlot;
+    char filename[256];
+} NewDisk;
+#endif
+
 // WIP, only 64 fully supported at the moment.
 enum AppKeySize
 {
