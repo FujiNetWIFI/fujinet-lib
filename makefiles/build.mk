@@ -90,6 +90,16 @@ CFLAGS += \
 	$(INCC_ARG)common/inc \
 	$(INCC_ARG)$(PLATFORM_SRC_DIR)/include \
 	$(INCC_ARG).
+else ifeq ($(CC),zcc)
+CFLAGS += \
+	$(INCC_ARG)common/inc \
+	$(INCC_ARG)$(PLATFORM_SRC_DIR)/include \
+	$(INCC_ARG).
+
+ASFLAGS += \
+	$(INCS_ARG)common/inc \
+	$(INCS_ARG)$(PLATFORM_SRC_DIR)/include \
+	$(INCS_ARG).
 else
 ASFLAGS += \
 	$(INCS_ARG) common/inc \
@@ -156,6 +166,8 @@ ifeq ($(CC),cl65)
 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(CFLAGS) --listing $(@:.o=.lst) -Ln $@.lbl -o $@ $<
 else ifeq ($(CC),iix compile)
 	$(CC) $(CFLAGS) $< keep=$(subst .root,,$@)
+else ifeq ($(CC),zcc)
+	$(CC) +$(CURRENT_TARGET) -c $(CFLAGS) -o $@ $<
 else
 	$(CC) -c --deps $(CFLAGS) -o $@ $<
 endif
@@ -166,6 +178,8 @@ ifeq ($(CC),cl65)
 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(CFLAGS) --listing $(@:.o=.lst) -Ln $@.lbl -o $@ $<
 else ifeq ($(CC),iix compile)
 	$(CC) $(CFLAGS) $< keep=$(subst .root,,$@)
+else ifeq ($(CC),zcc)
+	$(CC) +$(CURRENT_TARGET) -c $(CFLAGS) -o $@ $<
 else
 	$(CC) -c --deps $(CFLAGS) -o $@ $<
 endif
@@ -186,6 +200,8 @@ ifeq ($(CC),cl65)
 else ifeq ($(CC),iix compile)
 	$(CC) $(ASFLAGS) $< keep=$(subst .root,,$@)
 	@OUT_NAME="$@"; CAP_NAME=$${OUT_NAME//.root}.ROOT; if [ -f "$$CAP_NAME" ]; then mv $$CAP_NAME $@; fi
+else ifeq ($(CC),zcc)
+	$(CC) +$(CURRENT_TARGET) -c $(ASLAGS) -o $@ $<
 else
 	$(CC) -c --deps $(@:.o=.d) $(ASFLAGS) -o $@ $<
 endif
@@ -206,6 +222,9 @@ else
 	$(AR) $@ $(addprefix +,$(OBJECTS_ARC))
 endif
 
+else ifeq ($(CC),zcc)
+	$(AR) -x$@.lib $(OBJECTS)
+	mv -v $@.lib $@
 else
 	$(AR) $@ -a $(OBJECTS)
 endif
