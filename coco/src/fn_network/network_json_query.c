@@ -19,9 +19,10 @@ int16_t network_json_query(char *devicespec, char *query, char *s)
 
     uint16_t bw=0;
     uint8_t c=0, err=0;
+    uint8_t unit = network_unit(devicespec);
 
     jq.opcode = OP_NET;
-    jq.unit = network_unit(devicespec);
+    jq.unit = unit;
     jq.cmd = 'Q';
     jq.aux1 = jq.aux2 = 0;
     strcpy(jq.query, query);
@@ -32,7 +33,7 @@ int16_t network_json_query(char *devicespec, char *query, char *s)
     network_status(devicespec, &bw, &c, &err);
 
     if (bw)
-	net_get_response(network_unit(devicespec), (uint8_t *)s, bw);
+	    net_get_response(unit, (uint8_t *)s, bw);
     
     return bus_error(OP_NET) == BUS_SUCCESS;
 }

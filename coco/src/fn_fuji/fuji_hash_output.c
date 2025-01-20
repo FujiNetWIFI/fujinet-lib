@@ -20,7 +20,7 @@ bool fuji_hash_output(uint8_t output_type, char *s, uint16_t len)
     bus_ready();
     
     dwwrite((uint8_t *)&ho, sizeof(ho));
-    bus_get_response(OP_FUJI, (uint8_t *)s, len);
+    fuji_get_response((uint8_t *)s, len);
     
     return bus_error(OP_FUJI) == BUS_SUCCESS;
 }

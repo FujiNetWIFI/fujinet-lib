@@ -135,7 +135,7 @@ int16_t network_read_nb(char *devicespec, uint8_t *buf, uint16_t len)
 
     bus_ready();
     dwwrite((uint8_t *)&read_r, sizeof(read_r));
-    bus_get_response(OP_NET, (uint8_t *)buf, fetch_size);
+    net_get_response(unit, buf, fetch_size);
 #endif
 
     fn_bytes_read = fetch_size;

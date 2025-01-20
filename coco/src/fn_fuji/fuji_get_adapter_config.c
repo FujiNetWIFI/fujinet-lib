@@ -18,7 +18,7 @@ bool fuji_get_adapter_config(AdapterConfig *ac)
     bus_ready();
 
     dwwrite((uint8_t *)&gac, sizeof(gac));
-    bus_get_response(OP_FUJI,(uint8_t *)ac, sizeof(AdapterConfig));
+    fuji_get_response((uint8_t *)ac, sizeof(AdapterConfig));
         
     return bus_error(OP_FUJI) == BUS_SUCCESS;
 }

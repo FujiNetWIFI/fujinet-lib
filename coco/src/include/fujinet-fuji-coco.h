@@ -26,13 +26,12 @@
 void bus_ready(void);
 
 /**
- * @brief Get most recent response
- * @param opcode OP_FUJI or OP_NET
+ * @brief Get most recent response from Fuji device (OP_FUJI)
  * @param buf Target buffer
  * @param len length of bytes to get
  */
 #define FUJICMD_GET_RESPONSE 0x01
-uint8_t bus_get_response(uint8_t opcode, uint8_t *buf, int len);
+uint8_t fuji_get_response(uint8_t *buf, int len);
 
 /**
  * @brief command to send previous error

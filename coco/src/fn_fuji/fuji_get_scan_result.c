@@ -20,7 +20,7 @@ bool fuji_get_scan_result(uint8_t n, SSIDInfo *ssid_info)
     bus_ready();
 
     dwwrite((uint8_t *)&gsr, sizeof(gsr));
-    bus_get_response(OP_FUJI,(uint8_t *)ssid_info, sizeof(SSIDInfo));
+    fuji_get_response((uint8_t *)ssid_info, sizeof(SSIDInfo));
     
     return bus_error(OP_FUJI) == BUS_SUCCESS;
 }

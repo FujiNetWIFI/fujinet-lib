@@ -17,14 +17,16 @@ int network_read_coco(char* devicespec, byte *buf, unsigned int len)
         unsigned int len;
     } rc;
 
+    uint8_t unit = network_unit(devicespec);
+
     rc.opcode = OP_NET;
-    rc.id = network_unit(devicespec);
+    rc.id = unit;
     rc.command = 'R';
     rc.len = len;
 
     bus_ready();
     dwwrite((byte *)&rc, sizeof(rc));
-    net_get_response(network_unit(devicespec), buf, len);
+    net_get_response(unit, (uint8_t *)buf, len);
 
     return len; /* Yeah, I know, FIXME. */
 }

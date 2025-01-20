@@ -24,15 +24,16 @@ uint8_t network_status(char *devicespec, uint16_t *bw, uint8_t *c, uint8_t *err)
     } sr;
     
     uint8_t status;
+    uint8_t unit = network_unit(devicespec);
 
     s.opcode = OP_NET;
-    s.unit = network_unit(devicespec);
+    s.unit = unit;
     s.cmd = 'S';
     s.aux1 = s.aux2 = 0;
 
     bus_ready();
     dwwrite((uint8_t *)&s, sizeof(s));
-    status = net_get_response(network_unit(devicespec), (uint8_t *)&sr, sizeof(struct _sr));
+    status = net_get_response(unit, (uint8_t *)&sr, sizeof(sr));
 
     *bw = sr.bw;
     *c = sr.c;
