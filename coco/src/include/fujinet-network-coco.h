@@ -29,7 +29,14 @@
  */
 #define NETCMD_CLOSE 'C'
 
-byte net_get_response(byte devid, byte *buf, int len);
+/**
+ * @brief Get response data from Network device
+ * @param devid The device ID (0-255) 
+ * @param buf Target buffer 
+ * @param len Length 
+ */
+
+uint8_t net_get_response(uint8_t devid, uint8_t *buf, int len);
 
 /**
  * @brief Return Network unit, given devicespec

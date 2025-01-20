@@ -17,7 +17,7 @@ bool fuji_scan_for_networks(uint8_t *count)
 
     bus_ready();
     dwwrite((uint8_t *)&sfn, sizeof(sfn));
-    bus_get_response(OP_FUJI,count,sizeof(uint8_t));
+    fuji_get_response(count, sizeof(uint8_t));
     
     return bus_error(OP_FUJI) == BUS_SUCCESS;
 }

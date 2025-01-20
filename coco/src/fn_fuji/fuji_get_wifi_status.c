@@ -18,7 +18,7 @@ bool fuji_get_wifi_status(uint8_t *status)
     bus_ready();
 
     dwwrite((uint8_t *)&gws, sizeof(gws));
-    bus_get_response(OP_FUJI,(uint8_t *)status, sizeof(uint8_t));
+    fuji_get_response((uint8_t *)status, sizeof(uint8_t));
     
     return bus_error(OP_FUJI) == BUS_SUCCESS;
 }

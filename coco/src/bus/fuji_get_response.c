@@ -4,27 +4,22 @@
 #include <fujinet-fuji-coco.h>
 
 /**
- * @brief Get response data from last command
- * @param devid The device ID (0-255) 
- * @param buf Target buffer 
+ * @brief Get response data from last Fuji command
+ * @param buf Target buffer (needs to be at least len)
  * @param len Length 
  */
 
-uint8_t net_get_response(uint8_t devid, uint8_t *buf, int len)
+uint8_t fuji_get_response(uint8_t *buf, int len)
 {
-    /* Get response from Network Device OP_NET,devid */
-    struct _getnetresponse
+    /* Get response from Fuji Device OP_FUJI */
+    struct _getfujiresponse
     {
         uint8_t opcode;
-        uint8_t id;
         uint8_t command;
-        uint16_t len;
     } grc;
 
-    grc.opcode = OP_NET;
-    grc.id = devid;
+    grc.opcode = OP_FUJI;
     grc.command = FUJICMD_GET_RESPONSE; 
-    grc.len = len;
 
     bus_ready();
     dwwrite((byte *)&grc, sizeof(grc));

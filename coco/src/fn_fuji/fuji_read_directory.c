@@ -22,7 +22,7 @@ bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer)
     bus_ready();
 
     dwwrite((uint8_t *)&rd, sizeof(rd));
-    bus_get_response(OP_FUJI,(uint8_t *)buffer,maxlen);
+    fuji_get_response((uint8_t *)buffer, maxlen);
     
     return bus_error(OP_FUJI) == BUS_SUCCESS;
 }
