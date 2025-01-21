@@ -81,14 +81,14 @@ uint8_t network_init(void);
  * @param  err to where to put network error byte.
  * @return fujinet-network status/error code (See FN_ERR_* values)
  */
-uint8_t network_status(char *devicespec, uint16_t *bw, uint8_t *c, uint8_t *err);
+uint8_t network_status(const char *devicespec, uint16_t *bw, uint8_t *c, uint8_t *err);
 
 /**
  * @brief  Close Connection
  * @param  devicespec pointer to device specification of form: N:PROTO://[HOSTNAME]:PORT/PATH/.../
  * @return fujinet-network error code (See FN_ERR_* values)
  */
-uint8_t network_close(char* devicespec);
+uint8_t network_close(const char* devicespec);
 
 /**
  * @brief  Open Connection
@@ -97,7 +97,7 @@ uint8_t network_close(char* devicespec);
  * @param  trans translation mode (CR/LF to other line endings; 0=none, 1=CR, 2=LF, 3=CRLF, 4=Pet)
  * @return fujinet-network error code (See FN_ERR_* values)
  */
-uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans);
+uint8_t network_open(const char* devicespec, uint8_t mode, uint8_t trans);
 
 /**
  * @brief  Non-blocking read from channel
@@ -110,7 +110,7 @@ uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans);
  * @param  len length
  * @return Bytes read, or negative value of fujinet-network error code (See FN_ERR_* values) with fn_network_error containing real error code
  */
-int16_t network_read_nb(char* devicespec, uint8_t *buf, uint16_t len);
+int16_t network_read_nb(const char* devicespec, uint8_t *buf, uint16_t len);
 
 /**
  * @brief  Read from channel
@@ -124,7 +124,7 @@ int16_t network_read_nb(char* devicespec, uint8_t *buf, uint16_t len);
  * @param  len length
  * @return Bytes read, or negative value of fujinet-network error code (See FN_ERR_* values) with fn_network_error containing real error code
  */
-int16_t network_read(char* devicespec, uint8_t *buf, uint16_t len);
+int16_t network_read(const char* devicespec, uint8_t *buf, uint16_t len);
 
 /**
  * @brief  Write to network 
@@ -133,7 +133,7 @@ int16_t network_read(char* devicespec, uint8_t *buf, uint16_t len);
  * @param  len length
  * @return fujinet-network error code (See FN_ERR_* values)
  */
-uint8_t network_write(char* devicespec, uint8_t *buf, uint16_t len);
+uint8_t network_write(const char* devicespec, const uint8_t *buf, uint16_t len);
 
 /**
  * @brief  Device specific direct control commands
@@ -144,7 +144,7 @@ uint8_t network_write(char* devicespec, uint8_t *buf, uint16_t len);
  * @param  ... varargs - Device specific additional parameters to pass to the network device
  * @return fujinet-network error code (See FN_ERR_* values)
  */
-uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, char* devicespec, ...);
+uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char* devicespec, ...);
 
 /**
  * @brief  Parse the currently open JSON location
@@ -153,7 +153,7 @@ uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, char* devicespec,
  * 
  * This will set the channel mode to JSON, which will be unset in the close.
  */
-uint8_t network_json_parse(char *devicespec);
+uint8_t network_json_parse(const char *devicespec);
 
 /**
  * @brief  Perform JSON query
@@ -164,7 +164,7 @@ uint8_t network_json_parse(char *devicespec);
  * 
  * Assumes an open and parsed json.
  */
-int16_t network_json_query(char *devicespec, char *query, char *s);
+int16_t network_json_query(const char *devicespec, const char *query, char *s);
 
 /**
  * @brief  Sets the channel mode.
@@ -174,7 +174,7 @@ int16_t network_json_query(char *devicespec, char *query, char *s);
  * 
  * Assumes an open connection.
  */
-uint8_t network_http_set_channel_mode(char *devicespec, uint8_t mode);
+uint8_t network_http_set_channel_mode(const char *devicespec, uint8_t mode);
 
 /**
  * @brief  Start adding headers.
@@ -183,7 +183,7 @@ uint8_t network_http_set_channel_mode(char *devicespec, uint8_t mode);
  * 
  * Assumes an open connection. After calling this, add any headers with network_http_add_header, and finally call network_http_end_add_headers
  */
-uint8_t network_http_start_add_headers(char *devicespec);
+uint8_t network_http_start_add_headers(const char *devicespec);
 
 /**
  * @brief  End adding headers.
@@ -192,7 +192,7 @@ uint8_t network_http_start_add_headers(char *devicespec);
  * 
  * Assumes an open connection. Completes header adding, and sets mode back to BODY
  */
-uint8_t network_http_end_add_headers(char *devicespec);
+uint8_t network_http_end_add_headers(const char *devicespec);
 
 /**
  * @brief  Add header to HTTP request
@@ -202,7 +202,7 @@ uint8_t network_http_end_add_headers(char *devicespec);
  * 
  * Assumes an open connection.
  */
-uint8_t network_http_add_header(char *devicespec, char *header);
+uint8_t network_http_add_header(const char *devicespec, const char *header);
 
 
 /**
@@ -213,7 +213,7 @@ uint8_t network_http_add_header(char *devicespec, char *header);
  * 
  * Assumes an open connection.
  */
-uint8_t network_http_post(char *devicespec, char *data);
+uint8_t network_http_post(const char *devicespec, const char *data);
 
 
 /**
@@ -225,7 +225,7 @@ uint8_t network_http_post(char *devicespec, char *data);
  * 
  * Assumes an open connection.
  */
-uint8_t network_http_post_bin(char *devicespec, uint8_t *data, uint16_t len);
+uint8_t network_http_post_bin(const char *devicespec, const uint8_t *data, uint16_t len);
 
 /**
  * @brief  Send PUT HTTP request
@@ -235,7 +235,7 @@ uint8_t network_http_post_bin(char *devicespec, uint8_t *data, uint16_t len);
  * 
  * Assumes an open connection.
  */
-uint8_t network_http_put(char *devicespec, char *data);
+uint8_t network_http_put(const char *devicespec, const char *data);
 
 /**
  * @brief  Send DELETE HTTP request
@@ -245,7 +245,7 @@ uint8_t network_http_put(char *devicespec, char *data);
  * 
  * This will open a connection, consumer can then query the data, and must close the connection.
  */
-uint8_t network_http_delete(char *devicespec, uint8_t trans);
+uint8_t network_http_delete(const char *devicespec, uint8_t trans);
 
 /**
  * @brief  Internal routine to get the network UNIT id from the devicespec, i.e. Nx: find the "x" value
@@ -253,42 +253,42 @@ uint8_t network_http_delete(char *devicespec, uint8_t trans);
  * @return unit number
  * 
  */
-uint8_t network_unit(char *devicespec);
+uint8_t network_unit(const char *devicespec);
 
 /**
  * @brief Delete file from FS endpoint (e.g. TNFS, FTP, HTTPS, SMB)
  * @param devicespec Pointer to device specification e.g. "N1:TNFS://TMA-2/foo.txt"
  * @return fujinet-network error code (see FN_ERR_* values)
  */
-uint8_t network_fs_delete(char *devicespec);
+uint8_t network_fs_delete(const char *devicespec);
 
 /**
  * @brief Rename file on FS endpoint (e.g. TNFS, FTP, HTTPS, SMB)
  * @param devicespec Pointer to device specification, with new name after comma, e.g. "N1:TNFS://TMA-2/foo.txt,bar.txt"
  * @return fujinet-network error code (see FN_ERR_* values)
  */
-uint8_t network_fs_rename(char *devicespec);
+uint8_t network_fs_rename(const char *devicespec);
 
 /**
  * @brief Lock file (make read only) on FS (e.g. TNFS, FTP, HTTPS, SMB)
  * @param devicespec Pointer to device specification "N1:TNFS://TMA-2/foo.txt"
  * @return fujinet-network error code (see FN_ERR_* values)
  */
-uint8_t network_fs_lock(char *devicespec);
+uint8_t network_fs_lock(const char *devicespec);
 
 /**
  * @brief Unlock file (make read/write) on FS (e.g. TNFS, FTP, HTTPS, SMB)
  * @param devicespec Pointer to device specification "N1:TNFS://TMA-2/foo.txt"
  * @return fujinet-network error code (see FN_ERR_* values)
  */
-uint8_t network_fs_unlock(char *devicespec);
+uint8_t network_fs_unlock(const char *devicespec);
 
 /**
  * @brief Make directory on FS (e.g. TNFS, FTP, HTTPS, SMB)
  * @param devicespec pointer to devicespec "N1:TNFS://TMA-2/newdir"
  * @return fujinet-network error code (see FN_ERR_* values)
  */
-uint8_t network_fs_mkdir(char *devicespec);
+uint8_t network_fs_mkdir(const char *devicespec);
 
 /**
  * @brief Remove directory on FS (e.g. TNFS, FTP, HTTPS, SMB)
@@ -296,14 +296,14 @@ uint8_t network_fs_mkdir(char *devicespec);
  * @return fujinet-network error code (see FN_ERR_* values)
  * @verbose Directory must be empty!
  */
-uint8_t network_fs_rmdir(char *devicespec);
+uint8_t network_fs_rmdir(const char *devicespec);
 
 /**
  * @brief Change directory on FS (e.g. TNFS, FTP, HTTPS, SMB)
  * @param devicespec Pointer to devicespec "N1:TNFS://TMA-2/dir"
  * @return fujinet-network error code (see FN_ERR_* values)
  */
-uint8_t network_fs_cd(char *devicespec);
+uint8_t network_fs_cd(const char *devicespec);
 
 #define FN_ERR_OK               (0x00)      /* No error */
 #define FN_ERR_IO_ERROR         (0x01)      /* There was IO error/issue with the device */
