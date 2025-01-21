@@ -33,7 +33,7 @@ typedef enum time_format_t {
  * @param  tz the timezone string to apply
  * @return fujinet-clock status/error code (See FN_ERR_* values)
  */
-uint8_t clock_set_tz(char *tz);
+uint8_t clock_set_tz(const char *tz);
 
 /**
  * @brief  Get the FN clock's timezone
