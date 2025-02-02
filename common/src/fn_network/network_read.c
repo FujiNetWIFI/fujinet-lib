@@ -32,7 +32,7 @@
 #define MAX_READ_SIZE 512
 
 
-int16_t network_read(char *devicespec, uint8_t *buf, uint16_t len)
+int16_t network_read(const char *devicespec, uint8_t *buf, uint16_t len)
 {
     uint8_t r = 0;
     uint16_t fetch_size = 0;

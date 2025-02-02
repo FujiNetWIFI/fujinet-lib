@@ -43,6 +43,6 @@ uint8_t net_get_response(uint8_t devid, uint8_t *buf, int len);
  * @param deivcespec C string containing N: devicespec.
  * @return unit number (1-255)
  */
-uint8_t network_unit(char *devicespec);
+uint8_t network_unit(const char *devicespec);
 
 #endif /* FUJINET_NETWORK_COCO_H */

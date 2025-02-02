@@ -5,7 +5,7 @@
 #include <fujinet-network.h>
 #include <fujinet-network-coco.h>
 
-uint8_t network_json_parse(char *devicespec)
+uint8_t network_json_parse(const char *devicespec)
 {
     struct _jp
     {

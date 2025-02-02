@@ -5,7 +5,7 @@
 #include <fujinet-network.h>
 #include <fujinet-network-coco.h>
 
-int16_t network_json_query(char *devicespec, char *query, char *s)
+int16_t network_json_query(const char *devicespec, const char *query, char *s)
 {
     struct _jq
     {

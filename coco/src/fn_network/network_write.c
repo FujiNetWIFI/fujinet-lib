@@ -5,7 +5,7 @@
 #include <fujinet-network-coco.h>
 #include <fujinet-network.h>
 
-uint8_t network_write(char* devicespec, uint8_t *buf, uint16_t len)
+uint8_t network_write(const char* devicespec, const uint8_t *buf, uint16_t len)
 {
     struct _w
     {

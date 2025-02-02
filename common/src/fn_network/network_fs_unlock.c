@@ -12,6 +12,6 @@
 #endif /* _CMOC_VERSION_ */
 #include "fujinet-network.h"
 
-uint8_t network_fs_unlock(char *devicespec) {
+uint8_t network_fs_unlock(const char *devicespec) {
     return network_ioctl('$',0,0,devicespec);
 }

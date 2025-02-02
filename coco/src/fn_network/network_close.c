@@ -5,7 +5,7 @@
 #include <fujinet-fuji-coco.h>
 #include <fujinet-network-coco.h>
 
-uint8_t network_close(char* devicespec)
+uint8_t network_close(const char* devicespec)
 {
     struct _nc
     {

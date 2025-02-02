@@ -13,6 +13,6 @@
 #endif /* _CMOC_VERSION_ */
 #include "fujinet-network.h"
 
-uint8_t network_fs_rmdir(char *devicespec) {
+uint8_t network_fs_rmdir(const char *devicespec) {
     return network_ioctl('+',0,0,devicespec);
 }

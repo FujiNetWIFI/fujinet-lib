@@ -5,7 +5,7 @@
 #include <fujinet-network.h>
 #include <fujinet-network-coco.h>
 
-uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, char* devicespec, ...)
+uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char* devicespec, ...)
 {
     struct _ioctl
     {

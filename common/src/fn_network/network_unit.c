@@ -15,7 +15,7 @@
  * @return Unit number, 1 if nothing specified (e.g. "n:", "x:", "foo"), or the given value (char - '0') if specified (e.g. "n2:", "n9:").
  * Note there is limited checking here, if you specify "na:" you will get very odd results. 
  */
-uint8_t network_unit(char *devicespec)
+uint8_t network_unit(const char *devicespec)
 {
     if (devicespec[1] == ':')
         return 1;

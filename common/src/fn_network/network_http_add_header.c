@@ -6,6 +6,6 @@
 #endif /* _CMOC_VERSION_ */
 #include "fujinet-network.h"
 
-uint8_t network_http_add_header(char *devicespec, char *header) {
+uint8_t network_http_add_header(const char *devicespec, const char *header) {
     return network_write(devicespec, (uint8_t *) header, strlen(header));
 }
