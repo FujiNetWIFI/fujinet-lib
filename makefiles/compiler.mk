@@ -12,6 +12,10 @@ else ifeq ($(CURRENT_TARGET),pmd85)
 
 -include makefiles/compiler-pmd85.mk
 
+else ifeq ($(CURRENT_TARGET),msdos)
+
+-include makefiles/compiler-msdos.mk
+
 else
 
 -include makefiles/compiler-cc65.mk

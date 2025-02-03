@@ -100,6 +100,11 @@ ASFLAGS += \
 	$(INCS_ARG)common/inc \
 	$(INCS_ARG)$(PLATFORM_SRC_DIR)/include \
 	$(INCS_ARG).
+else ifeq ($(CC),wcc)
+CFLAGS += \
+	$(INCC_ARG)common/inc \
+	$(INCC_ARG)$(PLATFORM_SRC_DIR)/include \
+	$(INCC_ARG).
 else
 ASFLAGS += \
 	$(INCS_ARG) common/inc \
@@ -164,6 +169,8 @@ $(OBJDIR)/$(CURRENT_TARGET)/common/%$(OBJEXT): %.c | $(TARGETOBJDIR)
 	@$(call MKDIR,$(dir $@))
 ifeq ($(CC),cl65)
 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(CFLAGS) --listing $(@:.o=.lst) -Ln $@.lbl -o $@ $<
+else ifeq ($(CC),wcc)
+	$(CC) $(CFLAGS) -fo=$@ $<
 else ifeq ($(CC),iix compile)
 	$(CC) $(CFLAGS) $< keep=$(subst .root,,$@)
 else ifeq ($(CC),zcc)
@@ -180,6 +187,8 @@ else ifeq ($(CC),iix compile)
 	$(CC) $(CFLAGS) $< keep=$(subst .root,,$@)
 else ifeq ($(CC),zcc)
 	$(CC) +$(CURRENT_TARGET) -c $(CFLAGS) -o $@ $<
+else ifeq ($(CC),wcc)
+	$(CC) $(CFLAGS) -fo=$@ $<
 else
 	$(CC) -c --deps $(CFLAGS) -o $@ $<
 endif

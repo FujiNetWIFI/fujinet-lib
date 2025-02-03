@@ -173,6 +173,17 @@ typedef struct
 } NewDisk;
 #endif
 
+#ifdef __MSDOS__
+typedef struct
+{
+    uint16_t numSectors;
+    uint16_t sectorSize;
+    uint8_t hostSlot;
+    uint8_t deviceSlot;
+    char filename[256];
+} NewDisk;
+#endif
+
 #ifdef __APPLE2__
 typedef struct
 {
