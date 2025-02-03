@@ -27,5 +27,5 @@ uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char* devic
     bus_ready();
     dwwrite((uint8_t *)&ioctl, sizeof(ioctl));
     
-    return bus_error(OP_NET) == BUS_SUCCESS;
+    return network_get_error(ioctl.unit);
 }

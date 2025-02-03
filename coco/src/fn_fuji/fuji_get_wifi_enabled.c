@@ -20,7 +20,8 @@ bool fuji_get_wifi_enabled()
     bus_ready();
 
     dwwrite((uint8_t *)&gwe, sizeof(gwe));
-    fuji_get_response((uint8_t *)&enabled, sizeof(bool));
+    if (fuji_get_error())
+        return false;
     
-    return enabled;
+    return fuji_get_response((uint8_t *)&enabled, sizeof(bool));
 }

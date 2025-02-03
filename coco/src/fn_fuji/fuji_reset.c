@@ -18,5 +18,5 @@ bool fuji_reset()
     bus_ready();
     dwwrite((uint8_t *)&r, sizeof(r));
     
-    return bus_error(OP_FUJI) == BUS_SUCCESS;
+    return !fuji_get_error();
 }

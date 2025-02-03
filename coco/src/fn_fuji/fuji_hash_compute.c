@@ -21,5 +21,5 @@ bool fuji_hash_compute(uint8_t type)
 
     dwwrite((uint8_t *)&hc, sizeof(hc));
     
-    return bus_error(OP_FUJI) == BUS_SUCCESS;
+    return !fuji_get_error();
 }

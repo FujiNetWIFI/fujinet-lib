@@ -25,5 +25,5 @@ uint8_t network_http_set_channel_mode(const char *devicespec, uint8_t mode)
     bus_ready();
     dwwrite((uint8_t *)&hscm, sizeof(hscm));
     
-    return bus_error(OP_NET) == BUS_SUCCESS;
+    return network_get_error(hscm.unit);
 }

@@ -33,7 +33,7 @@ uint8_t network_status(const char *devicespec, uint16_t *bw, uint8_t *c, uint8_t
 
     bus_ready();
     dwwrite((uint8_t *)&s, sizeof(s));
-    status = net_get_response(unit, (uint8_t *)&sr, sizeof(sr));
+    status = network_get_response(unit, (uint8_t *)&sr, sizeof(sr));
 
     *bw = sr.bw;
     *c = sr.c;

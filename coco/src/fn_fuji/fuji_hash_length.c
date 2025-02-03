@@ -26,5 +26,5 @@ bool fuji_hash_length(uint8_t mode)
     // dwwrite((uint8_t *)&hl, sizeof(hl));
     // fuji_get_response(&len, sizeof(uint8_t));
     
-    // return bus_error(OP_FUJI) == BUS_SUCCESS;
+    // return !fuji_get_error();
 }

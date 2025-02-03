@@ -31,12 +31,21 @@
 
 /**
  * @brief Get response data from Network device
- * @param devid The device ID (0-255) 
+ * @param unit Network device unit (1-255)
  * @param buf Target buffer 
  * @param len Length 
+ * @return fujinet-network error code (see FN_ERR_* values)
  */
 
-uint8_t net_get_response(uint8_t devid, uint8_t *buf, int len);
+uint8_t network_get_response(uint8_t unit, uint8_t *buf, int len);
+
+/**
+ * @brief Get the error code from last Network command
+ * @param unit Network device unit (1-255)
+ * @return fujinet-network error code (see FN_ERR_* values)
+ */
+
+uint8_t network_get_error(uint8_t unit);
 
 /**
  * @brief Return Network unit, given devicespec

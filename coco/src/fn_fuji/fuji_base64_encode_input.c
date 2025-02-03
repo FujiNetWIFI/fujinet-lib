@@ -22,5 +22,5 @@ bool fuji_base64_encode_input(char *s, uint16_t len)
     dwwrite((uint8_t *)&bei, sizeof(bei));
     dwwrite((uint8_t *)s, len);
     
-    return bus_error(OP_FUJI) == BUS_SUCCESS;
+    return !fuji_get_error();
 }

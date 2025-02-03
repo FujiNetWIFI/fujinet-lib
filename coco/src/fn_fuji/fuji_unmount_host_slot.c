@@ -20,5 +20,5 @@ bool fuji_unmount_host_slot(uint8_t hs)
     bus_ready();
     dwwrite((uint8_t *)&uhs, sizeof(uhs));
     
-    return bus_error(OP_FUJI) == BUS_SUCCESS;
+    return !fuji_get_error();
 }

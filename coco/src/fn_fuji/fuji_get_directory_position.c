@@ -18,7 +18,8 @@ bool fuji_get_directory_position(uint16_t *pos)
     bus_ready();
 
     dwwrite((uint8_t *)&gdp, sizeof(gdp));
-    fuji_get_response((uint8_t *)pos, sizeof(uint16_t));
+    if (fuji_get_error())
+        return false;
     
-    return bus_error(OP_FUJI) == BUS_SUCCESS;
+    return fuji_get_response((uint8_t *)pos, sizeof(uint16_t));
 }

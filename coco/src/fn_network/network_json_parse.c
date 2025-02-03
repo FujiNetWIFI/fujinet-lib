@@ -25,5 +25,5 @@ uint8_t network_json_parse(const char *devicespec)
     dwwrite((uint8_t *)&jp, sizeof(jp));
     bus_ready(); // we want to be sure parse completes.
 
-    return bus_error(OP_NET) == BUS_SUCCESS;
+    return network_get_error(jp.unit);
 }

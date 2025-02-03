@@ -19,5 +19,5 @@ bool fuji_close_directory()
 
     dwwrite((uint8_t *)&cd, sizeof(cd));
     
-    return bus_error(OP_FUJI) == BUS_SUCCESS;
+    return !fuji_get_error();
 }
