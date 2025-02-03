@@ -18,7 +18,8 @@ bool fuji_get_ssid(NetConfig *net_config)
     bus_ready();
 
     dwwrite((uint8_t *)&gs, sizeof(gs));
-    fuji_get_response((uint8_t *)net_config, sizeof(NetConfig));
+    if (fuji_get_error())
+        return false;
     
-    return bus_error(OP_FUJI) == BUS_SUCCESS;
+    return fuji_get_response((uint8_t *)net_config, sizeof(NetConfig));
 }

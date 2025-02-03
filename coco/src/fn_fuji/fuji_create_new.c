@@ -27,5 +27,5 @@ bool fuji_create_new(NewDisk *new_disk)
 
     dwwrite((uint8_t *)&cn, sizeof(cn));
 
-    return bus_error(OP_FUJI) == BUS_SUCCESS;
+    return !fuji_get_error();
 }

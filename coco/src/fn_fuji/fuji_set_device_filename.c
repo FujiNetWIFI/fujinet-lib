@@ -26,5 +26,5 @@ bool fuji_set_device_filename(uint8_t mode, uint8_t hs, uint8_t ds, char *buffer
     bus_ready();
     dwwrite((uint8_t *)&sdf, sizeof(sdf));
 
-    return fuji_error() == BUS_SUCCESS;
+    return !fuji_get_error();
 }

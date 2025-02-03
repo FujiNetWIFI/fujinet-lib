@@ -6,6 +6,6 @@
 
 bool fuji_set_directory_position(uint16_t pos)
 {
-    
-    return bus_error(OP_FUJI) == BUS_SUCCESS;
+    /* TODO, implement */
+    return false;
 }

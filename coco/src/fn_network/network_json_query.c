@@ -33,7 +33,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *s)
     network_status(devicespec, &bw, &c, &err);
 
     if (bw)
-	    net_get_response(unit, (uint8_t *)s, bw);
+	    network_get_response(unit, (uint8_t *)s, bw);
     
-    return bus_error(OP_NET) == BUS_SUCCESS;
+    return network_get_error(unit);
 }

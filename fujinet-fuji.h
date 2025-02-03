@@ -6,17 +6,8 @@
 // In general, bools return the "success" status, so true is good, false is bad.
 
 #ifdef _CMOC_VERSION_
-#include <cmoc.h>
-
-// Implement <stdbool.h> for CMOC. 
-// Follow the standard "ifndef _STDBOOL_H" check in case the project already does this.
-#ifndef _STDBOOL_H
-#define _STDBOOL_H
-typedef unsigned char bool;
-#define true  1
-#define false 0
-#endif
-
+    #include <cmoc.h>
+    #include "stdbool-coco.h"
 #else
     #include <stddef.h>
     #include <stdbool.h>

@@ -22,5 +22,5 @@ bool fuji_open_directory(uint8_t hs, char *path_filter)
     bus_ready();
     dwwrite((uint8_t *)&od, sizeof(od));
     
-    return bus_error(OP_FUJI) == BUS_SUCCESS;
+    return !fuji_get_error();
 }

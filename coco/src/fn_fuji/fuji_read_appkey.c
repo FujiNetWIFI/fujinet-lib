@@ -44,12 +44,14 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
     bus_ready();
     dwwrite((uint8_t *)&ra, 2);
 
-    if (bus_error(OP_FUJI)) {
+    if (fuji_get_error())
         return false;
+    
+    if (fuji_get_response((uint8_t *)data, BUFFER_SIZE+2))
+    {
+        *count = *(uint16_t*)data;
+        memcpy(data,data+2, BUFFER_SIZE);
+        return true;
     }
-
-    fuji_get_response((uint8_t *)data, BUFFER_SIZE+2);
-    *count = *(uint16_t*)data;
-    memcpy(data,data+2, BUFFER_SIZE);
-    return true;
+    return false;
 }

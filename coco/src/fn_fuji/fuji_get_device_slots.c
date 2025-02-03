@@ -18,7 +18,8 @@ bool fuji_get_device_slots(DeviceSlot *d, size_t size)
     bus_ready();
 
     dwwrite((uint8_t *)&gds, sizeof(gds));
-    fuji_get_response((uint8_t *)d, sizeof(DeviceSlot) * size);
+    if (fuji_get_error())
+        return false;
     
-    return bus_error(OP_FUJI) == BUS_SUCCESS;
+    return fuji_get_response((uint8_t *)d, sizeof(DeviceSlot) * size);
 }

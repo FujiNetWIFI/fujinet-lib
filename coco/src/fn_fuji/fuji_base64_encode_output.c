@@ -18,7 +18,8 @@ bool fuji_base64_encode_output(char *s, uint16_t len)
     bus_ready();
 
     dwwrite((uint8_t *)&beo, sizeof(beo));
-    fuji_get_response((uint8_t *)s, len);
+    if (fuji_get_error())
+        return false;
     
-    return bus_error(OP_FUJI) == BUS_SUCCESS;
+    return fuji_get_response((uint8_t *)s, len);
 }

@@ -24,5 +24,5 @@ uint8_t network_close(const char* devicespec)
 
     dwwrite((uint8_t *)&nc, sizeof(nc));
     
-    return bus_error(OP_NET);
+    return network_get_error(nc.unit);
 }

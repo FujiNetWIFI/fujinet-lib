@@ -22,5 +22,5 @@ bool fuji_mount_disk_image(uint8_t ds, uint8_t mode)
     bus_ready();
     dwwrite((uint8_t *)&mdi, sizeof(mdi));
     
-    return bus_error(OP_FUJI) == BUS_SUCCESS;
+    return !fuji_get_error();
 }

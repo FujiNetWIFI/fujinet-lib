@@ -21,5 +21,5 @@ bool fuji_hash_input(char *s, uint16_t len)
     dwwrite((uint8_t *)&hi, sizeof(hi));
     dwwrite((uint8_t *)s, len);
     
-    return bus_error(OP_FUJI) == BUS_SUCCESS;
+    return !fuji_get_error();
 }

@@ -24,5 +24,5 @@ uint8_t network_write(const char* devicespec, const uint8_t *buf, uint16_t len)
     dwwrite((uint8_t *)&w,sizeof(w));
     dwwrite((uint8_t *)buf, len);
     
-    return bus_error(OP_NET) == BUS_SUCCESS;
+    return network_get_error(w.unit);
 }
