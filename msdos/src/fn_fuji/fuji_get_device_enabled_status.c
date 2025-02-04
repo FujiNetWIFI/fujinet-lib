@@ -4,5 +4,6 @@
 
 bool fuji_get_device_enabled_status(uint8_t d)
 {
-	return true;
+    // Not implemented
+    return true;
 }

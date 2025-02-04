@@ -4,5 +4,6 @@
 
 bool fuji_status(FNStatus *status)
 {
-	return true;
+    // Not used at the moment.
+    return true;
 }
