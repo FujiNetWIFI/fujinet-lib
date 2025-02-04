@@ -4,5 +4,6 @@
 
 bool fuji_set_status(void)
 {
+    // not implemented
 	return true;
 }

@@ -4,5 +4,6 @@
 
 bool fuji_set_sio_external_clock(uint16_t rate)
 {
-	return true;
+    // Not implemented
+    return true;
 }

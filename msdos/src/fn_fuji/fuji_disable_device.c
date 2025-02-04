@@ -4,5 +4,6 @@
 
 bool fuji_disable_device(uint8_t d)
 {
-	return true;
+    // Not implemented
+    return true;
 }
