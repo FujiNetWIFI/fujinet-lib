@@ -234,6 +234,8 @@ endif
 else ifeq ($(CC),zcc)
 	$(AR) -x$@.lib $(OBJECTS)
 	mv -v $@.lib $@
+else ifeq ($(CC),wcc)
+	$(AR) -q $@ $(OBJECTS)
 else
 	$(AR) $@ -a $(OBJECTS)
 endif
