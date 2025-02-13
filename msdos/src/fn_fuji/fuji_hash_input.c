@@ -5,5 +5,5 @@
 
 bool fuji_hash_input(char *s, uint16_t len)
 {
-    return int_f5_ah_80(0x70,0xC8,len&0xFF,len>>8,s,len) == 'C';
+    return int_f5_write(0x70,0xC8,len&0xFF,len>>8,s,len) == 'C';
 }

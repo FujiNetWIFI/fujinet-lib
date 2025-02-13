@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "fujinet-fuji.h"
+#include "fujinet-fuji-msdos.h"
 
 bool fuji_open_directory2(uint8_t hs, char *path, char *filter)
 {

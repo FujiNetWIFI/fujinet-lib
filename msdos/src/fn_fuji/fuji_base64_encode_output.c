@@ -5,5 +5,5 @@
 
 bool fuji_base64_encode_output(char *s, uint16_t len)
 {
-    return int_f5_ah_40(0x70,0xCD,len&0xFF,len>>8,s,len) == 'C';
+    return int_f5_read(0x70,0xCD,len&0xFF,len>>8,s,len) == 'C';
 }

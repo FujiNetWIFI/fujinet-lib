@@ -29,3 +29,4 @@ bool fuji_hash_calculate(hash_alg_t hash_type, bool as_hex, bool discard_data, u
 
 	return is_success;
 }
+

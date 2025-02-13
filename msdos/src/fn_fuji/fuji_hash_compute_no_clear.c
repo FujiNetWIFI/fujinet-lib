@@ -5,5 +5,5 @@
 
 bool fuji_hash_compute_no_clear(uint8_t type)
 {
-    return int_f5_ah_00(0x70,0xC3,type,0x00) == 'C';
+    return int_f5(0x70,0xC3,type,0x00) == 'C';
 }

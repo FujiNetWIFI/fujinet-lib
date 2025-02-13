@@ -5,5 +5,5 @@
 
 bool fuji_base64_encode_compute(void)
 {
-    return int_f5_ah_00(0x70,0xCF,0x00,0x00) == 'C';
+    return int_f5(0x70,0xCF,0x00,0x00) == 'C';
 }

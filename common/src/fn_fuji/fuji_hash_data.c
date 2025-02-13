@@ -29,3 +29,4 @@ bool fuji_hash_data(hash_alg_t hash_type, uint8_t *input, uint16_t length, bool 
 
 	return is_success;
 }
+

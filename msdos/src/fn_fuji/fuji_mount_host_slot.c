@@ -5,5 +5,5 @@
 
 bool fuji_mount_host_slot(uint8_t hs)
 {
-    return int_f5_ah_00(0x70,0xF9,hs,0x00) == 'C';
+    return int_f5(0x70,0xF9,hs,0x00) == 'C';
 }

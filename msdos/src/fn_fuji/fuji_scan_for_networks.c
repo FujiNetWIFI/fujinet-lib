@@ -5,5 +5,5 @@
 
 bool fuji_scan_for_networks(uint8_t *count)
 {
-    return int_f5_ah_40(0x70,0xFD,0x00,0x00,count,1) == 'C';
+    return int_f5_read(0x70,0xFD,0x00,0x00,count,1) == 'C';
 }

@@ -5,5 +5,5 @@
 
 bool fuji_set_directory_position(uint16_t pos)
 {
-    return int_f5_ah_00(0x70,0xE4,pos&0xFF,pos>>8) == 'C';
+    return int_f5(0x70,0xE4,pos&0xFF,pos>>8) == 'C';
 }

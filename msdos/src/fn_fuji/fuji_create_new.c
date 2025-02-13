@@ -6,5 +6,5 @@
 bool fuji_create_new(NewDisk *new_disk)
 {
     // FIXME: come back here when we have a ready.
-    return int_f5_ah_80(0x70,0xE7,0x00,0x00,new_disk,sizeof(new_disk)) == 'C';
+    return int_f5_write(0x70,0xE7,0x00,0x00,new_disk,sizeof(new_disk)) == 'C';
 }
