@@ -221,8 +221,7 @@ typedef struct
 #ifdef __PMD85__
 typedef struct
 {
-    uint16_t numSectors;
-    uint16_t sectorSize;
+    uint8_t numDisks;
     uint8_t hostSlot;
     uint8_t deviceSlot;
     char filename[256];

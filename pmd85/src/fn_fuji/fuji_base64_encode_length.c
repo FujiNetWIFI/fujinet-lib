@@ -1,0 +1,23 @@
+#include "fujinet-fuji.h"
+#include <dw.h>
+#include <fujinet-fuji-pmd85.h>
+
+bool fuji_base64_encode_length(unsigned long *len)
+{
+    struct _bel
+    {
+        uint8_t opcode;
+        uint8_t cmd;
+    } bel;
+
+    bel.opcode = OP_FUJI;
+    bel.cmd = FUJICMD_BASE64_ENCODE_LENGTH;
+
+    bus_ready();
+
+    dwwrite((uint8_t *)&bel, sizeof(bel));
+    if (fuji_get_error())
+        return false;
+
+    return fuji_get_response((uint8_t *)len, sizeof(unsigned long));
+}

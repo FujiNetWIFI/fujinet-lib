@@ -1,0 +1,3 @@
+defc    BECKERBASE   = 0x3E
+defc    BECKERSTATUS = BECKERBASE
+defc    BECKERDATA   = (1 + BECKERBASE)
