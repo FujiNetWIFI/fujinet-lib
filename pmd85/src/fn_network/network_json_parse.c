@@ -16,12 +16,18 @@ uint8_t network_json_parse(const char *devicespec)
 
     jp.opcode = OP_NET;
     jp.unit = network_unit(devicespec);
+    jp.cmd = 0xFC;  // CMD_SET_CHANNEL_MODE;
+    jp.aux1 = 1;    // CHANNELMODE_JSON
+    jp.aux2 = 0;
+
+    bus_ready();    
+    dwwrite((uint8_t *)&jp, sizeof(jp));
+
     jp.cmd = 'P';
     jp.aux1 = jp.aux2 = 0;
 
     bus_ready();
     dwwrite((uint8_t *)&jp, sizeof(jp));
-    bus_ready(); // we want to be sure parse completes.
 
     return network_get_error(jp.unit);
 }
