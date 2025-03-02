@@ -31,8 +31,8 @@ int16_t network_json_query(const char *devicespec, const char *query, char *s)
 
     network_status(devicespec, &bw, &c, &err);
 
-    if (bw)
-	    network_get_response(unit, (uint8_t *)s, bw);
-    
-    return network_get_error(unit);
+    if (!bw)
+        return 0;
+
+    return network_read(devicespec, (uint8_t *)s, bw);
 }
