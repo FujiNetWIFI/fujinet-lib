@@ -1,46 +1,38 @@
         .export     _fuji_read_directory_block
-        .import     _copy_fuji_cmd_data, popa, _bus
+
+        .import     _bus
+        .import     _copy_fuji_cmd_data
+        .import     _fuji_success
+
+        .import     popa
 
         .include    "zp.inc"
         .include    "macros.inc"
         .include    "device.inc"
 
-; void *fuji_read_directory_block(uint8_t maxlen, uint8_t pages, uint8_t extended_mode, void *buffer)
+; void *fuji_read_directory_block(uint8_t ram_pages, uint8_t group_size, void *buffer)
 ;
-; pages is number of 256 blocks to request
+; group_size is the number of files/dirs per PageGroup to allow client to cache efficiently
+; ram_pages is number of 256 blocks to request.
 ; trashes tmp7-tmp10
 .proc _fuji_read_directory_block
-        axinto  tmp7    ; 7/8 = buffer location
+        axinto  tmp7    ; 7/8 = tmp buffer location to receive data
 
         ; setup DCB basic data
         setax   #t_fuji_read_directory_block
         jsr     _copy_fuji_cmd_data
         mwa     tmp7, IO_DCB::dbuflo
 
-        popa    tmp10   ; extended mode, 1 = on, 0 = off
-        
-        jsr     popa    ; pages
-        sta     IO_DCB::dbythi    ; pages to expect back 
+        jsr     popa            ; group_size (i.e. files per page group), valid numbers $00-$3F (0-63), although 0 would be pretty bad
+        ora     #$C0            ; mark this as block read
+        sta     IO_DCB::daux2
 
-        sec
-        sbc     #$01    ; force into 0-7 range (from 1-8 from caller) to fit into 3 bits
-        ora     #$C0    ; force bits 7&8 to mark this as block mode
-
-        ; A = (PAGES | 0xC0) + if extended ? 0x20 : 0
-        ldx     tmp10
-        beq     :+      ; not extended
-
-        ; Add extended mode flag
-        ora     #$20    ; set the extended mode flag        
-
-:       sta     IO_DCB::daux2   ; pages | 0xC0 | 0x20 if extended dir info requested
-
-        jsr     popa            ; maxlen
-        sta     IO_DCB::daux1   ; save in aux1
+        jsr     popa            ; ram_pages count (number of 256 byte pages to use)
+        sta     IO_DCB::dbythi  ; pages to expect back 
+        sta     IO_DCB::daux1   ; also set in aux1 for firmware to use as buffer size
 
         jsr     _bus
-        setax   tmp7
-        rts
+        jmp     _fuji_success
 
 .endproc
 

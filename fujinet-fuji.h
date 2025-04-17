@@ -436,6 +436,13 @@ bool fuji_put_host_slots(HostSlot *h, size_t size);
 bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer);
 
 /**
+ * @brief Fill buffer with blocks of directory information.
+ * @return success status of request
+ * TODO: add full data structure here for people to read.
+ */
+bool fuji_read_directory_block(uint8_t ram_pages, uint8_t group_size, void *buffer);
+
+/**
  * @brief Reset FN
  * @return true if successful, false if there was an error from FN
  */

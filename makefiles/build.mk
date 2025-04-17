@@ -18,7 +18,7 @@ BUILD_DIR := build
 OBJDIR := obj
 DIST_DIR := dist
 
-# This allows src to be nested withing sub-directories.
+# This allows src to be nested within sub-directories.
 rwildcard=$(wildcard $(1)$(2))$(foreach d,$(wildcard $1*), $(call rwildcard,$d/,$2))
 
 PLATFORM_SRC_DIR := $(CURRENT_PLATFORM)/$(SRCDIR)
