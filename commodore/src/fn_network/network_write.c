@@ -3,7 +3,7 @@
 #include "fujinet-network.h"
 #include "fujinet-network-cbm.h"
 
-uint8_t network_write(char* devicespec, uint8_t *buf, uint16_t len)
+uint8_t network_write(const char *devicespec, const uint8_t *buf, uint16_t len)
 {
 	const char *after;
 	uint8_t data_channel;

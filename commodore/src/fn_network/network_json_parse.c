@@ -6,7 +6,7 @@
 uint8_t *cmd_mode = "chmode,N,json";
 uint8_t *cmd_parse = "jsonparse,N"; 
 
-uint8_t network_json_parse(char *devicespec)
+uint8_t network_json_parse(const char *devicespec)
 {
 	// for CBM, we need to set the channel mode to json, then send "JSONPARSE" command with the appropriate channel id for devicespec
 	const char *after;

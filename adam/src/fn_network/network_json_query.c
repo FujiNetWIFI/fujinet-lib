@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include "fujinet-network.h"
 
-int16_t network_json_query(char *devicespec, char *query, char *s)
+int16_t network_json_query(const char *devicespec, const char *query, char *s)
 {
 	return 0;
 }

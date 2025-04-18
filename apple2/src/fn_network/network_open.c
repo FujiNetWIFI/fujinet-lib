@@ -3,7 +3,7 @@
 #include "fujinet-network.h"
 #include "fujinet-bus-apple2.h"
 
-uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans) {
+uint8_t network_open(const char* devicespec, uint8_t mode, uint8_t trans) {
 	uint8_t nw_device;
 	uint16_t slen;
 	uint16_t payload_len;

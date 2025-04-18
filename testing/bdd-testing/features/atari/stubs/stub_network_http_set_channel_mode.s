@@ -6,7 +6,7 @@
         .include    "zp.inc"
         .include    "macros.inc"
 
-; uint8_t network_http_set_channel_mode(char* devicespec, uint8_t mode);
+; uint8_t network_http_set_channel_mode(const char* devicespec, uint8_t mode);
 _network_http_set_channel_mode:
         sta     t_mode
         popax   t_ds

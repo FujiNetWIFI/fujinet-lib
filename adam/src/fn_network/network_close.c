@@ -3,7 +3,7 @@
 #include <eos.h>
 #include "fujinet-network.h"
 
-uint8_t network_close(char* devicespec)
+uint8_t network_close(const char* devicespec)
 {
     unsigned char u = network_unit_adamnet(devicespec);
 

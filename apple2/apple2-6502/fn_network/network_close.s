@@ -10,7 +10,7 @@
         .import     _sp_nw_unit
         .import     pusha
 
-; uint8_t network_close(char* devicespec);
+; uint8_t network_close(const char* devicespec);
 ;
 ; returns 0 for ok, error code from control call for anything else.
 ; returns 1 if the sp_network isn't set, e.g. calling before calling _network_open.

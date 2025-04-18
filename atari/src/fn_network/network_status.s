@@ -14,7 +14,7 @@
         .include    "macros.inc"
         .include    "zp.inc"
 
-; uint8_t network_status(char *devicespec, uint16_t *bw, uint8_t *c, uint8_t *err);
+; uint8_t network_status(const char *devicespec, uint16_t *bw, uint8_t *c, uint8_t *err);
 ;
 ; Return will be either FN_ERR_OK, or FN_ERR_IO_ERROR.
 ; Actual device error is stored in err

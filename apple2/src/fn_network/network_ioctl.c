@@ -8,14 +8,14 @@
 extern uint8_t __argsize__;
 extern uint8_t bad_unit(void);
 
-// uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, char* devicespec, int16_t use_aux, void *buffer, uint16_t len);
+// uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char* devicespec, int16_t use_aux, void *buffer, uint16_t len);
 //
 // if use_aux is true (1), we put aux1/2 into payload[2,3], and any buffer will copy len bytes - 2 after it to payload[4+].
 // if use_aux is false, copy buffer to payload[2+]
 // if buffer is NULL, no copying ever done from buffer
 // len is set at payload[0,1]
 
-uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, char* devicespec, ...) {
+uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char* devicespec, ...) {
     va_list args;
 	uint8_t nw_device;
     uint16_t len;

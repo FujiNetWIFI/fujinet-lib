@@ -11,7 +11,7 @@
  * @param trans Translation mode 0 = none ...
  * @return FN_error code.
  */
-uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans)
+uint8_t network_open(const char* devicespec, uint8_t mode, uint8_t trans)
 {
     struct _o
     {

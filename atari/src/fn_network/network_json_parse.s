@@ -11,7 +11,7 @@
         .include    "macros.inc"
         .include    "zp.inc"
 
-; uint8_t network_json_parse(char *devicespec);
+; uint8_t network_json_parse(const char *devicespec);
 ;
 .proc _network_json_parse
         axinto  ptr1            ; devicespec

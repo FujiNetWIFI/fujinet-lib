@@ -6,7 +6,7 @@
         .include    "zp.inc"
         .include    "macros.inc"
 
-; uint8_t network_write(char* devicespec, uint8_t *buf, uint16_t len)
+; uint8_t network_write(const char *devicespec, const uint8_t *buf, uint16_t len)
 _network_write:
         axinto  t_len
         popax   t_buf
