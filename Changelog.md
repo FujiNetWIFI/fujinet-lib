@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- [apple2] fix sp_init.s not finding SmartPort device with FujiNet device on it.
+
 ## [4.7.4] - 2024-11-13
 
 - [coco] fix data size for host/device slots when pushing back to FN
