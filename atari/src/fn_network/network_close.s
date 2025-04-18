@@ -11,7 +11,7 @@
         .include    "zp.inc"
         .include    "macros.inc"
 
-; uint8_t network_close(char* devicespec)
+; uint8_t network_close(const char* devicespec)
 .proc _network_close
         ldy     #$00
         sty     _fn_device_error

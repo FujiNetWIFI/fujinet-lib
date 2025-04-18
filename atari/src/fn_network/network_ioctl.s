@@ -13,10 +13,10 @@
         .include    "device.inc"
         .include    "macros.inc"
 
-; uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, char* devicespec, ...);
+; uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char* devicespec, ...);
 ;
 ; for atari this must always be called with:
-; uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, char* devicespec, [uint8_t dstats, uint16_t dbuf, uint16_t dbyt]);
+; uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char* devicespec, [uint8_t dstats, uint16_t dbuf, uint16_t dbyt]);
 ;
 ; CC65 uses 2 bytes for every variadic parameter, even if they are uint8_t (from cl65 output), so each param
 ; should be done with popax.

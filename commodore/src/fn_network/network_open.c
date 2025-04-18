@@ -7,7 +7,7 @@
 
 uint8_t cmd_channel_open[2] = { 0x01, 0x00 };
 
-uint8_t network_open(char* devicespec, uint8_t mode, uint8_t trans)
+uint8_t network_open(const char* devicespec, uint8_t mode, uint8_t trans)
 {
 	uint8_t device_number;
 	uint8_t data_channel;

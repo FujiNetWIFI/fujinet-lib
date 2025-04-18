@@ -6,7 +6,7 @@
 uint8_t *nw_status_cmd = "statusb,N";
 
 // we only really need the device id, not the full devicespec in all network_status calls.
-uint8_t network_status(char *devicespec, uint16_t *bw, uint8_t *c, uint8_t *err)
+uint8_t network_status(const char *devicespec, uint16_t *bw, uint8_t *c, uint8_t *err)
 {
 	// if we do a read on the nw_status_cmd channel, we get the status for the specified devicespec, but we have to tell FN which device we want the status for first
 	const char *after;

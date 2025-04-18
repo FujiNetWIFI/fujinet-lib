@@ -5,7 +5,7 @@
 
 extern uint8_t bad_unit(void);
 
-int16_t network_json_query(char *devicespec, char *query, char *s) {
+int16_t network_json_query(const char *devicespec, const char *query, char *s) {
 	uint8_t err = 0;
 	uint16_t query_len = 0;
 	uint16_t read_len = 0;

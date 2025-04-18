@@ -22,7 +22,7 @@
         .include    "macros.inc"
         .include    "zp.inc"
 
-; int16_t network_json_query(char *devicespec, char *query, char *s);
+; int16_t network_json_query(const char *devicespec, const char *query, char *s);
 ;
 ; TODO: how do we deal with very large json results? Maybe interface with network_read, which can handle them.
 ; Or does sio_read work with any max size?

@@ -3,7 +3,7 @@
 #include "fujinet-network.h"
 #include "fujinet-network-cbm.h"
 
-uint8_t network_close(char* devicespec)
+uint8_t network_close(const char* devicespec)
 {
 	uint8_t device_number;
 	const char *after;

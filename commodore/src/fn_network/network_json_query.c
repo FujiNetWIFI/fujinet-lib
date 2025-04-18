@@ -7,7 +7,7 @@
 
 uint8_t *jq_cmd = "jq,N,";
 
-int16_t network_json_query(char *devicespec, char *query, char *s)
+int16_t network_json_query(const char *devicespec, const char *query, char *s)
 {
 	// for CBM, we just send the "JQ" command with the appropriate channel id for devicespec, and add the query on the end
 	const char *after;

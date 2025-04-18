@@ -5,7 +5,7 @@
 
 extern uint8_t bad_unit(void);
 
-uint8_t network_json_parse(char *devicespec) {
+uint8_t network_json_parse(const char *devicespec) {
 	uint8_t err = 0;
 
 	fn_device_error = 0;

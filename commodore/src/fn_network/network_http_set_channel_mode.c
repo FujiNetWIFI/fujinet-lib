@@ -6,7 +6,7 @@
 
 uint8_t *scm_cmd = "M,c,0,m";
 
-uint8_t network_http_set_channel_mode(char *devicespec, uint8_t mode)
+uint8_t network_http_set_channel_mode(const char *devicespec, uint8_t mode)
 {
 	// send "M,<channel>,0,<mode>"
 	const char *after;

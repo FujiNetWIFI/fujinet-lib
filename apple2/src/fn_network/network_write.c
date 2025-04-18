@@ -9,7 +9,7 @@ extern uint8_t bad_unit(void);
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
-uint8_t network_write(char* devicespec, uint8_t *buf, uint16_t len) {
+uint8_t network_write(const char *devicespec, const uint8_t *buf, uint16_t len) {
 	uint16_t buf_len = 0;
 	uint16_t sent_len = 0;
 	uint8_t err;
