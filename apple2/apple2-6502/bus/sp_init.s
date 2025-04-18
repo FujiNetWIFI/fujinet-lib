@@ -72,9 +72,7 @@ check_network:
         lda     #$01
         sta     _sp_is_init
         
-        ; store ptr1, and X while we go do stuff
-        lda     ptr1
-        pha
+        ; store ptr1 high byte, and X while we go do stuff.
         lda     ptr1+1
         pha
 .if (.cpu .bitand ::CPU_ISET_65SC02)
@@ -84,7 +82,7 @@ check_network:
         pha
 .endif
         jsr     _sp_get_network_id
-
+        ; Z flag set if it's not found
         bne     found_network
 
         ; failed to find a network device on this card, try the next one
@@ -97,14 +95,14 @@ check_network:
 .endif
         pla
         sta     ptr1+1
-        pla
-        sta     ptr1
 
 .if (.cpu .bitand ::CPU_ISET_65SC02)
         stz     _sp_is_init
+        stz     ptr1                    ; reset the low byte for ptr1 so the next loop reads from correct address
 .else
         lda     #$00
         sta     _sp_is_init
+        sta     ptr1                    ; reset the low byte for ptr1 so the next loop reads from correct address
 .endif
 
 no_match:
@@ -124,10 +122,8 @@ found_network:
 .if (.cpu .bitand ::CPU_ISET_65SC02)
         plx
         plx
-        plx
 .else
-        tax             ; save the A value, remove 3 values from stack, then restore A
-        pla
+        tax             ; save the A value, remove 2 values from stack, then restore A
         pla
         pla
         txa

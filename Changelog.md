@@ -2,6 +2,28 @@
 
 ## [Unreleased]
 
+## [4.7.5] - 2025-04-18
+
+- [apple2] fix sp_init.s not checking all SP devices (HEAD -> main) [Mark Fisher]
+- [coco] fix network_json_parse and network_json_query (upstream/main) [Jan Krupa]
+- [pmd85] fix network_json_parse and network_json_query [Jan Krupa]
+- [pmd85] forgotten network_read_nb() [Jan Krupa]
+- [pmd85] add fuji_ and network_ functions for pmd85 target [Jan Krupa]
+- Const needed in function declaration for network_http_set_channel_mode [Brad Colbert]
+- [msdos] match changes upstream in INT F5 (register changes) [Thomas Cherryhomes]
+- [msdos] first pass of fuji part of fn-lib. [Thomas Cherryhomes]
+- [msdos] fix build.mk for more of watcom's watcomisms. [Thomas Cherryhomes]
+- [msdos] include. [Thomas Cherryhomes]
+- [msdos][fuji] base64_decode_compute [Thomas Cherryhomes]
+- [msdos] add bus methods that talk via INT F5 [Thomas Cherryhomes]
+- [apple2gs] Fix sp_control param count issue [Eric Le Bras]
+- [coco] update error processing [Jan Krupa]
+- [coco] fix compile errors, add missing "const" [Jan Krupa]
+- Added 'const' to input parameter pointers. [Oliver Schmidt]
+- [coco] update *_get_response functions [Jan Krupa]
+- introduce zcc and pmd85 into makefiles [Jan Krupa]
+- [apple2gs] optimize all bus and fn_clock calls to asm [Eric Le Bras]
+
 ## [4.7.4] - 2024-11-13
 
 - [coco] fix data size for host/device slots when pushing back to FN
