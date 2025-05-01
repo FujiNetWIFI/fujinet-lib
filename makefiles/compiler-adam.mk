@@ -1,6 +1,6 @@
 CC        := zcc
 AR        := z80asm
-CFLAGS    := +$(CURRENT_TARGET)
+CFLAGS    := +coleco -subtype=adam
 # ASFLAGS   :=
 ASMEXT    := .asm
 

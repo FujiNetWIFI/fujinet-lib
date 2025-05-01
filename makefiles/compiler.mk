@@ -16,6 +16,10 @@ else ifeq ($(CURRENT_TARGET),msdos)
 
 -include makefiles/compiler-msdos.mk
 
+else ifeq ($(CURRENT_TARGET),adam)
+
+-include makefiles/compiler-adam.mk
+
 else
 
 -include makefiles/compiler-cc65.mk

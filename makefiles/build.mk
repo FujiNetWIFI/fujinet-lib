@@ -174,7 +174,7 @@ else ifeq ($(CC),wcc)
 else ifeq ($(CC),iix compile)
 	$(CC) $(CFLAGS) $< keep=$(subst .root,,$@)
 else ifeq ($(CC),zcc)
-	$(CC) +$(CURRENT_TARGET) -c $(CFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) -o $@ $<
 else
 	$(CC) -c --deps $(CFLAGS) -o $@ $<
 endif
@@ -186,7 +186,7 @@ ifeq ($(CC),cl65)
 else ifeq ($(CC),iix compile)
 	$(CC) $(CFLAGS) $< keep=$(subst .root,,$@)
 else ifeq ($(CC),zcc)
-	$(CC) +$(CURRENT_TARGET) -c $(CFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) -o $@ $<
 else ifeq ($(CC),wcc)
 	$(CC) $(CFLAGS) -fo=$@ $<
 else

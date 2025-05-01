@@ -30,7 +30,7 @@ uint8_t network_status(const char *devicespec, uint16_t *bw, uint8_t *c, uint8_t
         *bw = ns.bw;
 
     if (c)
-        *c = ns.c;
+        *c = ns.connected;
 
     if (err)
         *err = ns.err;

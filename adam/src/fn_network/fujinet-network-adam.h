@@ -9,6 +9,9 @@
 #ifndef FUJINET_NETWORK_ADAM_H
 #define FUJINET_NETWORK_ADAM_H
 
+#include <stdint.h>
+#include <eos.h>
+
 /**
  * @brief total # of network devices defined by firmware
  */
