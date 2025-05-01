@@ -14,7 +14,7 @@ uint8_t network_unit_adamnet(char *devicespec)
 {
     uint8_t u=0;
     
-    if (!u = network_unit(devicespec))
+    if (!(u = network_unit(devicespec)))
         return 0;
     else
     {
