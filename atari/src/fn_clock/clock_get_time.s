@@ -3,6 +3,7 @@
         .import         _bus
         .import         _fuji_success
 
+        .import         incsp2
         .import         popax
         .import         return0
 
@@ -14,10 +15,11 @@
 ; uint8_t clock_get_time(uint8_t* time_data, TimeFormat format);
 _clock_get_time:
         tay
-        cpy     #$06                            ; was the format value in range?
+        cpy     #$06                    ; was the format value in range?
         bcc     ok
 
         ; return an error status
+        jsr     incsp2                  ; remove stack parameter
         jmp     return0
 
 ok:
