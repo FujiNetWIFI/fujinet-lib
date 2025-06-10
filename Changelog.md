@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [4.7.6] - 2025-06-12
+
+- [atari] fix software stack leak in clock_get_time when timeformat value is not valid [Mark Fisher]
+- [atari] add block reading for directories [Mark Fisher]
+
 ## [4.7.5] - 2025-04-18
 
 - [apple2] fix sp_init.s not checking all SP devices (HEAD -> main) [Mark Fisher]
