@@ -46,7 +46,7 @@ time_format     = *-1
         ; ensure the value is valid
         cpx     #$06
         bcs     error
-        pusha   tmp1
+        jsr     pusha
         lda     code_table, x
 
         jsr     _sp_status

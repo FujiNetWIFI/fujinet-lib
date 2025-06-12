@@ -3,6 +3,10 @@
         .export     _halt
 
         .import     _main
+        .import     __HIMEM__
+
+        .include    "zeropage.inc"
+
 
 .segment "STARTUP"
 start:
@@ -15,7 +19,13 @@ start:
         sta     $FFFF   ; INTERRUPT
         sta     $FFFB   ; NMI
 
-        ; setup stack pointer to something sensible
+        ; setup software stack pointer
+        lda     #<__HIMEM__
+        sta     sp
+        lda     #>__HIMEM__
+        sta     sp+1
+
+        ; setup 6502 stack pointer
         ldx     #$ff
         txs
 
@@ -28,10 +38,15 @@ start:
         ; call main
         jmp     _main
 
-
 _halt:
         .byte   $db         ; STP in 65c02 emulator
 
-; this will cause the emulator to set the address "init" to the "start" address, so you can use "run init"
+.segment "ONCE"
+        rts
+
+.segment "INIT"
+        rts
+
+; ensures V_RESET is defined, otherwise __V_RESET_LOAD__ isn't defined.
 .segment "V_RESET"
-        .word start
+        rts

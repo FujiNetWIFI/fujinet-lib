@@ -1,0 +1,45 @@
+marker $$testing fn_clock clock_get_time$$
+
+memory load apple "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// required for apple2, as there is no facility to load the system vector from the file directly.
+// this writes the start address to $FFFC so we can "run init"
+memory write $__V_RESET_LOAD__ $start
+
+run init until CP = $_main
+run $_main while CP != $t0
+
+registers set cycle_count = 0
+run while CP != $t0_end
+
+memory show $_sp_payload 0x20
+
+assert $output_buffer ~ 0x(00,01,02,03,04,05,06,00) $$t0: T format has 7 bytes$$
+
+run while CP != $t1
+registers set cycle_count = 0
+run while CP != $t1_end
+assert $output_buffer ~ 0x(10,11,12,13,00)          $$t1: Prodos format has 4 bytes$$
+
+// this will be deprecated
+run while CP != $t2
+registers set cycle_count = 0
+run while CP != $t2_end
+assert $output_buffer ~ 0x(20,21,22,23,24,25,00)    $$t2: Apetime TZ 0x9A$$
+
+run while CP != $t3
+registers set cycle_count = 0
+run while CP != $t3_end
+assert $output_buffer ~ 0x(30,31,32,33,34,35,00)    $$t3: Apetime Normal 0x93$$
+
+run while CP != $t4
+registers set cycle_count = 0
+run while CP != $t4_end
+assert $output_buffer ~ "YYYY-MM-DDTHH:MM:SS+HHMM\0"$$t4: ISO TZ 'S' (0x53)$$
+
+run while CP != $t5
+registers set cycle_count = 0
+run while CP != $t5_end
+assert $output_buffer ~ "2025-06-11T20:19:00+0100\0"$$t5: ISO ZULU 'Z' (0x5A)$$
+
