@@ -6,6 +6,7 @@
 
 - [atari] fix software stack leak in clock_get_time when timeformat value is not valid [Mark Fisher]
 - [atari] add block reading for directories [Mark Fisher]
+- [atari] align apetime functionality with original intent with optional alternate TZ for some applications
 
 ## [4.7.5] - 2025-04-18
 

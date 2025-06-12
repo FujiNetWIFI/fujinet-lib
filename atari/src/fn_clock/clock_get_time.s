@@ -1,7 +1,9 @@
         .export         _clock_get_time
+        .export         _clock_get_time_tz
 
         .import         _bus
         .import         _fuji_success
+        .import         _clock_set_alternate_tz
 
         .import         incsp2
         .import         popax
@@ -12,17 +14,40 @@
         .include        "macros.inc"
         .include        "zp.inc"
 
-; uint8_t clock_get_time(uint8_t* time_data, TimeFormat format);
-_clock_get_time:
-        tay
-        cpy     #$06                    ; was the format value in range?
-        bcc     ok
 
-        ; return an error status
-        jsr     incsp2                  ; remove stack parameter
+; either 2 or 4 bytes to increase sp4 by
+exit_bad_tz4:
+        jsr     incsp2
+
+exit_bad_tz2:
+        jsr     incsp2
         jmp     return0
 
-ok:
+
+; uint8_t clock_get_time_tz(uint8_t* time_data, const char* tz, TimeFormat format);
+_clock_get_time_tz:
+        cmp     #$06                    ; was the format value in range?
+        bcs     exit_bad_tz4            ; too large, exit and remove 2 pointers (4 bytes) from stack
+
+        ; save it while we deal with the TZ string
+        sta     tmp_format
+        ; first read tz from string given, and set it as the alternate TZ in fujinet.
+        jsr     popax
+        jsr     _clock_set_alternate_tz
+
+        ; an error, but we still have an arg on software stack
+        bne     exit_bad_tz2
+
+        ldy     tmp_format
+        bpl     common_tz               ; it's between 0 and 6 validated, so this will always branch
+
+; uint8_t clock_get_time(uint8_t* time_data, TimeFormat format);
+_clock_get_time:
+        tay                             ; time format enum
+        cpy     #$06                    ; was the format value in range?
+        bcs     exit_bad_tz2
+
+common_tz:
         lda     t_clock_get_time_cmd, y
         sta     IO_DCB::dcomnd
         lda     t_clock_get_time_len, y
@@ -44,6 +69,9 @@ ok:
         stx     IO_DCB::dtimlo
         jsr     _bus
         jmp     _fuji_success
+
+.bss
+tmp_format:     .res 1
 
 .rodata
 

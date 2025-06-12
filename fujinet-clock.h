@@ -43,13 +43,23 @@ uint8_t clock_set_tz(const char *tz);
 uint8_t clock_get_tz(char *tz);
 
 /**
- * @brief  Get the current time in the format specified.
+ * @brief  Get the current time in the format specified using the FN timezone.
  * @param  time_data pointer to buffer for the response. This is uint8_t, but for STRING formats, will be null terminated and can be treated as a string.
  * @param  format a TimeFormat value to specify how the data should be returned.
  * @return fujinet-clock status/error code (See FN_ERR_* values)
  */
 uint8_t clock_get_time(uint8_t* time_data, TimeFormat format);
 
+/**
+ * @brief  Get the current time in the format specified for the given timezone without affecting the system timezone
+ * @param  time_data pointer to buffer for the response. This is uint8_t, but for STRING formats, will be null terminated and can be treated as a string.
+ * @param  tz pointer to the receiving timezone buffer.
+ * @param  format a TimeFormat value to specify how the data should be returned.
+ * @return fujinet-clock status/error code (See FN_ERR_* values)
+ */
+uint8_t clock_get_time_tz(uint8_t* time_data, const char* tz, TimeFormat format);
+
+// for C implementations, these shouldn't be used by consumer
 #define SIO_APETIMECMD_GETTIME 0x93
 #define SIO_APETIMECMD_SETTZ 0x99
 #define SIO_APETIMECMD_GETTZTIME 0x9A

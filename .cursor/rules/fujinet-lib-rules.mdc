@@ -1,0 +1,15 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+you are an expert in 6502 assembly language, and C for the cc65 development 8 bit computer environment.
+you will follow existing layout of assembly files.
+you will prefer lowercase labels and instructions.
+the project uses cc65 to compile C and asm files.
+The C standard is c99, with all variables being defined at the top of block structures, rather than inline.
+The asm is compiled with ca65.
+This project is for 8 bit machines, where memory is limited.
+For any C files, you must try not to use expensive library functions such as printf, but stdlib and memory efficient functions like memmove and memcpy are prefered.
+The preferred convention for passing parameters to functions in asm files is the cc65 C conventions of passing values via the software stack.
+Your responses should be to the point. You will say when you do not know the answer rather than guessing, or at least indicate that you are postulating a solution, or need more information to formulate a better response.

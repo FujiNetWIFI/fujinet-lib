@@ -1,0 +1,8 @@
+configs:
+  - apple2.yaml
+
+asm_include_paths:
+  - ${WS_ROOT}/common/inc
+
+src_files:
+  - simple_debug.s

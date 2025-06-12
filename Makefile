@@ -8,7 +8,7 @@ TARGETS = adam atari c64 apple2 apple2enh apple2gs coco
 # TARGETS = msdos
 PROGRAM := fujinet.lib
 
-SUB_TASKS := clean disk test release
+SUB_TASKS := clean disk test release unit-test
 .PHONY: all help $(SUB_TASKS)
 
 all:
@@ -32,3 +32,4 @@ help:
 	@echo "all       - do all compilation tasks, create app in build directory"
 	@echo "clean     - remove all build artifacts"
 	@echo "release   - create a release of the executable in the dist/ dir"
+	@echo "unit-test - run unit tests"
