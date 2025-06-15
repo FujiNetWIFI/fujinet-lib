@@ -11,11 +11,13 @@
 .export t4_end
 .export t5
 .export t5_end
+.export t6
+.export t6_end
 .export output_buffer
 
 .export _bus
 .export _clock_set_alternate_tz
-.export _fuji_success
+.export _fn_error
 
 .import _clock_get_time
 
@@ -69,6 +71,12 @@ t4_end:
 t5:
         jsr     _clock_get_time
 t5_end:
+
+        lda     #$ff              ; invalid time format, should be 0-6
+t6:
+        jsr     _clock_get_time
+t6_end:
+
         rts
 
 ; mocks
@@ -89,7 +97,7 @@ _bus:
         sta     (ptr2), y
         rts
 
-_fuji_success:
+_fn_error:
         rts
 
 _clock_set_alternate_tz:
@@ -104,6 +112,6 @@ output_buffer:  .res 31
 clock0:         .byte $00, $01, $02, $03, $04, $05, $06
 clock1:         .byte $10, $11, $12, $13
 clock2:         .byte $20, $21, $22, $23, $24, $25
-clock3:         .byte $30, $31, $32, $33, $34, $35
-clock4:         .byte "YYYY-MM-DDTHH:MM:SS+HHMM", 0
-clock5:         .byte "2025-06-11T20:19:00+0100", 0
+clock3:         .byte "YYYY-MM-DDTHH:MM:SS+HHMM", 0
+clock4:         .byte "2025-06-11T20:19:00+0100", 0
+clock5:         .byte "YYYYMMDD0HHMMSS000", 0

@@ -8,7 +8,7 @@
 
 .export _bus
 .export _clock_set_alternate_tz
-.export _fuji_success
+.export _fn_error
 
 .import _clock_get_time_tz
 
@@ -49,14 +49,15 @@ _bus:
         sta     (ptr2), y
         rts
 
-_fuji_success:
+_fn_error:
+        lda     #$00
         rts
 
 ; capture what this was called with
 _clock_set_alternate_tz:
         axinto  alt_tz_called_with_ptr
         mva     #$01, set_alt_tz_called
-        lda     #$00
+        lda     #$00 ; FN_ERR_OK
         rts
 
 .bss

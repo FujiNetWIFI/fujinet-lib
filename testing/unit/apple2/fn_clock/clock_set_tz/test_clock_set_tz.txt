@@ -1,0 +1,32 @@
+marker $$testing fn_clock clock_set_tz and clock_set_alternate_tz$$
+
+memory load apple "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+run init until CP = $_main
+run $_main while CP != $t0
+
+registers set cycle_count = 0
+run while CP != $t0_end
+
+memory show $_sp_payload 0x010
+
+assert $sp_control_called = 0x01        $$t0: sp_control was called$$
+assert $spc_arg1 = 0x01                 $$t0: sp_control arg1 = 0x01 (device id)$$
+assert $spc_arg2 = 0x54                 $$t0: sp_control arg2 = 0x54 ('T' for set FN TZ)$$
+
+assert $_sp_payload ~ 0x(06,00)         $$t0: sp_payload byte count is 6$$
+assert $_sp_payload+2 ~ "UTC+1\0"       $$t0: sp_payload sent TZ$$
+
+run while CP != $t1
+registers set cycle_count = 0
+run while CP != $t1_end
+
+memory show $_sp_payload 0x010
+
+assert $sp_control_called = 0x01        $$t1: sp_control was called$$
+assert $spc_arg1 = 0x01                 $$t1: sp_control arg1 = 0x01 (device id)$$
+assert $spc_arg2 = 0x74                 $$t1: sp_control arg2 = 0x74 ('t' for set alternate TZ)$$
+
+assert $_sp_payload ~ 0x(06,00)         $$t1: sp_payload byte count is 6$$
+assert $_sp_payload+2 ~ "UTC+2\0"       $$t1: sp_payload sent TZ$$

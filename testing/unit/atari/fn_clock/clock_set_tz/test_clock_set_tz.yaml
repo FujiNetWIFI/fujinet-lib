@@ -1,0 +1,10 @@
+name: test fn_clock clock_set_tz
+
+configs:
+  - ${UNIT_TEST_DIR}/base_configs/base_test_atari.yaml
+
+src_files:
+  - ${WS_ROOT}/atari/src/fn_clock/clock_set_tz.s
+  - test_clock_set_tz.s
+
+test_script: test_clock_set_tz.txt

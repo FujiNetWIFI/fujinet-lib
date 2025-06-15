@@ -1,0 +1,22 @@
+marker $$testing fn_clock clock_get_time_tz$$
+
+memory load apple "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// required for apple2, as there is no facility to load the system vector from the file directly.
+// this writes the start address to $FFFC so we can "run init"
+memory write $__V_RESET_LOAD__ $start
+
+run init until CP = $_main
+run $_main while CP != $t0
+
+registers set cycle_count = 0
+run while CP != $t0_end
+
+// check we sent the alternate tz data to fujinet first
+assert $set_alt_tz_called = 0x01                    $$t0: alternate tz was set$$
+assert $alt_tz_called_with_ptr -> $tz0              $$t0: timezone string was used setting alt tz$$
+
+// memory show $_sp_payload 0x20
+assert $output_buffer ~ 0x(00,01,02,03,04,05,06,00) $$t0: T format has 7 bytes$$
+assert A = 0                                        $$t0: success return$$

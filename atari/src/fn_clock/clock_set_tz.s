@@ -1,26 +1,26 @@
-        .export         _clock_set_apetime_tz
         .export         _clock_set_tz
+        .export         _clock_set_alternate_tz
 
         .import         _bus
-        .import         _fuji_success
+        .import         _fn_error
         .import         _strlen
 
         .import         popax
 
         .include        "device.inc"
-        .include        "fujinet-clock.inc"
         .include        "macros.inc"
         .include        "zp.inc"
+        .include        "clock.inc"
 
 
-; uint8_t clock_set_alternate_tz(char *tz);
+; uint8_t clock_set_alternate_tz(const char *tz);
 _clock_set_alternate_tz:
         ; for backwards compatibility, this is the same as the old "APETIME" settz
         ldy     #SIO_APETIMECMD_SETTZ
         sty     IO_DCB::dcomnd
         bne     _clock_set_tz_common
 
-; uint8_t clock_set_tz(char *tz);
+; uint8_t clock_set_tz(const char *tz);
 _clock_set_tz:
         ldy     #'t'
         sty     IO_DCB::dcomnd
@@ -50,4 +50,5 @@ _clock_set_tz_common:
         inx                             ; x = 2
         stx     IO_DCB::dtimlo
         jsr     _bus
-        jmp     _fuji_success
+        lda     IO_DCB::dstats
+        jmp     _fn_error

@@ -1,0 +1,28 @@
+marker $$testing fn_clock clock_set_tz$$
+
+memory load atari "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+run init until CP = $_main
+run $_main while CP != $t0
+
+registers set cycle_count = 0
+run while CP != $t0_end
+
+// check the bus was called and DCB setup correctly
+assert #0x0300 ~ 0x(45,01,74,80)                    $$t0: IO_DCB device, unit, command ('t'), stats (write)$$
+assert #0x0304 -> $tz0                              $$t0: IO_DCB buffer location set correctly$$
+// "UTC+1\0" is 6 bytes long, sent to FN
+assert #0x0306 ~ 0x(02,00,06,00,06,00)              $$t0: IO_DCB timlo, unused, 6 bytes lo/high, 6 bytes aux 1/2$$
+assert $bus_called = 0x01                           $$t0: bus was called to send data$$
+
+run while CP != $t1
+registers set cycle_count = 0
+run while CP != $t1_end
+
+// check the bus was called and DCB setup correctly
+assert #0x0300 ~ 0x(45,01,99,80)                    $$t1: IO_DCB device, unit, command (0x99), stats (write)$$
+assert #0x0304 -> $tz1                              $$t1: IO_DCB buffer location set correctly$$
+// "UTC+11\0" is 7 bytes long, sent to FN
+assert #0x0306 ~ 0x(02,00,07,00,07,00)              $$t1: IO_DCB timlo, unused, 7 bytes lo/high, 7 bytes aux 1/2$$
+assert $bus_called = 0x01                           $$t1: bus was called to send data$$

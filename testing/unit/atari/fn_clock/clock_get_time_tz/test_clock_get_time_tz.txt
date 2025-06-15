@@ -18,7 +18,8 @@ assert $alt_tz_called_with_ptr -> $tz0              $$t0: timezone string was us
 // validate the DCB calling bytes.
 assert #0x0300 ~ 0x(45,01,54,40)                    $$t0: IO_DCB device, unit, command, stats (read)$$
 assert #0x0304 -> $output_buffer                    $$t0: IO_DCB buffer location set correctly$$
-assert #0x0306 ~ 0x(02,00,07,00,00,00)              $$t0: IO_DCB timlo, unused, bytes lo/high, aux 1/2$$
+// aux1 is 1 for alternate timezone call
+assert #0x0306 ~ 0x(02,00,07,00,01,00)              $$t0: IO_DCB timlo, unused, bytes lo/high, aux 1/2$$
 
 // check the returned data from mock fujinet was put in the correct location
 assert $output_buffer ~ 0x(00,01,02,03,04,05,06,00) $$t0: T format has 7 bytes$$

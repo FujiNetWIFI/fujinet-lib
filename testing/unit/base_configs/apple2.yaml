@@ -9,4 +9,5 @@ src_files:
   - ./min_crt0_apple2.s
 
 asm_include_paths:
+  - ${WS_ROOT}
   - ${WS_ROOT}/apple2/src/common/inc

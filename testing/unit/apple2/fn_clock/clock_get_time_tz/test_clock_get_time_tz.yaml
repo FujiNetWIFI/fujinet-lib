@@ -1,0 +1,10 @@
+name: test fn_clock clock_get_time_tz
+
+configs:
+  - ${UNIT_TEST_DIR}/base_configs/base_test_apple2.yaml
+
+src_files:
+  - ${WS_ROOT}/apple2/apple2-6502/fn_clock/clock_get_time.s
+  - test_clock_get_time_tz.s
+
+test_script: test_clock_get_time_tz.txt

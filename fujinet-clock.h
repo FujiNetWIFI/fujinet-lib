@@ -19,12 +19,14 @@ typedef enum time_format_t {
 	// BINARY formats are just the numbers, not ascii characters for the number.
 	SIMPLE_BINARY,      // 7 bytes: [Y(century, e.g. 20), Y(hundreds, e.g. 24), M(1-12), D(1-31), H(0-23), M(0-59), S(0-59)] - Uses the current FN Timezone
 	PRODOS_BINARY,      // 4 bytes: special PRODOS format, see https://prodos8.com/docs/techref/adding-routines-to-prodos/ - Uses the current FN Timezone
-	APETIME_TZ_BINARY,  // 6 bytes: [Day, Mon, Yr (YY), Hour, Min, Sec] - This version honours the Timezone either set in the WebUI or below in the clock_set_tz (both of which update the FN global timezone value)
-	APETIME_BINARY,     // 6 bytes: [Day, Mon, Yr (YY), Hour, Min, Sec] - UTC version of the apetime data. This is for backwards compatibility for Atari Apetime with no TZ set.
+	APETIME_BINARY,     // 6 bytes: [Day, Mon, Yr (YY), Hour, Min, Sec]
 
 	// STRING formats are full null terminated strings
 	TZ_ISO_STRING,      // an ISO format: YYYY-MM-DDTHH:MM:SS+HHMM - Uses the current FN Timezone
-	UTC_ISO_STRING      // Current UTC time, still ISO format, but with 0000 offset: YYYY-MM-DDTHH:MM:SS+HHMM
+	UTC_ISO_STRING,     // Current UTC time, still ISO format, but with 0000 offset: YYYY-MM-DDTHH:MM:SS+HHMM
+
+	// APPLE 3 SOS format
+	APPLE3_SOS_BINARY   // Apple 3 SOS format, YYYYMMDD0HHMMSS000
 
 } TimeFormat;
 
@@ -58,11 +60,5 @@ uint8_t clock_get_time(uint8_t* time_data, TimeFormat format);
  * @return fujinet-clock status/error code (See FN_ERR_* values)
  */
 uint8_t clock_get_time_tz(uint8_t* time_data, const char* tz, TimeFormat format);
-
-// for C implementations, these shouldn't be used by consumer
-#define SIO_APETIMECMD_GETTIME 0x93
-#define SIO_APETIMECMD_SETTZ 0x99
-#define SIO_APETIMECMD_GETTZTIME 0x9A
-
 
 #endif // FUJINET_CLOCK_H

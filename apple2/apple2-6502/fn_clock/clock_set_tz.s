@@ -1,4 +1,5 @@
         .export         _clock_set_tz
+        .export         _clock_set_alternate_tz
 
         .import         _fn_error
         .import         _memcpy
@@ -15,15 +16,29 @@
         .include        "macros.inc"
         .include        "zp.inc"
 
+
+; uint8_t clock_set_alternate_tz(char *tz);
+; same as clock_set_tz, but sends 't' ctrl code
+_clock_set_alternate_tz:
+        ldy     #'t'
+        sty     ctrl_code
+        bne     _clock_set_tz_common    ; always
+
 ; uint8_t clock_set_tz(char *tz);
-_clock_set_tz:        
+; sends 'T' ctrl code
+_clock_set_tz:
+        ldy     #'T'
+        sty     ctrl_code
+        ; fall through
+
+_clock_set_tz_common:
         axinto  tmp_tz_ptr              ; save the tz
 
         ; get the device id of the clock, this is stored in _sp_clock_id, but also returned so we can check if it failed (0 is error)
         jsr     _sp_get_clock_id
         bne     got_id
 
-        ; no clock found, return 1 as an error (FN_ERR_IO_ERROR)
+        ; no clock found, return 1 as an error
         jmp     return1
 
 got_id:
@@ -47,7 +62,9 @@ got_id:
         jsr     _memcpy
 
         ; src/dst were both stored on s/w stack already
-        lda     #'T'                    ; set 'T'imezone
+        ; This is written to by the appropriate function, either 'T' for system TZ or 't' for alternate TZ
+        lda     #$00
+ctrl_code = *-1
         jsr     _sp_control
 
         ; convert to fujinet ok/error code

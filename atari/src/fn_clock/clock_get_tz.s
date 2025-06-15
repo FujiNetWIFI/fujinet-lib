@@ -1,13 +1,13 @@
         .export         _clock_get_tz
 
         .import         _bus
-        .import         _fuji_success
+        .import         _fn_error
 
         .import         popax
         .import         return0
 
         .include        "device.inc"
-        .include        "fujinet-clock.inc"
+        .include        "clock.inc"
         .include        "macros.inc"
         .include        "zp.inc"
 
@@ -33,8 +33,9 @@ _clock_get_tz:
         jsr     _bus
 
         ; check if we had a success (dstats holds status result)
-        jsr     _fuji_success
-        bne     ok
+        lda     IO_DCB::dstats
+        jsr     _fn_error
+        beq     ok
 
         ; error return, we weren't able to find the length of the current timezone
         rts
@@ -57,7 +58,8 @@ ok:
         ; inx                            ; x = 2 - as this is a FN non network call, we can keep this low
         ; stx     IO_DCB::dtimlo
         jsr     _bus
-        jmp     _fuji_success
+        lda     IO_DCB::dstats
+        jmp     _fn_error
 
 
 .bss

@@ -23,28 +23,33 @@ assert #0x0306 ~ 0x(02,00,04,00,00,00)              $$t1: IO_DCB matches last 6 
 run while CP != $t2
 registers set cycle_count = 0
 run while CP != $t2_end
-assert $output_buffer ~ 0x(20,21,22,23,24,25,00)    $$t2: Apetime TZ 0x9A$$
-assert #0x0300 ~ 0x(45,01,9A,40)                    $$t2: IO_DCB matches first 4 bytes$$
+assert $output_buffer ~ 0x(20,21,22,23,24,25,00)    $$t2: Apetime TZ 0x93$$
+assert #0x0300 ~ 0x(45,01,93,40)                    $$t2: IO_DCB matches first 4 bytes$$
 assert #0x0306 ~ 0x(02,00,06,00,00,00)              $$t2: IO_DCB matches last 6 bytes$$
 
 run while CP != $t3
 registers set cycle_count = 0
 run while CP != $t3_end
-assert $output_buffer ~ 0x(30,31,32,33,34,35,00)    $$t3: Apetime Normal 0x93$$
-assert #0x0300 ~ 0x(45,01,93,40)                    $$t3: IO_DCB matches first 4 bytes$$
-assert #0x0306 ~ 0x(02,00,06,00,00,00)              $$t3: IO_DCB matches last 6 bytes$$
+assert $output_buffer ~ "YYYY-MM-DDTHH:MM:SS+HHMM\0"$$t3: ISO TZ 'I' (0x49)$$
+assert #0x0300 ~ 0x(45,01,49,40)                    $$t3: IO_DCB matches first 4 bytes$$
+assert #0x0306 ~ 0x(02,00,19,00,00,00)              $$t3: IO_DCB matches last 6 bytes$$
 
 run while CP != $t4
 registers set cycle_count = 0
 run while CP != $t4_end
-assert $output_buffer ~ "YYYY-MM-DDTHH:MM:SS+HHMM\0"$$t4: ISO TZ 'S' (0x53)$$
-assert #0x0300 ~ 0x(45,01,53,40)                    $$t4: IO_DCB matches first 4 bytes$$
+assert $output_buffer ~ "2025-06-11T20:19:00+0100\0"$$t4: ISO ZULU 'Z' (0x5A)$$
+assert #0x0300 ~ 0x(45,01,5A,40)                    $$t4: IO_DCB matches first 4 bytes$$
 assert #0x0306 ~ 0x(02,00,19,00,00,00)              $$t4: IO_DCB matches last 6 bytes$$
 
 run while CP != $t5
 registers set cycle_count = 0
 run while CP != $t5_end
-assert $output_buffer ~ "2025-06-11T20:19:00+0100\0"$$t5: ISO ZULU 'Z' (0x5A)$$
-assert #0x0300 ~ 0x(45,01,5A,40)                    $$t5: IO_DCB matches first 4 bytes$$
-assert #0x0306 ~ 0x(02,00,19,00,00,00)              $$t5: IO_DCB matches last 6 bytes$$
+assert $output_buffer ~ "YYYYMMDD0HHMMSS000\0"      $$t5: APPLE 3 SOS 'S' (0x53)$$
+assert #0x0300 ~ 0x(45,01,53,40)                    $$t5: IO_DCB matches first 4 bytes$$
+assert #0x0306 ~ 0x(02,00,13,00,00,00)              $$t5: IO_DCB matches last 6 bytes$$
+
+run while CP != $t6
+registers set cycle_count = 0
+run while CP != $t6_end
+assert A = 2                                        $$t6: invalid format returns FN_ERR_BAD_CMD$$
 

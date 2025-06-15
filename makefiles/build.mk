@@ -122,7 +122,6 @@ FN_NW_INC = fujinet-network.inc
 FN_FUJI_HEADER = fujinet-fuji.h
 FN_FUJI_INC = fujinet-fuji.inc
 FN_CLOCK_HEADER = fujinet-clock.h
-FN_CLOCK_INC = fujinet-clock.inc
 CHANGELOG = Changelog.md
 
 # allow for additional flags etc
@@ -259,7 +258,6 @@ release: all | $(BUILD_DIR) $(DIST_DIR)
 	cp $(FN_FUJI_HEADER) dist/
 	cp $(FN_FUJI_INC) dist/
 	cp $(FN_CLOCK_HEADER) dist/
-	cp $(FN_CLOCK_INC) dist/
 	cp $(CHANGELOG) dist/
 	cd dist && zip fujinet-lib-$(CURRENT_TARGET)-$(VERSION_STRING).zip $(CHANGELOG) fujinet-$(CURRENT_TARGET)-$(VERSION_STRING).lib *.h *.inc
 	$(call RMFILES,dist/fujinet-$(CURRENT_TARGET)-*.lib)

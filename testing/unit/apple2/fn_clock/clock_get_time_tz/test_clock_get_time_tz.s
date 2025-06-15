@@ -1,19 +1,10 @@
 .export _main
 .export t0
 .export t0_end
-.export t1
-.export t1_end
-.export t2
-.export t2_end
-.export t3
-.export t3_end
-.export t4
-.export t4_end
-.export t5
-.export t5_end
-.export t6
-.export t6_end
 .export output_buffer
+.export set_alt_tz_called
+.export alt_tz_called_with_ptr
+.export tz0
 
 .export _sp_status
 .export _sp_count
@@ -23,7 +14,7 @@
 .export _clock_set_alternate_tz
 .export _fuji_success
 
-.import _clock_get_time
+.import _clock_get_time_tz
 
 .import pushax
 
@@ -33,53 +24,14 @@
 .code
 _main:
 
+        mva     #$00, set_alt_tz_called
         mwa     #clock0, clock_ptr
         pushax  #output_buffer
+        pushax  #tz0
         lda     #0
 t0:
-        jsr     _clock_get_time
+        jsr     _clock_get_time_tz
 t0_end:
-
-        mwa     #clock1, clock_ptr
-        pushax  #output_buffer
-        lda     #1
-t1:
-        jsr     _clock_get_time
-t1_end:
-
-        mwa     #clock2, clock_ptr
-        pushax  #output_buffer
-        lda     #2
-t2:
-        jsr     _clock_get_time
-t2_end:
-
-        mwa     #clock3, clock_ptr
-        pushax  #output_buffer
-        lda     #3
-t3:
-        jsr     _clock_get_time
-t3_end:
-
-        mwa     #clock4, clock_ptr
-        pushax  #output_buffer
-        lda     #4
-t4:
-        jsr     _clock_get_time
-t4_end:
-
-        mwa     #clock5, clock_ptr
-        pushax  #output_buffer
-        lda     #5
-t5:
-        jsr     _clock_get_time
-t5_end:
-
-
-        lda     #$ff              ; invalid time format, should be 0-6
-t6:
-        jsr     _clock_get_time
-t6_end:
 
         rts
 
@@ -118,6 +70,9 @@ _fuji_success:
         rts
 
 _clock_set_alternate_tz:
+        axinto  alt_tz_called_with_ptr
+        mva     #$01, set_alt_tz_called
+        lda     #$00    ; FN_ERR_OK
         rts
 
 .bss
@@ -129,11 +84,14 @@ clock_ptr:      .res 2
 _sp_payload:
 output_buffer:  .res 26
 
+.data
+set_alt_tz_called:      .byte 0
+alt_tz_called_with_ptr: .word 0
+
 .rodata
+; data sent to FN
+tz0:            .byte "UTC+1",0
+
 ; make these pascal style, length in first byte.
+; this is return data from mock FN
 clock0:         .byte $07, $00, $01, $02, $03, $04, $05, $06
-clock1:         .byte $04, $10, $11, $12, $13
-clock2:         .byte $06, $20, $21, $22, $23, $24, $25
-clock3:         .byte 25, "YYYY-MM-DDTHH:MM:SS+HHMM", 0
-clock4:         .byte 25, "2025-06-11T20:19:00+0100", 0
-clock5:         .byte 19, "YYYYMMDD0HHMMSS000", 0
