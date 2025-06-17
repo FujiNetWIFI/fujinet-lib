@@ -2,10 +2,11 @@
 
 ## [Unreleased]
 
-## [4.7.6] - 2025-06-12
+## [4.7.6] - 2025-06-17
 
-- [atari] fix software stack leak in clock_get_time when timeformat value is not valid [Mark Fisher]
-- [atari] add block reading for directories [Mark Fisher]
+- [atari] add block reading mode for directories with _fuji_read_directory_block [Mark Fisher]
+- [apple2] fix/refactor clock device and align with latest firmware changes
+- [atari] fix/refactor clock device and align with latest firmware changes
 - [atari] align apetime functionality with original intent with optional alternate TZ for some applications
 
 ## [4.7.5] - 2025-04-18
