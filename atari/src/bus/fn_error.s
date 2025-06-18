@@ -17,7 +17,10 @@
 ; and returns 0/false (by design FN_ERR_OK), or 1/true (by design FN_ERR_IO_ERROR)
 ; which are inverted but correct. Most functions return the success status (0 = false = error), but we flip that into FN_ERR_OK/FN_ERR_IO_ERROR
 
+; THIS RETURNS FN_ERR_* VALUES, NOT BOOLEANS (although it only returns FN_ERR_OK and FN_ERR_IO_ERROR at the moment)
 .proc _fn_error
         sta     _fn_device_error
+        ; this is utilising the common code in fuji_error, which returns booleans which match our FN_ERR_OK or FN_ERR_IO_ERROR codes
+        ; because fuji_error returns the "is error" boolean, true meaning there was an error, and its value is 1
         jmp     fuji_error_cmp
 .endproc

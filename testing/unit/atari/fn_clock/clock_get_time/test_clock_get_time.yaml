@@ -4,6 +4,8 @@ configs:
   - ${UNIT_TEST_DIR}/base_configs/base_test_atari.yaml
 
 src_files:
+  - ${WS_ROOT}/atari/src/fn_fuji/fuji_error.s
+  - ${WS_ROOT}/atari/src/bus/fn_error.s
   - ${WS_ROOT}/atari/src/fn_clock/clock_get_time.s
   - test_clock_get_time.s
 

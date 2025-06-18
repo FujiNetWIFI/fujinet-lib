@@ -86,6 +86,7 @@ aux1_val = *-1
         stx     IO_DCB::daux1
 
         jsr     _bus
+        lda     IO_DCB::dstats
         jmp     _fn_error
 
 .rodata
