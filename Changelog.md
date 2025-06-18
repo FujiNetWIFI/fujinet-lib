@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [4.7.7] - 2025-06-18
+
+- [atari] Fix return codes from clock_get_time, clock_get_time_tz
+
 ## [4.7.6] - 2025-06-17
 
 - [atari] add block reading mode for directories with _fuji_read_directory_block [Mark Fisher]
