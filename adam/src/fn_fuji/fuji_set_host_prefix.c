@@ -13,7 +13,7 @@ bool fuji_set_host_prefix(uint8_t hs, char *prefix)
     unsigned char prefix[256];
   } shp;
 
-  shp.cmd = 0xE2;
+  shp.cmd = FUJICMD_SET_HOST_PREFIX;
   shp.hs = hs;
   strcpy(shp.prefix,prefix);
   
