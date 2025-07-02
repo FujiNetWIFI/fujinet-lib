@@ -2,7 +2,7 @@
 #include "fujinet-fuji.h"
 #include "fujinet-bus.h"
 
-bool fuji_close_directory(void)
+bool fuji_reset(void)
 {
 	if (sp_get_fuji_id() == 0) {
 		return false;
@@ -11,6 +11,7 @@ bool fuji_close_directory(void)
 	sp_payload[0] = 0x00;
 	sp_payload[1] = 0x00;
 
-	sp_error = sp_control(sp_fuji_id, FUJICMD_CLOSE_DIRECTORY);
+	sp_error = sp_control(sp_fuji_id, 0xFF);
 	return sp_error == 0;
+
 }

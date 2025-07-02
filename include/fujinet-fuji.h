@@ -6,29 +6,13 @@
 // In general, bools return the "success" status, so true is good, false is bad.
 
 #ifdef _CMOC_VERSION_
-
-// CMOC-specific types and definitions
-#include <cmoc.h>
-#include <coco.h>
-
-#ifndef bool
-#define bool unsigned char
-#endif /* bool */
-
-#define true  1
-#define false 0
-
-// Define standard integer types for CMOC
-#define uint8_t unsigned char
-#define int8_t signed char
-#define uint16_t unsigned short
-#define int16_t signed short
-#define uint32_t unsigned long
-#define int32_t signed long
+    #include <cmoc.h>
+    #include <coco.h>
+    #include "stdbool-coco.h"
 #else
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdint.h>
+    #include <stddef.h>
+    #include <stdbool.h>
+    #include <stdint.h>
 #endif /* _CMOC_VERSION_ */
 
 #ifdef __CBM__
@@ -54,7 +38,6 @@
 #define FILE_MAXLEN    36
 #define SSID_MAXLEN    33 /* 32 + NULL */
 #define MAX_APPKEY_LEN 64
-#define MAX_GUID_LEN   37
 
 #ifdef __CBM__
     #define MAX_PASSWORD_LEN 65
@@ -85,8 +68,6 @@
 #define FUJICMD_GET_DIRECTORY_POSITION     0xE5
 #define FUJICMD_SET_DIRECTORY_POSITION     0xE4
 #define FUJICMD_SET_DEVICE_FULLPATH        0xE2
-#define FUJICMD_SET_HOST_PREFIX            0xE1
-#define FUJICMD_GET_HOST_PREFIX            0xE0
 #define FUJICMD_WRITE_APPKEY               0xDE
 #define FUJICMD_READ_APPKEY                0xDD
 #define FUJICMD_OPEN_APPKEY                0xDC
@@ -117,11 +98,6 @@
 #define FUJICMD_GET_ADAPTERCONFIG_EXTENDED 0xC4
 #define FUJICMD_HASH_COMPUTE_NO_CLEAR      0xC3
 #define FUJICMD_HASH_CLEAR                 0xC2
-#define FUJICMD_QRCODE_OUTPUT              0xBF
-#define FUJICMD_QRCODE_LENGTH              0xBE
-#define FUJICMD_QRCODE_ENCODE              0xBD
-#define FUJICMD_QRCODE_INPUT               0xBC
-#define FUJICMD_GENERATE_GUID              0xBB
 #define FUJICMD_SET_STATUS                 0x81
 
 enum WifiStatus
@@ -253,16 +229,6 @@ typedef struct
 } NewDisk;
 #endif
 
-#ifdef __ADAM__
-typedef struct
-{
-    uint8_t hostSlot;
-    uint8_t deviceSlot;
-    uint32_t numBlocks;
-    char filename[256];
-} NewDisk;
-#endif
-
 // WIP, only 64 fully supported at the moment.
 enum AppKeySize
 {
@@ -325,12 +291,6 @@ bool fuji_enable_udpstream(uint16_t port, char *host);
  * @return ERROR status, true if there was an error in last operation.
  */
 bool fuji_error(void);
-
-/**
- * @brief Generate a randomized GUID.
- * @return success status of request
- */
-bool fuji_generate_guid(char *buffer);
 
 /**
  * @brief Gets adapter config information from FN, e.g. IP, MAC, BSSID etc.
@@ -467,13 +427,6 @@ bool fuji_put_host_slots(HostSlot *h, size_t size);
 bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer);
 
 /**
- * @brief Fill buffer with blocks of directory information.
- * @return success status of request
- * TODO: add full data structure here for people to read.
- */
-bool fuji_read_directory_block(uint8_t ram_pages, uint8_t group_size, void *buffer);
-
-/**
  * @brief Reset FN
  * @return true if successful, false if there was an error from FN
  */
@@ -604,42 +557,6 @@ bool fuji_base64_encode_input(char *s, uint16_t len);
 bool fuji_base64_encode_length(unsigned long *len);
 bool fuji_base64_encode_output(char *s, uint16_t len);
 
-// QR Code
-// ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success
-
-// Error correction level, passed to fuji_qrcode_encode
-typedef enum QRCodeEcc
-{
-    QR_ECC_LOW,
-    QR_ECC_MEDIUM,
-    QR_ECC_QUARTILE,
-    QR_ECC_HIGH
-} qr_ecc_t;
-
-// Output format requested via fuji_qrcode_length, determines the bytes returned by fuji_qrcode_output
-typedef enum QRCodeOutputMode
-{
-    QR_OUTPUT_MODE_BINARY,
-    QR_OUTPUT_MODE_ANSI,
-    QR_OUTPUT_MODE_BITMAP,
-    QR_OUTPUT_MODE_SVG,
-    QR_OUTPUT_MODE_ATASCII,
-    QR_OUTPUT_MODE_PETSCII
-} qr_output_mode_t;
-
-// Add data to be encoded. Call one or more times before fuji_qrcode_encode.
-bool fuji_qrcode_input(char *s, uint16_t len);
-
-// Generate the QR code from the data sent with fuji_qrcode_input.
-// version is 1-40 (0 auto), ecc is a qr_ecc_t, shorten runs the url through a shortener first.
-bool fuji_qrcode_encode(uint8_t version, uint8_t ecc, bool shorten);
-
-// Re-render the code in output_mode (a qr_output_mode_t) and return its byte length in len.
-bool fuji_qrcode_length(uint8_t output_mode, unsigned long *len);
-
-// Read len bytes of the rendered code into s.
-bool fuji_qrcode_output(char *s, uint16_t len);
-
 ////////////////////////////////////////////////////////////////
 // These are very low level functions and should only be used internally.
 // Please use the new interface functions below this section.
@@ -713,12 +630,5 @@ bool fuji_hash_add(uint8_t *data, uint16_t length);
  * @return the success status of the operation.
  */
 bool fuji_hash_calculate(hash_alg_t hash_type, bool as_hex, bool discard_data, uint8_t *output);
-
-/**
- * @brief  The default timeout for fuji commands. Platform dependent on if it does anything.
- * The value defaults to 0x0F. No setter. This isn't java.
- */
-extern uint8_t fn_default_timeout;
-
 
 #endif /* FN_FUJI_H */

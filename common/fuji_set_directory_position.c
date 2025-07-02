@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include "fujinet-fuji.h"
-#include "fujinet-bus-apple2.h"
+#include "fujinet-bus.h"
 
 bool fuji_set_directory_position(uint16_t pos)
 {

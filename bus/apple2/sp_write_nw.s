@@ -1,7 +1,8 @@
-        .export         _sp_write
+        .export         _sp_write_nw
 
         .import         _sp_cmdlist
         .import         sp_dispatch
+        .import         _sp_nw_unit
 
         .import         sp_rw_common
 
@@ -18,7 +19,7 @@
 ;         // in network context it isn't used, so we will stuff the UNIT id of the request into byte 7
 ;         sp_cmdlist[6] = sp_nw_unit;
 
-;         sp_cmdlist[0] = SP_WRITE_PARAM_COUNT;
+;         sp_cmdlist[0] = SP_WRITE_PARAM_COUNT_NW;
 ;         sp_cmdlist[1] = dest;
 
 ;         payload_address = (uintptr_t)(&sp_payload[0]);
@@ -29,12 +30,15 @@
 ;         return sp_error;
 ; }
 
-.proc _sp_write
+.proc _sp_write_nw
         jsr     sp_rw_common                    ; sp_cmdlist[1..5]
 
-        lda     #SP_WRITE_PARAM_COUNT
-        sta     _sp_cmdlist                     ; sp_cmdlist[0] = SP_WRITE_PARAM_COUNT
+        lda     #SP_WRITE_PARAM_COUNT_NW
+        sta     _sp_cmdlist                     ; sp_cmdlist[0] = SP_WRITE_PARAM_COUNT_NW
+        lda     _sp_nw_unit
+        sta     _sp_cmdlist+6                   ; sp_cmdlist[6] = sp_nw_unit;
 
         ldx     #SP_CMD_WRITE
         jmp     sp_dispatch                    ; return sp_dispatch(SP_CMD_WRITE);
+
 .endproc

@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "fujinet-fuji.h"
-#include "fujinet-bus-apple2.h"
+#include "fujinet-bus.h"
 
 bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer)
 {
