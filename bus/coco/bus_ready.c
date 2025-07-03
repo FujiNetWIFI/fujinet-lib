@@ -19,14 +19,14 @@ void bus_ready(void)
         uint8_t command;
     } rc;
 
-    uint8_t z = 0, r;
-
+    uint8_t z=0, r;
+    
     rc.opcode = OP_FUJI;
     rc.command = FUJICMD_READY;
-
+    
     while (!z)
     {
-        dwwrite((uint8_t *)&rc, sizeof(rc));
-        z = dwread((uint8_t *)&r, sizeof(r));
-    }
+        dwwrite((uint8_t *)&rc,sizeof(rc));
+        z = dwread((uint8_t *)&r,sizeof(r));
+    }  
 }

@@ -23,8 +23,8 @@
 # 	    fuji_set_hsio_index.c fuji_set_ssid.c fuji_set_status.c	\
 # 	    fuji_status.c fuji_unmount_disk_image.c			\
 # 	    fuji_unmount_host_slot.c
-FUJICMDS := fuji_get_adapter_config_extended.c
-FUJIBUS := transaction.c
+FUJICMDS := fuji_get_adapter_config_extended.c fn_data.c
+FUJIBUS := fujinet-bus.c
 AFILES_SP := bus/apple2/sp_close_nw.s bus/apple2/sp_close.s		\
 	     bus/apple2/sp_clr_payload.s bus/apple2/sp_data.s		\
 	     bus/apple2/sp_find_clock.s bus/apple2/sp_find_cpm.s	\
@@ -36,15 +36,20 @@ AFILES_SP := bus/apple2/sp_close_nw.s bus/apple2/sp_close.s		\
 	     bus/apple2/sp_rw_common.s					\
 	     bus/apple2/sp_status_control_dispatch.s			\
 	     bus/apple2/sp_write_nw.s bus/apple2/sp_write.s
+CFILES_DW := bus_ready.c dwread.c dwwrite.c fuji_get_error.c	\
+	     fuji_get_response.c network_get_error.c		\
+	     network_get_response.c fn_error.c
 HFILES := $(addprefix include/, fujinet-fuji.h fujinet-bus.h)
 CFILES = $(addprefix common/, $(FUJICMDS))
 AFILES =
 CFILES_A2 = $(addprefix bus/apple2/, $(FUJIBUS))
 AFILES_A2 = $(addprefix bus/apple2/, $(AFILES_SP))
+CFILES_COCO = $(addprefix bus/coco/, $(FUJIBUS) $(CFILES_DW))
 BUILDDIR = build
 OBJDIR := $(PLATFORM)_obj
 OBJS = $(addprefix $(OBJDIR)/, $(notdir $(CFILES:.c=.o) $(AFILES:.s=.o)))
 OBJS_A2 = $(addprefix $(OBJDIR)/, $(notdir $(CFILES_A2:.c=.o) $(AFILES_A2:.s=.o)))
+OBJS_COCO = $(addprefix $(OBJDIR)/, $(notdir $(CFILES_COCO:.c=.o) $(AFILES_COCO:.s=.o)))
 
-vpath %.c common bus/apple2
-vpath %.s common bus/apple2
+vpath %.c common
+vpath %.s common

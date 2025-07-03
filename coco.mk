@@ -1,8 +1,18 @@
-PLATFORM=c64
+TARGET = $(BUILDDIR)/libfujinet.$(PLATFORM).a
+PLATFORM = coco
 -include defs.mk
 
-fujinet.$(PLATFORM).lib: $(OBJS) $(OBJS_COCO)
-	$(AR) a $@ $(OBJS)
+vpath %.c bus/coco
 
--include cc65.common.mk
+$(info OBJS_COCO: $(OBJS_COCO))
+
+all: $(TARGET) test.$(PLATFORM)
+
+$(TARGET): $(OBJS) $(OBJS_COCO) $(BUILDDIR)
+	$(AR) -a $@ $^
+
+test.$(PLATFORM): $(OBJDIR)/test.o
+	$(CC) -o $@ $(LDFLAGS) $^ $(TARGET)
+
+-include cmoc.common.mk
 -include post.mk
