@@ -15,7 +15,7 @@ bool fuji_set_host_prefix(uint8_t hs, char *prefix)
   
   pl = malloc(pl_len);
   if (pl == NULL) {
-    status_error(ERROR_MALLOC_FAILED, FUJICMD_SET_DEVICE_FULLPATH);
+    status_error(ERROR_MALLOC_FAILED, FUJICMD_SET_HOST_PREFIX);
     return false;
   }
   
