@@ -26,7 +26,6 @@
 FUJICMDS := fuji_get_adapter_config_extended.c fn_data.c	\
 	     fuji_get_host_prefix.c fuji_get_device_slots.c	\
 	     fuji_get_host_slots.c fuji_read_directory.c
-FUJIBUS := fujinet-bus.c
 AFILES_SP := sp_close_nw.s sp_close.s sp_clr_payload.s sp_data.s	\
 	     sp_find_clock.s sp_find_cpm.s sp_find_device.s		\
 	     sp_find_fuji.s sp_find_modem.s sp_find_network.s		\
@@ -40,10 +39,10 @@ AFILES_CBM := fuji_cbm_open.s
 HFILES := $(addprefix include/, fujinet-fuji.h fujinet-bus.h)
 CFILES = $(addprefix common/, $(FUJICMDS))
 AFILES =
-CFILES_A2 = $(addprefix bus/apple2/, $(FUJIBUS))
+CFILES_A2 = $(addprefix bus/apple2/, fujinet-bus-apple2.c)
 AFILES_A2 = $(addprefix bus/apple2/, $(AFILES_SP))
-CFILES_COCO = $(addprefix bus/coco/, $(FUJIBUS) $(CFILES_DW))
-CFILES_C64 = $(addprefix bus/c64/, $(FUJIBUS))
+CFILES_COCO = $(addprefix bus/coco/, fujinet-bus-coco.c $(CFILES_DW))
+CFILES_C64 = $(addprefix bus/c64/, fujinet-bus-c64.c)
 AFILES_C64 = $(addprefix bus/c64/, $(AFILES_CBM))
 BUILDDIR = build
 OBJDIR := $(PLATFORM)_obj

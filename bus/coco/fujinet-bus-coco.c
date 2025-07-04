@@ -12,7 +12,7 @@ fujibus_packet fb_packet;
 
 bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2,
-		   void *data, size_t length)
+		   const void *data, size_t length)
 {
   uint16_t idx = 0;
 
