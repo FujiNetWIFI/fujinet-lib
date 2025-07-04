@@ -1,8 +1,20 @@
 #include <stdint.h>
+#include <string.h>
 #include "fujinet-fuji.h"
+#include "fujinet-bus-apple2.h"
 
+// A8 to AF are now being allocated as get host prefix for slots 0 to 7.
 bool fuji_get_host_prefix(uint8_t hs, char *prefix)
 {
-	// Not implemented in A2
-	return false;
+  uint8_t stat = hs + 0xA8;
+  
+  if (sp_get_fuji_id() == 0) {
+    return false;
+  }
+  
+  sp_error = sp_status(sp_fuji_id, stat);
+  if (sp_error == 0) {
+    memcpy(prefix, &sp_payload[0], 256);
+  }
+  return sp_error == 0;
 }

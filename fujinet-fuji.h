@@ -67,6 +67,8 @@
 #define FUJICMD_GET_DIRECTORY_POSITION     0xE5
 #define FUJICMD_SET_DIRECTORY_POSITION     0xE4
 #define FUJICMD_SET_DEVICE_FULLPATH        0xE2
+#define FUJICMD_SET_HOST_PREFIX            0xE1
+#define FUJICMD_GET_HOST_PREFIX            0xE0
 #define FUJICMD_WRITE_APPKEY               0xDE
 #define FUJICMD_READ_APPKEY                0xDD
 #define FUJICMD_OPEN_APPKEY                0xDC
