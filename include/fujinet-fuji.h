@@ -31,6 +31,7 @@
 #define FILE_MAXLEN    36
 #define SSID_MAXLEN    33 /* 32 + NULL */
 #define MAX_APPKEY_LEN 64
+#define MAX_HOST_PREFIX_LEN 256
 
 #ifdef __CBM__
     #define MAX_PASSWORD_LEN 65
@@ -301,7 +302,7 @@ bool fuji_get_adapter_config(AdapterConfig *ac);
  * Extended version that returns strings in addition to raw for all IP etc related values.
  * @return Success status, true if all OK.
  */
-bool fuji_get_adapter_config_extended(AdapterConfigExtended *ac);
+#define fuji_get_adapter_config_extended(ac) FUJICALL_RV(FUJICMD_GET_ADAPTERCONFIG_EXTENDED, ac, sizeof(AdapterConfigExtended))
 
 /**
  * THIS IS BOGUS. Apple and Atari both just return "true" for any device.
@@ -324,7 +325,7 @@ bool fuji_get_device_filename(uint8_t ds, char *buffer);
  * If it doesn't match, no data is copied, and false is returned.
  * @return Success status, true if all OK.
  */
-bool fuji_get_device_slots(DeviceSlot *d, size_t size);
+#define fuji_get_device_slots(d, count) FUJICALL_RV(FUJICMD_READ_DEVICE_SLOTS, d, sizeof(DeviceSlot) * count)
 
 /**
  * @brief Fetch the current directory position for paging through directories into pos.
@@ -336,7 +337,7 @@ bool fuji_get_directory_position(uint16_t *pos);
  * @brief Fetch the host prefix for given host slot id.
  * @return success status of request
  */
-bool fuji_get_host_prefix(uint8_t hs, char *prefix);
+#define fuji_get_host_prefix(hs, prefix) FUJICALL_A1_RV(FUJICMD_GET_HOST_PREFIX, hs, prefix, MAX_HOST_PREFIX_LEN)
 
 /**
  * @brief Sets ALL host slot information into pointer h.
@@ -344,7 +345,7 @@ bool fuji_get_host_prefix(uint8_t hs, char *prefix);
  * If it doesn't match, no data is copied, and false is returned.
  * @return Success status, true if all OK.
  */
-bool fuji_get_host_slots(HostSlot *h, size_t count);
+#define fuji_get_host_slots(d, count) FUJICALL_RV(FUJICMD_READ_HOST_SLOTS, d, sizeof(HostSlot) * count)
 
 /**
  * @brief Fills ssid_info with wifi scan results for bssid index n.
@@ -421,7 +422,7 @@ bool fuji_put_host_slots(HostSlot *h, size_t size);
  * @brief Fill buffer with directory information.
  * @return success status of request
  */
-bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer);
+#define fuji_read_directory(maxlen, aux2, buffer) FUJICALL_A1_A2_RV(FUJICMD_READ_DIR_ENTRY, maxlen, aux2, buffer, maxlen)
 
 /**
  * @brief Reset FN

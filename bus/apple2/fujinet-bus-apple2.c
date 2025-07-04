@@ -27,11 +27,18 @@ static void status_init()
 }
 
 bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
-                   uint8_t aux1, uint8_t aux2,
-                   const void *data, size_t length)
+		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
+		   const void *data, size_t data_length,
+		   void *reply, size_t reply_length)
 {
   uint16_t idx = 0;
 
+
+  // These arguments are for compatibility with larger systems and not
+  // used on Apple II. Hack to suppress the warning that they are
+  // unused.
+  (void) aux3;
+  (void) aux4;
 
   sp_error = SP_ERR_OK;
   if (!did_status_init)
@@ -46,8 +53,8 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
     if (fields & FUJI_FIELD_AUX2)
       fb_packet->data[idx++] = aux2;
     if (fields & FUJI_FIELD_DATA) {
-      memcpy(&fb_packet->data[idx], data, length);
-      idx += length;
+      memcpy(&fb_packet->data[idx], data, data_length);
+      idx += data_length;
     }
 
     fb_packet->length = idx;
@@ -58,9 +65,12 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
   if (!sp_error && CONFIG_STATUS(fuji_cmd))
     sp_error = sp_status(sp_fuji_id, fuji_cmd);
 
+  if (reply)
+    memcpy(reply, &sp_payload[0], reply_length);
+
   return !sp_error;
 }
-
+#if 0
 bool fuji_bus_get(void *data, size_t length)
 {
   if (length > sp_count)
@@ -68,3 +78,4 @@ bool fuji_bus_get(void *data, size_t length)
   memcpy(data, &sp_payload[0], length);
   return true;
 }
+#endif

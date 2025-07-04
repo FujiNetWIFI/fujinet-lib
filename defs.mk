@@ -1,6 +1,6 @@
-FUJICMDS := fuji_get_adapter_config_extended.c fn_data.c	\
-	    fuji_get_host_prefix.c fuji_get_device_slots.c	\
-	    fuji_get_host_slots.c fuji_read_directory.c
+# FUJICMDS := fuji_get_adapter_config_extended.c fn_data.c	\
+# 	    fuji_get_host_prefix.c fuji_get_device_slots.c	\
+# 	    fuji_get_host_slots.c fuji_read_directory.c
 AFILES_SP := sp_status_control_dispatch.s sp_data.s sp_find_fuji.s	\
 	     sp_find_device.s sp_init.s sp_find_network.s
 CFILES_DW := bus_ready.c dwread.c dwwrite.c fuji_get_error.c	\
