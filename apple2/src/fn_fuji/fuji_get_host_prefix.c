@@ -1,5 +1,7 @@
 #include <stdint.h>
+#include <string.h>
 #include "fujinet-fuji.h"
+#include "fujinet-bus-apple2.h"
 
 // A8 to AF are now being allocated as get host prefix for slots 0 to 7.
 bool fuji_get_host_prefix(uint8_t hs, char *prefix)
