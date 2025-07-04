@@ -1,9 +1,8 @@
 #include "fujinet-fuji.h"
-#include "fujinet-bus.h"
 
 bool fuji_get_adapter_config_extended(AdapterConfigExtended *acx)
 {
-  if (!fuji_bus_call(FUJICMD_GET_ADAPTERCONFIG_EXTENDED))
+  if (!FUJICALL(FUJICMD_GET_ADAPTERCONFIG_EXTENDED))
     return false;
 
   fuji_bus_get(acx, sizeof(AdapterConfigExtended));

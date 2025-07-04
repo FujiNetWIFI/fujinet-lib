@@ -1,8 +1,16 @@
-PLATFORM=c64
+PLATFORM = c64
+TARGET=$(BUILDDIR)/fujinet.$(PLATFORM).lib
 -include defs.mk
 
-fujinet.$(PLATFORM).lib: $(OBJS) $(OBJS_C64)
-	$(AR) a $@ $(OBJS)
+vpath %.c bus/$(PLATFORM)
+
+all: $(TARGET) test.$(PLATFORM)
+
+$(TARGET): $(OBJS) $(OBJS_C64) $(BUILDDIR)
+	$(AR) a $@ $(OBJS) $(OBJS_C64)
+
+test.$(PLATFORM): $(OBJDIR)/test.o $(TARGET)
+	$(CC) -o $@ $(LDFLAGS) $^
 
 -include cc65.common.mk
 -include post.mk

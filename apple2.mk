@@ -2,11 +2,11 @@ PLATFORM=apple2
 TARGET=$(BUILDDIR)/fujinet.$(PLATFORM).lib
 -include defs.mk
 
-vpath %.c bus/apple2
+vpath %.c bus/$(PLATFORM)
 
 all: $(FNLIB) test.$(PLATFORM)
 
-$(TARGET): $(OBJS) $(OBJS_A2)
+$(TARGET): $(OBJS) $(OBJS_A2) $(BUILDDIR)
 	$(AR) a $@ $(OBJS) $(OBJS_A2)
 
 define single-to-double

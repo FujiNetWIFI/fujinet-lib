@@ -1,19 +1,12 @@
 #ifndef FN_FUJI_H
 #define FN_FUJI_H
 
+// Many fuji_ functions are just macros to the bus call so we need to include this
+#include "fujinet-bus.h"
+
 // TODO: this header file needs more documentation
 
 // In general, bools return the "success" status, so true is good, false is bad.
-
-#ifdef _CMOC_VERSION_
-    #include <cmoc.h>
-    #include <coco.h>
-    #include "stdbool-coco.h"
-#else
-    #include <stddef.h>
-    #include <stdbool.h>
-    #include <stdint.h>
-#endif /* _CMOC_VERSION_ */
 
 #ifdef __CBM__
 
@@ -68,6 +61,8 @@
 #define FUJICMD_GET_DIRECTORY_POSITION     0xE5
 #define FUJICMD_SET_DIRECTORY_POSITION     0xE4
 #define FUJICMD_SET_DEVICE_FULLPATH        0xE2
+#define FUJICMD_SET_HOST_PREFIX            0xE1
+#define FUJICMD_GET_HOST_PREFIX            0xE0
 #define FUJICMD_WRITE_APPKEY               0xDE
 #define FUJICMD_READ_APPKEY                0xDD
 #define FUJICMD_OPEN_APPKEY                0xDC
@@ -152,7 +147,9 @@ typedef struct
     char sBssid[18];
 } AdapterConfigExtended;
 
-typedef uint8_t HostSlot[32];
+typedef struct {
+  uint8_t url[32];
+} HostSlot;
 
 typedef struct
 {
@@ -266,7 +263,7 @@ extern FNStatus _fuji_status;
  * @brief Closes the currently open directory
  * @return Success status, true if all OK.
  */
-bool fuji_close_directory(void);
+#define fuji_close_directory() FUJICALL(FUJICMD_CLOSE_DIRECTORY)
 
 /**
  * @brief Copies a file from given src to dst, with supplied path in copy_spec
@@ -343,11 +340,11 @@ bool fuji_get_host_prefix(uint8_t hs, char *prefix);
 
 /**
  * @brief Sets ALL host slot information into pointer h.
- * `size` is the number of host slots, and the returned data size is checked against this multiple of HostSlot structs before copying.
+ * `count` is the number of host slots, and the returned data size is checked against this multiple of HostSlot structs before copying.
  * If it doesn't match, no data is copied, and false is returned.
  * @return Success status, true if all OK.
  */
-bool fuji_get_host_slots(HostSlot *h, size_t size);
+bool fuji_get_host_slots(HostSlot *h, size_t count);
 
 /**
  * @brief Fills ssid_info with wifi scan results for bssid index n.
@@ -392,21 +389,21 @@ bool fuji_mount_disk_image(uint8_t ds, uint8_t mode);
  * @brief Mount specific host slot
  * @return true if successful, false otherwise
  */
-bool fuji_mount_host_slot(uint8_t hs);
+#define fuji_mount_host_slot(hs) FUJICALL_A1(FUJICMD_MOUNT_HOST, hs)
 
 /**
  * @brief Open the given directory on the given host slot.
  * The path_filter is a buffer (not a string) of 256 bytes, with a separator of the \0 char between the path and filter parts.
  * @return true if successful, false otherwise
  */
-bool fuji_open_directory(uint8_t hs, char *path_filter);
+#define fuji_open_directory(hs, path_filter) FUJICALL_A1_D(FUJICMD_OPEN_DIRECTORY, hs, path_filter, 255)
 
 /**
  * @brief Open the given directory on the given host slot.
  * path and filter are separate strings. If filter is not set, it is NULL
  * @return true if successful, false otherwise
  */
-bool fuji_open_directory2(uint8_t hs, char *path, char *filter);
+bool fuji_open_directory2(uint8_t hs, const char *path, const char *filter);
 
 /**
  * @brief Save `size` device slots to FN
@@ -487,7 +484,7 @@ bool fuji_set_sio_external_clock(uint16_t rate);
  * @brief Set the host prefix for given host slot id for platforms that support it.
  * @return success status of request
  */
-bool fuji_set_host_prefix(uint8_t hs, char *prefix);
+#define fuji_set_host_prefix(hs, prefix) FUJICALL_A1_D(FUJICMD_SET_HOST_PREFIX, hs, prefix, 255)
 
 /**
  * @brief Set the SSID information from NetConfig structure
