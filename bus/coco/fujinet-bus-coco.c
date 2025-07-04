@@ -11,8 +11,9 @@ typedef struct {
 fujibus_packet fb_packet;
 
 bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
-		   uint8_t aux1, uint8_t aux2,
-		   const void *data, size_t length)
+		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
+		   const void *data, size_t data_length,
+		   void *reply, size_t reply_length)
 {
   uint16_t idx = 0;
 
@@ -25,16 +26,17 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
   if (fields & FUJI_FIELD_AUX2)
     fb_packet.data[idx++] = aux2;
   if (fields & FUJI_FIELD_DATA) {
-    memcpy(&fb_packet.data[idx], data, length);
-    idx += length;
+    memcpy(&fb_packet.data[idx], data, data_length);
+    idx += data_length;
   }
 
   bus_ready();
   dwwrite((unsigned char *) &fb_packet, 2 + idx);
-  return !fuji_get_error();
-}
+  if (fuji_get_error())
+    return false;
 
-bool fuji_bus_get(void *data, size_t length)
-{
-  return (bool) fuji_get_response((unsigned char *) data, length);
+  if (reply)
+    return (bool) fuji_get_response((unsigned char *) reply, reply_length);
+
+  return true;
 }

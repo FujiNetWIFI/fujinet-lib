@@ -3,6 +3,8 @@
 #include "fujinet-network.h"
 #include "fujinet-network-coco.h"
 
+unsigned char fn_device_error;
+
 uint8_t fn_error(uint8_t code)
 {
 	fn_device_error = code;

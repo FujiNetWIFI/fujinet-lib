@@ -70,12 +70,3 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
 
   return !sp_error;
 }
-#if 0
-bool fuji_bus_get(void *data, size_t length)
-{
-  if (length > sp_count)
-    return false;
-  memcpy(data, &sp_payload[0], length);
-  return true;
-}
-#endif
