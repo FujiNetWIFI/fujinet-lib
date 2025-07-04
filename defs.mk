@@ -1,6 +1,3 @@
-# FUJICMDS := fuji_get_adapter_config_extended.c fn_data.c	\
-# 	    fuji_get_host_prefix.c fuji_get_device_slots.c	\
-# 	    fuji_get_host_slots.c fuji_read_directory.c
 AFILES_SP := sp_status_control_dispatch.s sp_data.s sp_find_fuji.s	\
 	     sp_find_device.s sp_init.s sp_find_network.s
 CFILES_DW := bus_ready.c dwread.c dwwrite.c fuji_get_error.c	\
@@ -8,7 +5,6 @@ CFILES_DW := bus_ready.c dwread.c dwwrite.c fuji_get_error.c	\
 	     network_get_response.c fn_error.c
 AFILES_CBM := fuji_cbm_open.s
 HFILES := $(addprefix include/, fujinet-fuji.h fujinet-bus.h)
-CFILES = $(addprefix common/, $(FUJICMDS))
 AFILES =
 CFILES_A2 = $(addprefix bus/apple2/, fujinet-bus-apple2.c)
 AFILES_A2 = $(addprefix bus/apple2/, $(AFILES_SP))
