@@ -22,6 +22,7 @@ static void status_init()
   CONFIG_STATUS(FUJICMD_READ_DEVICE_SLOTS) = 1;
   CONFIG_STATUS(FUJICMD_READ_HOST_SLOTS) = 1;
   CONFIG_STATUS(FUJICMD_READ_DIR_ENTRY) = 1;
+  CONFIG_STATUS(FUJICMD_GET_WIFISTATUS) = 1;
   did_status_init = 1;
   return;
 }
@@ -33,12 +34,6 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
 {
   uint16_t idx = 0;
 
-
-  // These arguments are for compatibility with larger systems and not
-  // used on Apple II. Hack to suppress the warning that they are
-  // unused.
-  (void) aux3;
-  (void) aux4;
 
   sp_error = SP_ERR_OK;
   if (!did_status_init)
@@ -52,6 +47,10 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
       fb_packet->data[idx++] = aux1;
     if (fields & FUJI_FIELD_AUX2)
       fb_packet->data[idx++] = aux2;
+    if (fields & FUJI_FIELD_AUX3)
+      fb_packet->data[idx++] = aux3;
+    if (fields & FUJI_FIELD_AUX4)
+      fb_packet->data[idx++] = aux4;
     if (fields & FUJI_FIELD_DATA) {
       memcpy(&fb_packet->data[idx], data, data_length);
       idx += data_length;
@@ -69,4 +68,10 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
     memcpy(reply, &sp_payload[0], reply_length);
 
   return !sp_error;
+}
+
+bool fuji_error(void)
+{
+  // a2 config just returns "sp_error", but that's an int. TYPES DAMN IT
+  return sp_error != 0;
 }
