@@ -17,12 +17,26 @@ static uint8_t did_status_init = 0;
 #define CONFIG_STATUS(x) do_status[x - FUJICMD_LOWEST]
 static void status_init()
 {
+  uint8_t idx;
+
+
+  for (idx = 0; idx < 8; idx++)
+    CONFIG_STATUS(FUJICMD_GET_DEVICE1_FULLPATH + idx) = 1;
+
+  CONFIG_STATUS(FUJICMD_GET_ADAPTERCONFIG) = 1;
   CONFIG_STATUS(FUJICMD_GET_ADAPTERCONFIG_EXTENDED) = 1;
+  CONFIG_STATUS(FUJICMD_GET_DIRECTORY_POSITION) = 1;
   CONFIG_STATUS(FUJICMD_GET_HOST_PREFIX) = 1;
-  CONFIG_STATUS(FUJICMD_READ_DEVICE_SLOTS) = 1;
-  CONFIG_STATUS(FUJICMD_READ_HOST_SLOTS) = 1;
-  CONFIG_STATUS(FUJICMD_READ_DIR_ENTRY) = 1;
+  CONFIG_STATUS(FUJICMD_GET_SCAN_RESULT) = 1;
+  CONFIG_STATUS(FUJICMD_GET_SSID) = 1;
   CONFIG_STATUS(FUJICMD_GET_WIFISTATUS) = 1;
+  CONFIG_STATUS(FUJICMD_GET_WIFI_ENABLED) = 1;
+  CONFIG_STATUS(FUJICMD_READ_DEVICE_SLOTS) = 1;
+  CONFIG_STATUS(FUJICMD_READ_DIR_ENTRY) = 1;
+  CONFIG_STATUS(FUJICMD_READ_HOST_SLOTS) = 1;
+  CONFIG_STATUS(FUJICMD_SCAN_NETWORKS) = 1;
+  CONFIG_STATUS(FUJICMD_STATUS) = 1;
+
   did_status_init = 1;
   return;
 }
@@ -61,11 +75,11 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
     sp_error = sp_control(sp_fuji_id, fuji_cmd);
   }
 
-  if (!sp_error && CONFIG_STATUS(fuji_cmd))
+  if (!sp_error && CONFIG_STATUS(fuji_cmd)) {
     sp_error = sp_status(sp_fuji_id, fuji_cmd);
-
-  if (reply)
-    memcpy(reply, &sp_payload[0], reply_length);
+    if (!sp_error && reply)
+      memcpy(reply, &sp_payload[0], reply_length);
+  }
 
   return !sp_error;
 }
