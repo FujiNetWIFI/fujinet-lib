@@ -25,7 +25,11 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
     fb_packet.data[idx++] = aux1;
   if (fields & FUJI_FIELD_AUX2)
     fb_packet.data[idx++] = aux2;
-  if (fields & FUJI_FIELD_DATA) {
+  if (fields & FUJI_FIELD_AUX3)
+    fb_packet.data[idx++] = aux3;
+  if (fields & FUJI_FIELD_AUX4)
+    fb_packet.data[idx++] = aux4;
+  if (data) {
     memcpy(&fb_packet.data[idx], data, data_length);
     idx += data_length;
   }

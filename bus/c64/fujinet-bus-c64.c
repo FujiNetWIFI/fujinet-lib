@@ -19,12 +19,6 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
   bool success = true;
 
 
-  // These arguments are for compatibility with larger systems and not
-  // used on Apple II. Hack to suppress the warning that they are
-  // unused.
-  (void) aux3;
-  (void) aux4;
-
   fb_packet.opcode = 0x01;
   fb_packet.cmd = fuji_cmd;
 
@@ -32,7 +26,11 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
     fb_packet.data[idx++] = aux1;
   if (fields & FUJI_FIELD_AUX2)
     fb_packet.data[idx++] = aux2;
-  if (fields & FUJI_FIELD_DATA) {
+  if (fields & FUJI_FIELD_AUX3)
+    fb_packet.data[idx++] = aux3;
+  if (fields & FUJI_FIELD_AUX4)
+    fb_packet.data[idx++] = aux4;
+  if (data) {
     memcpy(&fb_packet.data[idx], data, data_length);
     idx += data_length;
   }

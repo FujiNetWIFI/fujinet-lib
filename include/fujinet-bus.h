@@ -11,13 +11,14 @@
     #include <stdint.h>
 #endif /* _CMOC_VERSION_ */
 
+#define FUJI_DEVICEID_FUJINET 0x70
+
 enum {
   FUJI_FIELD_NONE = 0x00,
   FUJI_FIELD_AUX1 = 0x01,
   FUJI_FIELD_AUX2 = 0x02,
   FUJI_FIELD_AUX3 = 0x04,
   FUJI_FIELD_AUX4 = 0x08,
-  FUJI_FIELD_DATA = 0x10,
 };
 
 extern bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
@@ -72,47 +73,31 @@ extern bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
 		a1, a2, a3, a4, NULL, 0, NULL, 0)
 
 #define FUJICALL_A1_A2_A3_A4_D(cmd, a1, a2, a3, a4, data, len) \
-  fuji_bus_call((cmd), \FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4 \
-		| FUJI_FIELD_DATA, a1, a2, a3, a4, data, len, NULL, 0)
-
-#define FUJICALL_A1_A2_A3_A4_D_RV(cmd, a1, a2, a3, a4, data, len, reply, replylen) \
-  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4 \
-		| FUJI_FIELD_DATA, a1, a2, a3, a4, data, len, reply, replylen)
+  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
+		a1, a2, a3, a4, data, len, NULL, 0)
 
 #define FUJICALL_A1_A2_A3_A4_RV(cmd, a1, a2, a3, a4, reply, replylen) \
   fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4 \
 		, a1, a2, a3, a4, NULL, 0, reply, replylen)
 
 #define FUJICALL_A1_A2_A3_D(cmd, a1, a2, a3, data, len) \
-  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_DATA, \
+  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3, \
 		a1, a2, a3, 0, data, len, NULL, 0)
-
-#define FUJICALL_A1_A2_A3_D_RV(cmd, a1, a2, a3, data, len, reply, replylen) \
-  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_DATA, \
-		a1, a2, a3, 0, data, len, reply, replylen)
 
 #define FUJICALL_A1_A2_A3_RV(cmd, a1, a2, a3, reply, replylen) \
   fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3, \
 		a1, a2, a3, 0, NULL, 0, reply, replylen)
 
 #define FUJICALL_A1_A2_D(cmd, a1, a2, data, len) \
-  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_DATA, \
+  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
 		a1, a2, 0, 0, data, len, NULL, 0)
-
-#define FUJICALL_A1_A2_D_RV(cmd, a1, a2, data, len, reply, replylen) \
-  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_DATA, \
-		a1, a2, 0, 0, data, len, reply, replylen)
 
 #define FUJICALL_A1_A2_RV(cmd, a1, a2, reply, replylen) \
   fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
 		a1, a2, 0, 0, NULL, 0, reply, replylen)
 
 #define FUJICALL_A1_D(cmd, a1, data, len) \
-  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_DATA, a1, 0, 0, 0, data, len, NULL, 0)
-
-#define FUJICALL_A1_D_RV(cmd, a1, data, len, reply, replylen) \
-  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_DATA, \
-		a1, 0, 0, 0, data, len, reply, replylen)
+  fuji_bus_call((cmd), FUJI_FIELD_AUX1, a1, 0, 0, 0, data, len, NULL, 0)
 
 #define FUJICALL_A1_RV(cmd, a1, reply, replylen) \
   fuji_bus_call((cmd), FUJI_FIELD_AUX1, a1, 0, 0, 0, NULL, 0, reply, replylen)
@@ -122,12 +107,8 @@ extern bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
 		(uint8_t) ((b12) >> 8), (uint8_t) (b12), 0, 0, NULL, 0, NULL, 0)
 
 #define FUJICALL_B12_D(cmd, b12, data, len) \
-  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_DATA, \
+  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
 		(uint8_t) ((b12) >> 8), (uint8_t) (b12), 0, 0, data, len, NULL, 0)
-
-#define FUJICALL_B12_D_RV(cmd, b12, data, len, reply, replylen) \
-  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_DATA, \
-		(uint8_t) ((b12) >> 8), (uint8_t) (b12), 0, 0, data, len, reply, replylen)
 
 #define FUJICALL_B12_RV(cmd, b12, reply, replylen) \
   fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
@@ -143,11 +124,6 @@ extern bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
 		(uint8_t) ((b12) >> 8), (uint8_t) (b12), \
 		(uint8_t) ((b34) >> 8), (uint8_t) (b34), data, len, NULL, 0)
 
-#define FUJICALL_B12_B34_D_RV(cmd, b12, b34, data, len, reply, replylen) \
-  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
-		(uint8_t) ((b12) >> 8), (uint8_t) (b12), \
-		(uint8_t) ((b34) >> 8), (uint8_t) (b34), data, len, reply, replylen)
-
 #define FUJICALL_B12_B34_RV(cmd, b12, b34, reply, replylen)	\
   fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
 		(uint8_t) ((b12) >> 8), (uint8_t) (b12), \
@@ -159,16 +135,9 @@ extern bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
 		(uint8_t) ((c1234) >> 8), (uint8_t) (c1234), NULL, 0, NULL, 0)
 
 #define FUJICALL_C1234_D(cmd, c1234, data, len) \
-  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4 \
-		| FUJI_FIELD_DATA, \
+  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
 		(uint8_t) ((c1234) >> 24), (uint8_t) ((c1234) >> 16), \
 		(uint8_t) ((c1234) >> 8), (uint8_t) (c1234), data, len, NULL, 0)
-
-#define FUJICALL_C1234_D_RV(cmd, c1234, data, len, reply, replylen) \
-  fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4 \
-		| FUJI_FIELD_DATA, \
-		(uint8_t) ((c1234) >> 24), (uint8_t) ((c1234) >> 16), \
-		(uint8_t) ((c1234) >> 8), (uint8_t) (c1234), data, len, reply, replylen)
 
 #define FUJICALL_C1234_RV(cmd, c1234, reply, replylen) \
   fuji_bus_call((cmd), FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
@@ -176,10 +145,7 @@ extern bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
 		(uint8_t) ((c1234) >> 8), (uint8_t) (c1234), NULL, 0, reply, replylen)
 
 #define FUJICALL_D(cmd, data, len) \
-  fuji_bus_call((cmd), FUJI_FIELD_DATA, 0, 0, 0, 0, data, len, NULL, 0)
-
-#define FUJICALL_D_RV(cmd, data, len, reply, replylen) \
-  fuji_bus_call((cmd), FUJI_FIELD_DATA, 0, 0, 0, 0, data, len, reply, replylen)
+  fuji_bus_call((cmd), 0, 0, 0, 0, 0, data, len, NULL, 0)
 
 #define FUJICALL_RV(cmd, reply, replylen) \
   fuji_bus_call((cmd), FUJI_FIELD_NONE, 0, 0, 0, 0, NULL, 0, reply, replylen)

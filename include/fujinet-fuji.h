@@ -31,8 +31,7 @@
 #define FILE_MAXLEN    36
 #define SSID_MAXLEN    33 /* 32 + NULL */
 #define MAX_APPKEY_LEN 64
-#define MAX_HOST_PREFIX_LEN 256
-#define MAX_PATH_LEN 255
+#define MAX_FILENAME_LEN 256
 
 #ifdef __CBM__
     #define MAX_PASSWORD_LEN 65
@@ -276,7 +275,7 @@ extern FNStatus _fuji_status;
  * @brief Copies a file from given src to dst, with supplied path in copy_spec
  * @return Success status, true if all OK.
  */
-#define fuji_copy_file(src_slot, dest_slot, copy_spec) FUJICALL_A1_A2_D(FUJICMD_COPY_FILE, src_slot, dest_slot, copy_spec, MAX_PATH_LEN)
+#define fuji_copy_file(src_slot, dest_slot, copy_spec) FUJICALL_A1_A2_D(FUJICMD_COPY_FILE, src_slot, dest_slot, copy_spec, MAX_FILENAME_LEN)
 
 /**
  * @brief Creates a new disk from the given structure.
@@ -323,7 +322,7 @@ bool fuji_get_device_enabled_status(uint8_t d);
  * Note: BUFFER MUST BE ABLE TO ACCEPT UP TO 256 BYTE STRING
  * @return Success status, true if all OK.
  */
-#define fuji_get_device_filename(ds, buffer) FUJICALL_RV(FUJICMD_GET_DEVICE1_FULLPATH + ds, buffer, MAX_PATH_LEN + 1)
+#define fuji_get_device_filename(ds, buffer) FUJICALL_RV(FUJICMD_GET_DEVICE1_FULLPATH + ds, buffer, MAX_FILENAME_LEN)
 
 /**
  * @brief Sets ALL device slot information into pointer d.
@@ -343,7 +342,7 @@ bool fuji_get_directory_position(uint16_t *pos);
  * @brief Fetch the host prefix for given host slot id.
  * @return success status of request
  */
-#define fuji_get_host_prefix(hs, prefix) FUJICALL_A1_RV(FUJICMD_GET_HOST_PREFIX, hs, prefix, MAX_HOST_PREFIX_LEN)
+#define fuji_get_host_prefix(hs, prefix) FUJICALL_A1_RV(FUJICMD_GET_HOST_PREFIX, hs, prefix, MAX_FILENAME_LEN)
 
 /**
  * @brief Sets ALL host slot information into pointer h.
@@ -371,7 +370,7 @@ bool fuji_get_directory_position(uint16_t *pos);
  * @brief Checks if WIFI is enabled or not. Any device errors will return false also.
  * @return enabled status 
  */
-bool fuji_get_wifi_enabled(void);
+#define fuji_get_wifi_enabled() FUJICALL(FUJICMD_GET_WIFI_ENABLED)
 
 /**
  * @brief  Sets status to the wifi status value.
@@ -384,7 +383,7 @@ bool fuji_get_wifi_enabled(void);
  * @brief Mount all devices
  * @return true if successful, false otherwise
  */
-bool fuji_mount_all(void);
+#define fuji_mount_all() FUJICALL(FUJICMD_MOUNT_ALL)
 
 /**
  * @brief Mount specific device slot
@@ -403,7 +402,7 @@ bool fuji_mount_all(void);
  * The path_filter is a buffer (not a string) of 256 bytes, with a separator of the \0 char between the path and filter parts.
  * @return true if successful, false otherwise
  */
-#define fuji_open_directory(hs, path_filter) FUJICALL_A1_D(FUJICMD_OPEN_DIRECTORY, hs, path_filter, MAX_PATH_LEN)
+#define fuji_open_directory(hs, path_filter) FUJICALL_A1_D(FUJICMD_OPEN_DIRECTORY, hs, path_filter, MAX_FILENAME_LEN)
 
 /**
  * @brief Open the given directory on the given host slot.
@@ -458,7 +457,11 @@ bool fuji_reset(void);
  * @brief Sends the device/host/mode information for devices to FN
  * @return success status of request.
  */
-#define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_A2_A3_D(FUJICMD_SET_DEVICE_FULLPATH, ds, hs, mode, buffer, MAX_PATH_LEN - 1)
+#ifdef __ATARI__
+#define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_A2_D(FUJICMD_SET_DEVICE_FULLPATH, ds, (hs << 4) | mode, buffer, MAX_FILENAME_LEN)
+#else /* !__ATARI__ */
+#define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_A2_A3_D(FUJICMD_SET_DEVICE_FULLPATH, ds, hs, mode, buffer, MAX_FILENAME_LEN)
+#endif /* __ATARI__ */
 
 /**
  * @brief Sets current directory position
@@ -491,7 +494,7 @@ bool fuji_set_sio_external_clock(uint16_t rate);
  * @brief Set the host prefix for given host slot id for platforms that support it.
  * @return success status of request
  */
-#define fuji_set_host_prefix(hs, prefix) FUJICALL_A1_D(FUJICMD_SET_HOST_PREFIX, hs, prefix, MAX_PATH_LEN)
+#define fuji_set_host_prefix(hs, prefix) FUJICALL_A1_D(FUJICMD_SET_HOST_PREFIX, hs, prefix, MAX_FILENAME_LEN)
 
 /**
  * @brief Set the SSID information from NetConfig structure

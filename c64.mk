@@ -10,7 +10,7 @@ $(TARGET): $(OBJS) $(OBJS_C64) $(BUILDDIR)
 	$(AR) a $@ $(OBJS) $(OBJS_C64)
 
 test.$(PLATFORM): $(OBJDIR)/test.o $(TARGET)
-	$(CC) -o $@ $(LDFLAGS) $^
+	$(CC) -t $(PLATFORM) -o $@ $(LDFLAGS) $^
 
 -include cc65.common.mk
 -include post.mk

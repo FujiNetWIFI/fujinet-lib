@@ -1,6 +1,5 @@
 PLATFORMS := apple2 c64 coco atari rs232
-TARGETS := fujinet.apple2.lib libfujinet.coco.a fujinet.c64.lib
-#ALL_TARGETS := fujinet.atari.lib fujinet.apple2.lib fujinet.c64.lib libfujinet.coco.a
+TARGETS := fujinet.atari.lib fujinet.apple2.lib fujinet.c64.lib libfujinet.coco.a
 ALL_TARGETS = $(addprefix $(BUILDDIR)/, $(TARGETS))
 
 -include defs.mk
@@ -21,6 +20,11 @@ $(BUILDDIR)/fujinet.c64.lib: $(CFILES) $(HFILES) $(AFILES) \
 			     $(CFILES_C64) $(AFILES_C64) \
 			     $(BUILDDIR)
 	$(MAKE) -f c64.mk
+
+$(BUILDDIR)/fujinet.atari.lib: $(CFILES) $(HFILES) $(AFILES) \
+			     $(CFILES_ATARI) $(AFILES_ATARI) \
+			     $(BUILDDIR)
+	$(MAKE) -f atari.mk
 
 clean:
 	rm -rf *.o *.lst *.map *.bin *.lib *_obj $(BUILDDIR) $(ALL_TARGETS)
