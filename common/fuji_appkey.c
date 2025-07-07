@@ -18,15 +18,15 @@ typedef struct {
 typedef struct {
   uint16_t length;
   uint8_t data[APPKEY_BLOCK_SIZE];
-} FNAppKeyData;
+} FNAppKeyString;
 
 typedef struct {
   uint16_t block_size;
-  FNAppKeyData;
+  FNAppKeyString string;
 } FNAppKeyRead;
 
 static FNAppKeyID appkey;
-static FNAppKeyData appkey_buf;
+static FNAppKeyString appkey_buf;
 
 static void init_appkey(uint8_t key_id, uint8_t mode)
 {
@@ -50,10 +50,10 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *length, uint8_t *data)
   if (!FUJICALL_D(FUJICMD_OPEN_APPKEY, &appkey, sizeof(appkey)))
     return false;
 
-  if (!FUJICALL_RV(FUJICMD_READ_APPKEY, ak_read, sizeof(FNAppKeyData)))
+  if (!FUJICALL_RV(FUJICMD_READ_APPKEY, ak_read, sizeof(FNAppKeyString)))
     return false;
-  *length = ak_read->length;
-  memmove(data, ak_read->data, sizeof(ak_read->data));
+  *length = ak_read->string.length;
+  memmove(data, ak_read->string.data, sizeof(ak_read->string.data));
   return true;
 }
 
