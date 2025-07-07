@@ -16,10 +16,14 @@ typedef struct {
 } FNAppKeyID;
 
 typedef struct {
-  uint16_t block_size;
   uint16_t length;
   uint8_t data[APPKEY_BLOCK_SIZE];
 } FNAppKeyData;
+
+typedef struct {
+  uint16_t block_size;
+  FNAppKeyData;
+} FNAppKeyRead;
 
 static FNAppKeyID appkey;
 static FNAppKeyData appkey_buf;
@@ -37,34 +41,30 @@ static void init_appkey(uint8_t key_id, uint8_t mode)
   return;
 }
 
-bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data)
+bool fuji_read_appkey(uint8_t key_id, uint16_t *length, uint8_t *data)
 {
-  FNAppKeyData *ak_data = (FNAppKeyData *) data;
+  FNAppKeyRead *ak_read = (FNAppKeyRead *) data;
 
 
   init_appkey(key_id, 0);
   if (!FUJICALL_D(FUJICMD_OPEN_APPKEY, &appkey, sizeof(appkey)))
     return false;
 
-  if (!FUJICALL_RV(FUJICMD_READ_APPKEY, ak_data, sizeof(FNAppKeyData)))
+  if (!FUJICALL_RV(FUJICMD_READ_APPKEY, ak_read, sizeof(FNAppKeyData)))
     return false;
-  *count = ak_data->length;
-  memmove(data, ak_data->data, sizeof(ak_data->data));
+  *length = ak_read->length;
+  memmove(data, ak_read->data, sizeof(ak_read->data));
   return true;
 }
 
-bool fuji_write_appkey(uint8_t key_id, uint16_t count, uint8_t *data)
+bool fuji_write_appkey(uint8_t key_id, uint16_t length, uint8_t *data)
 {
-  FNAppKeyData *ak_data = (FNAppKeyData *) data;
-
-
   init_appkey(key_id, 1);
   if (!FUJICALL_D(FUJICMD_OPEN_APPKEY, &appkey, sizeof(appkey)))
     return false;
-  appkey_buf.length = count;
+  appkey_buf.length = length;
   memcpy(appkey_buf.data, data, APPKEY_BLOCK_SIZE);
-  return FUJICALL_D(FUJICMD_WRITE_APPKEY, &appkey_buf.length,
-                    sizeof(appkey_buf) - sizeof(appkey_buf.block_size));
+  return FUJICALL_D(FUJICMD_WRITE_APPKEY, &appkey_buf.length, sizeof(appkey_buf));
 }
 
 void fuji_set_appkey_details(uint16_t creator_id, uint8_t app_id, enum AppKeySize keysize)
