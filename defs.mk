@@ -1,3 +1,4 @@
+FUJICMDS := fuji_appkey.c
 AFILES_SP := sp_status_control_dispatch.s sp_data.s sp_find_fuji.s	\
 	     sp_find_device.s sp_init.s sp_find_network.s
 CFILES_DW := bus_ready.c dwread.c dwwrite.c fuji_get_error.c	\
@@ -6,6 +7,7 @@ CFILES_DW := bus_ready.c dwread.c dwwrite.c fuji_get_error.c	\
 AFILES_CBM := fuji_cbm_open.s
 AFILES_SIO := call_sio.s
 HFILES := $(addprefix include/, fujinet-fuji.h fujinet-bus.h)
+CFILES = $(addprefix common/, $(FUJICMDS))
 AFILES =
 CFILES_A2 = $(addprefix bus/apple2/, fujinet-bus-apple2.c)
 AFILES_A2 = $(addprefix bus/apple2/, $(AFILES_SP))
