@@ -90,3 +90,7 @@ dispatch_data:
         lda     _sp_error
         rts
 
+; uint8_t sp_call(uint8_t cmd)
+_sp_call:
+	tax
+	jmp	sp_dispatch

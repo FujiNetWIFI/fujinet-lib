@@ -51,6 +51,27 @@
 
 #define SP_PAYLOAD_SIZE         (512)
 
+typedef struct {
+  uint16_t lo;
+  uint8_t  hi;
+} uint24_t;
+
+typedef struct {
+  uint8_t parm_count;
+  uint8_t unit_id;
+
+  void *buffer;
+
+  union {
+    uint8_t code;
+    uint8_t nw_unit;
+    uint24_t block;
+    struct {
+      uint16_t length;
+      uint24_t special;
+    };
+  };
+} SP_Parms;
 
 extern uint8_t sp_is_init;
 
@@ -70,7 +91,7 @@ extern uint8_t sp_nw_unit;
 extern uint8_t sp_payload[];
 
 // cmd data that is communicated to the SP device (not for apple2gs)
-extern uint8_t sp_cmdlist[10];
+extern SP_Parms sp_cmdlist;
 
 // the location of the dispatch function to be written by sp_init (not for apple2gs)
 extern uint8_t sp_dispatch_address[2];
@@ -85,6 +106,8 @@ extern uint16_t sp_count;
 extern int8_t sp_error;
 
 void sp_clr_payload(void);
+
+int8_t sp_call(uint8_t cmd);
 
 // these are the 'fuji' device versions
 int8_t sp_status(uint8_t dest, uint8_t statcode);

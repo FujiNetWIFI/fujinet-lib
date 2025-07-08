@@ -6,8 +6,12 @@
 
 uint8_t fn_device_error;
 
+#define MAX_SMARTPORT_BLOCK 512
+
 #define FUJICMD_HIGHEST FUJICMD_RESET
-#define FUJICMD_LOWEST  FUJICMD_STATUS
+#define FUJICMD_LOWEST  FUJICMD_RENAME
+
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 typedef struct {
   uint16_t length;
@@ -46,12 +50,13 @@ static void status_init()
   return;
 }
 
-bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
+bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
 		   const void *data, size_t data_length,
 		   void *reply, size_t reply_length)
 {
   uint16_t idx = 0;
+  uint8_t unit_id = sp_fuji_id;
 
 
   if (!did_status_init)
@@ -60,6 +65,11 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
   if (sp_get_fuji_id() == 0) {
     fn_device_error = FN_ERR_OFFLINE;
     return false;
+  }
+
+  if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
+    unit_id = sp_network;
+    sp_nw_unit = unit;
   }
 
   if (fields || !CONFIG_STATUS(fuji_cmd)) {
@@ -78,17 +88,79 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
 
     fb_packet->length = idx;
 
-    sp_error = sp_control(sp_fuji_id, fuji_cmd);
+    sp_error = unit_id == sp_network ?
+      sp_control_nw(unit_id, fuji_cmd) : sp_control(unit_id, fuji_cmd);
   }
 
   if (!sp_error && CONFIG_STATUS(fuji_cmd)) {
-    sp_error = sp_status(sp_fuji_id, fuji_cmd);
+    sp_error = unit_id == sp_network ?
+      sp_status_nw(unit_id, fuji_cmd) : sp_status(unit_id, fuji_cmd);
     if (!sp_error && reply)
       memcpy(reply, &sp_payload[0], reply_length);
   }
 
   fn_device_error = fn_error(sp_error);
   return !sp_error;
+}
+
+uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length)
+{
+  uint16_t err;
+  uint8_t unit_id = sp_fuji_id;
+
+
+  if (!length)
+    return 0;
+
+  if (sp_get_fuji_id() == 0)
+    return false;
+
+  if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
+    unit_id = sp_network;
+    sp_nw_unit = unit;
+  }
+
+  length = MIN(length, MAX_TRANSFER_SIZE);
+
+  if (unit_id == sp_network)
+    err = sp_read_nw(unit_id, length);
+  else
+    err = sp_read(unit_id, length);
+  if (err)
+    return 0;
+
+  memcpy(buffer, &sp_payload[0], length);
+  return length;
+}
+
+uint16_t fuji_bus_write(uint8_t device, uint8_t unit, const void *buffer, size_t length)
+{
+  uint16_t err;
+  uint8_t unit_id = sp_fuji_id;
+
+
+  if (!length)
+    return 0;
+
+  if (sp_get_fuji_id() == 0)
+    return false;
+
+  if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
+    unit_id = sp_network;
+    sp_nw_unit = unit;
+  }
+
+  length = MIN(length, MAX_TRANSFER_SIZE);
+  memcpy(&sp_payload[0], buffer, length);
+
+  if (unit_id == sp_network)
+    err = sp_write_nw(unit_id, length);
+  else
+    err = sp_write(unit_id, length);
+  if (err)
+    return 0;
+
+  return length;
 }
 
 bool fuji_error(void)

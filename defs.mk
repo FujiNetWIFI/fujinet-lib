@@ -1,6 +1,8 @@
-FUJICMDS := fuji_appkey.c
-AFILES_SP := sp_status_control_dispatch.s sp_data.s sp_find_fuji.s	\
-	     fn_error.s sp_find_device.s sp_init.s sp_find_network.s sp_read.s
+FUJICMDS := fuji_appkey.c network.c network_json.c
+AFILES_SP := fn_error.s sp_status_control_dispatch.s sp_data.s		\
+	     sp_find_fuji.s sp_find_device.s sp_init.s			\
+	     sp_find_network.s sp_read.s sp_read_nw.s sp_rw_common.s	\
+	     sp_write.s sp_write_nw.s
 CFILES_DW := bus_ready.c dwread.c dwwrite.c fuji_get_error.c	\
 	     fuji_get_response.c network_get_error.c		\
 	     network_get_response.c fn_error.c
