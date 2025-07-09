@@ -31,30 +31,17 @@ uint8_t network_unit(const char *devicespec)
 
 uint8_t network_open(const char *devicespec, uint8_t mode, uint8_t trans)
 {
-  return !fuji_bus_call(FUJI_DEVICEID_NETWORK, network_unit(devicespec), FUJICMD_OPEN,
-		       FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2,
-		       mode, trans, 0, 0,
-		       devicespec, MAX_FILENAME_LEN, NULL, 0);
+  return !NETCALL_A1_A2_D(FUJICMD_OPEN, network_unit(devicespec),
+			  mode, trans, devicespec, MAX_FILENAME_LEN);
 }
 
 uint8_t network_close(const char *devicespec)
 {
-  return !fuji_bus_call(FUJI_DEVICEID_NETWORK, network_unit(devicespec), FUJICMD_CLOSE,
-		       FUJI_FIELD_NONE, 0, 0, 0, 0, NULL, 0, NULL, 0);
+  return !NETCALL(FUJICMD_CLOSE, network_unit(devicespec));
 }
 
 int16_t network_read_nb(const char *devicespec, uint8_t *buf, uint16_t len)
 {
-  uint8_t result;
-  uint16_t avail;
-  uint8_t status, err;
-
-
-  result = network_status(devicespec, &avail, &status, &err);
-  if (result)
-    return -result;
-
-  len = MIN(len, avail);
   return fuji_bus_read(FUJI_DEVICEID_NETWORK, network_unit(devicespec), buf, len);
 }
 
@@ -94,8 +81,7 @@ uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char *devic
 
 uint8_t network_status(const char *devicespec, uint16_t *avail, uint8_t *status, uint8_t *err)
 {
-  if (!fuji_bus_call(FUJI_DEVICEID_NETWORK, network_unit(devicespec), FUJICMD_STATUS,
-		     FUJI_FIELD_NONE, 0, 0, 0, 0, NULL, 0, &nw_status, sizeof(nw_status)))
+  if (!NETCALL_RV(FUJICMD_STATUS, network_unit(devicespec), &nw_status, sizeof(nw_status)))
     return FN_ERR_IO_ERROR;
 
   *avail = nw_status.avail;

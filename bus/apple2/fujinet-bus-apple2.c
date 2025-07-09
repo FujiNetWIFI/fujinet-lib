@@ -120,7 +120,7 @@ uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length
     sp_nw_unit = unit;
   }
 
-  length = MIN(length, MAX_TRANSFER_SIZE);
+  length = MIN(length, MAX_SMARTPORT_BLOCK);
 
   if (unit_id == sp_network)
     err = sp_read_nw(unit_id, length);
@@ -129,6 +129,7 @@ uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length
   if (err)
     return 0;
 
+  length = sp_count;
   memcpy(buffer, &sp_payload[0], length);
   return length;
 }

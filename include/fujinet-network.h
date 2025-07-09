@@ -159,12 +159,12 @@ uint8_t network_json_parse(const char *devicespec);
  * @brief  Perform JSON query
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  query pointer to string containing json path to query, e.g. "/path/field". No need to add device drive.
- * @param  s pointer to receiving string, nul terminated, if no data was retrieved, sets it to an empty string
+ * @param  buffer pointer to receiving string, nul terminated, if no data was retrieved, sets it to an empty string
  * @return Bytes read, or negative values represent fujinet-network error code (See FN_ERR_* values)
  * 
  * Assumes an open and parsed json.
  */
-int16_t network_json_query(const char *devicespec, const char *query, char *s);
+int16_t network_json_query(const char *devicespec, const char *query, char *buffer);
 
 /**
  * @brief  Sets the channel mode.
