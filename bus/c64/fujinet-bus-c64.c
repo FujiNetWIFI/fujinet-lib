@@ -2,6 +2,9 @@
 #include "fujinet-cbm.h"
 #include <string.h>
 
+#warning "Use fujinet-const.h"
+#define MAX_APPKEY_LEN 64
+
 typedef struct {
   uint8_t opcode;
   uint8_t cmd;
@@ -55,4 +58,26 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
   cbm_close(CBM_CMD_CHANNEL);
 
   return success;
+}
+
+/*
+  appkeys are variable length strings. Because IEC supports
+  variable length data packets, aux1/aux2 aren't used to send the
+  length of the string. Instead only the string data is sent with no
+  length field, no block size, no padding.
+*/
+
+bool fuji_bus_appkey_read(void *string, uint16_t *length)
+{
+  uint16_t rlen;
+
+
+  rlen = cbm_read(CBM_CMD_CHANNEL, string, MAX_APPKEY_LEN);
+  *length = rlen;
+  return true;
+}
+
+bool fuji_bus_appkey_write(void *string, uint16_t length)
+{
+  return FUJICALL_D(FUJICMD_WRITE_APPKEY, string, length);
 }

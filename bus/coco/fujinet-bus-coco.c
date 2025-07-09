@@ -1,6 +1,16 @@
 #include "fujinet-bus.h"
 #include "fujinet-fuji-coco.h"
+#warning "use fujinet-commands.h instead of fujinet-fuji.h"
+#include "fujinet-fuji.h"
 #include "dw.h"
+
+#warning "Use fujinet-const.h"
+#define MAX_APPKEY_LEN 64
+
+typedef struct {
+  uint16_t length;
+  uint8_t data[MAX_APPKEY_LEN];
+} FNAppKeyString;
 
 typedef struct {
   uint8_t opcode;
@@ -9,6 +19,7 @@ typedef struct {
 } fujibus_packet;
 
 fujibus_packet fb_packet;
+FNAppKeyString appkey_buf;
 
 bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
@@ -43,4 +54,28 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
     return (bool) fuji_get_response((unsigned char *) reply, reply_length);
 
   return true;
+}
+
+/*
+  appkeys are variable length strings. CoCo drivewire is serial but
+  drivewireFuji in the FujiNet firmware seems to be using fixed length
+  packets with a header to indicate the true length of the key, same
+  as Atari SIO. On write the aux1/aux2 fields are combined into a
+  uint16_t. On read, there is an extra 2 bytes of header to indicate
+  how much of the fixed block represents the string.
+*/
+
+bool fuji_bus_appkey_read(void *string, uint16_t *length)
+{
+ // Caller may not have room for length header so use our own buffer to read
+  if (!FUJICALL_RV(FUJICMD_READ_APPKEY, &appkey_buf, sizeof(appkey_buf)))
+    return false;
+  *length = appkey_buf.length;
+  memmove(string, appkey_buf.data, appkey_buf.length);
+  return true;
+}
+
+bool fuji_bus_appkey_write(void *string, uint16_t length)
+{
+  return FUJICALL_B12_D(FUJICMD_WRITE_APPKEY, length, string, MAX_APPKEY_LEN);
 }

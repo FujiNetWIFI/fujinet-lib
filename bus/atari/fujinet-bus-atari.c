@@ -4,6 +4,15 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <string.h>
+
+#warning "Use fujinet-const.h"
+#define MAX_APPKEY_LEN 64
+
+typedef struct {
+  uint16_t length;
+  uint8_t data[MAX_APPKEY_LEN];
+} FNAppKeyString;
 
 #define SIO_NONE	0x00
 #define SIO_READ	0x40
@@ -26,6 +35,8 @@ typedef struct {
 } SIO_DCB;
 
 #define atari_dcb ((SIO_DCB*) 0x0300)
+
+FNAppKeyString appkey_buf;
 
 bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
@@ -66,4 +77,27 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
 bool fuji_error(void)
 {
   return atari_dcb->DSTATS != SIO_ERR_NONE;
+}
+
+/*
+  appkeys are variable length strings. Because Atari SIO requires
+  fixed length packets, an extra header must be added to indicate the
+  true size of the key. On write the aux1/aux2 fields are combined
+  into a uint16_t. On read, there is an extra 2 bytes of header to
+  indicate how much of the fixed block represents the string.
+*/
+
+bool fuji_bus_appkey_read(void *string, uint16_t *length)
+{
+ // Caller may not have room for length header so use our own buffer to read
+  if (!FUJICALL_RV(FUJICMD_READ_APPKEY, &appkey_buf, sizeof(appkey_buf)))
+    return false;
+  *length = appkey_buf.length;
+  memmove(string, appkey_buf.data, appkey_buf.length);
+  return true;
+}
+
+bool fuji_bus_appkey_write(void *string, uint16_t length)
+{
+  return FUJICALL_B12_D(FUJICMD_WRITE_APPKEY, length, string, MAX_APPKEY_LEN);
 }

@@ -111,9 +111,5 @@ bool fuji_bus_appkey_read(void *string, uint16_t *length)
 
 bool fuji_bus_appkey_write(void *string, uint16_t length)
 {
-  memcpy(fb_packet->data, string, length);
-  fb_packet->length = length;
-  sp_control(sp_fuji_id, FUJICMD_WRITE_APPKEY);
-  //fn_device_error = fn_error(sp_error);
-  return !sp_error;
+  return FUJICALL_D(FUJICMD_WRITE_APPKEY, string, length);
 }
