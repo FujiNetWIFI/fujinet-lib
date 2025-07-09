@@ -2,6 +2,7 @@
 #include "fujinet-bus.h"
 #include "fujinet-commands.h"
 #include "fujinet-const.h"
+#include "fujinet-err.h"
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 

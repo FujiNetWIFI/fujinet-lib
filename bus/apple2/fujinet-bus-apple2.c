@@ -88,13 +88,17 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
 
     fb_packet->length = idx;
 
-    sp_error = unit_id == sp_network ?
-      sp_control_nw(unit_id, fuji_cmd) : sp_control(unit_id, fuji_cmd);
+    if (unit_id == sp_network)
+      sp_control_nw(unit_id, fuji_cmd);
+    else
+      sp_control(unit_id, fuji_cmd);
   }
 
   if (!sp_error && CONFIG_STATUS(fuji_cmd)) {
-    sp_error = unit_id == sp_network ?
-      sp_status_nw(unit_id, fuji_cmd) : sp_status(unit_id, fuji_cmd);
+    if (unit_id == sp_network)
+      sp_status_nw(unit_id, fuji_cmd);
+    else
+      sp_status(unit_id, fuji_cmd);
     if (!sp_error && reply)
       memcpy(reply, &sp_payload[0], reply_length);
   }
@@ -112,8 +116,10 @@ uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length
   if (!length)
     return 0;
 
-  if (sp_get_fuji_id() == 0)
-    return false;
+  if (sp_get_fuji_id() == 0) {
+    fn_device_error = FN_ERR_OFFLINE;
+    return 0;
+  }
 
   if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
     unit_id = sp_network;
@@ -126,6 +132,9 @@ uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length
     err = sp_read_nw(unit_id, length);
   else
     err = sp_read(unit_id, length);
+
+  fn_device_error = fn_error(sp_error);
+
   if (err)
     return 0;
 
@@ -143,21 +152,26 @@ uint16_t fuji_bus_write(uint8_t device, uint8_t unit, const void *buffer, size_t
   if (!length)
     return 0;
 
-  if (sp_get_fuji_id() == 0)
-    return false;
+  if (sp_get_fuji_id() == 0) {
+    fn_device_error = FN_ERR_OFFLINE;
+    return 0;
+  }
 
   if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
     unit_id = sp_network;
     sp_nw_unit = unit;
   }
 
-  length = MIN(length, MAX_TRANSFER_SIZE);
+  length = MIN(length, MAX_SMARTPORT_BLOCK);
   memcpy(&sp_payload[0], buffer, length);
 
   if (unit_id == sp_network)
     err = sp_write_nw(unit_id, length);
   else
     err = sp_write(unit_id, length);
+
+  fn_device_error = fn_error(sp_error);
+
   if (err)
     return 0;
 

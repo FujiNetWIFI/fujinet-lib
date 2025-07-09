@@ -1,6 +1,7 @@
 #include "fujinet-network.h"
 #include "fujinet-bus.h"
 #include "fujinet-commands.h"
+#include "fujinet-err.h"
 #include <stdint.h>
 #include <string.h>
 
