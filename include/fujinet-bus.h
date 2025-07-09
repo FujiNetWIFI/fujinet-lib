@@ -29,4 +29,7 @@ extern bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
 			  const void *data, size_t data_length,
 			  void *reply, size_t reply_length);
 
+extern bool fuji_bus_appkey_read(void *string, uint16_t *length);
+extern bool fuji_bus_appkey_write(void *string, uint16_t length);
+
 #endif /* FUJINET_BUS_H */

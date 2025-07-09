@@ -90,3 +90,30 @@ bool fuji_error(void)
   // a2 config just returns "sp_error", but that's an int. TYPES DAMN IT
   return sp_error != 0;
 }
+
+/*
+  appkeys are variable length strings. Because SmartPort supports
+  variable length data packets, aux1/aux2 aren't used to send the
+  length of the string. Instead only the string data is sent with no
+  length field, no block size, no padding.
+*/
+
+bool fuji_bus_appkey_read(void *string, uint16_t *length)
+{
+  sp_status(sp_fuji_id, FUJICMD_READ_APPKEY);
+  //fn_device_error = fn_error(sp_error);
+  if (sp_error)
+    return false;
+  memcpy(string, &sp_payload[0], sp_count);
+  *length = sp_count;
+  return true;
+}
+
+bool fuji_bus_appkey_write(void *string, uint16_t length)
+{
+  memcpy(fb_packet->data, string, length);
+  fb_packet->length = length;
+  sp_control(sp_fuji_id, FUJICMD_WRITE_APPKEY);
+  //fn_device_error = fn_error(sp_error);
+  return !sp_error;
+}
