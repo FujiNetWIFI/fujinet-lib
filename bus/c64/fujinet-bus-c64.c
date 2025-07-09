@@ -2,9 +2,6 @@
 #include "fujinet-cbm.h"
 #include <string.h>
 
-#warning "Use fujinet-const.h"
-#define MAX_APPKEY_LEN 64
-
 typedef struct {
   uint8_t opcode;
   uint8_t cmd;

@@ -1,4 +1,4 @@
-; ASM version of fujinet-network.h
+; ASM version of fujinet-err.h
 ;
 
 FN_ERR_OK               := $00      ; No error

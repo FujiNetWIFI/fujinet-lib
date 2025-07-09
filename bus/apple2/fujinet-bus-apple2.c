@@ -1,6 +1,10 @@
 #include "fujinet-bus-apple2.h"
-#include "fujinet-fuji.h"
+#include "fujinet-commands.h"
+#include "fujinet-network.h"
+#include "fujinet-err.h"
 #include <string.h>
+
+uint8_t fn_device_error;
 
 #define FUJICMD_HIGHEST FUJICMD_RESET
 #define FUJICMD_LOWEST  FUJICMD_STATUS
@@ -50,12 +54,13 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
   uint16_t idx = 0;
 
 
-  sp_error = SP_ERR_OK;
   if (!did_status_init)
     status_init();
 
-  if (sp_get_fuji_id() == 0)
+  if (sp_get_fuji_id() == 0) {
+    fn_device_error = FN_ERR_OFFLINE;
     return false;
+  }
 
   if (fields || !CONFIG_STATUS(fuji_cmd)) {
     if (fields & FUJI_FIELD_AUX1)
@@ -82,13 +87,13 @@ bool fuji_bus_call(uint8_t fuji_cmd, uint8_t fields,
       memcpy(reply, &sp_payload[0], reply_length);
   }
 
+  fn_device_error = fn_error(sp_error);
   return !sp_error;
 }
 
 bool fuji_error(void)
 {
-  // a2 config just returns "sp_error", but that's an int. TYPES DAMN IT
-  return sp_error != 0;
+  return fn_device_error != FN_ERR_OK;
 }
 
 /*
@@ -101,7 +106,7 @@ bool fuji_error(void)
 bool fuji_bus_appkey_read(void *string, uint16_t *length)
 {
   sp_status(sp_fuji_id, FUJICMD_READ_APPKEY);
-  //fn_device_error = fn_error(sp_error);
+  fn_device_error = fn_error(sp_error);
   if (sp_error)
     return false;
   memcpy(string, &sp_payload[0], sp_count);

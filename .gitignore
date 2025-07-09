@@ -61,3 +61,5 @@ dkms.conf
 *~
 test
 test.*
+*.orig
+*.rej

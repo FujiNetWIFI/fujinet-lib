@@ -3,6 +3,7 @@
 #include <dw.h>
 #include "fujinet-network.h"
 #include "fujinet-fuji-coco.h"
+#include "fujinet-err.h"
 
 /**
  * @brief Get the error code from last Fuji command

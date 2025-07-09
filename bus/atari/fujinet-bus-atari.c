@@ -6,9 +6,6 @@
 #include <stddef.h>
 #include <string.h>
 
-#warning "Use fujinet-const.h"
-#define MAX_APPKEY_LEN 64
-
 typedef struct {
   uint16_t length;
   uint8_t data[MAX_APPKEY_LEN];

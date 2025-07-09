@@ -1,11 +1,8 @@
 #include "fujinet-bus.h"
 #include "fujinet-fuji-coco.h"
-#warning "use fujinet-commands.h instead of fujinet-fuji.h"
-#include "fujinet-fuji.h"
+#include "fujinet-commands.h"
+#include "fujinet-const.h"
 #include "dw.h"
-
-#warning "Use fujinet-const.h"
-#define MAX_APPKEY_LEN 64
 
 typedef struct {
   uint16_t length;

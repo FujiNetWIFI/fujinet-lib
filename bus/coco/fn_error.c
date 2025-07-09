@@ -2,6 +2,7 @@
 #include <coco.h>
 #include "fujinet-network.h"
 #include "fujinet-network-coco.h"
+#include "fujinet-err.h"
 
 unsigned char fn_device_error;
 
