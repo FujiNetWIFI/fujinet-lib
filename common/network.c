@@ -43,7 +43,17 @@ uint8_t network_close(const char *devicespec)
 
 int16_t network_read_nb(const char *devicespec, uint8_t *buf, uint16_t len)
 {
-  return fuji_bus_read(FUJI_DEVICEID_NETWORK, network_unit(devicespec), buf, len);
+  uint8_t nw_unit;
+
+
+  nw_unit = network_unit(devicespec);
+  if (!NETCALL_RV(FUJICMD_STATUS, nw_unit, &nw_status, sizeof(nw_status)))
+    return -FN_ERR_IO_ERROR;
+
+  len = MIN(len, nw_status.avail);
+  if (!len)
+    return 0;
+  return fuji_bus_read(FUJI_DEVICEID_NETWORK, nw_unit, buf, len);
 }
 
 int16_t network_read(const char *devicespec, uint8_t *buf, uint16_t len)
@@ -53,7 +63,7 @@ int16_t network_read(const char *devicespec, uint8_t *buf, uint16_t len)
 
   for (total = 0; len; total += rlen, len -= rlen) {
     rlen = network_read_nb(devicespec, &buf[total], len);
-    if (rlen < 0)
+    if (rlen < 1)
       break;
   }
 

@@ -8,22 +8,22 @@ all: $(ALL_TARGETS)
 
 $(BUILDDIR)/fujinet.apple2.lib: $(CFILES) $(HFILES) $(AFILES) \
 				$(CFILES_A2) $(AFILES_A2) \
-				$(BUILDDIR)
+				| $(BUILDDIR)
 	$(MAKE) -f apple2.mk
 
 $(BUILDDIR)/libfujinet.coco.a: $(CFILES) $(HFILES) $(AFILES) \
 			       $(CFILES_COCO) \
-			       $(BUILDDIR)
+			       | $(BUILDDIR)
 	$(MAKE) -f coco.mk
 
 $(BUILDDIR)/fujinet.c64.lib: $(CFILES) $(HFILES) $(AFILES) \
 			     $(CFILES_C64) $(AFILES_C64) \
-			     $(BUILDDIR)
+			     | $(BUILDDIR)
 	$(MAKE) -f c64.mk
 
 $(BUILDDIR)/fujinet.atari.lib: $(CFILES) $(HFILES) $(AFILES) \
 			     $(CFILES_ATARI) $(AFILES_ATARI) \
-			     $(BUILDDIR)
+			     | $(BUILDDIR)
 	$(MAKE) -f atari.mk
 
 clean:
