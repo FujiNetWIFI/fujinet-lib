@@ -55,8 +55,8 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
 		   const void *data, size_t data_length,
 		   void *reply, size_t reply_length)
 {
+  uint8_t unit_id;
   uint16_t idx = 0;
-  uint8_t unit_id = sp_fuji_id;
 
 
   if (!did_status_init)
@@ -66,6 +66,8 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
     fn_device_error = FN_ERR_OFFLINE;
     return false;
   }
+
+  unit_id = sp_fuji_id;
 
   if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
     unit_id = sp_network;
