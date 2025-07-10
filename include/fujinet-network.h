@@ -110,7 +110,7 @@ uint8_t network_open(const char* devicespec, uint8_t mode, uint8_t trans);
  * @param  len length
  * @return Bytes read, or negative value of fujinet-network error code (See FN_ERR_* values) with fn_network_error containing real error code
  */
-int16_t network_read_nb(const char* devicespec, uint8_t *buf, uint16_t len);
+int16_t network_read_nb(const char* devicespec, void *buf, uint16_t len);
 
 /**
  * @brief  Read from channel
@@ -124,7 +124,7 @@ int16_t network_read_nb(const char* devicespec, uint8_t *buf, uint16_t len);
  * @param  len length
  * @return Bytes read, or negative value of fujinet-network error code (See FN_ERR_* values) with fn_network_error containing real error code
  */
-int16_t network_read(const char* devicespec, uint8_t *buf, uint16_t len);
+int16_t network_read(const char* devicespec, void *buf, uint16_t len);
 
 /**
  * @brief  Write to network 
@@ -133,7 +133,7 @@ int16_t network_read(const char* devicespec, uint8_t *buf, uint16_t len);
  * @param  len length
  * @return fujinet-network error code (See FN_ERR_* values)
  */
-uint8_t network_write(const char* devicespec, const uint8_t *buf, uint16_t len);
+uint8_t network_write(const char* devicespec, const void *buf, uint16_t len);
 
 /**
  * @brief  Device specific direct control commands

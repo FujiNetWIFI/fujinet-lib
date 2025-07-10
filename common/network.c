@@ -41,7 +41,7 @@ uint8_t network_close(const char *devicespec)
   return !NETCALL(FUJICMD_CLOSE, network_unit(devicespec));
 }
 
-int16_t network_read_nb(const char *devicespec, uint8_t *buf, uint16_t len)
+int16_t network_read_nb(const char *devicespec, void *buf, uint16_t len)
 {
   uint8_t nw_unit;
 
@@ -56,13 +56,14 @@ int16_t network_read_nb(const char *devicespec, uint8_t *buf, uint16_t len)
   return fuji_bus_read(FUJI_DEVICEID_NETWORK, nw_unit, buf, len);
 }
 
-int16_t network_read(const char *devicespec, uint8_t *buf, uint16_t len)
+int16_t network_read(const char *devicespec, void *buf, uint16_t len)
 {
   int16_t rlen, total;
+  uint8_t *ubuf = (uint8_t *) buf;
 
 
   for (total = 0; len; total += rlen, len -= rlen) {
-    rlen = network_read_nb(devicespec, &buf[total], len);
+    rlen = network_read_nb(devicespec, &ubuf[total], len);
     if (rlen < 1)
       break;
   }
@@ -70,19 +71,20 @@ int16_t network_read(const char *devicespec, uint8_t *buf, uint16_t len)
   return total;
 }
 
-uint8_t network_write(const char *devicespec, const uint8_t *buf, uint16_t len)
+uint8_t network_write(const char *devicespec, const void *buf, uint16_t len)
 {
   uint8_t nw_unit;
   uint16_t wlen;
+  uint8_t *ubuf = (uint8_t *) buf;
 
 
   nw_unit = network_unit(devicespec);
   while (len) {
-    wlen = fuji_bus_write(FUJI_DEVICEID_NETWORK, nw_unit, buf, len);
+    wlen = fuji_bus_write(FUJI_DEVICEID_NETWORK, nw_unit, ubuf, len);
     if (len && !wlen)
       return FN_ERR_IO_ERROR;
     len -= wlen;
-    buf += wlen;
+    ubuf += wlen;
   }
 
   return FN_ERR_OK;
