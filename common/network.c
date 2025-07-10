@@ -4,12 +4,10 @@
 #include "fujinet-const.h"
 #include "fujinet-err.h"
 
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
-
 typedef struct {
   uint16_t avail;
   uint8_t status;
-  uint8_t error;
+  uint8_t errcode;
 } NetworkStatus;
 
 NetworkStatus nw_status;
@@ -47,12 +45,21 @@ int16_t network_read_nb(const char *devicespec, void *buf, uint16_t len)
 
 
   nw_unit = network_unit(devicespec);
-  if (!NETCALL_RV(FUJICMD_STATUS, nw_unit, &nw_status, sizeof(nw_status)))
-    return -FN_ERR_IO_ERROR;
 
-  len = MIN(len, nw_status.avail);
-  if (!len)
-    return 0;
+  do {
+    // Check how many bytes are available
+    if (!NETCALL_RV(FUJICMD_STATUS, nw_unit, &nw_status, sizeof(nw_status)))
+      return -FN_ERR_IO_ERROR;
+
+    if (nw_status.errcode > NETWORK_SUCCESS && !nw_status.avail) {
+      fn_device_error = nw_status.errcode;
+      return 0;
+    }
+  } while (!nw_status.avail);
+
+  if (len > nw_status.avail)
+    len = nw_status.avail;
+
   return fuji_bus_read(FUJI_DEVICEID_NETWORK, nw_unit, buf, len);
 }
 
@@ -99,7 +106,7 @@ uint8_t network_status(const char *devicespec, uint16_t *avail, uint8_t *status,
 
   *avail = nw_status.avail;
   *status = nw_status.status;
-  *err = nw_status.error;
+  *err = nw_status.errcode;
 
   return FN_ERR_OK;
 }
