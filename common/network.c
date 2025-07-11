@@ -30,8 +30,25 @@ uint8_t network_unit(const char *devicespec)
 
 uint8_t network_open(const char *devicespec, uint8_t mode, uint8_t trans)
 {
-  return !NETCALL_A1_A2_D(FUJICMD_OPEN, network_unit(devicespec),
-			  mode, trans, devicespec, MAX_FILENAME_LEN);
+  bool success;
+  uint8_t nw_unit = network_unit(devicespec);
+
+
+  success = NETCALL_A1_A2_D(FUJICMD_OPEN, nw_unit,
+			    mode, trans, devicespec, MAX_FILENAME_LEN);
+  if (!success)
+    return FN_ERR_IO_ERROR;
+
+  if (!NETCALL_RV(FUJICMD_STATUS, nw_unit, &nw_status, sizeof(nw_status)))
+    return FN_ERR_IO_ERROR;
+
+  /* We haven't even read the file yet, it's not EOF */
+  if (nw_status.errcode == NETWORK_ERROR_END_OF_FILE)
+    nw_status.errcode = NETWORK_SUCCESS;
+
+  if (nw_status.errcode > NETWORK_SUCCESS && !nw_status.avail)
+    return nw_status.errcode;
+  return FN_ERR_OK;
 }
 
 uint8_t network_close(const char *devicespec)
