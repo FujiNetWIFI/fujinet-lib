@@ -4,6 +4,8 @@
 #include "fujinet-err.h"
 #include <string.h>
 
+#include <stdio.h> // debug
+
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 #define MAX_SMARTPORT_BLOCK 512
@@ -26,21 +28,40 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
   uint16_t idx = 0;
 
 
-  if (sp_get_fuji_id() == 0) {
+  if (device == FUJI_DEVICEID_FUJINET)
+    unit_id = sp_get_fuji_id();
+  else if (device == FUJI_DEVICEID_CLOCK)
+    unit_id = sp_get_clock_id();
+  else if (device == FUJI_DEVICEID_CPM)
+    unit_id = sp_get_cpm_id();
+#ifdef MIDI_SUPPORTED
+  else if (device == FUJI_DEVICEID_MIDI)
+    unit_id = sp_get_midi_id();
+#endif /* MIDI_SUPPORTED */
+  else if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
+    unit_id = sp_get_network_id();
+    sp_nw_unit = unit;
+  }
+  else if (device >= FUJI_DEVICEID_PRINTER && device <= FUJI_DEVICEID_PRINTER_LAST)
+    unit_id = sp_get_printer_id();
+  else if (device >= FUJI_DEVICEID_SERIAL && device <= FUJI_DEVICEID_SERIAL_LAST)
+    unit_id = sp_get_modem_id();
+#ifdef VOICE_SUPPORTED
+  else if (device == FUJI_DEVICEID_VOICE)
+    unit_id = sp_get_voice_id();
+#endif /* VOICE_SUPPORTED */
+  else
+    return FN_ERR_NO_DEVICE;
+
+  if (unit_id == 0) {
     fn_device_error = FN_ERR_OFFLINE;
     return false;
   }
 
-  unit_id = sp_fuji_id;
-
-  if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
-    unit_id = sp_network;
-    sp_nw_unit = unit;
-  }
-
   // FIXME - I think there's a couple of commands that don't have a
   //         reply value but used SP_STATUS instead of SP_CONTROL
-  is_status = reply;
+  is_status = (bool) reply;
+  printf("COMMAND: 0x%02x:%02x IS STATUS: %i\n", device, fuji_cmd, is_status);
 
   if (fields || !is_status) {
     if (fields & FUJI_FIELD_AUX1)
