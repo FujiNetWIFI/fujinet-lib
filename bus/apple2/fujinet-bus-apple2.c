@@ -4,63 +4,27 @@
 #include "fujinet-err.h"
 #include <string.h>
 
-uint8_t fn_device_error;
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 #define MAX_SMARTPORT_BLOCK 512
-
-#define FUJICMD_HIGHEST FUJICMD_RESET
-#define FUJICMD_LOWEST  FUJICMD_RENAME
-
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 typedef struct {
   uint16_t length;
   uint8_t data[];
 } fujibus_packet;
 
+uint8_t fn_device_error;
+
 static fujibus_packet *fb_packet = (fujibus_packet *) sp_payload;
-static uint8_t do_status[FUJICMD_HIGHEST - FUJICMD_LOWEST + 1];
-static uint8_t did_status_init = 0;
-
-#define CONFIG_STATUS(x) do_status[x - FUJICMD_LOWEST]
-static void status_init()
-{
-  uint8_t idx;
-
-
-  for (idx = 0; idx < 8; idx++)
-    CONFIG_STATUS(FUJICMD_GET_DEVICE1_FULLPATH + idx) = 1;
-
-  CONFIG_STATUS(FUJICMD_GET_ADAPTERCONFIG) = 1;
-  CONFIG_STATUS(FUJICMD_GET_ADAPTERCONFIG_EXTENDED) = 1;
-  CONFIG_STATUS(FUJICMD_GET_DIRECTORY_POSITION) = 1;
-  CONFIG_STATUS(FUJICMD_GET_HOST_PREFIX) = 1;
-  CONFIG_STATUS(FUJICMD_GET_SCAN_RESULT) = 1;
-  CONFIG_STATUS(FUJICMD_GET_SSID) = 1;
-  CONFIG_STATUS(FUJICMD_GET_WIFISTATUS) = 1;
-  CONFIG_STATUS(FUJICMD_GET_WIFI_ENABLED) = 1;
-  CONFIG_STATUS(FUJICMD_READ_DEVICE_SLOTS) = 1;
-  CONFIG_STATUS(FUJICMD_READ_DIR_ENTRY) = 1;
-  CONFIG_STATUS(FUJICMD_READ_HOST_SLOTS) = 1;
-  CONFIG_STATUS(FUJICMD_SCAN_NETWORKS) = 1;
-  CONFIG_STATUS(FUJICMD_STATUS) = 1;
-  CONFIG_STATUS(FUJICMD_READ_APPKEY) = 1;
-
-  did_status_init = 1;
-  return;
-}
-
 bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
 		   const void *data, size_t data_length,
 		   void *reply, size_t reply_length)
 {
+  bool is_status;
   uint8_t unit_id;
   uint16_t idx = 0;
 
-
-  if (!did_status_init)
-    status_init();
 
   if (sp_get_fuji_id() == 0) {
     fn_device_error = FN_ERR_OFFLINE;
@@ -74,7 +38,11 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
     sp_nw_unit = unit;
   }
 
-  if (fields || !CONFIG_STATUS(fuji_cmd)) {
+  // FIXME - I think there's a couple of commands that don't have a
+  //         reply value but used SP_STATUS instead of SP_CONTROL
+  is_status = reply;
+
+  if (fields || !is_status) {
     if (fields & FUJI_FIELD_AUX1)
       fb_packet->data[idx++] = aux1;
     if (fields & FUJI_FIELD_AUX2)
@@ -96,7 +64,7 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
       sp_control(unit_id, fuji_cmd);
   }
 
-  if (!sp_error && CONFIG_STATUS(fuji_cmd)) {
+  if (!sp_error && is_status) {
     if (unit_id == sp_network)
       sp_status_nw(unit_id, fuji_cmd);
     else
