@@ -228,7 +228,7 @@ bool fuji_enable_udpstream(uint16_t port, char *host);
  * @brief Returns true if last operation had an error.
  * @return ERROR status, true if there was an error in last operation.
  */
-bool fuji_error(void);
+#define fuji_error() (fn_device_error != FN_ERR_OK)
 
 /**
  * @brief Gets adapter config information from FN, e.g. IP, MAC, BSSID etc.

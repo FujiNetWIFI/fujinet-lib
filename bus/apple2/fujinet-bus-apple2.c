@@ -169,11 +169,6 @@ uint16_t fuji_bus_write(uint8_t device, uint8_t unit, const void *buffer, size_t
   return length;
 }
 
-bool fuji_error(void)
-{
-  return fn_device_error != FN_ERR_OK;
-}
-
 /*
   appkeys are variable length strings. Because SmartPort supports
   variable length data packets, aux1/aux2 aren't used to send the
