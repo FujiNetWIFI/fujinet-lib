@@ -3,7 +3,11 @@
 #ifndef _STDBOOL_H
 #define _STDBOOL_H
 
-typedef unsigned char bool;
+#ifndef bool
+#define bool _FNBool
+typedef unsigned char _FNBool;
+#endif /* bool */
+
 #define true  1
 #define false 0
 

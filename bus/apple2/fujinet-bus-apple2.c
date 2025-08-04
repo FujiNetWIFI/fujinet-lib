@@ -50,8 +50,10 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
   else if (device == FUJI_DEVICEID_VOICE)
     unit_id = sp_get_voice_id();
 #endif /* VOICE_SUPPORTED */
-  else
-    return FN_ERR_NO_DEVICE;
+  else {
+    fn_device_error = FN_ERR_NO_DEVICE;
+    return false;
+  }
 
   if (unit_id == 0) {
     fn_device_error = FN_ERR_OFFLINE;
