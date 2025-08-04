@@ -2,6 +2,7 @@
 #include "fujinet-fuji-coco.h"
 #include "fujinet-commands.h"
 #include "fujinet-const.h"
+#include "fujinet-network-coco.h"
 #include "dw.h"
 
 typedef struct {
@@ -15,8 +16,16 @@ typedef struct {
   uint8_t data[256];
 } fujibus_packet;
 
-fujibus_packet fb_packet;
-FNAppKeyString appkey_buf;
+typedef struct {
+  byte opcode;
+  byte unit;
+  byte cmd;
+  unsigned int len;
+} fujinw_packet;
+
+static fujibus_packet fb_packet;
+static fujinw_packet nw_packet;
+static FNAppKeyString appkey_buf;
 
 bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
@@ -51,6 +60,34 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
     return (bool) fuji_get_response((unsigned char *) reply, reply_length);
 
   return true;
+}
+
+uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length)
+{
+  nw_packet.opcode = OP_NET;
+  nw_packet.unit = unit;
+  nw_packet.cmd = FUJICMD_READ;
+  nw_packet.len = length;
+
+  bus_ready();
+  dwwrite((uint8_t *) &nw_packet, sizeof(nw_packet));
+  network_get_response(unit, (uint8_t *) buffer, nw_packet.len);
+
+  return nw_packet.len;
+}
+
+uint16_t fuji_bus_write(uint8_t device, uint8_t unit, const void *buffer, size_t length)
+{
+  nw_packet.opcode = OP_NET;
+  nw_packet.unit = unit;
+  nw_packet.cmd = FUJICMD_WRITE;
+  nw_packet.len = length;
+
+  bus_ready();
+  dwwrite((uint8_t *) &nw_packet,sizeof(nw_packet));
+  dwwrite((uint8_t *) buffer, nw_packet.len);
+
+  return network_get_error(nw_packet.unit);
 }
 
 /*
