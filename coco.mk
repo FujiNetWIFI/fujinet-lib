@@ -6,7 +6,7 @@ vpath %.c bus/$(PLATFORM)
 
 all: $(TARGET) test.$(PLATFORM)
 
-$(TARGET): $(OBJS) $(OBJS_COCO) $(BUILDDIR)
+$(TARGET): $(OBJS) $(OBJS_COCO) | $(BUILDDIR)
 	$(AR) -a -r $@ $^
 
 test.$(PLATFORM): $(OBJDIR)/test.o $(TARGET)
