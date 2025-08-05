@@ -350,13 +350,13 @@ bool fuji_open_directory2(uint8_t hs, const char *path, const char *filter);
  * @brief Save `size` device slots to FN
  * @return true if successful, false if there was an error from FN
  */
-#define fuji_put_device_slots(d, count) FUJICALL(FUJICMD_WRITE_DEVICE_SLOTS, d, sizeof(DeviceSlot) * count)
+#define fuji_put_device_slots(d, count) FUJICALL_D(FUJICMD_WRITE_DEVICE_SLOTS, d, sizeof(DeviceSlot) * count)
 
 /**
  * @brief Save `size` hosts slots to FN
  * @return true if successful, false if there was an error from FN
  */
-#define fuji_put_host_slots(d, count) FUJICALL(FUJICMD_WRITE_HOST_SLOTS, d, sizeof(HostSlot) * count)
+#define fuji_put_host_slots(d, count) FUJICALL_D(FUJICMD_WRITE_HOST_SLOTS, d, sizeof(HostSlot) * count)
 
 /**
  * @brief Fill buffer with directory information.
