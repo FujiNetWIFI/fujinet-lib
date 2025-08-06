@@ -210,19 +210,25 @@ extern FNStatus _fuji_status;
  * @brief Copies a file from given src to dst, with supplied path in copy_spec
  * @return Success status, true if all OK.
  */
-#define fuji_copy_file(src_slot, dest_slot, copy_spec) FUJICALL_A1_A2_D(FUJICMD_COPY_FILE, src_slot, dest_slot, copy_spec, MAX_FILENAME_LEN)
+bool fuji_copy_file(uint8_t src_slot, uint8_t dst_slot, char *copy_spec);
 
 /**
  * @brief Creates a new disk from the given structure.
  * @return Success status, true if all OK.
  */
-#define fuji_create_new(new_disk) FUJICALL_D(FUJICMD_NEW_DISK, new_disk, sizeof(new_disk))
+bool fuji_create_new(NewDisk *new_disk);
 
 #define fuji_disable_device(d) FUJICALL_A1(FUJICMD_DISABLE_DEVICE, d)
 #define fuji_enable_device(d) FUJICALL_A1(FUJICMD_ENABLE_DEVICE, d)
 
 // TODO: document and fix atari
 bool fuji_enable_udpstream(uint16_t port, char *host);
+
+/**
+ * Device specific error. This is the raw code from any device errors before they are converted to
+ * simpler device-agnostic network library errors.
+ */
+extern uint8_t fn_device_error;
 
 /**
  * @brief Returns true if last operation had an error.
@@ -242,7 +248,7 @@ bool fuji_get_adapter_config(AdapterConfig *ac);
  * Extended version that returns strings in addition to raw for all IP etc related values.
  * @return Success status, true if all OK.
  */
-#define fuji_get_adapter_config_extended(ac) FUJICALL_RV(FUJICMD_GET_ADAPTERCONFIG_EXTENDED, ac, sizeof(AdapterConfigExtended))
+bool fuji_get_adapter_config_extended(AdapterConfigExtended *ac);
 
 /**
  * THIS IS BOGUS. Apple and Atari both just return "true" for any device.
@@ -257,15 +263,15 @@ bool fuji_get_device_enabled_status(uint8_t d);
  * Note: BUFFER MUST BE ABLE TO ACCEPT UP TO 256 BYTE STRING
  * @return Success status, true if all OK.
  */
-#define fuji_get_device_filename(ds, buffer) FUJICALL_RV(FUJICMD_GET_DEVICE1_FULLPATH + ds, buffer, MAX_FILENAME_LEN)
+bool fuji_get_device_filename(uint8_t ds, char *buffer);
 
 /**
  * @brief Sets ALL device slot information into pointer d.
- * `size` is the receiving array size, and the returned data size is checked against this before copying.
+ * `count` is the number of slots to get, and the returned data size is checked against this before copying.
  * If it doesn't match, no data is copied, and false is returned.
  * @return Success status, true if all OK.
  */
-#define fuji_get_device_slots(d, count) FUJICALL_RV(FUJICMD_READ_DEVICE_SLOTS, d, sizeof(DeviceSlot) * count)
+bool fuji_get_device_slots(DeviceSlot *d, size_t count);
 
 /**
  * @brief Fetch the current directory position for paging through directories into pos.
@@ -277,7 +283,7 @@ bool fuji_get_directory_position(uint16_t *pos);
  * @brief Fetch the host prefix for given host slot id.
  * @return success status of request
  */
-#define fuji_get_host_prefix(hs, prefix) FUJICALL_A1_RV(FUJICMD_GET_HOST_PREFIX, hs, prefix, MAX_FILENAME_LEN)
+bool fuji_get_host_prefix(uint8_t hs, char *prefix);
 
 /**
  * @brief Sets ALL host slot information into pointer h.
@@ -285,21 +291,21 @@ bool fuji_get_directory_position(uint16_t *pos);
  * If it doesn't match, no data is copied, and false is returned.
  * @return Success status, true if all OK.
  */
-#define fuji_get_host_slots(d, count) FUJICALL_RV(FUJICMD_READ_HOST_SLOTS, d, sizeof(HostSlot) * count)
+bool fuji_get_host_slots(HostSlot *h, size_t count);
 
 /**
  * @brief Fills ssid_info with wifi scan results for bssid index n.
  * No data copied if there is an error.
  * @return Success status, true if all OK.
  */
-#define fuji_get_scan_result(n, ssid_info) FUJICALL_A1_RV(FUJICMD_GET_SCAN_RESULT, n, ssid_info, sizeof(SSIDInfo))
+bool fuji_get_scan_result(uint8_t n, SSIDInfo *ssid_info);
 
 /**
  * @brief Fills net_config with current SSID/password values.
  * No data copied if there is an error.
  * @return Success status, true if all OK.
  */
-#define fuji_get_ssid(net_config) FUJICALL_RV(FUJICMD_GET_SSID, net_config, sizeof(NetConfig))
+bool fuji_get_ssid(NetConfig *net_config);
 
 /**
  * @brief Checks if WIFI is enabled or not. Any device errors will return false also.
@@ -312,7 +318,7 @@ bool fuji_get_wifi_enabled(void);
  * WL_CONNECTED (3), WL_DISCONNECTED (6) are set if there are no underyling errors in FN.
  * @return Success status, true if all OK.
  */
-#define fuji_get_wifi_status(status) FUJICALL_RV(FUJICMD_GET_WIFISTATUS, status, 1)
+bool fuji_get_wifi_status(uint8_t *status);
 
 /**
  * @brief Mount all devices
@@ -337,7 +343,7 @@ bool fuji_get_wifi_enabled(void);
  * The path_filter is a buffer (not a string) of 256 bytes, with a separator of the \0 char between the path and filter parts.
  * @return true if successful, false otherwise
  */
-#define fuji_open_directory(hs, path_filter) FUJICALL_A1_D(FUJICMD_OPEN_DIRECTORY, hs, path_filter, MAX_FILENAME_LEN)
+bool fuji_open_directory(uint8_t hs, char *path_filter);
 
 /**
  * @brief Open the given directory on the given host slot.
@@ -347,22 +353,22 @@ bool fuji_get_wifi_enabled(void);
 bool fuji_open_directory2(uint8_t hs, const char *path, const char *filter);
 
 /**
- * @brief Save `size` device slots to FN
+ * @brief Save `count` device slots to FN
  * @return true if successful, false if there was an error from FN
  */
-#define fuji_put_device_slots(d, count) FUJICALL_D(FUJICMD_WRITE_DEVICE_SLOTS, d, sizeof(DeviceSlot) * count)
+bool fuji_put_device_slots(DeviceSlot *d, size_t count);
 
 /**
- * @brief Save `size` hosts slots to FN
+ * @brief Save `count` hosts slots to FN
  * @return true if successful, false if there was an error from FN
  */
-#define fuji_put_host_slots(d, count) FUJICALL_D(FUJICMD_WRITE_HOST_SLOTS, d, sizeof(HostSlot) * count)
+bool fuji_put_host_slots(HostSlot *h, size_t count);
 
 /**
  * @brief Fill buffer with directory information.
  * @return success status of request
  */
-#define fuji_read_directory(maxlen, aux2, buffer) FUJICALL_A1_A2_RV(FUJICMD_READ_DIR_ENTRY, maxlen, aux2, buffer, maxlen)
+bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer);
 
 /**
  * @brief Reset FN
@@ -374,7 +380,7 @@ bool fuji_reset(void);
  * @brief Scans network for SSIDs and sets count accordingly.
  * @return success status of request.
  */
-#define fuji_scan_for_networks(count) FUJICALL_RV(FUJICMD_SCAN_NETWORKS, count, 1)
+bool fuji_scan_for_networks(uint8_t *count);
 
 /**
  * @brief Scans network for SSIDs and sets count accordingly.
@@ -392,11 +398,7 @@ bool fuji_reset(void);
  * @brief Sends the device/host/mode information for devices to FN
  * @return success status of request.
  */
-#ifdef __ATARI__
-#define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_A2_D(FUJICMD_SET_DEVICE_FULLPATH, ds, (hs << 4) | mode, buffer, MAX_FILENAME_LEN)
-#else /* !__ATARI__ */
-#define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_A2_A3_D(FUJICMD_SET_DEVICE_FULLPATH, ds, hs, mode, buffer, MAX_FILENAME_LEN)
-#endif /* __ATARI__ */
+bool fuji_set_device_filename(uint8_t mode, uint8_t hs, uint8_t ds, char *buffer);
 
 /**
  * @brief Sets current directory position
@@ -429,20 +431,20 @@ bool fuji_set_sio_external_clock(uint16_t rate);
  * @brief Set the host prefix for given host slot id for platforms that support it.
  * @return success status of request
  */
-#define fuji_set_host_prefix(hs, prefix) FUJICALL_A1_D(FUJICMD_SET_HOST_PREFIX, hs, prefix, MAX_FILENAME_LEN)
+bool fuji_set_host_prefix(uint8_t hs, char *prefix);
 
 /**
  * @brief Set the SSID information from NetConfig structure
  * @return success status of request
  */
-#define fuji_set_ssid(nc) FUJICALL_D(FUJICMD_SET_SSID, nc, sizeof(NetConfig))
+bool fuji_set_ssid(NetConfig *nc);
 
 /**
  * @brief Gets the FNStatus information from FUJI device.
  * @return success status of the status request
  * NOTE: The actual status VALUE is in 'status', the return is just whether the command to fetch the status succeeded, it could succeed, but the status value holds an error.
  */
-#define fuji_status(status) FUJICALL_RV(FUJICMD_STATUS, status, sizeof(FNStatus))
+bool fuji_status(FNStatus *status);
 
 #ifdef __CBM__
 // DEBUGGING

@@ -1,4 +1,4 @@
-FUJICMDS := fuji_appkey.c network.c network_json.c
+FUJICMDS := fuji_appkey.c network.c network_json.c wrappers.c
 AFILES_SP := fn_error.s sp_data.s sp_find_clock.s sp_find_cpm.s		\
 	     sp_find_device.s sp_find_fuji.s sp_find_modem.s		\
 	     sp_find_network.s sp_find_printer.s sp_init.s		\

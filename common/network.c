@@ -1,4 +1,5 @@
 #include "fujinet-network.h"
+#include "fujinet-fuji.h"
 #include "fujinet-bus.h"
 #include "fujinet-commands.h"
 #include "fujinet-const.h"

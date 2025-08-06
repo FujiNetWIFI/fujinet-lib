@@ -1,7 +1,7 @@
 #ifndef FUJINET_BUS_H
 #define FUJINET_BUS_H
 
-// Convenience wrappers to fill in FujiDCB and make the call
+// Convenience macros to fill in FujiDCB and make the call
 #include <fujinet-bus-ezcall.h>
 
 #ifdef _CMOC_VERSION_

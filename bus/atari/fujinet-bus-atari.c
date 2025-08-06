@@ -71,11 +71,6 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
   return call_sio();
 }
 
-bool fuji_error(void)
-{
-  return atari_dcb->DSTATS != SIO_ERR_NONE;
-}
-
 /*
   appkeys are variable length strings. Because Atari SIO requires
   fixed length packets, an extra header must be added to indicate the
