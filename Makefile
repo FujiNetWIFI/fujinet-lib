@@ -27,6 +27,6 @@ $(BUILDDIR)/fujinet.atari.lib: $(CFILES) $(HFILES) $(AFILES) \
 	$(MAKE) -f atari.mk
 
 clean:
-	rm -rf *.o *.lst *.map *.bin *.lib *_obj $(BUILDDIR) $(ALL_TARGETS)
+	rm -rf *.o *.lst *.map *.a2s *.bin *.lib *_obj $(BUILDDIR) $(ALL_TARGETS)
 
 -include post.mk
