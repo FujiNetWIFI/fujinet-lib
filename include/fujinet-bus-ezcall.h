@@ -1,6 +1,8 @@
 #ifndef FUJINET_BUS_EZCALL_H
 #define FUJINET_BUS_EZCALL_H
 
+#include <fujinet-endian.h>
+
 /* Fuji Call Macro Naming Convention:
  *
  *   A#      = individual 8-bit aux fields (e.g. A1, A1_A2)
@@ -87,51 +89,53 @@
 
 #define FUJICALL_B12(cmd, b12) \
   fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
-		(uint8_t) (b12), (uint8_t) ((b12) >> 8), 0, 0, NULL, 0, NULL, 0)
+		U16_LSB(b12), U16_MSB(b12), 0, 0, NULL, 0, NULL, 0)
 
 #define FUJICALL_B12_D(cmd, b12, data, len) \
   fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
-		(uint8_t) (b12), (uint8_t) ((b12) >> 8), 0, 0, data, len, NULL, 0)
+		U16_LSB(b12), U16_MSB(b12), 0, 0, data, len, NULL, 0)
 
 #define FUJICALL_B12_RV(cmd, b12, reply, replylen) \
   fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
-		(uint8_t) (b12), (uint8_t) ((b12) >> 8), 0, 0, NULL, 0, reply, replylen)
+		U16_LSB(b12), U16_MSB(b12), 0, 0, NULL, 0, reply, replylen)
 
 #define FUJICALL_B12_B34(cmd, b12, b34)				\
   fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
-		(uint8_t) (b12), (uint8_t) ((b12) >> 8), \
-		(uint8_t) (b34), (uint8_t) ((b34) >> 8), NULL, 0, NULL, 0)
+		U16_LSB(b12), U16_MSB(b12), \
+		U16_LSB(b34), U16_MSB(b34), NULL, 0, NULL, 0)
 
 #define FUJICALL_B12_B34_D(cmd, b12, b34, data, len)			\
   fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
-		(uint8_t) (b12), (uint8_t) ((b12) >> 8), \
-		(uint8_t) (b34), (uint8_t) ((b34) >> 8), data, len, NULL, 0)
+		U16_LSB(b12), U16_MSB(b12), \
+		U16_LSB(b34), U16_MSB(b34), data, len, NULL, 0)
 
 #define FUJICALL_B12_B34_RV(cmd, b12, b34, reply, replylen)	\
   fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
-		(uint8_t) (b12), (uint8_t) ((b12) >> 8), \
-		(uint8_t) (b34), (uint8_t) ((b34) >> 8), NULL, 0, reply, replylen)
+		U16_LSB(b12), U16_MSB(b12), \
+		U16_LSB(b34), U16_MSB(b34), NULL, 0, reply, replylen)
 
 #define FUJICALL_C1234(cmd, c1234) \
   fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
-		(uint8_t) (c1234), (uint8_t) ((c1234) >> 8), \
-		(uint8_t) ((c1234) >> 16), (uint8_t) ((c1234) >> 24), NULL, 0, NULL, 0)
+		U16_LSB(U32_LSW(c1234)), U16_MSB(U32_LSW(c1234)), \
+		U16_LSB(U32_MSW(c1234)), U16_MSB(U32_MSW(c1234)), NULL, 0, NULL, 0)
 
 #define FUJICALL_C1234_D(cmd, c1234, data, len) \
   fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
-		(uint8_t) (c1234), (uint8_t) ((c1234) >> 8), \
-		(uint8_t) ((c1234) >> 16), (uint8_t) ((c1234) >> 24), data, len, NULL, 0)
+		U16_LSB(U32_LSW(c1234)), U16_MSB(U32_LSW(c1234)), \
+		U16_LSB(U32_MSW(c1234)), U16_MSB(U32_MSW(c1234)), \
+                data, len, NULL, 0)
 
 #define FUJICALL_C1234_RV(cmd, c1234, reply, replylen) \
   fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
-		(uint8_t) (c1234), (uint8_t) ((c1234) >> 8), \
-		(uint8_t) ((c1234) >> 16), (uint8_t) ((c1234) >> 24), NULL, 0, reply, replylen)
+		U16_LSB(U32_LSW(c1234)), U16_MSB(U32_LSW(c1234)), \
+		U16_LSB(U32_MSW(c1234)), U16_MSB(U32_MSW(c1234)), \
+                NULL, 0, reply, replylen)
 
 #define FUJICALL_D(cmd, data, len) \
   fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, 0, 0, 0, 0, 0, data, len, NULL, 0)
@@ -198,51 +202,51 @@
 
 #define NETCALL_B12(cmd, unit, b12) \
   fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
-		(uint8_t) (b12), (uint8_t) ((b12) >> 8), 0, 0, NULL, 0, NULL, 0)
+		(uint8_t) (b12), U16_MSB(b12), 0, 0, NULL, 0, NULL, 0)
 
 #define NETCALL_B12_D(cmd, unit, b12, data, len) \
   fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
-		(uint8_t) (b12), (uint8_t) ((b12) >> 8), 0, 0, data, len, NULL, 0)
+		(uint8_t) (b12), U16_MSB(b12), 0, 0, data, len, NULL, 0)
 
 #define NETCALL_B12_RV(cmd, unit, b12, reply, replylen) \
   fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
-		(uint8_t) (b12), (uint8_t) ((b12) >> 8), 0, 0, NULL, 0, reply, replylen)
+		(uint8_t) (b12), U16_MSB(b12), 0, 0, NULL, 0, reply, replylen)
 
 #define NETCALL_B12_B34(cmd, unit, b12, b34)				\
   fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
-		(uint8_t) (b12), (uint8_t) ((b12) >> 8), \
-		(uint8_t) (b34), (uint8_t) ((b34) >> 8), NULL, 0, NULL, 0)
+		(uint8_t) (b12), U16_MSB(b12), \
+		(uint8_t) (b34), U16_MSB(b34), NULL, 0, NULL, 0)
 
 #define NETCALL_B12_B34_D(cmd, unit, b12, b34, data, len)			\
   fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
-		(uint8_t) (b12), (uint8_t) ((b12) >> 8), \
-		(uint8_t) (b34), (uint8_t) ((b34) >> 8), data, len, NULL, 0)
+		(uint8_t) (b12), U16_MSB(b12), \
+		(uint8_t) (b34), U16_MSB(b34), data, len, NULL, 0)
 
 #define NETCALL_B12_B34_RV(cmd, unit, b12, b34, reply, replylen)	\
   fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
-		(uint8_t) (b12), (uint8_t) ((b12) >> 8), \
-		(uint8_t) (b34), (uint8_t) ((b34) >> 8), NULL, 0, reply, replylen)
+		(uint8_t) (b12), U16_MSB(b12), \
+		(uint8_t) (b34), U16_MSB(b34), NULL, 0, reply, replylen)
 
 #define NETCALL_C1234(cmd, unit, c1234) \
   fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
 		(uint8_t) (c1234), (uint8_t) ((c1234) >> 8), \
-		(uint8_t) ((c1234) >> 16), (uint8_t) ((c1234) >> 24), NULL, 0, NULL, 0)
+		(uint8_t) ((c1234) >> 16), U16_MSB(U32_MSW(c1234)), NULL, 0, NULL, 0)
 
 #define NETCALL_C1234_D(cmd, unit, c1234, data, len) \
   fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
 		(uint8_t) (c1234), (uint8_t) ((c1234) >> 8), \
-		(uint8_t) ((c1234) >> 16), (uint8_t) ((c1234) >> 24), data, len, NULL, 0)
+		(uint8_t) ((c1234) >> 16), U16_MSB(U32_MSW(c1234)), data, len, NULL, 0)
 
 #define NETCALL_C1234_RV(cmd, unit, c1234, reply, replylen) \
   fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
 		(uint8_t) (c1234), (uint8_t) ((c1234) >> 8), \
-		(uint8_t) ((c1234) >> 16), (uint8_t) ((c1234) >> 24), NULL, 0, reply, replylen)
+		(uint8_t) ((c1234) >> 16), U16_MSB(U32_MSW(c1234)), NULL, 0, reply, replylen)
 
 #define NETCALL_D(cmd, unit, data, len) \
   fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, 0, 0, 0, 0, 0, data, len, NULL, 0)
