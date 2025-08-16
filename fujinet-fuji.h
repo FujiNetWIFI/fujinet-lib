@@ -231,9 +231,9 @@ typedef struct
 #ifdef __ADAM__
 typedef struct
 {
-    uint8_t numDisks;
     uint8_t hostSlot;
     uint8_t deviceSlot;
+    uint32_t numBlocks;
     char filename[256];
 } NewDisk;
 #endif
