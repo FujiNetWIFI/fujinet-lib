@@ -3,7 +3,7 @@
 #include <eos.h>
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
-#include "fujinet-fuji-adam.h"
+#include "fujinet-network-adam.h"
 
 bool fuji_mount_host_slot(uint8_t hs)
 {
@@ -26,3 +26,5 @@ bool fuji_mount_host_slot(uint8_t hs)
 
   return FN_ERR_OK;
 }
+
+

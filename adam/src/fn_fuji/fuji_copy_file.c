@@ -4,7 +4,7 @@
 #include <string.h>
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
-#include "fujinet-fuji-adam.h"
+#include "fujinet-network-adam.h"
 
 bool fuji_copy_file(uint8_t src_slot, uint8_t dst_slot, char *copy_spec)
 {

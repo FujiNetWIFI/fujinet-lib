@@ -3,9 +3,8 @@
 #include <eos.h>
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
-#include "fujinet-fuji-adam.h"
-
-extern unsigned char response[1024];
+#include "fujinet-network-adam.h"
+#include "response.h"
 
 bool fuji_base64_encode_length(unsigned long *len)
 {

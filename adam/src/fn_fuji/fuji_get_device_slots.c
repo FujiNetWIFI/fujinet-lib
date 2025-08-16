@@ -4,7 +4,7 @@
 #include <string.h>
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
-#include "fujinet-fuji-adam.h"
+#include "fujinet-network-adam.h"
 
 bool fuji_get_device_slots(DeviceSlot *d, size_t size)
 {
@@ -37,3 +37,4 @@ bool fuji_get_device_slots(DeviceSlot *d, size_t size)
   if (d)
     memcpy(d, response, 304); // yes, I know, hard coded. bad me.
 }
+

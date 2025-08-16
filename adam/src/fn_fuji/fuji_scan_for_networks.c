@@ -3,9 +3,8 @@
 #include <eos.h>
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
-#include "fujinet-fuji-adam.h"
-
-extern uint8_t response[1024];
+#include "fujinet-network-adam.h"
+#include "response.h"
 
 bool fuji_scan_for_networks(uint8_t *count)
 {
@@ -40,3 +39,4 @@ bool fuji_scan_for_networks(uint8_t *count)
 
   return FN_ERR_OK;
 }
+

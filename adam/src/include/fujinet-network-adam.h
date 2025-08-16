@@ -11,6 +11,20 @@
 
 #include <stdint.h>
 #include <eos.h>
+#include "fujinet-fuji.h"
+
+/**
+ * @brief AdamNet Device ID for FujiNet Device
+ */
+#define FUJINET_DEVICE_ID 0x0F
+
+#define ADAMNET_SEND_APPKEY_READ  0xDD
+#define ADAMNET_SEND_APPKEY_WRITE 0xDE
+
+#define MAX_APPKEY_LEN 64
+
+extern uint16_t fn_adam_creator_id;
+extern uint8_t fn_adam_app_id;
 
 /**
  * @brief total # of network devices defined by firmware
@@ -33,5 +47,14 @@ extern DCB *network_dcb[MAX_NETWORK_DEVICES];
  * @return AdamNet unit number.
  */
 uint8_t network_unit_adamnet(char *devicespec);
+
+/**
+ * @brief Return proper unit # for adamnet.
+ * @param devicespec The Device Specification "N:..."
+ * @param buf Buffer to read data into
+ * @param len Length of the buffer
+ * @return Fujinet error code.
+ */
+int16_t network_read_adam(char* devicespec, uint8_t *buf, uint16_t len);
 
 #endif /* FUJINET_NETWORK_ADAM_H */

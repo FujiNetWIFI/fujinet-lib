@@ -4,9 +4,8 @@
 #include <string.h>
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
-#include "fujinet-fuji-adam.h"
-
-extern uint8_t response[1024];
+#include "fujinet-network-adam.h"
+#include "response.h"
 
 bool fuji_get_scan_result(uint8_t n, SSIDInfo *ssid_info)
 {
@@ -42,3 +41,4 @@ bool fuji_get_scan_result(uint8_t n, SSIDInfo *ssid_info)
 
   return FN_ERR_OK;
 }
+

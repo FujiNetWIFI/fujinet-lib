@@ -4,10 +4,8 @@
 #include <string.h>
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
-#include "fujinet-fuji-adam.h"
-
-// Borrow the response buffer.
-extern unsigned char response[1024];
+#include "fujinet-network-adam.h"
+#include "response.h"
 
 bool fuji_base64_encode_input(char *s, uint16_t len)
 {
@@ -16,7 +14,7 @@ bool fuji_base64_encode_input(char *s, uint16_t len)
 
   while(len)
     {
-      uint16_t l = (len > 1024 ? 1024 : len);
+      uint16_t l = (len > RESPONSE_SIZE ? RESPONSE_SIZE : len);
 
       // Fill command + payload
       response[0] = 0xD0; // Command

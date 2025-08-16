@@ -27,6 +27,10 @@
 #include "fujinet-network-cbm.h"
 #endif
 
+#ifdef __ADAM__
+#include "fujinet-network-adam.h"
+#endif
+
 #ifdef __PMD85__
 #include "fujinet-network-pmd85.h"
 #include "fujinet-fuji-pmd85.h"
@@ -43,7 +47,6 @@ int16_t network_read_nb(const char *devicespec, uint8_t *buf, uint16_t len)
 {
     uint8_t r = 0;
     uint16_t fetch_size = 0;
-
 #if defined(_CMOC_VERSION_) || defined(__PMD85__)
     struct _r
     {
@@ -58,7 +61,7 @@ int16_t network_read_nb(const char *devicespec, uint8_t *buf, uint16_t len)
     const char *after;
 #endif
 
-#if defined(__ATARI__) || defined(_CMOC_VERSION_) || defined(__CBM__) || defined(__PMD85__)
+#if defined(__ATARI__) || defined(_CMOC_VERSION_) || defined(__CBM__) || defined(__PMD85__) || defined(__ADAM__)
     uint8_t unit = 0;
 #endif
 
@@ -70,7 +73,7 @@ int16_t network_read_nb(const char *devicespec, uint8_t *buf, uint16_t len)
         return -fn_error(SP_ERR_BAD_CMD);
 #elif defined(__CBM__)
         return -FN_ERR_BAD_CMD;
-#elif defined(_CMOC_VERSION_) || defined(__PMD85__)
+#elif defined(_CMOC_VERSION_) || defined(__PMD85__) || defined (__ADAM__)
         return -fn_error(132); // invalid command
 #endif
     }
@@ -85,7 +88,7 @@ int16_t network_read_nb(const char *devicespec, uint8_t *buf, uint16_t len)
     fn_bytes_read = 0;
     fn_device_error = 0;
 
-#if defined(__ATARI__) || defined(_CMOC_VERSION_) || defined(__PMD85__)
+#if defined(__ATARI__) || defined(_CMOC_VERSION_) || defined(__PMD85__) || defined(__ADAM__)
     unit = network_unit(devicespec);
 #elif defined(__CBM__)
     unit = getDeviceNumber(devicespec, &after);
@@ -97,13 +100,14 @@ int16_t network_read_nb(const char *devicespec, uint8_t *buf, uint16_t len)
     r = network_status(devicespec, &fn_network_bw, &fn_network_conn, &fn_network_error);
 #elif defined(__CBM__)
     r = network_status(devicespec, &fn_network_bw, &fn_network_conn, &fn_network_error);
-#elif defined(_CMOC_VERSION_) || defined(__PMD85__)
+#elif defined(_CMOC_VERSION_) || defined(__PMD85__) || defined (__ADAM__)
     r = network_status(devicespec, &fn_network_bw, &fn_network_conn, &fn_network_error); // TODO: Status return needs fixing.
 #endif
 
     // check if the status failed.
     if (r != 0) {
         return -r;
+
     }
 
     // EOF hit, exit reading
@@ -133,7 +137,10 @@ int16_t network_read_nb(const char *devicespec, uint8_t *buf, uint16_t len)
     memcpy(buf, sp_payload, fetch_size);
 #elif defined(__CBM__)
     cbm_read(unit + CBM_DATA_CHANNEL_0, buf, fetch_size);
+#elif defined(__ADAM__)
+    network_read_adam(devicespec, buf, fetch_size);
 #endif
+
 #if defined(_CMOC_VERSION_) || defined(__PMD85__)
     read_r.opcode = OP_NET;
     read_r.unit = unit;
