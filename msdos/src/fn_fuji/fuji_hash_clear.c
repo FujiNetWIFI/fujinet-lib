@@ -5,6 +5,5 @@
 
 bool fuji_hash_clear(void)
 {
-    // I think this is duplicated.
-	return true;
+  return int_f5(0x70,0xC2,0x00,0x00) == 'C';
 }

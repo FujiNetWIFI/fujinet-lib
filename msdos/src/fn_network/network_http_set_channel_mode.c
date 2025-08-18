@@ -4,5 +4,6 @@
 
 uint8_t network_http_set_channel_mode(const char *devicespec, uint8_t mode)
 {
-	return 0;
+  uint8_t device = network_unit(devicespec) + 0x70;
+  return int_f5(device,'M',0x00,mode) == 'C';
 }

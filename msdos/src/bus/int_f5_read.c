@@ -25,7 +25,8 @@ unsigned char int_f5_read(unsigned char dev, unsigned char command, unsigned cha
     r.h.ah = command;
     r.h.cl = aux1;
     r.h.ch = aux2;
-
+    r.x.si = 0x00;
+    
     sr.es  = FP_SEG(buf);
     r.x.bx = FP_OFF(buf);
     r.x.di = len;

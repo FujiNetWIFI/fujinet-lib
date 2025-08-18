@@ -8,6 +8,8 @@
 #ifndef FUJINET_FUJI_MSDOS_H
 #define FUJINET_FUJI_MSDOS_H
 
+#define BUS_SUCCESS 0
+
 /**
  * @brief bus functions.
  */
