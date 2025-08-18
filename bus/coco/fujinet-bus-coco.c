@@ -13,19 +13,61 @@ typedef struct {
 typedef struct {
   uint8_t opcode;
   uint8_t cmd;
-  uint8_t data[256];
-} fujibus_packet;
+} fujibus_header;
 
 typedef struct {
   byte opcode;
   byte unit;
   byte cmd;
-  unsigned int len;
-} fujinw_packet;
+} fujinw_header;
 
-static fujibus_packet fb_packet;
-static fujinw_packet nw_packet;
+static fujibus_header fb_header;
+static fujinw_header nw_header;
 static FNAppKeyString appkey_buf;
+static unsigned char buffer[256];
+
+bool fuji_net_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
+		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
+		   const void *data, size_t data_length,
+		   void *reply, size_t reply_length)
+{
+  uint16_t idx = 0;
+  uint8_t err;
+
+
+  nw_header.opcode = OP_NET;
+  nw_header.unit = unit;
+  nw_header.cmd = fuji_cmd;
+
+  if (fields & FUJI_FIELD_AUX1)
+    buffer[idx++] = aux1;
+  if (fields & FUJI_FIELD_AUX2)
+    buffer[idx++] = aux2;
+  if (fields & FUJI_FIELD_AUX3)
+    buffer[idx++] = aux3;
+  if (fields & FUJI_FIELD_AUX4)
+    buffer[idx++] = aux4;
+  if (data) {
+    memcpy(&buffer[idx], data, data_length);
+    idx += data_length;
+  }
+
+  bus_ready();
+  dwwrite((unsigned char *) &nw_header, sizeof(nw_header));
+  if (idx)
+    dwwrite(buffer, idx);
+
+  err = network_get_error(unit);
+  if (err)
+    return false;
+  
+  if (reply) {
+    err = network_get_response(unit, (unsigned char *) reply, reply_length);
+    return !err;
+  }
+
+  return true;
+}
 
 bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
@@ -35,24 +77,33 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
   uint16_t idx = 0;
 
 
-  fb_packet.opcode = OP_FUJI;
-  fb_packet.cmd = fuji_cmd;
+  if (device >= FUJI_DEVICEID_NETWORK  && device <= FUJI_DEVICEID_NETWORK_LAST)
+    return fuji_net_call(device, unit, fuji_cmd, fields, aux1, aux2, aux3, aux4, data, data_length, reply, reply_length);
+
+  if (device != FUJI_DEVICEID_FUJINET)
+    return false;  
+
+  fb_header.opcode = OP_FUJI;
+  fb_header.cmd = fuji_cmd;
 
   if (fields & FUJI_FIELD_AUX1)
-    fb_packet.data[idx++] = aux1;
+    buffer[idx++] = aux1;
   if (fields & FUJI_FIELD_AUX2)
-    fb_packet.data[idx++] = aux2;
+    buffer[idx++] = aux2;
   if (fields & FUJI_FIELD_AUX3)
-    fb_packet.data[idx++] = aux3;
+    buffer[idx++] = aux3;
   if (fields & FUJI_FIELD_AUX4)
-    fb_packet.data[idx++] = aux4;
+    buffer[idx++] = aux4;
   if (data) {
-    memcpy(&fb_packet.data[idx], data, data_length);
+    memcpy(&buffer[idx], data, data_length);
     idx += data_length;
   }
 
   bus_ready();
-  dwwrite((unsigned char *) &fb_packet, 2 + idx);
+  dwwrite((unsigned char *) &fb_header, sizeof(fb_header));
+  if (idx)
+    dwwrite(buffer, idx);
+
   if (fuji_get_error())
     return false;
 
@@ -64,30 +115,16 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
 
 uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length)
 {
-  nw_packet.opcode = OP_NET;
-  nw_packet.unit = unit;
-  nw_packet.cmd = FUJICMD_READ;
-  nw_packet.len = length;
+  NETCALL_RV(device, unit, buffer, length);
+  network_get_response(unit, (uint8_t *) buffer, length);
 
-  bus_ready();
-  dwwrite((uint8_t *) &nw_packet, sizeof(nw_packet));
-  network_get_response(unit, (uint8_t *) buffer, nw_packet.len);
-
-  return nw_packet.len;
+  return length;
 }
 
 uint16_t fuji_bus_write(uint8_t device, uint8_t unit, const void *buffer, size_t length)
 {
-  nw_packet.opcode = OP_NET;
-  nw_packet.unit = unit;
-  nw_packet.cmd = FUJICMD_WRITE;
-  nw_packet.len = length;
-
-  bus_ready();
-  dwwrite((uint8_t *) &nw_packet,sizeof(nw_packet));
-  dwwrite((uint8_t *) buffer, nw_packet.len);
-
-  return network_get_error(nw_packet.unit);
+  NETCALL_D(device, unit, buffer, length);
+  return network_get_error(unit);
 }
 
 /*

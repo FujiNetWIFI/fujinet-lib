@@ -49,6 +49,7 @@ uint8_t network_open(const char *devicespec, uint8_t mode, uint8_t trans)
 
   if (nw_status.errcode > NETWORK_SUCCESS && !nw_status.avail)
     return nw_status.errcode;
+
   return FN_ERR_OK;
 }
 
