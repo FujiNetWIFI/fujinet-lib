@@ -15,11 +15,11 @@ bool fuji_get_device_slots(DeviceSlot *d, size_t size)
       err = eos_write_character_device(FUJINET_DEVICE_ID,"\xF2",1);
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	break;
+        break;
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
 
   while(1)
@@ -27,11 +27,11 @@ bool fuji_get_device_slots(DeviceSlot *d, size_t size)
       err = eos_read_character_device(FUJINET_DEVICE_ID,response,1024);
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	break;
+        break;
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
 
   if (d)

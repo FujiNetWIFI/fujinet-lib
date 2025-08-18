@@ -12,17 +12,17 @@ bool fuji_base64_decode_length(unsigned long *len)
   uint8_t err = 0;
 
   // Send command
-  
+
   while(1)
     {
       err = eos_write_character_device(FUJINET_DEVICE_ID,"\xCA",1);
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	break;
+        break;
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
 
   // Get response
@@ -32,11 +32,11 @@ bool fuji_base64_decode_length(unsigned long *len)
       err = eos_read_character_device(FUJINET_DEVICE_ID,response,1024);
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	break;
+        break;
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
 
   if (len)

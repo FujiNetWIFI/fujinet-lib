@@ -11,18 +11,18 @@ bool fuji_set_boot_mode(uint8_t mode)
   uint8_t err = 0;
 
   sbm[1] = mode;
-  
+
   while(1)
     {
       err = eos_write_character_device(FUJINET_DEVICE_ID,&sbm,sizeof(sbm));
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	break;
+        break;
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
-  
+
   return FN_ERR_OK;
 }

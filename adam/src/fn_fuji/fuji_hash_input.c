@@ -13,7 +13,7 @@ bool fuji_hash_input(char *s, uint16_t len)
 {
   uint8_t err = 0;
   uint16_t o = 0; // offset
-  
+
   while(len)
     {
       uint16_t l = (len > 1024 ? 1024 : len);
@@ -21,18 +21,18 @@ bool fuji_hash_input(char *s, uint16_t len)
       // Fill command + payload
       response[0] = 0xC8; // Command
       memcpy(&response[1],&s[o],l);
-      
+
       err = eos_write_character_device(FUJINET_DEVICE_ID,response,l);
 
       if (err = ADAMNET_TIMEOUT)
-	continue; // Retry
+        continue; // Retry
       else if (err == ADAMNET_OK)
-	{
-	  len -= l;
-	  o += l;
-	  continue; // Do the next chunk.
- 	}
+        {
+          len -= l;
+          o += l;
+          continue; // Do the next chunk.
+        }
       else
-	return FN_ERR_IO_ERROR; // We failed.
+        return FN_ERR_IO_ERROR; // We failed.
     }
 }

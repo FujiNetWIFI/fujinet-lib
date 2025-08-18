@@ -18,12 +18,12 @@ bool fuji_set_ssid(NetConfig *nc)
       err = eos_write_character_device(FUJINET_DEVICE_ID,&ss,sizeof(ss));
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	break;
+        break;
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
-  
+
   return FN_ERR_OK;
 }

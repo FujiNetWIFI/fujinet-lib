@@ -15,19 +15,19 @@ bool fuji_hash_output(uint8_t output_type, char *s, uint16_t len)
   uint8_t ho[2] = {0xC5,0x00};
 
   ho[1] = output_type;
-  
+
   // Send command
-  
+
   while(1)
     {
       err = eos_write_character_device(FUJINET_DEVICE_ID,&ho,sizeof(ho));
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	break;
+        break;
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
 
   // Get response
@@ -35,19 +35,19 @@ bool fuji_hash_output(uint8_t output_type, char *s, uint16_t len)
   while(len)
     {
       uint16_t l = (len > 1024 ? 1024 : len);
-      
+
       err = eos_read_character_device(FUJINET_DEVICE_ID,response,1024);
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	{
-	  memcpy(&s[o],&response[o],l);
-	  len -= l;
-	  o += l;
-	}
+        {
+          memcpy(&s[o],&response[o],l);
+          len -= l;
+          o += l;
+        }
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
 
   return FN_ERR_OK;

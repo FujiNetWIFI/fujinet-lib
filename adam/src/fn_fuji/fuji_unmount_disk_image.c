@@ -17,12 +17,12 @@ bool fuji_unmount_disk_image(uint8_t ds)
       err = eos_write_character_device(FUJINET_DEVICE_ID,&udi,sizeof(udi));
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	break;
+        break;
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
-  
+
   return FN_ERR_OK;
 }

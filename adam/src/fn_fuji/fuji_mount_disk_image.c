@@ -18,11 +18,11 @@ bool fuji_mount_disk_image(uint8_t ds, uint8_t mode)
       err = eos_write_character_device(FUJINET_DEVICE_ID,&mdi,sizeof(mdi));
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	break;
+        break;
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
 
   return FN_ERR_OK;

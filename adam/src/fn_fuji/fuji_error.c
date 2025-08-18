@@ -9,6 +9,6 @@ bool fuji_error()
 {
   // Gonna guess here.
   DCB *dcb;
-  
+
   return eos_request_device_status(FUJINET_DEVICE_ID,dcb) != ADAMNET_OK;
 }

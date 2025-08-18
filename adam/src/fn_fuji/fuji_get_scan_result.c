@@ -18,11 +18,11 @@ bool fuji_get_scan_result(uint8_t n, SSIDInfo *ssid_info)
       err = eos_write_character_device(FUJINET_DEVICE_ID,&gsr,sizeof(gsr));
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	break;
+        break;
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
 
   while(1)
@@ -30,15 +30,15 @@ bool fuji_get_scan_result(uint8_t n, SSIDInfo *ssid_info)
       err = eos_read_character_device(FUJINET_DEVICE_ID,response,sizeof(response));
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	break;
+        break;
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
 
   if (ssid_info)
     memcpy(ssid_info,response,sizeof(SSIDInfo));
-  
+
   return FN_ERR_OK;
 }

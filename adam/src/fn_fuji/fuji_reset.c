@@ -14,12 +14,12 @@ bool fuji_reset()
       err = eos_write_character_device(FUJINET_DEVICE_ID,"\xFF",1);
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	break;
+        break;
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
-  
+
   return FN_ERR_OK;
 }

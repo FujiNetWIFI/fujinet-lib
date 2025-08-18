@@ -20,14 +20,14 @@ bool fuji_open_directory(uint8_t hs, char *path_filter)
   while(1)
     {
       err = eos_write_character_device(FUJINET_DEVICE_ID,&od,sizeof(od));
-      
+
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	break;
+        break;
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
-  
+
   return FN_ERR_OK;
 }

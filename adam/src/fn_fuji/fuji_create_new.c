@@ -12,26 +12,26 @@ bool fuji_create_new(NewDisk *new_disk)
   char *c = &nd[3];
   unsigned long *l = (unsigned long *)c;
   uint8_t err = 0;
-  
+
   // fill in newdisk structure
-  
+
   nd[1]=new_disk->hostSlot;
   nd[2]=new_disk->deviceSlot;
   *l=new_disk->numBlocks;
   strcpy(&nd[7],path);
 
   // Send command
-  
+
   while(1)
     {
       err = eos_write_character_device(FUJINET_DEVICE_ID,&nd,sizeof(nd));
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	break;
+        break;
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
 
   // Poll status until complete
@@ -41,7 +41,7 @@ bool fuji_create_new(NewDisk *new_disk)
       err = eos_request_device_status(FUJINET_DEVICE_ID,dcb);
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
     }
 
   return err;

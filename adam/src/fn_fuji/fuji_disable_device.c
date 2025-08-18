@@ -12,16 +12,16 @@ bool fuji_disable_device(uint8_t d)
   char dd[2] = {0xD4,0x00};
 
   dd[1] = d;
-  
+
   while (1)
     {
       err = eos_write_character_device(FUJINET_DEVICE_ID,&dd,2);
 
       if (err == ADAMNET_TIMEOUT)
-	continue;
+        continue;
       else if (err == ADAMNET_OK)
-	return FN_ERR_OK;
+        return FN_ERR_OK;
       else
-	return FN_ERR_IO_ERROR;
+        return FN_ERR_IO_ERROR;
     }
 }
