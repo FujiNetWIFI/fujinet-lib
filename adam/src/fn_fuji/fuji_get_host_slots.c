@@ -6,7 +6,7 @@
 #include "fujinet-network.h"
 #include "fujinet-fuji-adam.h"
 
-bool fuji_get_device_slots(HostSlot *h, size_t size)
+bool fuji_get_host_slots(HostSlot *h, size_t size)
 {
   uint8_t err = 0;
 
