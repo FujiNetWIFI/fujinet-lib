@@ -115,7 +115,13 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
 
 uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length)
 {
-  NETCALL_RV(device, unit, buffer, length);
+  nw_header.opcode = OP_NET;
+  nw_header.unit = unit;
+  nw_header.cmd = FUJICMD_READ;
+
+  bus_ready();
+  dwwrite((uint8_t *) &nw_header, sizeof(nw_header));
+  dwwrite((uint8_t *) &length, sizeof(length));
   network_get_response(unit, (uint8_t *) buffer, length);
 
   return length;
@@ -123,9 +129,32 @@ uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length
 
 uint16_t fuji_bus_write(uint8_t device, uint8_t unit, const void *buffer, size_t length)
 {
-  NETCALL_D(device, unit, buffer, length);
+  nw_header.opcode = OP_NET;
+  nw_header.unit = unit;
+  nw_header.cmd = FUJICMD_WRITE;
+
+  bus_ready();
+  dwwrite((uint8_t *) &nw_header, sizeof(nw_header));
+  dwwrite((uint8_t *) &length, sizeof(length));
+  dwwrite((uint8_t *) buffer, length);
+
+  return network_get_error(nw_header.unit);
+}
+#if 0
+uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length)
+{
+  NETCALL_B12_RV(FUJICMD_READ, unit, length, buffer, length);
+  network_get_response(unit, (uint8_t *) buffer, length);
+
+  return length;
+}
+
+uint16_t fuji_bus_write(uint8_t device, uint8_t unit, const void *buffer, size_t length)
+{
+  NETCALL_D(FUJICMD_WRITE, unit, buffer, length);
   return network_get_error(unit);
 }
+#endif
 
 /*
   appkeys are variable length strings. CoCo drivewire is serial but
