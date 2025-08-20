@@ -3,9 +3,9 @@
 #include <fujinet-network.h>
 #include <fujinet-fuji-msdos.h>
 
-uint8_t network_write(const char* devicespec, const uint8_t *buf, uint16_t len)
+int network_read_msdos(char* devicespec, byte *buf, unsigned int len)
 {
   uint8_t device = network_unit(devicespec) + 0x70;
-  
-  return intf5_write(device,'W',len&0xFF,len>>8,(void *)buf,len) == 'C';
+
+  return intf5_read(device,'R',len&0xFF,len>>8,(void *)buf,len) == 'C';
 }

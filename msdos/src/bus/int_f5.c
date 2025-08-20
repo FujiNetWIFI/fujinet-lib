@@ -22,7 +22,8 @@ unsigned char int_f5(unsigned char dev, unsigned char command, unsigned char aux
     r.h.ah = command;
     r.h.cl = aux1;
     r.h.ch = aux2;
-
+    r.x.si = 0x00;
+    
     int86(0xF5,&r,&r);
 
     return r.h.al;
