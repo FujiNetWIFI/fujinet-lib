@@ -24,38 +24,38 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
 		   void *reply, size_t reply_length)
 {
   bool is_status;
-  uint8_t unit_id;
+  uint8_t sp_id;
   uint16_t idx = 0;
 
 
   if (device == FUJI_DEVICEID_FUJINET)
-    unit_id = sp_get_fuji_id();
+    sp_id = sp_get_fuji_id();
   else if (device == FUJI_DEVICEID_CLOCK)
-    unit_id = sp_get_clock_id();
+    sp_id = sp_get_clock_id();
   else if (device == FUJI_DEVICEID_CPM)
-    unit_id = sp_get_cpm_id();
+    sp_id = sp_get_cpm_id();
 #ifdef MIDI_SUPPORTED
   else if (device == FUJI_DEVICEID_MIDI)
-    unit_id = sp_get_midi_id();
+    sp_id = sp_get_midi_id();
 #endif /* MIDI_SUPPORTED */
   else if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
-    unit_id = sp_get_network_id();
+    sp_id = sp_get_network_id();
     sp_nw_unit = unit;
   }
   else if (device >= FUJI_DEVICEID_PRINTER && device <= FUJI_DEVICEID_PRINTER_LAST)
-    unit_id = sp_get_printer_id();
+    sp_id = sp_get_printer_id();
   else if (device >= FUJI_DEVICEID_SERIAL && device <= FUJI_DEVICEID_SERIAL_LAST)
-    unit_id = sp_get_modem_id();
+    sp_id = sp_get_modem_id();
 #ifdef VOICE_SUPPORTED
   else if (device == FUJI_DEVICEID_VOICE)
-    unit_id = sp_get_voice_id();
+    sp_id = sp_get_voice_id();
 #endif /* VOICE_SUPPORTED */
   else {
     fn_device_error = FN_ERR_NO_DEVICE;
     return false;
   }
 
-  if (unit_id == 0) {
+  if (sp_id == 0) {
     fn_device_error = FN_ERR_OFFLINE;
     return false;
   }
@@ -81,17 +81,17 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
 
     fb_packet->length = idx;
 
-    if (unit_id == sp_network)
-      sp_control_nw(unit_id, fuji_cmd);
+    if (sp_id == sp_network)
+      sp_control_nw(sp_id, fuji_cmd);
     else
-      sp_control(unit_id, fuji_cmd);
+      sp_control(sp_id, fuji_cmd);
   }
 
   if (!sp_error && is_status) {
-    if (unit_id == sp_network)
-      sp_status_nw(unit_id, fuji_cmd);
+    if (sp_id == sp_network)
+      sp_status_nw(sp_id, fuji_cmd);
     else
-      sp_status(unit_id, fuji_cmd);
+      sp_status(sp_id, fuji_cmd);
     if (!sp_error && reply)
       memcpy(reply, &sp_payload[0], reply_length);
   }
@@ -103,7 +103,7 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
 uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length)
 {
   uint16_t err;
-  uint8_t unit_id = sp_fuji_id;
+  uint8_t sp_id = sp_fuji_id;
 
 
   if (!length)
@@ -115,16 +115,16 @@ uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length
   }
 
   if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
-    unit_id = sp_network;
+    sp_id = sp_network;
     sp_nw_unit = unit;
   }
 
   length = MIN(length, MAX_SMARTPORT_BLOCK);
 
-  if (unit_id == sp_network)
-    err = sp_read_nw(unit_id, length);
+  if (sp_id == sp_network)
+    err = sp_read_nw(sp_id, length);
   else
-    err = sp_read(unit_id, length);
+    err = sp_read(sp_id, length);
 
   fn_device_error = fn_error(sp_error);
 
@@ -139,7 +139,7 @@ uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length
 uint16_t fuji_bus_write(uint8_t device, uint8_t unit, const void *buffer, size_t length)
 {
   uint16_t err;
-  uint8_t unit_id = sp_fuji_id;
+  uint8_t sp_id = sp_fuji_id;
 
 
   if (!length)
@@ -151,17 +151,17 @@ uint16_t fuji_bus_write(uint8_t device, uint8_t unit, const void *buffer, size_t
   }
 
   if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
-    unit_id = sp_network;
+    sp_id = sp_network;
     sp_nw_unit = unit;
   }
 
   length = MIN(length, MAX_SMARTPORT_BLOCK);
   memcpy(&sp_payload[0], buffer, length);
 
-  if (unit_id == sp_network)
-    err = sp_write_nw(unit_id, length);
+  if (sp_id == sp_network)
+    err = sp_write_nw(sp_id, length);
   else
-    err = sp_write(unit_id, length);
+    err = sp_write(sp_id, length);
 
   fn_device_error = fn_error(sp_error);
 
