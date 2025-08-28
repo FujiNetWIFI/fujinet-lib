@@ -1,4 +1,4 @@
-FUJICMDS := fuji_appkey.c network.c network_json.c wrappers.c
+FUJICMDS := fuji_appkey.c network.c network_json.c network_unit_status_default.c
 AFILES_SP := fn_error.s sp_data.s sp_find_clock.s sp_find_cpm.s		\
 	     sp_find_device.s sp_find_fuji.s sp_find_modem.s		\
 	     sp_find_network.s sp_find_printer.s sp_init.s		\
@@ -15,17 +15,21 @@ AFILES =
 CFILES_A2 = $(addprefix bus/apple2/, fujinet-bus-apple2.c)
 AFILES_A2 = $(addprefix bus/apple2/, $(AFILES_SP))
 CFILES_COCO = $(addprefix bus/coco/, fujinet-bus-coco.c $(CFILES_DW))
-CFILES_C64 = $(addprefix bus/c64/, fujinet-bus-c64.c)
+CFILES_C64 = $(addprefix bus/c64/, fujinet-bus-c64.c network_unit_status.c)
 AFILES_C64 = $(addprefix bus/c64/, $(AFILES_CBM))
 CFILES_ATARI = $(addprefix bus/atari/, fujinet-bus-atari.c)
 AFILES_ATARI = $(addprefix bus/atari/, $(AFILES_SIO))
 BUILDDIR = build
 OBJDIR := $(PLATFORM)_obj
-OBJS = $(addprefix $(OBJDIR)/, $(notdir $(CFILES:.c=.o) $(AFILES:.s=.o)))
-OBJS_A2 = $(addprefix $(OBJDIR)/, $(notdir $(CFILES_A2:.c=.o) $(AFILES_A2:.s=.o)))
-OBJS_COCO = $(addprefix $(OBJDIR)/, $(notdir $(CFILES_COCO:.c=.o) $(AFILES_COCO:.s=.o)))
-OBJS_C64 = $(addprefix $(OBJDIR)/, $(notdir $(CFILES_C64:.c=.o) $(AFILES_C64:.s=.o)))
-OBJS_ATARI = $(addprefix $(OBJDIR)/, $(notdir $(CFILES_ATARI:.c=.o) $(AFILES_ATARI:.s=.o)))
+OBJS_COMMON = $(addprefix $(OBJDIR)/, $(notdir $(CFILES:.c=.o) $(AFILES:.s=.o)))
+OBJS_A2 = $(OBJS_COMMON) \
+	$(addprefix $(OBJDIR)/, $(notdir $(CFILES_A2:.c=.o) $(AFILES_A2:.s=.o)))
+OBJS_COCO = $(OBJS_COMMON) \
+	$(addprefix $(OBJDIR)/, $(notdir $(CFILES_COCO:.c=.o) $(AFILES_COCO:.s=.o)))
+OBJS_C64 = $(filter-out common/network_unit_status_default.o,$(OBJS_COMMON)) \
+	$(addprefix $(OBJDIR)/, $(notdir $(CFILES_C64:.c=.o) $(AFILES_C64:.s=.o)))
+OBJS_ATARI = $(OBJS_COMMON) \
+	$(addprefix $(OBJDIR)/, $(notdir $(CFILES_ATARI:.c=.o) $(AFILES_ATARI:.s=.o)))
 
 vpath %.c common
 vpath %.s common

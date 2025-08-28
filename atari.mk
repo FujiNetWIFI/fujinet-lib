@@ -6,8 +6,8 @@ vpath %.c bus/$(PLATFORM)
 
 all: $(TARGET) test.$(PLATFORM)
 
-$(TARGET): $(OBJS) $(OBJS_ATARI) $(BUILDDIR)
-	$(AR) a $@ $(OBJS) $(OBJS_ATARI)
+$(TARGET): $(OBJS_ATARI) | $(BUILDDIR)
+	$(AR) a $@ $^
 
 test.$(PLATFORM): $(OBJDIR)/test.o $(TARGET)
 	$(CC) -t $(PLATFORM) -o $@ $(LDFLAGS) $^

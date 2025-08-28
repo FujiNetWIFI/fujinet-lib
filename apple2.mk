@@ -8,8 +8,8 @@ vpath %.c bus/$(PLATFORM)
 
 all: $(FNLIB) test.$(PLATFORM)
 
-$(TARGET): $(OBJS) $(OBJS_A2) $(BUILDDIR)
-	$(AR) a $@ $(OBJS) $(OBJS_A2)
+$(TARGET): $(OBJS_A2) | $(BUILDDIR)
+	$(AR) a $@ $^
 
 define single-to-double
   $(UNSINGLE) $< && mv $<.ad $@ && mv .AppleDouble/$<.ad .AppleDouble/$@

@@ -1,4 +1,3 @@
-
 /**
  * @brief FujiNet Network Device Library
  * @license gpl v. 3, see LICENSE for details.
@@ -7,13 +6,7 @@
 #ifndef FUJINET_NETWORK_H
 #define FUJINET_NETWORK_H
 
-#ifdef _CMOC_VERSION_
-#include <cmoc.h>
-#include <coco.h>
-#else
-#include <stdint.h>
-#include <stdbool.h>
-#endif /* _CMOC_VERSION_ */
+#include <fujinet-int.h>
 
 #ifdef __CBM__
 

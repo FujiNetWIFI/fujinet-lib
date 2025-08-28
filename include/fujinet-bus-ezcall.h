@@ -98,7 +98,7 @@
   FUJICALL_A1_A2(cmd, U16_LSB(b12), U16_MSB(b12))
 
 #define FUJICALL_B12_D(cmd, b12, data, len) \
-  FUJICALL_A1_A2(cmd, U16_LSB(b12), U16_MSB(b12))
+  FUJICALL_A1_A2_D(cmd, U16_LSB(b12), U16_MSB(b12), data, len)
 
 #define FUJICALL_B12_RV(cmd, b12, reply, replylen) \
   FUJICALL_A1_A2_RV(cmd, U16_LSB(b12), U16_MSB(b12), reply, replylen)

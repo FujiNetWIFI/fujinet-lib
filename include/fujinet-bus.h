@@ -3,16 +3,7 @@
 
 // Convenience macros to fill in FujiDCB and make the call
 #include <fujinet-bus-ezcall.h>
-
-#ifdef _CMOC_VERSION_
-    #include <cmoc.h>
-    #include <coco.h>
-    #include "stdbool-coco.h"
-#else
-    #include <stddef.h>
-    #include <stdbool.h>
-    #include <stdint.h>
-#endif /* _CMOC_VERSION_ */
+#include <fujinet-int.h>
 
 #define FUJI_DEVICEID_FUJINET           0x70
 

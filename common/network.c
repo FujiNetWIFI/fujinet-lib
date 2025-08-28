@@ -1,15 +1,12 @@
-#include "fujinet-network.h"
-#include "fujinet-fuji.h"
-#include "fujinet-bus.h"
-#include "fujinet-commands.h"
-#include "fujinet-const.h"
-#include "fujinet-err.h"
+#include "network_unit_status.h"
 
-typedef struct {
-  uint16_t avail;
-  uint8_t status;
-  uint8_t errcode;
-} NetworkStatus;
+#include <fujinet-network.h>
+#include <fujinet-bus.h>
+#include <fujinet-commands.h>
+#include <fujinet-const.h>
+#include <fujinet-err.h>
+
+#include <stdio.h> // debug
 
 NetworkStatus nw_status;
 
@@ -35,12 +32,14 @@ uint8_t network_open(const char *devicespec, uint8_t mode, uint8_t trans)
   uint8_t nw_unit = network_unit(devicespec);
 
 
+  printf("NETWORK_OPEN %s\n", devicespec);
   success = NETCALL_A1_A2_D(FUJICMD_OPEN, nw_unit,
 			    mode, trans, devicespec, MAX_FILENAME_LEN);
+  printf("NETOPEN RESULT %d\n", success);
   if (!success)
     return FN_ERR_IO_ERROR;
 
-  if (!NETCALL_RV(FUJICMD_STATUS, nw_unit, &nw_status, sizeof(nw_status)))
+  if (!network_unit_status(network_unit(devicespec), &nw_status))
     return FN_ERR_IO_ERROR;
 
   /* We haven't even read the file yet, it's not EOF */
@@ -67,7 +66,7 @@ int16_t network_read_nb(const char *devicespec, void *buf, uint16_t len)
 
   do {
     // Check how many bytes are available
-    if (!NETCALL_RV(FUJICMD_STATUS, nw_unit, &nw_status, sizeof(nw_status)))
+    if (!network_unit_status(network_unit(devicespec), &nw_status))
       return -FN_ERR_IO_ERROR;
 
     if (nw_status.errcode > NETWORK_SUCCESS && !nw_status.avail) {
@@ -120,7 +119,7 @@ uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char *devic
 
 uint8_t network_status(const char *devicespec, uint16_t *avail, uint8_t *status, uint8_t *err)
 {
-  if (!NETCALL_RV(FUJICMD_STATUS, network_unit(devicespec), &nw_status, sizeof(nw_status)))
+  if (!network_unit_status(network_unit(devicespec), &nw_status))
     return FN_ERR_IO_ERROR;
 
   *avail = nw_status.avail;
