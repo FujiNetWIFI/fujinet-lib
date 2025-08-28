@@ -62,8 +62,8 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
 
   // FIXME - I think there's a couple of commands that don't have a
   //         reply value but used SP_STATUS instead of SP_CONTROL
-  is_status = (bool) reply;
-  //printf("COMMAND: 0x%02x:%02x IS STATUS: %i\n", device, fuji_cmd, is_status);
+  is_status = !!reply;
+  printf("COMMAND: 0x%02x:%02x IS STATUS: %i\n", device, fuji_cmd, is_status);
 
   if (fields || !is_status) {
     if (fields & FUJI_FIELD_AUX1)

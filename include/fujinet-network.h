@@ -37,6 +37,12 @@
 extern uint16_t fn_bytes_read;
 
 /**
+ * Device specific error. This is the raw code from any device errors before they are converted to
+ * simpler device-agnostic network library errors.
+ */
+extern uint8_t fn_device_error;
+
+/**
  * Convert device specific error in code to FujiNet Network library error, agnostic of device.
  * Library code calls this when it encounters an error to return value applications should use.
  */
