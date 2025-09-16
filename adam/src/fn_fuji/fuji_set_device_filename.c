@@ -4,7 +4,7 @@
 #include <string.h>
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
-#include "fujinet-fuji-adam.h"
+#include "fujinet-network-adam.h"
 
 bool fuji_set_device_filename(uint8_t mode, uint8_t hs, uint8_t ds, char *buffer)
 {

@@ -3,7 +3,7 @@
 #include <eos.h>
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
-#include "fujinet-fuji-adam.h"
+#include "fujinet-network-adam.h"
 
 bool fuji_set_boot_config(uint8_t toggle)
 {

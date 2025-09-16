@@ -1,6 +1,6 @@
 CC        := zcc
 AR        := z80asm
-CFLAGS    := +coleco -subtype=adam
+CFLAGS    := +coleco -subtype=adam -Iadam/src/bus
 # ASFLAGS   :=
 ASMEXT    := .asm
 

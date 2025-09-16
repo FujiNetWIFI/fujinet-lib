@@ -3,9 +3,8 @@
 #include <eos.h>
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
-#include "fujinet-fuji-adam.h"
-
-extern unsigned char response[1024];
+#include "fujinet-network-adam.h"
+#include "response.h"
 
 bool fuji_base64_decode_length(unsigned long *len)
 {
@@ -29,7 +28,7 @@ bool fuji_base64_decode_length(unsigned long *len)
 
   while(1)
     {
-      err = eos_read_character_device(FUJINET_DEVICE_ID,response,1024);
+      err = eos_read_character_device(FUJINET_DEVICE_ID,response,RESPONSE_SIZE);
 
       if (err == ADAMNET_TIMEOUT)
         continue;

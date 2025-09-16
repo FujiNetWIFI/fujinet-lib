@@ -13,5 +13,6 @@
  * @brief Firmware sets response buffer size at 1024 bytes.
  */
 #define RESPONSE_SIZE 1024
+extern unsigned char response[RESPONSE_SIZE];
 
 #endif /* RESPONSE_H */

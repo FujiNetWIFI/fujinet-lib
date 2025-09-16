@@ -3,7 +3,7 @@
 #include <eos.h>
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
-#include "fujinet-fuji-adam.h"
+#include "fujinet-network-adam.h"
 
 bool fuji_hash_compute(uint8_t type)
 {

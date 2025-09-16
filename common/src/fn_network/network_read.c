@@ -37,6 +37,10 @@
 extern int network_read_msdos(char* devicespec, byte *buf, unsigned int len);
 #endif /* __WATCOMC__ */
 
+#ifdef __ADAM__
+#include "fujinet-network-adam.h"
+#endif
+
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -64,7 +68,7 @@ int16_t network_read(const char *devicespec, uint8_t *buf, uint16_t len)
     const char *after;
 #endif
 
-#if defined(__ATARI__) || defined(_CMOC_VERSION_) || defined(__CBM__) || defined(__PMD85__) || defined(__WATCOMC__)
+#if defined(__ATARI__) || defined(_CMOC_VERSION_) || defined(__CBM__) || defined(__PMD85__) || defined(__WATCOMC__) || defined(__ADAM__)
     uint8_t unit = 0;
 #endif
 
@@ -76,7 +80,7 @@ int16_t network_read(const char *devicespec, uint8_t *buf, uint16_t len)
         return fn_error(SP_ERR_BAD_CMD);
 #elif defined(__CBM__)
         return FN_ERR_BAD_CMD;
-#elif defined(_CMOC_VERSION_) || defined(__PMD85__) || defined(__WATCOMC__)
+#elif defined(_CMOC_VERSION_) || defined(__PMD85__) || defined(__WATCOMC__) || defined(__ADAM__)
         return fn_error(132); // invalid command
 #endif
 
@@ -96,6 +100,8 @@ int16_t network_read(const char *devicespec, uint8_t *buf, uint16_t len)
     unit = network_unit(devicespec);
 #elif defined(__CBM__)
     unit = getDeviceNumber(devicespec, &after);
+#elif defined(__ADAM__)
+    unit = network_unit_adamnet(devicespec);
 #endif
 
     while (1) {
@@ -108,13 +114,14 @@ int16_t network_read(const char *devicespec, uint8_t *buf, uint16_t len)
         r = network_status(devicespec, &fn_network_bw, &fn_network_conn, &fn_network_error);
 #elif defined(__CBM__)
         r = network_status(devicespec, &fn_network_bw, &fn_network_conn, &fn_network_error);
-#elif defined(_CMOC_VERSION_) || defined(__PMD85__) || defined(__WATCOMC__)
+#elif defined(_CMOC_VERSION_) || defined(__PMD85__) || defined(__WATCOMC__) || defined(__ADAM__)
         r = network_status(devicespec, &fn_network_bw, &fn_network_conn, &fn_network_error);
 #endif
 
         // check if the status failed. The buffer may be partially filled, up to client if they want to use any of it. The count is in fn_bytes_read
         if (r != 0) {
             fn_bytes_read = total_read;
+
             // r is the FN_ERR code
             return -r;
         }
@@ -125,6 +132,7 @@ int16_t network_read(const char *devicespec, uint8_t *buf, uint16_t len)
         // is there another error? The buffer may be partially filled, up to client if they want to use any of it. The count is in fn_bytes_read
         if (fn_network_error != 1) {
             fn_bytes_read = total_read;
+
             return -FN_ERR_IO_ERROR;
         }
 
@@ -149,6 +157,8 @@ int16_t network_read(const char *devicespec, uint8_t *buf, uint16_t len)
         memcpy(buf, sp_payload, fetch_size);
 #elif defined(__CBM__)
         cbm_read(unit + CBM_DATA_CHANNEL_0, buf, fetch_size);
+#elif defined(__ADAM__)
+        network_read_adam(devicespec, buf, fetch_size);
 #endif
 #if defined(_CMOC_VERSION_) || defined(__PMD85__)
         read_r.opcode = OP_NET;
@@ -170,5 +180,6 @@ int16_t network_read(const char *devicespec, uint8_t *buf, uint16_t len)
 
     // do this here at the end, not in the loop so sio_read for atari can continue to set fn_bytes_read for short reads.
     fn_bytes_read = total_read;
+
     return total_read;
 }

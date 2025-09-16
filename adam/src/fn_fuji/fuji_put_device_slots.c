@@ -4,7 +4,7 @@
 #include <string.h>
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
-#include "fujinet-fuji-adam.h"
+#include "fujinet-network-adam.h"
 
 bool fuji_put_device_slots(DeviceSlot *d, size_t size)
 {

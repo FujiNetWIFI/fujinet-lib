@@ -4,7 +4,7 @@
 #include <string.h>
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
-#include "fujinet-fuji-adam.h"
+#include "fujinet-network-adam.h"
 
 bool fuji_open_directory(uint8_t hs, char *path_filter)
 {

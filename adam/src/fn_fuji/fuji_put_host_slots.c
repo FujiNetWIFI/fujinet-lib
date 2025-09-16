@@ -4,7 +4,7 @@
 #include <string.h>
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
-#include "fujinet-fuji-adam.h"
+#include "fujinet-network-adam.h"
 
 bool fuji_put_host_slots(HostSlot *h, size_t size)
 {
@@ -27,3 +27,4 @@ bool fuji_put_host_slots(HostSlot *h, size_t size)
 
   return FN_ERR_OK;
 }
+

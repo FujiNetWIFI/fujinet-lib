@@ -3,9 +3,8 @@
 #include <eos.h>
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
-#include "fujinet-fuji-adam.h"
-
-extern uint8_t response[1024];
+#include "fujinet-network-adam.h"
+#include "response.h"
 
 bool fuji_get_device_enabled_status(uint8_t d)
 {
@@ -32,7 +31,7 @@ bool fuji_get_device_enabled_status(uint8_t d)
 
   while(1)
     {
-      err = eos_read_character_device(FUJINET_DEVICE_ID,response,1024);
+      err = eos_read_character_device(FUJINET_DEVICE_ID,response,RESPONSE_SIZE);
 
       if (err == ADAMNET_TIMEOUT)
         continue;
