@@ -132,8 +132,12 @@ uint8_t network_status(const char *devicespec, uint16_t *avail, uint8_t *status,
 uint8_t network_accept(const char *devicespec)
 {
   uint8_t nw_unit;
+  bool success;
 
 
   nw_unit = network_unit(devicespec);
-  return NETCALL(FUJICMD_ACCEPT, nw_unit);
+  success = NETCALL(FUJICMD_ACCEPT, nw_unit);
+  if (!success)
+    return FN_ERR_IO_ERROR;
+  return FN_ERR_OK;
 }
