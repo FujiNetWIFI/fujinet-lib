@@ -7,7 +7,14 @@
 
 #ifdef _CMOC_VERSION_
     #include <cmoc.h>
-    #include "stdbool-coco.h"
+
+    #ifndef bool
+    #define bool _FNBool
+    typedef unsigned char _FNBool;
+    #endif /* bool */
+
+    #define true  1
+    #define false 0
 #else
     #include <stddef.h>
     #include <stdbool.h>
