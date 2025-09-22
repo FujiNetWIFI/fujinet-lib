@@ -23,5 +23,11 @@ bool fuji_get_wifi_enabled()
     if (fuji_get_error())
         return false;
     
-    return fuji_get_response((uint8_t *)&enabled, sizeof(bool));
+    if (fuji_get_response((uint8_t *)&enabled, sizeof(bool)) == BUS_ERROR)
+    {
+        // Set enabled = false on error
+        enabled = false;   
+    }
+
+    return enabled;
 }

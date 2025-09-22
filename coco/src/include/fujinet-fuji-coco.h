@@ -9,7 +9,7 @@
 #ifndef FUJINET_FUJI_COCO_H
 #define FUJINET_FUJI_COCO_H
 
-#include "stdbool-coco.h"
+#include "fujinet-fuji.h"
 
 /**
  * @brief Error code for success
