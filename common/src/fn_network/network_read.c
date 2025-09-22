@@ -34,7 +34,7 @@
 
 #ifdef __WATCOMC__
 #include "fujinet-fuji-msdos.h"
-extern int network_read_msdos(char* devicespec, byte *buf, unsigned int len);
+extern int network_read_msdos(const char* devicespec, unsigned char *buf, unsigned int len);
 #endif /* __WATCOMC__ */
 
 #ifdef __ADAM__
