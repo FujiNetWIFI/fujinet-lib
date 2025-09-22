@@ -71,6 +71,7 @@ enum {
   FUJICMD_PARSE                         = 0x50,
   FUJICMD_OPEN                          = 0x4F,
   FUJICMD_CLOSE                         = 0x43,
+  FUJICMD_ACCEPT                        = 0x41,
   FUJICMD_GETCWD                        = 0x30,
   FUJICMD_CHDIR                         = 0x2C,
   FUJICMD_RMDIR                         = 0x2B,

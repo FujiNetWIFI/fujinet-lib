@@ -298,6 +298,8 @@ uint8_t network_fs_rmdir(const char *devicespec);
  */
 uint8_t network_fs_cd(const char *devicespec);
 
+uint8_t network_accept(const char* devicespec);
+
 #define OPEN_MODE_READ          (0x04)
 #define OPEN_MODE_WRITE         (0x08)
 #define OPEN_MODE_RW            (0x0C)
