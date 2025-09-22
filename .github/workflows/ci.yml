@@ -71,13 +71,21 @@ jobs:
           name: dist
           path: dist
 
+      # Generate random release name
+      - name: Generate random release name
+        id: random_name
+        run: |
+          RANDOM_NAME=$(docker run --rm fnichol/names)
+          echo "name=$RANDOM_NAME" >> $GITHUB_OUTPUT
+          echo "Generated release name: $RANDOM_NAME"
+
       # Create GitHub Release for the tag
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         with:
           tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
+          release_name: ${{ steps.random_name.outputs.name }} (${{ github.ref_name }})
           draft: false
           prerelease: false
         env:
