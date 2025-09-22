@@ -1,5 +1,4 @@
-PLATFORMS := apple2 c64 coco atari rs232
-TARGETS := fujinet.atari.lib fujinet.apple2.lib fujinet.c64.lib libfujinet.coco.a
+TARGETS := fujinet.atari.lib fujinet.apple2.lib libfujinet.coco.a
 ALL_TARGETS = $(addprefix $(BUILDDIR)/, $(TARGETS))
 
 -include defs.mk
