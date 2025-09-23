@@ -7,6 +7,7 @@
 
 #ifdef _CMOC_VERSION_
     #include <cmoc.h>
+    #include <coco.h>
 
     #ifndef bool
     #define bool _FNBool
