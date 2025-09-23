@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [4.7.9] - 2025-09-23
+
+- [coco] CoCo: Fix fuji_set_directory_position (#41) [Rich Stephens]
+- [release] Add random name generator to releases (#39) [Mark Fisher]
+
 ## [4.7.8] - 2025-09-23
 
 - [release] Added github workflow to create PR artifacts and release on tag [FoxxTexx]
