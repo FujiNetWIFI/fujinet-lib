@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [4.7.8] - 2025-09-23
+
+- [release] Added github workflow to create PR artifacts and release on tag [FoxxTexx]
+- [msdos] Fix MS-DOS compiling. (#36) [FozzTexx]
+- [coco] Fixes to coco wifi functions, and to fujinet-fuji.h (#33) [Rich Stephens]
+- [adam] Add fn_network support for Adam, merge with Thom's changes (#32) [geoffdaddy]
+- [msdos] implement network. (#31) [Thomas Cherryhomes]
+- [adam] Implement fuji adam (#30) [Thomas Cherryhomes]
+
+
 ## [4.7.7] - 2025-06-18
 
 - [atari] Fix return codes from clock_get_time, clock_get_time_tz

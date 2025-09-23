@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch: # allows manual run too
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: fozztexx/defoogi:1.4.2
+
+    outputs:
+      files: ${{ steps.list_zips.outputs.files }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build release files
+        run: make release
+
+      - name: List zip files
+        id: list_zips
+        shell: bash
+        run: |
+          echo 'files=["'"$(( cd dist ; echo *.zip ) | sed -e 's/ /","/g')"'"]' >> $GITHUB_OUTPUT
+
+      - name: Upload dist folder for next job
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  upload:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    strategy:
+      matrix:
+        file: ${{ fromJson(needs.build.outputs.files) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download dist folder
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Upload individual artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.file }}
+          path: dist/${{ matrix.file }}
+
+  tagged-release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v4
+
+      # Download the dist folder from the build job
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      # Generate random release name
+      - name: Generate random release name
+        id: random_name
+        run: |
+          RANDOM_NAME=$(docker run --rm fnichol/names)
+          echo "name=$RANDOM_NAME" >> $GITHUB_OUTPUT
+          echo "Generated release name: $RANDOM_NAME"
+
+      # Create GitHub Release for the tag
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ steps.random_name.outputs.name }} (${{ github.ref_name }})
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Upload each zip as a release asset
+      - name: Upload release assets
+        run: |
+          for zip in dist/*.zip; do
+            echo "Uploading $zip..."
+            gh release upload ${{ github.ref_name }} "$zip"
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
