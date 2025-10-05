@@ -2,8 +2,6 @@
 #include "fujinet-bus.h"
 #include "fujinet-commands.h"
 #include "fujinet-err.h"
-#include <stdint.h>
-#include <string.h>
 
 #warning "MAX_JSON_QUERY_LEN should be 256 but there are bugs in iwm implementation"
 #define MAX_JSON_QUERY_LEN 255

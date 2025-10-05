@@ -1,31 +1,22 @@
-TARGETS := fujinet.atari.lib fujinet.apple2.lib libfujinet.coco.a
-ALL_TARGETS = $(addprefix $(BUILDDIR)/, $(TARGETS))
+PRODUCT = fujinet.lib
+PLATFORMS = coco apple2 atari c64
+#PLATFORMS += adam msdos
 
--include defs.mk
+# You can run 'make <platform>' to build for a specific platform,
+# or 'make <platform>/<target>' for a platform-specific target.
+# Example shortcuts:
+#   make coco        → build for coco
+#   make apple2/disk → build the 'disk' target for apple2
 
-all: $(ALL_TARGETS)
+# SRC_DIRS may use the literal %PLATFORM% token.
+# It expands to the chosen PLATFORM plus any of its combos.
+SRC_DIRS = common bus/%PLATFORM%
+EXTRA_INCLUDE = include
 
-$(BUILDDIR)/fujinet.apple2.lib: $(CFILES) $(HFILES) $(AFILES) \
-				$(CFILES_A2) $(AFILES_A2) \
-				| $(BUILDDIR)
-	$(MAKE) -f apple2.mk
+include makefiles/toplevel-rules.mk
 
-$(BUILDDIR)/libfujinet.coco.a: $(CFILES) $(HFILES) $(AFILES) \
-			       $(CFILES_COCO) \
-			       | $(BUILDDIR)
-	$(MAKE) -f coco.mk
-
-$(BUILDDIR)/fujinet.c64.lib: $(CFILES) $(HFILES) $(AFILES) \
-			     $(CFILES_C64) $(AFILES_C64) \
-			     | $(BUILDDIR)
-	$(MAKE) -f c64.mk
-
-$(BUILDDIR)/fujinet.atari.lib: $(CFILES) $(HFILES) $(AFILES) \
-			     $(CFILES_ATARI) $(AFILES_ATARI) \
-			     | $(BUILDDIR)
-	$(MAKE) -f atari.mk
-
-clean:
-	rm -rf *.o *.lst *.map *.a2s *.bin *.lib *_obj $(BUILDDIR) $(ALL_TARGETS)
-
--include post.mk
+# If you need to add extra platform-specific steps, do it below:
+#   coco/r2r:: coco/custom-step1
+#   coco/r2r:: coco/custom-step2
+# or
+#   apple2/disk: apple2/custom-step1 apple2/custom-step2

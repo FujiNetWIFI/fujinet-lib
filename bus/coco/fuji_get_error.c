@@ -1,9 +1,7 @@
-#include <cmoc.h>
-#include <coco.h>
-#include <dw.h>
 #include "fujinet-network.h"
 #include "fujinet-fuji-coco.h"
 #include "fujinet-err.h"
+#include "dw.h"
 
 /**
  * @brief Get the error code from last Fuji command

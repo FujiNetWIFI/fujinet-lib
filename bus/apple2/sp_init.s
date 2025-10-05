@@ -8,8 +8,8 @@
         .import         popa
         .import         return0
 
-        .include        "macros.inc"
-        .include        "zp.inc"
+        .include        "cc65/macros.inc"
+        .include        "cc65/zp.inc"
         .macpack        cpu
 
 ; Find the SmartPort device that has a FujiNet NETWORK adapter on it.

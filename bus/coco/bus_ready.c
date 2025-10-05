@@ -6,10 +6,8 @@
  * @verbose Block until device ready.
  */
 
-#include <cmoc.h>
-#include <coco.h>
-#include <dw.h>
-#include <fujinet-fuji-coco.h>
+#include "dw.h"
+#include "fujinet-fuji-coco.h"
 
 void bus_ready(void)
 {

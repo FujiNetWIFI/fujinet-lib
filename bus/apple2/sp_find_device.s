@@ -16,7 +16,7 @@
         .import         return0
 
         .include        "sp.inc"
-        .include        "zp.inc"
+        .include        "cc65/zp.inc"
 
 ; uint8_t sp_find_device();
 ; device_type_id contains the type id to search for

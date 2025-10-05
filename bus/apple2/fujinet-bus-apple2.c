@@ -15,8 +15,6 @@ typedef struct {
   uint8_t data[];
 } fujibus_packet;
 
-uint8_t fn_device_error;
-
 static fujibus_packet *fb_packet = (fujibus_packet *) sp_payload;
 bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,

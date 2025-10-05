@@ -1,10 +1,3 @@
-#include <stdbool.h>
-#include <stdint.h>
-#include "fujinet-network.h"
-#include "fujinet-fuji-msdos.h"
+#include <fujinet-fuji.h>
 
-uint8_t fn_error(uint8_t code)
-{
-  fn_device_error = code;
-  return (code == BUS_SUCCESS) ? FN_ERR_OK : FN_ERR_IO_ERROR;
-}
+uint8_t fn_device_error;

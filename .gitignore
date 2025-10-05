@@ -63,3 +63,5 @@ test
 test.*
 *.orig
 *.rej
+_cache/
+build/

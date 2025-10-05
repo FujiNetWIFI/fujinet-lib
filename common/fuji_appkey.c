@@ -1,5 +1,4 @@
 #include "fujinet-fuji.h"
-#include <string.h>
 
 static uint16_t ak_creator_id;
 static uint8_t ak_app_id;

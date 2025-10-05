@@ -6,8 +6,8 @@
 		.import     ___oserror
 
         .include    "cbm_kernal.inc"
-        .include    "macros.inc"
-        .include    "zp.inc"
+        .include    "cc65/macros.inc"
+        .include    "cc65/zp.inc"
 
 ; A replacement for cbm_open that takes parameters for location of the data to send to SETNAM and the size
 ; instead of computing it, which allows us to send binary data as part of the NAME field to pass parameters to FN.

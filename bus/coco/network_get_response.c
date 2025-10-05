@@ -1,9 +1,9 @@
 #include <cmoc.h>
 #include <coco.h>
-#include <dw.h>
 #include "fujinet-network.h"
 #include "fujinet-fuji-coco.h"
 #include "fujinet-network-coco.h"
+#include "dw.h"
 
 /**
  * @brief Get response data from last Network command
