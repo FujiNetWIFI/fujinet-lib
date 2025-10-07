@@ -12,5 +12,5 @@ r2r:: $(BUILD_DISK) $(BUILD_LIB) $(R2R_EXTRA_DEPS_$(PLATFORM_UC))
 $(BUILD_DISK): $(BUILD_EXEC) $(DISK_EXTRA_DEPS_$(PLATFORM_UC)) | $(R2R_PD)
 	$(RM) $@
 	decb dskini $@
-	decb copy -b -2 $< $@,$(shell echo $(PRODUCT) | tr '[:lower:]' '[:upper:]').BIN
+	decb copy -b -2 $< $@,$(shell echo $(PRODUCT_BASE) | tr '[:lower:]' '[:upper:]').BIN
 	@make -f $(PLATFORM_MK) $(PLATFORM)/disk-post

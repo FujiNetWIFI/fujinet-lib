@@ -1,5 +1,5 @@
 PRODUCT = fujinet.lib
-PLATFORMS = coco apple2 atari c64
+PLATFORMS = coco apple2 atari c64 msx
 #PLATFORMS += adam msdos
 
 # You can run 'make <platform>' to build for a specific platform,

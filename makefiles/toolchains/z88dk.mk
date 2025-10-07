@@ -5,9 +5,9 @@ AR_DEFAULT ?= $(AS_DEFAULT)
 
 include $(MWD)/tc-common.mk
 
-CFLAGS += +coleco -subtype=adam
+CFLAGS +=
 AFLAGS +=
-LDFLAGS += +coleco -subtype=adam
+LDFLAGS +=
 
 define include-dir-flag
   -I$1
@@ -26,7 +26,7 @@ define library-flag
 endef
 
 define link-lib
-  $(AR) -xeos $1 $2
+  $(AR) -x$1 $2
 endef
 
 define link-bin
@@ -38,5 +38,5 @@ define compile
 endef
 
 define assemble
-  $(AS) -c $(AFLAGS) -o $1 $2
+  $(AS) $(AFLAGS) -o=$1 $2
 endef
