@@ -88,7 +88,7 @@ class LibLocator:
       rxm = re.match(VERSION_NAME, FUJINET_LIB)
       if rxm:
         self.MV.FUJINET_LIB_VERSION = rxm.group(1)
-      elif "://" or "@" in FUJINET_LIB:
+      elif any(sub in FUJINET_LIB for sub in ("://", "@")):
         self.gitClone(FUJINET_LIB)
       elif os.path.isfile(FUJINET_LIB):
         _, ext = os.path.splitext(FUJINET_LIB)
@@ -281,12 +281,15 @@ class LibLocator:
 
   def getInclude(self):
     parent = os.path.dirname(self.MV.FUJINET_LIB_DIR.rstrip("/"))
-    check_dirs = [self.MV.FUJINET_LIB_DIR, parent, os.path.join(parent, "include")]
-    for idir in check_dirs:
+    checkDirs = [self.MV.FUJINET_LIB_DIR, parent, os.path.join(parent, "include")]
+    components = self.MV.FUJINET_LIB_DIR.split(os.path.sep)
+    if components[-1] == self.PLATFORM and components[-2] == "r2r":
+      checkDirs.append(os.path.join(os.path.dirname(parent), "include"))
+    for idir in checkDirs:
       if os.path.exists(os.path.join(idir, "fujinet-fuji.h")):
         self.MV.FUJINET_LIB_INCLUDE = idir
         return
-    raise ValueError("Unable to find include directory")
+    raise ValueError("Unable to find include directory", self.MV.FUJINET_LIB_DIR)
 
     return
 
