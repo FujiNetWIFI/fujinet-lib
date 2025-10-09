@@ -1,8 +1,10 @@
 #include "fujinet-bus-msx.h"
 #include "portio.h"
 
-#define TIMEOUT         100
-#define TIMEOUT_SLOW	15 * 1000
+#define milliseconds_to_jiffy(millis) ((millis) / (VDP_IS_PAL ? 20 : 1000 / 60))
+
+#define TIMEOUT         milliseconds_to_jiffy(100)
+#define TIMEOUT_SLOW	milliseconds_to_jiffy(15 * 1000)
 #define MAX_RETRIES	5
 
 enum {
@@ -57,7 +59,7 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
 		   const void *data, size_t data_length,
 		   void *reply, size_t reply_length)
 {
-  uint8_t reply, retries;
+  uint8_t code, retries;
   uint8_t ck1, ck2;
   uint16_t rlen;
 
@@ -72,14 +74,14 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
   
   fb_packet.cksum = fujicom_cksum(&fb_packet, sizeof(fb_packet) - sizeof(fb_packet.cksum));
   // FIXME - encode packet as SLIP
-  port_putbuf(&fb_packet, sizeof(fb_packet));
 
   for (retries = 0; retries < MAX_RETRIES; retries++) {
-    reply = port_getc_timeout(TIMEOUT);
-    if (reply == PACKET_NAK)
+    port_putbuf(&fb_packet, sizeof(fb_packet));
+    code = port_getc_timeout(TIMEOUT);
+    if (code == PACKET_NAK)
       return false;
 
-    if (reply == PACKET_ACK)
+    if (code == PACKET_ACK)
       break;
   }
 
@@ -87,8 +89,8 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
     return false;
 
   if (reply) {
-    reply = port_getc_timeout(TIMEOUT_SLOW);
-    if (reply != PACKET_COMPLETE)
+    code = port_getc_timeout(TIMEOUT_SLOW);
+    if (code != PACKET_COMPLETE)
       return false;
 
     /* Complete, get payload */
@@ -105,20 +107,20 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
   }
   else if (data) {
     /* Write the payload */
-    port_putbuf(reply, reply_length);
+    port_putbuf(data, data_length);
 
     /* Write the checksum */
-    ck1 = fujicom_cksum(reply, reply_length);
+    ck1 = fujicom_cksum(data, data_length);
     port_putc(ck1);
 
     /* Wait for ACK/NACK */
-    reply = port_getc_timeout(TIMEOUT_SLOW);
-    if (reply != PACKET_ACK)
+    code = port_getc_timeout(TIMEOUT_SLOW);
+    if (code != PACKET_ACK)
       return false;
 
     /* Wait for COMPLETE/ERROR */
-    reply = port_getc_timeout(TIMEOUT_SLOW);
-    if (reply != PACKET_COMPLETE)
+    code = port_getc_timeout(TIMEOUT_SLOW);
+    if (code != PACKET_COMPLETE)
       return false;
   }
 
