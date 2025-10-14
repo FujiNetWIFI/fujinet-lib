@@ -46,7 +46,7 @@ extern DCB *network_dcb[MAX_NETWORK_DEVICES];
  * @param devicespec The Device Specification "N:..."
  * @return AdamNet unit number.
  */
-uint8_t network_unit_adamnet(char *devicespec);
+uint8_t network_unit_adamnet(const char *devicespec);
 
 /**
  * @brief Return proper unit # for adamnet.
@@ -55,6 +55,6 @@ uint8_t network_unit_adamnet(char *devicespec);
  * @param len Length of the buffer
  * @return Fujinet error code.
  */
-int16_t network_read_adam(char* devicespec, uint8_t *buf, uint16_t len);
+int16_t network_read_adam(const char* devicespec, uint8_t *buf, uint16_t len);
 
 #endif /* FUJINET_NETWORK_ADAM_H */

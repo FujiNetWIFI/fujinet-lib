@@ -7,6 +7,8 @@
 
 #include <cmoc.h>
 #include <coco.h>
+#include "dw.h"
+
 
 byte dwwrite(byte *s, int l)
 {
@@ -15,7 +17,7 @@ byte dwwrite(byte *s, int l)
         pshs x,y
         ldx :s
         ldy :l
-        jsr [0xD941]
+        jsr [dwwritevec]
         tfr cc,d
         puls y,x
     }

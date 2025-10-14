@@ -6,8 +6,8 @@
  */
 
 #include <cmoc.h>
-
-typedef unsigned char byte;
+#include <coco.h>
+#include "dw.h"
 
 byte dwread(byte *s, int l)
 {
@@ -16,7 +16,7 @@ byte dwread(byte *s, int l)
         pshs x,y
         ldx :s
         ldy :l
-        jsr [0xD93F]
+        jsr [dwreadvec]
         puls y,x
         tfr cc,b
         lsrb
