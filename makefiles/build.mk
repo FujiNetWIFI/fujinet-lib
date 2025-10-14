@@ -129,13 +129,13 @@ CHANGELOG = Changelog.md
 # global PLATFORM custom settings
 -include ./makefiles/custom-$(CURRENT_PLATFORM).mk
 
-# allow for application specific config
--include ./application.mk
-
 .SUFFIXES:
 .PHONY: all clean release $(PROGRAM_TGT) $(ALL_TASKS)
 
 all: $(ALL_TASKS) $(PROGRAM_TGT)
+
+# allow for application specific config
+-include ./application.mk
 
 -include $(DEPENDS)
 
