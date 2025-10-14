@@ -1,6 +1,8 @@
 #ifndef FUJINET_ERR_H
 #define FUJINET_ERR_H
 
+#include <fujinet-int.h>
+
 #define FN_ERR_OK               (0x00)      /* No error */
 #define FN_ERR_IO_ERROR         (0x01)      /* There was IO error/issue with the device */
 #define FN_ERR_BAD_CMD          (0x02)      /* Function called with bad arguments */
@@ -44,5 +46,11 @@ enum {
   NETWORK_ERROR_NOT_A_DIRECTORY                 = 217,
   NETWORK_ERROR_COULD_NOT_ALLOCATE_BUFFERS      = 255,
 };
+
+/**
+ * Device specific error. This is the raw code from any device errors before they are converted to
+ * simpler device-agnostic network library errors.
+ */
+extern uint8_t fn_device_error;
 
 #endif /* FUJINET_ERR_H */
