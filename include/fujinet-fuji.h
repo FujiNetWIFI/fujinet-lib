@@ -336,7 +336,7 @@ bool fuji_get_wifi_enabled(void);
  * path and filter are separate strings. If filter is not set, it is NULL
  * @return true if successful, false otherwise
  */
-bool fuji_open_directory_filter(uint8_t hs, const char *path, const char *filter);
+bool fuji_open_directory_filter(uint8_t hostSlot, const char *path, const char *filter);
 #define fuji_open_directory2(hs, path, filter) fuji_open_directory_filter(hs, path, filter)
 
 /**
