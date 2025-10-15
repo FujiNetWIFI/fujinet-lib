@@ -3,7 +3,7 @@
 
 	extern	timeout_init, timeout_check, timeout_cleanup
 
-	IO_OFFSET	EQU	(0x4000 + 0x3FFC)
+	IO_OFFSET	EQU	(0x8000 + 0x3FFC)
 	IO_GETC		EQU	(IO_OFFSET + 0)
 	IO_STATUS	EQU	(IO_OFFSET + 1)
 	IO_PUTC		EQU	(IO_OFFSET + 2)
