@@ -1,4 +1,5 @@
 #include "fujinet-bus-msx.h"
+#include "fujinet-commands.h"
 #include "portio.h"
 
 #define milliseconds_to_jiffy(millis) ((millis) / (VDP_IS_PAL ? 20 : 1000 / 60))
@@ -127,3 +128,14 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
   return true;
 }
 
+uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length)
+{
+  NETCALL_B12_RV(FUJICMD_READ, unit, length, buffer, length);
+  return length;
+}
+
+uint16_t fuji_bus_write(uint8_t device, uint8_t unit, const void *buffer, size_t length)
+{
+  NETCALL_D(FUJICMD_WRITE, unit, buffer, length);
+  return length;
+}
