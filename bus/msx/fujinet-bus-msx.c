@@ -77,6 +77,10 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
   // FIXME - encode packet as SLIP
 
   for (retries = 0; retries < MAX_RETRIES; retries++) {
+    // Flush out any data in RX buffer
+    while (port_getc() >= 0)
+      ;
+
     port_putbuf(&fb_packet, sizeof(fb_packet));
     code = port_getc_timeout(TIMEOUT);
     if (code == PACKET_NAK)
