@@ -140,6 +140,6 @@ uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length
 
 uint16_t fuji_bus_write(uint8_t device, uint8_t unit, const void *buffer, size_t length)
 {
-  NETCALL_D(FUJICMD_WRITE, unit, buffer, length);
+  NETCALL_B12_D(FUJICMD_WRITE, unit, length, buffer, length);
   return length;
 }
