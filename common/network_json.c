@@ -25,7 +25,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
     if (result)
       return -result;
 
-    read_len = fuji_bus_read(FUJI_DEVICEID_NETWORK, nw_unit, &buffer[total], 512);
+    read_len = fuji_bus_read(FUJI_DEVICEID_NETWORK + nw_unit - 1, &buffer[total], 512);
     if (read_len < 0)
       return -FN_ERR_IO_ERROR;
     total += read_len;

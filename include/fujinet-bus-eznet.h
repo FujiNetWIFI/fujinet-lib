@@ -1,52 +1,52 @@
 
 #define NETCALL_A1_A2(cmd, unit, a1, a2) \
-  fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, \
+  fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, a1, a2, 0, 0, NULL, 0, NULL, 0)
 
 #define NETCALL_A1_A2_A3(cmd, unit, a1, a2, a3) \
-  fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, \
+  fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3,	\
 		a1, a2, a3, 0, NULL, 0, NULL, 0)
 
 #define NETCALL_A1_A2_A3_A4(cmd, unit, a1, a2, a3, a4) \
-  fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, \
+  fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
 		a1, a2, a3, a4, NULL, 0, NULL, 0)
 
 #define NETCALL_A1_A2_A3_A4_D(cmd, unit, a1, a2, a3, a4, data, len) \
-  fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, \
+  fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
 		a1, a2, a3, a4, data, len, NULL, 0)
 
 #define NETCALL_A1_A2_A3_A4_RV(cmd, unit, a1, a2, a3, a4, reply, replylen) \
-  fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, \
+  fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4 \
 		, a1, a2, a3, a4, NULL, 0, reply, replylen)
 
 #define NETCALL_A1_A2_A3_D(cmd, unit, a1, a2, a3, data, len) \
-  fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, \
+  fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3,	\
 		a1, a2, a3, 0, data, len, NULL, 0)
 
 #define NETCALL_A1_A2_A3_RV(cmd, unit, a1, a2, a3, reply, replylen) \
-  fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, \
+  fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3,	\
 		a1, a2, a3, 0, NULL, 0, reply, replylen)
 
 #define NETCALL_A1_A2_D(cmd, unit, a1, a2, data, len) \
-  fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
+  fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
 		a1, a2, 0, 0, data, len, NULL, 0)
 
 #define NETCALL_A1_A2_RV(cmd, unit, a1, a2, reply, replylen) \
-  fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
+  fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
 		a1, a2, 0, 0, NULL, 0, reply, replylen)
 
 #define NETCALL_A1_D(cmd, unit, a1, data, len) \
-  fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, FUJI_FIELD_AUX1, \
+  fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, FUJI_FIELD_AUX1, \
 		a1, 0, 0, 0, data, len, NULL, 0)
 
 #define NETCALL_A1_RV(cmd, unit, a1, reply, replylen) \
-  fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, FUJI_FIELD_AUX1, \
+  fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, FUJI_FIELD_AUX1, \
 		a1, 0, 0, 0, NULL, 0, reply, replylen)
 
 #define NETCALL_B12(cmd, unit, b12) \
@@ -93,16 +93,18 @@
   NETCALL_A1_A2(cmd, unit, a1, 0)
 #else /* ! _CMOC_VERSION_ */
 #define NETCALL(cmd, unit) \
-  fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, FUJI_FIELD_NONE, 0, 0, 0, 0, NULL, 0, NULL, 0)
+  fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, FUJI_FIELD_NONE, \
+                0, 0, 0, 0, NULL, 0, NULL, 0)
 
 #define NETCALL_D(cmd, unit, data, len) \
-  fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, 0, 0, 0, 0, 0, data, len, NULL, 0)
+  fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, 0, 0, 0, 0, 0, data, len, NULL, 0)
 
 #define NETCALL_RV(cmd, unit, reply, replylen) \
-  fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, FUJI_FIELD_NONE, \
+  fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, FUJI_FIELD_NONE, \
 		0, 0, 0, 0, NULL, 0, reply, replylen)
 
 #define NETCALL_A1(cmd, unit, a1) \
-  fuji_bus_call(FUJI_DEVICEID_NETWORK, unit, cmd, FUJI_FIELD_AUX1, a1, 0, 0, 0, NULL, 0, NULL, 0)
+  fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, FUJI_FIELD_AUX1, \
+                a1, 0, 0, 0, NULL, 0, NULL, 0)
 #endif /* _CMOC_VERSION_ */
 

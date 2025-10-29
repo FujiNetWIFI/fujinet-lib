@@ -35,7 +35,7 @@ typedef struct {
 
 FNAppKeyString appkey_buf;
 
-bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
+bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
 		   const void *data, size_t data_length,
 		   void *reply, size_t reply_length)
@@ -47,7 +47,7 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
   (void) fields;
 
   atari_dcb->DDEVIC = device;
-  atari_dcb->DUNIT = unit;
+  atari_dcb->DUNIT = 1;
   atari_dcb->DCOMND = fuji_cmd;
   atari_dcb->DTIM = 0x0f;
   atari_dcb->DUNUSE = 0;
@@ -71,12 +71,12 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
   return call_sio();
 }
 
-uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length)
+uint16_t fuji_bus_read(uint8_t device, void *buffer, size_t length)
 {
   return 0;
 }
 
-uint16_t fuji_bus_write(uint8_t device, uint8_t unit, const void *buffer, size_t length)
+uint16_t fuji_bus_write(uint8_t device, const void *buffer, size_t length)
 {
   return 0;
 }

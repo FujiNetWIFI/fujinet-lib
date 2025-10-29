@@ -32,66 +32,66 @@
  */
 
 #define FUJICALL(cmd) \
-  fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, FUJI_FIELD_NONE, 0, 0, 0, 0, NULL, 0, NULL, 0)
+  fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd, FUJI_FIELD_NONE, 0, 0, 0, 0, NULL, 0, NULL, 0)
 
 #define FUJICALL_D(cmd, data, len) \
-  fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, 0, 0, 0, 0, 0, data, len, NULL, 0)
+  fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd, 0, 0, 0, 0, 0, data, len, NULL, 0)
 
 #define FUJICALL_RV(cmd, reply, replylen) \
-  fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, FUJI_FIELD_NONE, \
+  fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd, FUJI_FIELD_NONE, \
 		0, 0, 0, 0, NULL, 0, reply, replylen)
 
 #define FUJICALL_A1(cmd, a1) \
-  fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, FUJI_FIELD_AUX1, a1, 0, 0, 0, NULL, 0, NULL, 0)
+  fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd, FUJI_FIELD_AUX1, a1, 0, 0, 0, NULL, 0, NULL, 0)
 
 #define FUJICALL_A1_A2(cmd, a1, a2) \
-  fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, \
+  fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, a1, a2, 0, 0, NULL, 0, NULL, 0)
 
 #define FUJICALL_A1_A2_A3(cmd, a1, a2, a3) \
-  fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, \
+  fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3,	\
 		a1, a2, a3, 0, NULL, 0, NULL, 0)
 
 #define FUJICALL_A1_A2_A3_A4(cmd, a1, a2, a3, a4) \
-  fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, \
+  fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
 		a1, a2, a3, a4, NULL, 0, NULL, 0)
 
 #define FUJICALL_A1_A2_A3_A4_D(cmd, a1, a2, a3, a4, data, len) \
-  fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, \
+  fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4, \
 		a1, a2, a3, a4, data, len, NULL, 0)
 
 #define FUJICALL_A1_A2_A3_A4_RV(cmd, a1, a2, a3, a4, reply, replylen) \
-  fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, \
+  fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3 | FUJI_FIELD_AUX4 \
 		, a1, a2, a3, a4, NULL, 0, reply, replylen)
 
 #define FUJICALL_A1_A2_A3_D(cmd, a1, a2, a3, data, len) \
-  fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, \
+  fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3,	\
 		a1, a2, a3, 0, data, len, NULL, 0)
 
 #define FUJICALL_A1_A2_A3_RV(cmd, a1, a2, a3, reply, replylen) \
-  fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, \
+  fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd, \
 		FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2 | FUJI_FIELD_AUX3,	\
 		a1, a2, a3, 0, NULL, 0, reply, replylen)
 
 #define FUJICALL_A1_A2_D(cmd, a1, a2, data, len) \
-  fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
+  fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd, FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
 		a1, a2, 0, 0, data, len, NULL, 0)
 
 #define FUJICALL_A1_A2_RV(cmd, a1, a2, reply, replylen) \
-  fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
+  fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd, FUJI_FIELD_AUX1 | FUJI_FIELD_AUX2, \
 		a1, a2, 0, 0, NULL, 0, reply, replylen)
 
 #define FUJICALL_A1_D(cmd, a1, data, len) \
-  fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, FUJI_FIELD_AUX1, \
+  fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd, FUJI_FIELD_AUX1, \
 		a1, 0, 0, 0, data, len, NULL, 0)
 
 #define FUJICALL_A1_RV(cmd, a1, reply, replylen) \
-  fuji_bus_call(FUJI_DEVICEID_FUJINET, 1, cmd, FUJI_FIELD_AUX1, \
+  fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd, FUJI_FIELD_AUX1, \
 		a1, 0, 0, 0, NULL, 0, reply, replylen)
 
 #define FUJICALL_B12(cmd, b12) \

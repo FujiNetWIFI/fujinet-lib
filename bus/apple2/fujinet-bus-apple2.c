@@ -16,7 +16,7 @@ typedef struct {
 } fujibus_packet;
 
 static fujibus_packet *fb_packet = (fujibus_packet *) sp_payload;
-bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
+bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
 		   const void *data, size_t data_length,
 		   void *reply, size_t reply_length)
@@ -38,7 +38,7 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
 #endif /* MIDI_SUPPORTED */
   else if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
     sp_id = sp_get_network_id();
-    sp_nw_unit = unit;
+    sp_nw_unit = device - FUJI_DEVICEID_NETWORK + 1;
   }
   else if (device >= FUJI_DEVICEID_PRINTER && device <= FUJI_DEVICEID_PRINTER_LAST)
     sp_id = sp_get_printer_id();
@@ -98,7 +98,7 @@ bool fuji_bus_call(uint8_t device, uint8_t unit, uint8_t fuji_cmd, uint8_t field
   return !sp_error;
 }
 
-uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length)
+uint16_t fuji_bus_read(uint8_t device, void *buffer, size_t length)
 {
   uint16_t err;
   uint8_t sp_id = sp_fuji_id;
@@ -114,7 +114,7 @@ uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length
 
   if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
     sp_id = sp_network;
-    sp_nw_unit = unit;
+    sp_nw_unit = device - FUJI_DEVICEID_NETWORK + 1;
   }
 
   length = MIN(length, MAX_SMARTPORT_BLOCK);
@@ -134,7 +134,7 @@ uint16_t fuji_bus_read(uint8_t device, uint8_t unit, void *buffer, size_t length
   return length;
 }
 
-uint16_t fuji_bus_write(uint8_t device, uint8_t unit, const void *buffer, size_t length)
+uint16_t fuji_bus_write(uint8_t device, const void *buffer, size_t length)
 {
   uint16_t err;
   uint8_t sp_id = sp_fuji_id;
@@ -150,7 +150,7 @@ uint16_t fuji_bus_write(uint8_t device, uint8_t unit, const void *buffer, size_t
 
   if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
     sp_id = sp_network;
-    sp_nw_unit = unit;
+    sp_nw_unit = device - FUJI_DEVICEID_NETWORK + 1;
   }
 
   length = MIN(length, MAX_SMARTPORT_BLOCK);
