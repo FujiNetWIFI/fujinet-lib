@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [4.8.0] - 2025-10-29
+
+- [atari] Fix bug in return status being marked ok after extended error 144
+
 ## [4.7.9] - 2025-09-23
 
 - [coco] CoCo: Fix fuji_set_directory_position (#41) [Rich Stephens]

@@ -21,9 +21,9 @@ start:
 
         ; setup software stack pointer
         lda     #<__HIMEM__
-        sta     sp
+        sta     c_sp
         lda     #>__HIMEM__
-        sta     sp+1
+        sta     c_sp+1
 
         ; setup 6502 stack pointer
         ldx     #$ff

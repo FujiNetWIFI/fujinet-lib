@@ -2,13 +2,13 @@
 target: atari
 compiler: cc65
 
-config_file: "./config_min_atari.cfg"
+config_file: "./base.cfg"
 
 # setup files for a basic application
 src_files:
-  - ./min_crt0_atari.s
+  - ./crt0.s
 
 asm_include_paths:
   - ${WS_ROOT}
   - ${WS_ROOT}/atari/src/include
-
+  - ${WS_ROOT}/common/inc

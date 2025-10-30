@@ -14,7 +14,7 @@
         .include    "macros.inc"
         .include    "zp.inc"
 
-; uint8_t io_status(uint8_t unit)
+; uint8_t bus_status(uint8_t unit)
 ;
 ; unit is only used when dstats is equal to DERROR (144) for extended information
 .proc _bus_status
@@ -24,6 +24,7 @@
         lda     IO_DCB::dstats
         cmp     #DERROR
         beq     @extended
+@exit:
         jmp     _fn_error
 
 @extended:
@@ -31,5 +32,9 @@
         pushax  #_fn_network_bw         ; bytes waiting location
         pushax  #_fn_network_conn       ; connection status
         setax   #_fn_network_error      ; network error
-        jmp     _network_status_unit
+        jsr     _network_status_unit    ; fill in the status bytes into memory locations given
+
+        ; we must restore the ERROR code from the original call, not leave ourselves with the network_status result code, which is "OK" and makes an extended error look like it didn't fail
+        lda     #DERROR
+        bne     @exit                   ; always
 .endproc
