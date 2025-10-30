@@ -30,12 +30,7 @@ typedef struct {
 } fujibus_header;
 
 typedef struct {
-  uint8_t device;   /* Destination Device */
-  uint8_t command;  /* Command */
-  uint16_t length;  /* Total length of packet including header */
-  uint8_t checksum; /* Checksum of entire packet */
-  uint8_t fields;   /* Describes the fields that follow */
-  //fujibus_header;
+  fujibus_header header;
   uint8_t data[];
 } fujibus_packet;
 
@@ -54,7 +49,7 @@ uint16_t fuji_slip_encode()
 
 
   // Count how many bytes need to be escaped
-  len = fb_packet->length;
+  len = fb_packet->header.length;
   ptr = (uint8_t *) fb_packet;
   for (idx = esc_count = 0; idx < len; idx++) {
     if (ptr[idx] == SLIP_END || ptr[idx] == SLIP_ESCAPE)
@@ -133,11 +128,11 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   uint16_t idx, numbytes;
 
 
-  fb_packet->device = device;
-  fb_packet->command = fuji_cmd;
-  fb_packet->length = sizeof(fujibus_header);
-  fb_packet->checksum = 0;
-  fb_packet->fields = fields;
+  fb_packet->header.device = device;
+  fb_packet->header.command = fuji_cmd;
+  fb_packet->header.length = sizeof(fujibus_header);
+  fb_packet->header.checksum = 0;
+  fb_packet->header.fields = fields;
 
   idx = 0;
   numbytes = fuji_field_numbytes(fields);
@@ -154,9 +149,9 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
     idx += data_length;
   }
 
-  fb_packet->length += idx;
+  fb_packet->header.length += idx;
 
-  fb_packet->checksum = fuji_calc_checksum(fb_packet, fb_packet->length);
+  fb_packet->header.checksum = fuji_calc_checksum(fb_packet, fb_packet->header.length);
 
   numbytes = fuji_slip_encode();
 
@@ -168,14 +163,14 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   rlen = port_get_until(fb_packet, (fb_buffer + sizeof(fb_buffer)) - ((uint8_t *) fb_packet),
                  SLIP_END, TIMEOUT_SLOW);
   rlen = fuji_slip_decode(rlen);
-  if (rlen != fb_packet->length)
+  if (rlen != fb_packet->header.length)
     return false;
   if (rlen - sizeof(fujibus_header) != reply_length)
     return false;
 
   // Need to zero out checksum in order to calculate
-  ck1 = fb_packet->checksum;
-  fb_packet->checksum = 0;
+  ck1 = fb_packet->header.checksum;
+  fb_packet->header.checksum = 0;
   ck2 = fuji_calc_checksum(fb_packet, rlen);
   if (ck1 != ck2)
     return false;
