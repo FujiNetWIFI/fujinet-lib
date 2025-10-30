@@ -655,4 +655,11 @@ bool fuji_hash_add(uint8_t *data, uint16_t length);
  */
 bool fuji_hash_calculate(hash_alg_t hash_type, bool as_hex, bool discard_data, uint8_t *output);
 
+/**
+ * @brief  The default timeout for fuji commands. Platform dependent on if it does anything.
+ * The value defaults to 0x0F. No setter. This isn't java.
+ */
+extern uint8_t fn_default_timeout;
+
+
 #endif /* FN_FUJI_H */

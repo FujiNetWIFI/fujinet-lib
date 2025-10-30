@@ -3,10 +3,7 @@
 # Set the TARGETS and PROGRAM values as required.
 # See makefiles/build.mk for details on directory structure for src files and how to add custom extensions to the build.
 
-TARGETS = adam apple2 apple2enh atari c64 coco
-TARGETS += msdos
-# TARGETS += apple2gs
-# TARGETS += pmd85
+TARGETS = adam apple2 apple2enh atari c64 coco msdos
 PROGRAM := fujinet.lib
 
 SUB_TASKS := clean disk test release unit-test

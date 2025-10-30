@@ -2,9 +2,11 @@
 
 ## [Unreleased]
 
-## [4.8.0] - 2025-10-29
+## [4.8.0] - 2025-10-30
 
 - [atari] Fix bug in return status being marked ok after extended error 144
+- [fuji] Add field for default timeout (fn_default_timeout), only currently useful for atari. sets timlo (which still defaults to $0F). set before doing any network of fuji device command
+- [tests] updated unit testing to create minimal setup tests, added tests for above changes
 
 ## [4.7.9] - 2025-09-23
 
