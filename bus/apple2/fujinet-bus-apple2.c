@@ -23,7 +23,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 {
   bool is_status;
   uint8_t sp_id;
-  uint16_t idx = 0;
+  uint16_t idx, numbytes;
 
 
   if (device == FUJI_DEVICEID_FUJINET)
@@ -64,13 +64,15 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   printf("COMMAND: 0x%02x:%02x IS STATUS: %i\n", device, fuji_cmd, is_status);
 
   if (fields || !is_status) {
-    if (fields & FUJI_FIELD_AUX1)
+    idx = 0;
+    numbytes = fuji_field_numbytes(fields);
+    if (numbytes--)
       fb_packet->data[idx++] = aux1;
-    if (fields & FUJI_FIELD_AUX2)
+    if (numbytes--)
       fb_packet->data[idx++] = aux2;
-    if (fields & FUJI_FIELD_AUX3)
+    if (numbytes--)
       fb_packet->data[idx++] = aux3;
-    if (fields & FUJI_FIELD_AUX4)
+    if (numbytes--)
       fb_packet->data[idx++] = aux4;
     if (data) {
       memcpy(&fb_packet->data[idx], data, data_length);

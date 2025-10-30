@@ -21,12 +21,53 @@
 #define FUJI_DEVICEID_VOICE		0x43
 
 enum {
-  FUJI_FIELD_NONE = 0x00,
-  FUJI_FIELD_AUX1 = 0x01,
-  FUJI_FIELD_AUX2 = 0x02,
-  FUJI_FIELD_AUX3 = 0x04,
-  FUJI_FIELD_AUX4 = 0x08,
+  FUJI_FIELD_NONE        = 0,
+  FUJI_FIELD_A1          = 1,
+  FUJI_FIELD_A1_A2       = 2,
+  FUJI_FIELD_A1_A2_A3    = 3,
+  FUJI_FIELD_A1_A2_A3_A4 = 4,
+  FUJI_FIELD_B12         = 5,
+  FUJI_FIELD_B12_B34     = 6,
+  FUJI_FIELD_C1234       = 7,
 };
+
+#define FUJI_FIELD_LOOKUP_TABLE 1
+#ifdef FUJI_FIELD_LOOKUP_TABLE
+
+// Not worth making these into functions, I'm sure they'd eat more bytes
+extern uint8_t fuji_field_numbytes_table[];  // 0, 1, 2, 3, 4, 2, 4, 4
+extern uint8_t fuji_field_numfields_table[]; // 0, 1, 2, 3, 4, 1, 2, 1
+#define fuji_field_numbytes(descr) fuji_field_numbytes_table[descr]
+#define fuji_field_numfields(descr) fuji_field_numfiels_table[descr]
+
+#else /* ! FUJI_FIELD_LOOKUP_TABLE */
+
+#define FUJI_FIELD_16_OR_32_MASK 0x40
+#define FUJI_FIELD_32_MASK       0x20
+
+static inline uint8_t fuji_field_numbytes(uint8_t descr)
+{
+  if (!descr)
+    return 0;
+  descr--;
+  if (!(descr & FUJI_FIELD_16_OR_32_MASK))
+    return descr + 1;
+  if (descr & FUJI_FIELD_32_MASK)
+    return 4;
+  return ((descr & 1) + 1) << 1; // Shift by 1 instead of multiply by 2
+}
+
+static inline uint8_t fuji_field_numfields(uint8_t descr)
+{
+  if (!descr)
+    return 0;
+  descr--;
+  if (!(descr & FUJI_FIELD_16_OR_32_MASK))
+    return descr + 1;
+  return (descr & 1) + 1;
+}
+
+#endif /* FUJI_FIELD_LOOKUP_TABLE */
 
 extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 			  uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,

@@ -31,21 +31,23 @@ bool fuji_net_call(uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
 		   const void *data, size_t data_length,
 		   void *reply, size_t reply_length)
 {
-  uint16_t idx = 0;
   uint8_t err;
+  uint16_t idx, numbytes;
 
 
   nw_header.opcode = OP_NET;
   nw_header.unit = unit;
   nw_header.cmd = fuji_cmd;
 
-  if (fields & FUJI_FIELD_AUX1)
+  idx = 0;
+  numbytes = fuji_field_numbytes(fields);
+  if (numbytes--)
     buffer[idx++] = aux1;
-  if (fields & FUJI_FIELD_AUX2)
+  if (numbytes--)
     buffer[idx++] = aux2;
-  if (fields & FUJI_FIELD_AUX3)
+  if (numbytes--)
     buffer[idx++] = aux3;
-  if (fields & FUJI_FIELD_AUX4)
+  if (numbytes--)
     buffer[idx++] = aux4;
   if (data) {
     memcpy(&buffer[idx], data, data_length);
@@ -60,7 +62,7 @@ bool fuji_net_call(uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
   err = network_get_error(unit);
   if (err)
     return false;
-  
+
   if (reply) {
     err = network_get_response(unit, (unsigned char *) reply, reply_length);
     return !err;
@@ -74,7 +76,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   const void *data, size_t data_length,
 		   void *reply, size_t reply_length)
 {
-  uint16_t idx = 0;
+  uint16_t idx, numbytes;
 
 
   if (device >= FUJI_DEVICEID_NETWORK  && device <= FUJI_DEVICEID_NETWORK_LAST)
@@ -82,18 +84,20 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
                          aux1, aux2, aux3, aux4, data, data_length, reply, reply_length);
 
   if (device != FUJI_DEVICEID_FUJINET)
-    return false;  
+    return false;
 
   fb_header.opcode = OP_FUJI;
   fb_header.cmd = fuji_cmd;
 
-  if (fields & FUJI_FIELD_AUX1)
+  idx = 0;
+  numbytes = fuji_field_numbytes(fields);
+  if (numbytes--)
     buffer[idx++] = aux1;
-  if (fields & FUJI_FIELD_AUX2)
+  if (numbytes--)
     buffer[idx++] = aux2;
-  if (fields & FUJI_FIELD_AUX3)
+  if (numbytes--)
     buffer[idx++] = aux3;
-  if (fields & FUJI_FIELD_AUX4)
+  if (numbytes--)
     buffer[idx++] = aux4;
   if (data) {
     memcpy(&buffer[idx], data, data_length);

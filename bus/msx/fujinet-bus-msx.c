@@ -1,6 +1,7 @@
 #include "fujinet-bus-msx.h"
 #include "fujinet-commands.h"
 #include "portio.h"
+#include <string.h>
 
 #define milliseconds_to_jiffy(millis) ((millis) / (VDP_IS_PAL ? 20 : 1000 / 60))
 
@@ -9,41 +10,107 @@
 #define MAX_RETRIES	1
 
 enum {
-  PACKET_ACK = 'A',
-  PACKET_NAK = 'N',
-  PACKET_COMPLETE = 'C',
-  PACKET_ERROR = 'E',
+  SLIP_END     = 0xC0,
+  SLIP_ESCAPE  = 0xDB,
+  SLIP_ESC_END = 0xDC,
+  SLIP_ESC_ESC = 0xDD,
 };
 
-typedef union {         /* Command Frame */
-  struct {
-    union {
-      struct {
-        uint8_t device; /* Destination Device */
-        uint8_t command;  /* Command */
-      };
-      uint16_t devcom;
-    };
-    union {
-      struct {
-        uint8_t aux1;   /* Auxiliary Parameter 1 */
-        uint8_t aux2;   /* Auxiliary Parameter 2 */
-        uint8_t aux3;   /* Auxiliary Parameter 3 */
-        uint8_t aux4;   /* Auxiliary Parameter 4 */
-      };
-      struct {
-        uint16_t aux12;
-        uint16_t aux34;
-      };
-      uint32_t aux;
-    };
-    uint8_t cksum;               /* 8-bit checksum */
-  };
-} cmdFrame_t;
+enum {
+  PACKET_ACK = 6, // ASCII ACK
+  PACKET_NAK = 21, // ASCII NAK
+};
 
-cmdFrame_t fb_packet;
+typedef struct {
+  uint8_t device;   /* Destination Device */
+  uint8_t command;  /* Command */
+  uint16_t length;  /* Total length of packet including header */
+  uint8_t checksum; /* Checksum of entire packet */
+  uint8_t fields;   /* Describes the fields that follow */
+} fujibus_header;
 
-uint8_t fujicom_cksum(void *ptr, uint16_t len)
+typedef struct {
+  uint8_t device;   /* Destination Device */
+  uint8_t command;  /* Command */
+  uint16_t length;  /* Total length of packet including header */
+  uint8_t checksum; /* Checksum of entire packet */
+  uint8_t fields;   /* Describes the fields that follow */
+  //fujibus_header;
+  uint8_t data[];
+} fujibus_packet;
+
+#define MAX_PACKET      (512 + sizeof(fujibus_header) + 4) // sector + header + secnum
+static uint8_t fb_buffer[MAX_PACKET * 2 + 2];              // Enough room for SLIP encoding
+static fujibus_packet *fb_packet = (fujibus_packet *) (fb_buffer + 1); // +1 for SLIP_END
+
+/* This function expects that fb_packet is one byte into fb_buffer so
+   that there's already room at the front for the SLIP_END framing
+   byte. This allows skipping moving all the bytes if no escaping is
+   needed. */
+uint16_t fuji_slip_encode()
+{
+  uint16_t idx, len, enc_idx, esc_count;
+  uint8_t *ptr;
+
+
+  // Count how many bytes need to be escaped
+  len = fb_packet->length;
+  ptr = (uint8_t *) fb_packet;
+  for (idx = esc_count = 0; idx < len; idx++) {
+    if (ptr[idx] == SLIP_END || ptr[idx] == SLIP_ESCAPE)
+      esc_count++;
+  }
+
+  if (esc_count) {
+    // Encode buffer in place working from back to front
+    for (idx = len - 1, enc_idx = 1 + len + esc_count; idx; idx--, enc_idx--) {
+      if (ptr[idx] == SLIP_END) {
+        ptr[enc_idx--] = SLIP_ESC_END;
+        ptr[enc_idx] = SLIP_ESCAPE;
+      }
+      else if (ptr[idx] == SLIP_ESCAPE) {
+        ptr[enc_idx--] = SLIP_ESC_ESC;
+        ptr[enc_idx] = SLIP_ESCAPE;
+      }
+      else
+        ptr[enc_idx] = ptr[idx];
+    }
+  }
+
+  // FIXME - this byte probably never changes, maybe we should init fb_buffer with it?
+  fb_buffer[0] = SLIP_END;
+  fb_buffer[2 + len + esc_count] = SLIP_END;
+  return 2 + len + esc_count;
+}
+
+uint16_t fuji_slip_decode(uint16_t len)
+{
+  uint16_t idx, dec_idx, esc_count;
+  uint8_t *ptr;
+
+
+  ptr = (uint8_t *) fb_packet;
+  for (idx = dec_idx = 0; idx < len; idx++, dec_idx++) {
+    if (ptr[idx] == SLIP_END)
+      break;
+
+    if (ptr[idx] == SLIP_ESCAPE) {
+      idx++;
+      if (ptr[idx] == SLIP_ESC_END)
+        ptr[dec_idx] = SLIP_END;
+      else if (ptr[idx] == SLIP_ESC_ESC)
+        ptr[dec_idx] = SLIP_ESCAPE;
+    }
+    else if (idx != dec_idx) {
+      // Only need to move byte if there were escapes decoded
+      ptr[dec_idx] = ptr[idx];
+    }
+  }
+
+  return dec_idx;
+}
+
+uint8_t fuji_calc_checksum(void *ptr, uint16_t len)
 {
   uint16_t chk = 0;
   int i = 0;
@@ -63,73 +130,60 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   uint8_t code, retries;
   uint8_t ck1, ck2;
   uint16_t rlen;
+  uint16_t idx, numbytes;
 
 
-  fb_packet.device = device;
-  fb_packet.command = fuji_cmd;
+  fb_packet->device = device;
+  fb_packet->command = fuji_cmd;
+  fb_packet->length = sizeof(fujibus_header);
+  fb_packet->checksum = 0;
+  fb_packet->fields = fields;
 
-  fb_packet.aux1 = aux1;
-  fb_packet.aux2 = aux2;
-  fb_packet.aux3 = aux3;
-  fb_packet.aux4 = aux4;
-  
-  fb_packet.cksum = fujicom_cksum(&fb_packet, sizeof(fb_packet) - sizeof(fb_packet.cksum));
-  // FIXME - encode packet as SLIP
-
-  for (retries = 0; retries < MAX_RETRIES; retries++) {
-    // Flush out any data in RX buffer
-    while (port_getc() >= 0)
-      ;
-
-    port_putbuf(&fb_packet, sizeof(fb_packet));
-    code = port_getc_timeout(TIMEOUT);
-    if (code == PACKET_NAK)
-      return false;
-
-    if (code == PACKET_ACK)
-      break;
+  idx = 0;
+  numbytes = fuji_field_numbytes(fields);
+  if (numbytes--)
+    fb_packet->data[idx++] = aux1;
+  if (numbytes--)
+    fb_packet->data[idx++] = aux2;
+  if (numbytes--)
+    fb_packet->data[idx++] = aux3;
+  if (numbytes--)
+    fb_packet->data[idx++] = aux4;
+  if (data) {
+    memcpy(&fb_packet->data[idx], data, data_length);
+    idx += data_length;
   }
 
-  if (retries == MAX_RETRIES)
+  fb_packet->length += idx;
+
+  fb_packet->checksum = fuji_calc_checksum(fb_packet, fb_packet->length);
+
+  numbytes = fuji_slip_encode();
+
+  port_putbuf(fb_buffer, numbytes);
+  code = port_discard_until(SLIP_END, TIMEOUT_SLOW);
+  if (code != SLIP_END)
     return false;
 
-  if (reply) {
-    code = port_getc_timeout(TIMEOUT_SLOW);
-    if (code != PACKET_COMPLETE)
-      return false;
+  rlen = port_get_until(fb_packet, (fb_buffer + sizeof(fb_buffer)) - ((uint8_t *) fb_packet),
+                 SLIP_END, TIMEOUT_SLOW);
+  rlen = fuji_slip_decode(rlen);
+  if (rlen != fb_packet->length)
+    return false;
+  if (rlen - sizeof(fujibus_header) != reply_length)
+    return false;
 
-    /* Complete, get payload */
-    rlen = port_getbuf(reply, reply_length, TIMEOUT);
-    if (rlen != reply_length)
-      return false;
+  // Need to zero out checksum in order to calculate
+  ck1 = fb_packet->checksum;
+  fb_packet->checksum = 0;
+  ck2 = fuji_calc_checksum(fb_packet, rlen);
+  if (ck1 != ck2)
+    return false;
 
-    /* Get Checksum byte, verify it. */
-    ck1 = port_getc_timeout(TIMEOUT_SLOW);
-    ck2 = fujicom_cksum(reply, rlen);
+  // FIXME - validate that fb_packet->fields is zero?
 
-    if (ck1 != ck2)
-      return false;
-  }
-  else {
-    if (data) {
-      /* Write the payload */
-      port_putbuf(data, data_length);
-
-      /* Write the checksum */
-      ck1 = fujicom_cksum(data, data_length);
-      port_putc(ck1);
-
-      /* Wait for ACK/NACK */
-      code = port_getc_timeout(TIMEOUT_SLOW);
-      if (code != PACKET_ACK)
-        return false;
-    }
-
-    /* Wait for COMPLETE/ERROR */
-    code = port_getc_timeout(TIMEOUT_SLOW);
-    if (code != PACKET_COMPLETE)
-      return false;
-  }
+  if (reply_length)
+    memcpy(reply, fb_packet->data, reply_length);
 
   return true;
 }

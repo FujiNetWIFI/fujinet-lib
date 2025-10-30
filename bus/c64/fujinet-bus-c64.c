@@ -26,20 +26,23 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   const void *data, size_t data_length,
 		   void *reply, size_t reply_length)
 {
-  uint16_t idx = 0, wlen, rlen;
+  uint16_t wlen, rlen;
+  uint16_t idx, numbytes;
   bool success = true;
 
 
   fb_packet.opcode = 0x01;
   fb_packet.cmd = fuji_cmd;
 
-  if (fields & FUJI_FIELD_AUX1)
+  idx = 0;
+  numbytes = fuji_field_numbytes(fields);
+  if (numbytes--)
     fb_packet.data[idx++] = aux1;
-  if (fields & FUJI_FIELD_AUX2)
+  if (numbytes--)
     fb_packet.data[idx++] = aux2;
-  if (fields & FUJI_FIELD_AUX3)
+  if (numbytes--)
     fb_packet.data[idx++] = aux3;
-  if (fields & FUJI_FIELD_AUX4)
+  if (numbytes--)
     fb_packet.data[idx++] = aux4;
   if (data) {
     memcpy(&fb_packet.data[idx], data, data_length);
