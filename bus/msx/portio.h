@@ -8,7 +8,7 @@ extern int __FASTCALL__ port_getc_timeout(uint16_t timeout);
 
 // reads data until c is seen or timeout occurs, returns c or -1 on timeout
 // timeout *does not reset* when a character is received
-extern int __FASTCALL__ port_discard_until(uint8_t c, uint16_t timeout);
+extern int __CALLEE__ port_discard_until(uint8_t c, uint16_t timeout);
 
 // returns length of data received, if timeout expires returns all data received until then
 // timeout resets when a character is received
