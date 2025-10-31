@@ -1,6 +1,6 @@
 ; Guard to prevent multiple inclusion of cpu macros
-.ifndef __CPU_INC_INCLUDED__
-.define __CPU_INC_INCLUDED__
+; Check if CPU_ISET_NONE is already defined (from cpu.mac)
+.ifndef CPU_ISET_NONE
 
 .macpack cpu
 
