@@ -6,20 +6,25 @@
 // In general, bools return the "success" status, so true is good, false is bad.
 
 #ifdef _CMOC_VERSION_
-    #include <cmoc.h>
-    #include <coco.h>
+// CMOC-specific types and definitions
+#ifndef bool
+#define bool unsigned char
+#endif /* bool */
 
-    #ifndef bool
-    #define bool _FNBool
-    typedef unsigned char _FNBool;
-    #endif /* bool */
+#define true  1
+#define false 0
 
-    #define true  1
-    #define false 0
+// Define standard integer types for CMOC
+#define uint8_t unsigned char
+#define int8_t signed char
+#define uint16_t unsigned short
+#define int16_t signed short
+#define uint32_t unsigned long
+#define int32_t signed long
 #else
-    #include <stddef.h>
-    #include <stdbool.h>
-    #include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdint.h>
 #endif /* _CMOC_VERSION_ */
 
 #ifdef __CBM__
