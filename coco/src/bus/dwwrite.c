@@ -17,7 +17,7 @@ byte dwwrite(byte *s, int l)
         pshs x,y
         ldx :s
         ldy :l
-        jsr [dwwritevec]
+        jsr [0xD941]
         tfr cc,d
         puls y,x
     }
