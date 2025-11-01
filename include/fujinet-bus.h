@@ -38,7 +38,7 @@ enum {
 extern uint8_t fuji_field_numbytes_table[];  // 0, 1, 2, 3, 4, 2, 4, 4
 extern uint8_t fuji_field_numfields_table[]; // 0, 1, 2, 3, 4, 1, 2, 1
 #define fuji_field_numbytes(descr) fuji_field_numbytes_table[descr]
-#define fuji_field_numfields(descr) fuji_field_numfiels_table[descr]
+#define fuji_field_numfields(descr) fuji_field_numfields_table[descr]
 
 #else /* ! FUJI_FIELD_LOOKUP_TABLE */
 

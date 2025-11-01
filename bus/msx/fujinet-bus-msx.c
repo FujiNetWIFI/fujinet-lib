@@ -1,7 +1,41 @@
+#include <stdio.h>
+
 #include "fujinet-bus-msx.h"
 #include "fujinet-commands.h"
 #include "portio.h"
 #include <string.h>
+
+#define COLUMNS 16
+
+void hexdump(uint8_t *buffer, int count)
+{
+  int outer, inner;
+  uint8_t c;
+
+
+  for (outer = 0; outer < count; outer += COLUMNS) {
+    for (inner = 0; inner < COLUMNS; inner++) {
+      if (inner + outer < count) {
+	c = buffer[inner + outer];
+	printf("%02x ", c);
+      }
+      else
+	printf("   ");
+    }
+    printf(" |");
+    for (inner = 0; inner < COLUMNS && inner + outer < count; inner++) {
+      c = buffer[inner + outer];
+      if (c >= ' ' && c <= 0x7f)
+	printf("%c", c);
+      else
+	printf(".");
+    }
+    printf("|\n");
+  }
+
+  return;
+}
+
 
 #define milliseconds_to_jiffy(millis) ((millis) / (VDP_IS_PAL ? 20 : 1000 / 60))
 
@@ -36,7 +70,7 @@ typedef struct {
 
 #define MAX_PACKET      (512 + sizeof(fujibus_header) + 4) // sector + header + secnum
 static uint8_t fb_buffer[MAX_PACKET * 2 + 2];              // Enough room for SLIP encoding
-static fujibus_packet *fb_packet = (fujibus_packet *) (fb_buffer + 1); // +1 for SLIP_END
+static fujibus_packet *fb_packet;
 
 /* This function expects that fb_packet is one byte into fb_buffer so
    that there's already room at the front for the SLIP_END framing
@@ -56,6 +90,7 @@ uint16_t fuji_slip_encode()
       esc_count++;
   }
 
+  printf("ESC count: %d %d\n", esc_count, len);
   if (esc_count) {
     // Encode buffer in place working from back to front
     for (idx = len - 1, enc_idx = 1 + len + esc_count; idx; idx--, enc_idx--) {
@@ -74,7 +109,7 @@ uint16_t fuji_slip_encode()
 
   // FIXME - this byte probably never changes, maybe we should init fb_buffer with it?
   fb_buffer[0] = SLIP_END;
-  fb_buffer[2 + len + esc_count] = SLIP_END;
+  fb_buffer[1 + len + esc_count] = SLIP_END;
   return 2 + len + esc_count;
 }
 
@@ -107,13 +142,12 @@ uint16_t fuji_slip_decode(uint16_t len)
 
 uint8_t fuji_calc_checksum(void *ptr, uint16_t len)
 {
-  uint16_t chk = 0;
-  int i = 0;
+  uint16_t idx, chk;
   uint8_t *buf = (uint8_t *) ptr;
 
 
-  for (i = 0; i < len; i++)
-    chk = ((chk + buf[i]) >> 8) + ((chk + buf[i]) & 0xFF);
+  for (idx = chk = 0; idx < len; idx++)
+    chk = ((chk + buf[idx]) >> 8) + ((chk + buf[idx]) & 0xFF);
   return (uint8_t) chk;
 }
 
@@ -128,33 +162,52 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   uint16_t idx, numbytes;
 
 
+  fb_packet = (fujibus_packet *) (fb_buffer + 1); // +1 for SLIP_END
+  printf("buf: 0x%04x pak: 0x%04x\n", fb_buffer, fb_packet);
+  printf("fields: %d\n", fields);
   fb_packet->header.device = device;
   fb_packet->header.command = fuji_cmd;
   fb_packet->header.length = sizeof(fujibus_header);
   fb_packet->header.checksum = 0;
   fb_packet->header.fields = fields;
+  printf("Header len %d %d\n", fb_packet->header.length, sizeof(fujibus_header));
+  hexdump((uint8_t *) fb_packet, sizeof(fujibus_header));
 
   idx = 0;
   numbytes = fuji_field_numbytes(fields);
-  if (numbytes--)
+  if (numbytes) {
     fb_packet->data[idx++] = aux1;
-  if (numbytes--)
+    numbytes--;
+  }
+  if (numbytes) {
     fb_packet->data[idx++] = aux2;
-  if (numbytes--)
+    numbytes--;
+  }
+  if (numbytes) {
     fb_packet->data[idx++] = aux3;
-  if (numbytes--)
+    numbytes--;
+  }
+  if (numbytes) {
     fb_packet->data[idx++] = aux4;
+    numbytes--;
+  }
   if (data) {
     memcpy(&fb_packet->data[idx], data, data_length);
     idx += data_length;
   }
+  printf("Fields + data %d %d\n", numbytes, idx);
 
   fb_packet->header.length += idx;
+  printf("Packet len %d\n", fb_packet->header.length);
 
-  fb_packet->header.checksum = fuji_calc_checksum(fb_packet, fb_packet->header.length);
+  ck1 = fuji_calc_checksum(fb_packet, fb_packet->header.length);
+  printf("Checksum: 0x%02x\n", ck1);
+  fb_packet->header.checksum = ck1;
 
   numbytes = fuji_slip_encode();
 
+  printf("Sending packet %d\n", numbytes);
+  hexdump(fb_buffer, numbytes);
   port_putbuf(fb_buffer, numbytes);
   code = port_discard_until(SLIP_END, TIMEOUT_SLOW);
   if (code != SLIP_END)
