@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## 4.8.1 2025-11-01
+
+- [coco] rollback dragon changes for dwread/write that broke coco. Dragon will need testing and future fix potentially by Eric Carr
+- [coco] some dodgy changes for xcode on a mac so it compiles by Andy Diller
+
 ## [4.8.0] - 2025-10-30
 
 - [atari] Fix bug in return status being marked ok after extended error 144

@@ -8,7 +8,7 @@ ifeq ($(filter 4.%,$(MAKE_VERSION)),)
     $(error This Makefile requires GNU Make 4.0 or later. You are using $(MAKE_VERSION). Please use 'gmake' instead of 'make' on macOS.)
 endif
 
-TARGETS = apple2 apple2enh atari c64 coco
+TARGETS = adam apple2 apple2enh atari c64 coco msdos
 PROGRAM := fujinet.lib
 
 SUB_TASKS := clean disk test release unit-test
