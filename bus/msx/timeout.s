@@ -40,14 +40,14 @@ timeout_check:
 	push	hl		; restore return address
 
 	ld	hl,(JIFFY)	; HL = CUR
-	
+
 	xor	a		; clear carry before subtract
 	sbc	hl,de		; HL = CUR - START
 	xor	a		; clear carry before subtract
 	sbc	hl,bc		; sets carry if (CUR - START) < TIMEOUT (borrow occurred)
 	ccf			; invert it: carry = 1 if (CUR - START) >= TIMEOUT
 	ret
-	
+
 ; ------------------------------------------------------------
 ; timeout_cleanup
 ;   Discards START and TIMEOUT from top of stack

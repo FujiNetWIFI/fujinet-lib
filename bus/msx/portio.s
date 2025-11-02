@@ -11,7 +11,7 @@
 	IO_CONTROL	EQU	(IO_OFFSET + 3)
 
 ;; extern int __FASTCALL__ port_getc();
-;; returns signed int with data or -1 if no data is available
+;; returns signed int with data or -1 if no data is available, zero flag clear if data
 _port_getc:
 	ld	a,(IO_STATUS)
 	bit	7,a		; set Z flag based on high bit
@@ -34,7 +34,7 @@ _port_getc_timeout:
 	call	timeout_init
 wait_rx:
 	call	_port_getc	; get byte if there is one
-	jr	nz,getc_done	; Z80 LD doesn't change flags so NZ check still works
+	jr	nz,getc_done	; zero flag clear if data
 	call	timeout_check
 	jr	nc,wait_rx	; if carry is clear then haven't timed out
 
@@ -51,20 +51,29 @@ getc_done:
 _port_discard_until:
 	pop	ix		; save return address
 	pop	hl		; timeout
-	pop	bc		; char to look for
+	pop	de		; char to look for
 	push	ix		; restore return address
 
+	call	timeout_init
+
 not_yet:
-	call	_port_getc
-	jr	nz,check_c	; Z80 LD doesn't change flags so NZ check still works
+	call	_port_getc	; get byte if there is one
+	jr	nz,check_c	; zero flag clear if data
+	push	de
 	call	timeout_check
-	jr	c,discard_done	; if carry is set then timed out
+	pop	de
+	jr	nc,not_yet	; if carry is clear then haven't timed out
+
+	ld	hl,0xFFFF	; timed out, return -1
+	jr	discard_done
+
 check_c:
 	ld	a,l		; check low byte
-	cp	c
-	jr	z,not_yet	; try again
+	cp	e
+	jr	nz,not_yet	; try again
 
 discard_done:
+	call	timeout_cleanup
 	ret
 
 ;; extern uint16_t __CALLEE__ port_getbuf(void *buf, uint16_t len, uint16_t timeout);

@@ -156,7 +156,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   const void *data, size_t data_length,
 		   void *reply, size_t reply_length)
 {
-  uint8_t code, retries;
+  int code;
   uint8_t ck1, ck2;
   uint16_t rlen;
   uint16_t idx, numbytes;
@@ -209,13 +209,25 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   printf("Sending packet %d\n", numbytes);
   hexdump(fb_buffer, numbytes);
   port_putbuf(fb_buffer, numbytes);
+#if 1
   code = port_discard_until(SLIP_END, TIMEOUT_SLOW);
-  if (code != SLIP_END)
+#else
+  do {
+    code = port_getc_timeout(TIMEOUT_SLOW);
+  } while (code > 0 && code != SLIP_END);
+#endif // 0
+  if (code != SLIP_END) {
+    printf("NO SLIP FRAME %d\n", code);
     return false;
+  }
 
   rlen = port_get_until(fb_packet, (fb_buffer + sizeof(fb_buffer)) - ((uint8_t *) fb_packet),
                  SLIP_END, TIMEOUT_SLOW);
+  printf("Packet reply: %d\n", rlen);
+  hexdump(fb_packet, sizeof(fujibus_header));
   rlen = fuji_slip_decode(rlen);
+  printf("Decode len: %d %d\n", rlen, fb_packet->header.length);
+  hexdump(fb_packet, sizeof(fujibus_header));
   if (rlen != fb_packet->header.length)
     return false;
   if (rlen - sizeof(fujibus_header) != reply_length)
