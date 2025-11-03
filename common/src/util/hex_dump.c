@@ -1,3 +1,5 @@
+#ifdef FN_LIB_DEBUG
+
 #ifdef _CMOC_VERSION_
 #include <cmoc.h>
 #else
@@ -37,3 +39,5 @@ void hd(void* data, unsigned int size) {
         }
     }
 }
+
+#endif

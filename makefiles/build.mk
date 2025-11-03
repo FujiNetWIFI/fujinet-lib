@@ -1,7 +1,23 @@
-# Generic Build script for CC65
+# generic c/asm build script.
 #
-
-# Customized for fujinet-libs
+# This makefile is responsible for compiling the asm/s/c files for a particular target, passed in as CURRENT_TARGET
+#
+# You should not normally need to update this file unless you are making enhancements or bug fixes to it.
+# For compiling the library, it does not need changes for simple additions of new files etc.
+#
+# It will RECURSIVELY add to the sources to be built everything that isunder the folders
+# - <CURRENT_TARGET>/src/*.[c,<s|asm>]
+# - common/src/*.[c,<s|asm>]
+# - <CURRENT_TARGET>/<platform specific path>/
+#
+# This means that the makefile does not have to be updated to add new folders, or if you restructure your code.
+#
+# Platform specific paths are defined in os.mk, and allow a particular target within a platform (e.g. apple2gs) to
+# add its own folders that are not included for other targets of that platform.
+# e.g. for apple2 and apple2enh it includes "apple2/apple2-6502", whereas the apple2gs target adds "apple2/apple2gs"
+#
+# code is compiled into the obj/ folder including the full paths of the src file to ensure similarly named files
+# from different folders do not clash
 
 # Ensure WSL2 Ubuntu and other linuxes use bash by default instead of /bin/sh, which does not always like the shell commands.
 SHELL := /usr/bin/env bash
@@ -85,36 +101,17 @@ OBJECTS_ARC := $(strip $(OBJECTS_ARC))
 # Ensure make recompiles parts it needs to if src files change
 DEPENDS := $(OBJECTS:$(OBJEXT)=.d)
 
-ifeq ($(CC),iix compile)
-CFLAGS += \
-	$(INCC_ARG)common/inc \
-	$(INCC_ARG)$(PLATFORM_SRC_DIR)/include \
-	$(INCC_ARG).
-else ifeq ($(CC),zcc)
 CFLAGS += \
 	$(INCC_ARG)common/inc \
 	$(INCC_ARG)$(PLATFORM_SRC_DIR)/include \
 	$(INCC_ARG).
 
+# only include ASFLAGS if not wcc or iix
+ifneq ($(filter $(CC),wcc iix),$(CC))
 ASFLAGS += \
 	$(INCS_ARG)common/inc \
 	$(INCS_ARG)$(PLATFORM_SRC_DIR)/include \
 	$(INCS_ARG).
-else ifeq ($(CC),wcc)
-CFLAGS += \
-	$(INCC_ARG)common/inc \
-	$(INCC_ARG)$(PLATFORM_SRC_DIR)/include \
-	$(INCC_ARG).
-else
-ASFLAGS += \
-	$(INCS_ARG) common/inc \
-	$(INCS_ARG) $(PLATFORM_SRC_DIR)/include \
-	$(INCS_ARG) .
-
-CFLAGS += \
-	$(INCC_ARG) common/inc \
-	$(INCC_ARG) $(PLATFORM_SRC_DIR)/include \
-	$(INCC_ARG) .
 endif
 
 FN_NW_HEADER = fujinet-network.h
@@ -191,14 +188,6 @@ else ifeq ($(CC),wcc)
 else
 	$(CC) -c --deps $(CFLAGS) -o $@ $<
 endif
-
-## For now, no asm in common dirs... as it would be compiler specific
-# $(OBJDIR)/$(CURRENT_TARGET)/common/%$(OBJEXT): %$(ASMEXT) | $(TARGETOBJDIR)
-# 	@$(call MKDIR,$(dir $@))
-# ifeq ($(CC),cl65)
-# 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(ASFLAGS) -o $@ $<
-# else
-# endif
 
 # below shell part is a hack to make foo.ROOT become foo.root, even though the output name is already foo.root, iix capitalizes the "ROOT" part in the filename, which breaks the linux version of linker
 $(OBJDIR)/$(CURRENT_TARGET)/%$(OBJEXT): %$(ASMEXT) $(VERSION_FILE) | $(OBJDIR)

@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+- [build] Guarded hex_dump.c with flag `FN_LIB_DEBUG` which can be enabled via `application.mk`.
+          Added additional docs to `README.md` to explain this.
+          Added comments to top of `build.mk` to explain a little bit about paths that are included.
+          Cosolidated the CFLAGS/ASMFLAGS inclusion in `build.mk` into common pattern.
+          The fix included putting a space after the args in `compiler-cc65.mk` so it was separated from the parameter correctly.
+
 ## 4.8.1 2025-11-01
 
 - [coco] rollback dragon changes for dwread/write that broke coco. Dragon will need testing and future fix potentially by Eric Carr
