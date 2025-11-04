@@ -9,6 +9,16 @@
 #include <ctype.h>
 #endif /* _CMOC_VERSION_ */
 
+
+#ifdef _CMOC_VERSION_
+int isprint(int c)
+{
+    // Check if c falls within the ASCII range for printable characters (0x20 to 0x7E)
+    // This range includes space (0x20) up to tilde (0x7E).
+    return (c >= 0x20 && c <= 0x7E);
+}
+#endif
+
 void hd(void* data, unsigned int size) {
     unsigned int i = 0;
     unsigned int j = 0;
