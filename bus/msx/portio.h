@@ -21,7 +21,7 @@ extern uint16_t __CALLEE__ port_get_until(void *buf, uint16_t maxlen, uint8_t c,
                                           uint16_t timeout);
 
 // writes character to port
-extern int __FASTCALL__ port_putc(uint8_t c);
+extern void __FASTCALL__ port_putc(uint8_t c);
 
 // writes data to port, returns number of bytes written
 extern uint16_t __CALLEE__ port_putbuf(void *buf, uint16_t len);

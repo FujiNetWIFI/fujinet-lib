@@ -42,8 +42,8 @@ extern uint8_t fuji_field_numfields_table[]; // 0, 1, 2, 3, 4, 1, 2, 1
 
 #else /* ! FUJI_FIELD_LOOKUP_TABLE */
 
-#define FUJI_FIELD_16_OR_32_MASK 0x40
-#define FUJI_FIELD_32_MASK       0x20
+#define FUJI_FIELD_16_OR_32_MASK 0x04
+#define FUJI_FIELD_32_MASK       0x02
 
 static inline uint8_t fuji_field_numbytes(uint8_t descr)
 {
