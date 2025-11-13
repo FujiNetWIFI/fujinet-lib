@@ -1,3 +1,4 @@
+#undef UNUSED
 #ifdef UNUSED
 #include <stdio.h>
 #endif /* UNUSED */
@@ -10,7 +11,7 @@
 #ifdef UNUSED
 #define COLUMNS 16
 
-void hexdump(uint8_t *buffer, int count)
+static void hexdump(uint8_t *buffer, int count)
 {
   int outer, inner;
   uint8_t c;
@@ -83,7 +84,7 @@ static fujibus_packet *fb_packet;
 uint16_t fuji_slip_encode()
 {
   uint16_t idx, len, enc_idx, esc_count;
-  uint8_t *ptr;
+  uint8_t ch, *ptr;
 
 
   // Count how many bytes need to be escaped
@@ -99,17 +100,18 @@ uint16_t fuji_slip_encode()
 #endif /* UNUSED */
   if (esc_count) {
     // Encode buffer in place working from back to front
-    for (idx = len - 1, enc_idx = 1 + len + esc_count; idx; idx--, enc_idx--) {
-      if (ptr[idx] == SLIP_END) {
+    for (idx = len - 1, enc_idx = len + esc_count - 1; idx; idx--, enc_idx--) {
+      ch = ptr[idx];
+      if (ch == SLIP_END) {
         ptr[enc_idx--] = SLIP_ESC_END;
-        ptr[enc_idx] = SLIP_ESCAPE;
+        ch = SLIP_ESCAPE;
       }
-      else if (ptr[idx] == SLIP_ESCAPE) {
+      else if (ch == SLIP_ESCAPE) {
         ptr[enc_idx--] = SLIP_ESC_ESC;
-        ptr[enc_idx] = SLIP_ESCAPE;
+        ch = SLIP_ESCAPE;
       }
-      else
-        ptr[enc_idx] = ptr[idx];
+
+      ptr[enc_idx] = ch;
     }
   }
 
@@ -185,6 +187,10 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 
   idx = 0;
   numbytes = fuji_field_numbytes(fields);
+#ifdef UNUSED
+  printf("numbytes: %d %d\n", fields, numbytes);
+  hexdump(fuji_field_numbytes_table, 8);
+#endif /* UNUSED */
   if (numbytes) {
     fb_packet->data[idx++] = aux1;
     numbytes--;
@@ -217,6 +223,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   ck1 = fuji_calc_checksum(fb_packet, fb_packet->header.length);
 #ifdef UNUSED
   printf("Checksum: 0x%02x\n", ck1);
+  hexdump((uint8_t *) fb_packet, sizeof(fujibus_header));
 #endif /* UNUSED */
   fb_packet->header.checksum = ck1;
 
@@ -224,7 +231,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 
 #ifdef UNUSED
   printf("Sending packet %d\n", numbytes);
-  hexdump(fb_buffer, numbytes);
+  //hexdump(fb_buffer, numbytes);
 #endif /* UNUSED */
   port_putbuf(fb_buffer, numbytes);
 #if 0
@@ -250,12 +257,12 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
                  SLIP_END, TIMEOUT_SLOW);
 #ifdef UNUSED
   printf("Packet reply: %d\n", rlen);
-  hexdump(fb_packet, sizeof(fujibus_header));
+  hexdump((uint8_t *) fb_packet, sizeof(fujibus_header));
 #endif /* UNUSED */
   rlen = fuji_slip_decode(rlen);
 #ifdef UNUSED
   printf("Decode len: %d %d\n", rlen, fb_packet->header.length);
-  hexdump(fb_packet, sizeof(fujibus_header));
+  hexdump((uint8_t *) fb_packet, sizeof(fujibus_header));
 #endif /* UNUSED */
   if (rlen != fb_packet->header.length)
     return false;
@@ -285,6 +292,6 @@ uint16_t fuji_bus_read(uint8_t device, void *buffer, size_t length)
 
 uint16_t fuji_bus_write(uint8_t device, const void *buffer, size_t length)
 {
-  NETCALL_B12_D(FUJICMD_READ, device - FUJI_DEVICEID_NETWORK + 1, length, buffer, length);
+  NETCALL_B12_D(FUJICMD_WRITE, device - FUJI_DEVICEID_NETWORK + 1, length, buffer, length);
   return length;
 }

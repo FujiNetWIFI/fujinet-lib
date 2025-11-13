@@ -6,7 +6,7 @@
 #include <fujinet-const.h>
 #include <fujinet-err.h>
 
-//#include <stdio.h> // debug
+#include <stdio.h> // debug
 
 NetworkStatus nw_status;
 
@@ -32,10 +32,10 @@ uint8_t network_open(const char *devicespec, uint8_t mode, uint8_t trans)
   uint8_t nw_unit = network_unit(devicespec);
 
 
-  //printf("NETWORK_OPEN %s\n", devicespec);
+  printf("NETWORK_OPEN %s\n", devicespec);
   success = NETCALL_A1_A2_D(FUJICMD_OPEN, nw_unit,
 			    mode, trans, devicespec, MAX_FILENAME_LEN);
-  //printf("NETOPEN RESULT %d\n", success);
+  printf("NETOPEN RESULT %d\n", success);
   if (!success)
     return FN_ERR_IO_ERROR;
 
