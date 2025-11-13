@@ -83,7 +83,7 @@ static fujibus_packet *fb_packet;
    needed. */
 uint16_t fuji_slip_encode()
 {
-  uint16_t idx, len, enc_idx, esc_count;
+  uint16_t idx, len, enc_idx, esc_count, esc_remain;
   uint8_t ch, *ptr;
 
 
@@ -100,15 +100,19 @@ uint16_t fuji_slip_encode()
 #endif /* UNUSED */
   if (esc_count) {
     // Encode buffer in place working from back to front
-    for (idx = len - 1, enc_idx = len + esc_count - 1; idx; idx--, enc_idx--) {
+    for (esc_remain = esc_count, enc_idx = esc_count + (idx = len - 1);
+         esc_remain;
+         idx--, enc_idx--) {
       ch = ptr[idx];
       if (ch == SLIP_END) {
         ptr[enc_idx--] = SLIP_ESC_END;
         ch = SLIP_ESCAPE;
+        esc_remain--;
       }
       else if (ch == SLIP_ESCAPE) {
         ptr[enc_idx--] = SLIP_ESC_ESC;
         ch = SLIP_ESCAPE;
+        esc_remain--;
       }
 
       ptr[enc_idx] = ch;
