@@ -268,22 +268,36 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   printf("Decode len: %d %d\n", rlen, fb_packet->header.length);
   hexdump((uint8_t *) fb_packet, sizeof(fujibus_header));
 #endif /* UNUSED */
-  if (rlen != fb_packet->header.length)
+  if (rlen != fb_packet->header.length) {
+#ifdef UNUSED
+    printf("Reply length incorrect: %d %d\n", rlen, fb_packet->header.length);
+#endif /* UNUSED */
     return false;
-  if (rlen - sizeof(fujibus_header) != reply_length)
-    return false;
+  }
+#ifdef UNUSED
+  if (rlen - sizeof(fujibus_header) != reply_length) {
+    printf("Expected length incorrect: %d %d\n", rlen - sizeof(fujibus_header), reply_length);
+  }
+#endif /* UNUSED */
 
   // Need to zero out checksum in order to calculate
   ck1 = fb_packet->header.checksum;
   fb_packet->header.checksum = 0;
   ck2 = fuji_calc_checksum(fb_packet, rlen);
-  if (ck1 != ck2)
+  if (ck1 != ck2) {
+#ifdef UNUSED
+    printf("Checksum mismatch: %02x %02x\n", ck1, ck2);
+#endif /* UNUSED */
     return false;
+  }
 
   // FIXME - validate that fb_packet->fields is zero?
 
-  if (reply_length)
-    memcpy(reply, fb_packet->data, reply_length);
+  if (reply_length && rlen) {
+    if (reply_length < rlen)
+      rlen = reply_length;
+    memcpy(reply, fb_packet->data, rlen);
+  }
 
   return true;
 }
