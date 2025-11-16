@@ -3,11 +3,6 @@
 # Set the TARGETS and PROGRAM values as required.
 # See makefiles/build.mk for details on directory structure for src files and how to add custom extensions to the build.
 
-# Require GNU Make 4.0 or later for $(file ...) function
-ifeq ($(filter 4.%,$(MAKE_VERSION)),)
-    $(error This Makefile requires GNU Make 4.0 or later. You are using $(MAKE_VERSION). Please use 'gmake' instead of 'make' on macOS.)
-endif
-
 TARGETS = adam apple2 apple2enh atari c64 coco msdos
 PROGRAM := fujinet.lib
 
