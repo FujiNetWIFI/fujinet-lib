@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+## [4.8.2] 2025-11-16
+
+- [pmd85] Add back to targets list to generate library on release
 - [coco] Fix bug in fuji_set_appkey_details that overwrote the first byte of data of a project that includes fujinet-lib
 - [coco] Remove unneccesary makefile block for mac - make runs fine on mac
 - [coco] Removed legacy -D_CMOC_VERSION_=1 CFLAG, which floods output with "macro redefined" warnings. CMOC already defines this.
@@ -11,7 +14,7 @@
           Cosolidated the CFLAGS/ASMFLAGS inclusion in `build.mk` into common pattern.
           The fix included putting a space after the args in `compiler-cc65.mk` so it was separated from the parameter correctly.
 
-## 4.8.1 2025-11-01
+## [4.8.1] 2025-11-01
 
 - [coco] rollback dragon changes for dwread/write that broke coco. Dragon will need testing and future fix potentially by Eric Carr
 - [coco] some dodgy changes for xcode on a mac so it compiles by Andy Diller
