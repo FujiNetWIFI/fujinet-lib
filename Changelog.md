@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- [coco] Fix bug in fuji_set_appkey_details that overwrote the first byte of data of a project that includes fujinet-lib
+- [coco] Remove unneccesary makefile block for mac - make runs fine on mac
+- [coco] Removed legacy -D_CMOC_VERSION_=1 CFLAG, which floods output with "macro redefined" warnings. CMOC already defines this.
 - [build] Guarded hex_dump.c with flag `FN_LIB_DEBUG` which can be enabled via `application.mk`.
           Added additional docs to `README.md` to explain this.
           Added comments to top of `build.mk` to explain a little bit about paths that are included.
