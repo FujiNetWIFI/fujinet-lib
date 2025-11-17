@@ -7,6 +7,7 @@ on:
 
 jobs:
   build:
+    name: "CONFIG check"
     runs-on: ubuntu-latest
     container:
       image: fozztexx/defoogi:1.4.2
