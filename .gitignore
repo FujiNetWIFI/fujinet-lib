@@ -10,3 +10,6 @@ Makefile.options
 
 _temp
 *.err
+*~
+*.orig
+*.rej

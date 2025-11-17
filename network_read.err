@@ -1,3 +1,0 @@
-common/src/fn_network/network_read.c(154): Warning! W102: Parameter 1: Type mismatch (warning)
-common/src/fn_network/network_read.c(154): Note! I2003: source conversion type is 'unsigned char'
-common/src/fn_network/network_read.c(154): Note! I2004: target conversion type is 'char const *'
