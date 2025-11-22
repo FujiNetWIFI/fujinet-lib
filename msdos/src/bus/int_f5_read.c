@@ -14,11 +14,15 @@
  */
 
 #include <dos.h>
+#include <string.h>
 
 unsigned char int_f5_read(unsigned char dev, unsigned char command, unsigned char aux1, unsigned char aux2, void *buf, unsigned short len)
 {
     union REGS r;
     struct SREGS sr;
+
+    memset(&r,0,sizeof(union REGS));
+    memset(&sr,0,sizeof(struct SREGS));
 
     r.h.dl = 0x40;
     r.h.al = dev;
@@ -26,7 +30,7 @@ unsigned char int_f5_read(unsigned char dev, unsigned char command, unsigned cha
     r.h.cl = aux1;
     r.h.ch = aux2;
     r.x.si = 0x00;
-    
+
     sr.es  = FP_SEG(buf);
     r.x.bx = FP_OFF(buf);
     r.x.di = len;
