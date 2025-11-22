@@ -14,6 +14,7 @@
  */
 
 #include <dos.h>
+#include <string.h>
 
 unsigned char int_f5_write(unsigned char dev, unsigned char command, unsigned char aux1, unsigned char aux2, void *buf, unsigned short len)
 {
