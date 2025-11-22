@@ -6,7 +6,11 @@
 // In general, bools return the "success" status, so true is good, false is bad.
 
 #ifdef _CMOC_VERSION_
+
 // CMOC-specific types and definitions
+#include <cmoc.h>
+#include <coco.h>
+
 #ifndef bool
 #define bool unsigned char
 #endif /* bool */
