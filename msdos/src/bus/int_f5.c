@@ -12,18 +12,21 @@
  */
 
 #include <dos.h>
+#include <string.h>
 
 unsigned char int_f5(unsigned char dev, unsigned char command, unsigned char aux1, unsigned char aux2)
 {
     union REGS r;
-    
+
+    memset(&r,0,sizeof(union REGS));
+
     r.h.dl = 0x00;
     r.h.al = dev;
     r.h.ah = command;
     r.h.cl = aux1;
     r.h.ch = aux2;
     r.x.si = 0x00;
-    
+
     int86(0xF5,&r,&r);
 
     return r.h.al;
