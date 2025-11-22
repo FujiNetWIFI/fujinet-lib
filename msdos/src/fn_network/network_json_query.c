@@ -9,6 +9,9 @@ int16_t network_json_query(const char *devicespec, const char *query, char *s)
   uint8_t ret = 0;
   uint8_t c=0, err=0;
   uint16_t bw=0;
+  char ch;
+  int16_t offset = 0;
+  int16_t read_len = 0;
 
   // Perform query
   ret = int_f5_write(device,'Q',0x00,0x00,(void *)query,256);
@@ -21,5 +24,18 @@ int16_t network_json_query(const char *devicespec, const char *query, char *s)
   if (!bw)
     return 0;
   
-  return network_read(devicespec,(uint8_t *)s, bw);
+  read_len = network_read(devicespec,(uint8_t *)s, bw);
+
+  if (read_len > 0)
+  {
+      // if last char is 0x9b, 0x0A or 0x0D, then set that char to nul, else just null terminate
+      c = s[read_len - 1];
+      if (c == 0x9B || c == 0x0A || c == 0x0D)
+      {
+          offset = 1;
+      }
+      s[read_len - offset] = '\0';
+  }
+  
+  return read_len - offset;
 }
