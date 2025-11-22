@@ -7,7 +7,12 @@
 #ifndef FUJINET_CLOCK_H
 #define FUJINET_CLOCK_H
 
+#ifdef _CMOC_VERSION_
+#include <cmoc.h>
+#include <coco.h>
+#else
 #include <stdint.h>
+#endif /* _CMOC_VERSION_ */
 
 // Read the error codes from network
 #include "fujinet-network.h"
