@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## [4.8.3] 2025-11-23
+
+- [coco] Add isprint debug function
+- [msdos] fix return value and zero memory in network calls
+- [coco/msdos] ensure network_json_query returns C string by nulling last char
+- [coco] fix some includes
+- [workflows] compile against fujinet-config as test
+
 ## [4.8.2] 2025-11-16
 
 - [pmd85] Add back to targets list to generate library on release
