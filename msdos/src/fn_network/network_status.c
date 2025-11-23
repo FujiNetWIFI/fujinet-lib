@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <fujinet-network.h>
 #include <fujinet-fuji-msdos.h>
+#include <string.h>
 
 uint8_t network_status(const char *devicespec, uint16_t *bw, uint8_t *c, uint8_t *err)
 {
@@ -14,6 +15,8 @@ uint8_t network_status(const char *devicespec, uint16_t *bw, uint8_t *c, uint8_t
     uint8_t err;
   } sr;
 
+  memset(&sr,0,sizeof(sr));
+
   ret = int_f5_read(device,'S',0x00,0x00,&sr,sizeof(sr));
 
   if (bw)
@@ -22,6 +25,6 @@ uint8_t network_status(const char *devicespec, uint16_t *bw, uint8_t *c, uint8_t
     *c = sr.c;
   if (err)
     *err = sr.err;
-  
-  return ret;
+
+  return ret == 'C' ? FN_ERR_OK : FN_ERR_IO_ERROR;
 }
