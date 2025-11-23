@@ -42,17 +42,17 @@ extern const uint8_t fuji_field_numfields_table[]; // 0, 1, 2, 3, 4, 1, 2, 1
 
 #else /* ! FUJI_FIELD_LOOKUP_TABLE */
 
-#define FUJI_FIELD_16_OR_32_MASK 0x04
-#define FUJI_FIELD_32_MASK       0x02
+#define FUJI_DESCR_EXCEEDS_U8  0x04
+#define FUJI_DESCR_EXCEEDS_U16 0x02
 
 static inline uint8_t fuji_field_numbytes(uint8_t descr)
 {
   if (!descr)
     return 0;
   descr--;
-  if (!(descr & FUJI_FIELD_16_OR_32_MASK))
+  if (descr & FUJI_DESCR_EXCEEDS_U8)
     return descr + 1;
-  if (descr & FUJI_FIELD_32_MASK)
+  if (descr & FUJI_DESCR_EXCEEDS_U16)
     return 4;
   return ((descr & 1) + 1) << 1; // Shift by 1 instead of multiply by 2
 }
@@ -62,7 +62,7 @@ static inline uint8_t fuji_field_numfields(uint8_t descr)
   if (!descr)
     return 0;
   descr--;
-  if (!(descr & FUJI_FIELD_16_OR_32_MASK))
+  if (!(descr & FUJI_DESCR_EXCEEDS_U8))
     return descr + 1;
   return (descr & 1) + 1;
 }
