@@ -41,14 +41,22 @@ bool fuji_net_call(uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
 
   idx = 0;
   numbytes = fuji_field_numbytes(fields);
-  if (numbytes--)
+  if (numbytes) {
     buffer[idx++] = aux1;
-  if (numbytes--)
+    numbytes--;
+  }
+  if (numbytes) {
     buffer[idx++] = aux2;
-  if (numbytes--)
+    numbytes--;
+  }
+  if (numbytes) {
     buffer[idx++] = aux3;
-  if (numbytes--)
+    numbytes--;
+  }
+  if (numbytes) {
     buffer[idx++] = aux4;
+    numbytes--;
+  }
   if (data) {
     memcpy(&buffer[idx], data, data_length);
     idx += data_length;
