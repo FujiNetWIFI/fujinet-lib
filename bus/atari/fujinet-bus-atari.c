@@ -73,12 +73,14 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 
 uint16_t fuji_bus_read(uint8_t device, void *buffer, size_t length)
 {
-  return 0;
+  NETCALL_B12_RV(FUJICMD_READ, device - FUJI_DEVICEID_NETWORK + 1, length, buffer, length);
+  return length;
 }
 
 uint16_t fuji_bus_write(uint8_t device, const void *buffer, size_t length)
 {
-  return 0;
+  NETCALL_B12_D(FUJICMD_WRITE, device - FUJI_DEVICEID_NETWORK + 1, length, buffer, length);
+  return length;
 }
 
 /*
