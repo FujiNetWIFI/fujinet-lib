@@ -36,14 +36,22 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 
   idx = 0;
   numbytes = fuji_field_numbytes(fields);
-  if (numbytes--)
+  if (numbytes) {
     fb_packet.data[idx++] = aux1;
-  if (numbytes--)
+    numbytes--;
+  }
+  if (numbytes) {
     fb_packet.data[idx++] = aux2;
-  if (numbytes--)
+    numbytes--;
+  }
+  if (numbytes) {
     fb_packet.data[idx++] = aux3;
-  if (numbytes--)
+    numbytes--;
+  }
+  if (numbytes) {
     fb_packet.data[idx++] = aux4;
+    numbytes--;
+  }
   if (data) {
     memcpy(&fb_packet.data[idx], data, data_length);
     idx += data_length;
