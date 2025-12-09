@@ -1,7 +1,7 @@
 #ifndef FUJINET_ENDIAN_H
 #define FUJINET_ENDIAN_H
 
-#ifndef _CMOC_VERSION_
+#if !defined(_CMOC_VERSION_) || _CMOC_VERSION_ >= 1096
 #define U32_MSW(v) ((uint16_t)(((uint32_t)(v) >> 16) & 0xFFFF))  // Most Significant Word
 #define U32_LSW(v) ((uint16_t)((uint32_t)(v) & 0xFFFF))          // Least Significant Word
 

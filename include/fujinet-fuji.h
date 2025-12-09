@@ -506,19 +506,23 @@ bool fuji_base64_encode_output(char *s, uint16_t len);
 // Please use the new interface functions below this section.
 ////////////////////////////////////////////////////////////////
 // All return success status (true = worked)
-bool fuji_hash_compute(uint8_t type);
-bool fuji_hash_compute_no_clear(uint8_t type);
-bool fuji_hash_input(char *s, uint16_t len);
+//bool fuji_hash_compute(uint8_t type);
+#define fuji_hash_compute(type) FUJICALL_A1(FUJICMD_HASH_COMPUTE, type)
+//bool fuji_hash_compute_no_clear(uint8_t type);
+#define fuji_hash_compute_no_clear(type) FUJICALL_A1(FUJICMD_HASH_COMPUTE_NO_CLEAR, type)
+bool fuji_hash_input(const void *data, uint16_t len);
 // this requires compute to have been called to set the hashing algorithm - don't use!
 // ALSO, there is no way to get the return value with this signature
 
 // output_type is 1 for hex, 0 of binary. the len is the length of data, which currently is only up to 128 if hex, but future proofing with word.
-bool fuji_hash_output(uint8_t output_type, char *s, uint16_t len);
+//bool fuji_hash_output(uint8_t output_type, char *s, uint16_t len);
+#define fuji_hash_output(type, data, len) FUJICALL_A1_RV(FUJICMD_HASH_OUTPUT, type, data, len)
 
 /**
  * \deprecated Use fuji_hash_size instead, as this function is broken.
  */
-bool fuji_hash_length(uint8_t mode);
+//bool fuji_hash_length(uint8_t mode);
+#define fuji_hash_length(mode, reply, len) FUJICALL_A1_RV(FUJICMD_HASH_LENGTH, mode, reply, len)
 
 ///////////////////////////////////////////////////////
 // New hashing interface
@@ -555,7 +559,8 @@ bool fuji_hash_data(hash_alg_t hash_type, uint8_t *input, uint16_t length, bool 
  * @brief  Clear any data associated with hashing in the Fujinet. Should be called before calculating new hashes when using \ref fuji_hash_add and \ref fuji_hash_calculate. Can also be called to discard any data previously sent to free memory on the FujiNet used for any previous data sent with \ref fuji_hash_add.
  * @return success status of the operation
  */
-bool fuji_hash_clear(void);
+//bool fuji_hash_clear(void);
+#define fuji_hash_clear() FUJICALL(FUJICMD_HASH_CLEAR)
 
 /**
  * @brief  Adds data that needs to be hashed.
@@ -563,7 +568,8 @@ bool fuji_hash_clear(void);
  * @param  length the length of data to add for hashign
  * @return success status of the operation
  */
-bool fuji_hash_add(uint8_t *data, uint16_t length);
+//bool fuji_hash_add(uint8_t *data, uint16_t length);
+#define fuji_hash_add(data, length) fuji_hash_input(data, length)
 
 /**
  * @brief  Calculates the hash of the accumulated data. Can be called multiple times with different hash_type values on the same data if discard_data is false. If different data is required to be hashed, call \ref fuji_hash_clear to start over, then add data with \ref fuji_hash_add again.
