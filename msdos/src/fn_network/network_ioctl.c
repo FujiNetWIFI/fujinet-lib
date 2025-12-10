@@ -27,11 +27,11 @@ uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char* devic
   va_end(ap);
 
   if (dstats == 0x00)
-    ret = int_f5(device,cmd,aux1,aux2) == 'C';
+      ret = int_f5(device,cmd,aux1,aux2) == 'C' ? FN_ERR_OK : network_error(devicespec);
   else if (dstats == 0x40) // Payload to computer
-    ret = int_f5_read(device,cmd,aux1,aux2,dbuf,dbyt) == 'C';
+      ret = int_f5_read(device,cmd,aux1,aux2,dbuf,dbyt) == 'C' ? FN_ERR_OK : network_error(devicespec);
   else if (dstats == 0x80) // Payload to fujinet
-    ret = int_f5_write(device,cmd,aux1,aux2,dbuf,dbyt) == 'C';
+      ret = int_f5_write(device,cmd,aux1,aux2,dbuf,dbyt) == 'C' ? FN_ERR_OK : network_error(devicespec);
 
   return ret;
 }

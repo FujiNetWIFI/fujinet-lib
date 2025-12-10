@@ -7,5 +7,5 @@ uint8_t network_close(const char* devicespec)
 {
   uint8_t device = network_unit(devicespec) + 0x70;
 
-  return int_f5(device,'C',0x00,0x00) == 'C';
+  return int_f5(device,'C',0x00,0x00) == 'C' ? FN_ERR_OK : FN_ERR_IO_ERROR;
 }
