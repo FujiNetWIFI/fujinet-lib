@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [4.9.0] 2025-11-23
+
+- [coco] Implemented fuji_copy_file (Rich Stephens)
+
 ## [4.8.3] 2025-11-23
 
 - [coco] Add isprint debug function

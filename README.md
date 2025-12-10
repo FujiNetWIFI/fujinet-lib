@@ -30,6 +30,28 @@ the built library to pickup.
 
 ## Releasing a new version of the library
 
+### Update the version number
+
+Update the version number in the `version.txt` file.
+
+For example:
+```
+4.9.0
+```
+
+### Update the changelog
+
+Update the changelog in the `CHANGELOG.md` file.
+
+Put notes in and create a dated section for the new version.
+
+### Commit and push the changes
+
+Once this is done, you can then cause a release to be built by tagging the release, as
+described below.
+
+### Tag the release
+
 This can be done with the gitlab automated workflow.
 To trigger it, tag the release with a version and push the tag to the remote.
 
