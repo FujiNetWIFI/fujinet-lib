@@ -10,7 +10,7 @@ jobs:
     name: "CONFIG check"
     runs-on: ubuntu-latest
     container:
-      image: fozztexx/defoogi:1.4.2
+      image: fozztexx/defoogi:1.4.3
 
     steps:
     - name: Checkout this repository
