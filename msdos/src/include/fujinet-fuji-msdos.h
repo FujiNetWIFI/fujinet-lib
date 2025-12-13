@@ -17,4 +17,6 @@ unsigned char int_f5(unsigned char dev, unsigned char command, unsigned char aux
 unsigned char int_f5_read(unsigned char dev, unsigned char command, unsigned char aux1, unsigned char aux2, void *buf, unsigned short len);
 unsigned char int_f5_write(unsigned char dev, unsigned char command, unsigned char aux1, unsigned char aux2, const void *buf, unsigned short len);
 
+unsigned char network_error(const char *devicespec);
+
 #endif /* FUJINET_FUJI_MSDOS_H */

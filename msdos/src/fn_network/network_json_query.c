@@ -15,7 +15,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *s)
   // Perform query
   ret = int_f5_write(device,'Q',0x00,0x00,(void *)query,256);
   if (ret != 'C')
-    return ret;
+    return -1;
 
   // Get # of bytes waiting
   network_status(devicespec,&bw,&c,&err);
@@ -33,7 +33,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *s)
       }
       s[bw - offset] = '\0';
   }
-  
+
     // return the string length (minus any trailing EOL char)
 	return bw - offset;
 }
