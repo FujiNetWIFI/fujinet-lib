@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- [msdos] Add appkey support [Eric Carr]
+
 ## [4.9.0] 2025-11-23
 
 - [coco] Implemented fuji_copy_file (Rich Stephens)
