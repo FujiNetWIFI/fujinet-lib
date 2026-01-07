@@ -159,7 +159,9 @@ uint16_t fuji_bus_write(uint8_t device, const void *buffer, size_t length)
   dwwrite((uint8_t *) &length, sizeof(length));
   dwwrite((uint8_t *) buffer, length);
 
-  return network_get_error(nw_header.unit);
+  if (network_get_error(nw_header.unit))
+    length = 0;
+  return length;
 }
 
 /*
