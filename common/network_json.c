@@ -3,8 +3,12 @@
 #include "fujinet-commands.h"
 #include "fujinet-err.h"
 
+#ifdef _CMOC_VERSION_
+#define MAX_JSON_QUERY_LEN 256
+#else /* ! _CMOC_VERSION_ */
 #warning "MAX_JSON_QUERY_LEN should be 256 but there are bugs in iwm implementation"
 #define MAX_JSON_QUERY_LEN 255
+#endif /* _CMOC_VERSION_ */
 
 int16_t network_json_query(const char *devicespec, const char *query, char *buffer)
 {
@@ -25,7 +29,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
     if (result)
       return -result;
 
-    read_len = fuji_bus_read(FUJI_DEVICEID_NETWORK + nw_unit - 1, &buffer[total], 512);
+    read_len = network_read(devicespec, &buffer[total], avail);
     if (read_len < 0)
       return -FN_ERR_IO_ERROR;
     total += read_len;

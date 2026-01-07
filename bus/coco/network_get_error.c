@@ -1,6 +1,7 @@
 #include <cmoc.h>
 #include <coco.h>
 #include "fujinet-network.h"
+#include "fujinet-err.h"
 #include "fujinet-fuji-coco.h"
 #include "fujinet-network-coco.h"
 #include "dw.h"
@@ -36,5 +37,11 @@ uint8_t network_get_error(uint8_t unit)
      * 0 -> BUS_ERROR(144) -> FN_ERR_IO_ERROR(1)
      * 1 -> translate err to FN_ERR_xxx
      */
-    return fn_error(dwread((byte *)&err, 1) ? err : BUS_ERROR);
+
+    if (!dwread((byte *) &err, 1))
+      err = BUS_ERROR;
+    else
+      if (err == NETWORK_ERROR_END_OF_FILE)
+        err = NETWORK_SUCCESS;
+    return fn_error(err);
 }
