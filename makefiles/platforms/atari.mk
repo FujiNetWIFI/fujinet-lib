@@ -1,6 +1,8 @@
 EXECUTABLE = $(R2R_PD)/$(PRODUCT_BASE).com
 DISK = $(R2R_PD)/$(PRODUCT_BASE).atr
 LIBRARY = $(R2R_PD)/$(PRODUCT_BASE).$(PLATFORM).lib
+DISK_TOOL = dir2atr
+DISK_TOOL_INFO = https://www.horus.com/~hias/atari/\#atarisio (Linux) or https://github.com/EricCarrGH/atari-dist/releases/ ( Mac)
 
 MWD := $(realpath $(dir $(lastword $(MAKEFILE_LIST)))..)
 include $(MWD)/common.mk
@@ -14,9 +16,11 @@ ATRBOOT := $(CACHE_PLATFORM)/$(PICOBOOT_BIN)
 
 $(BUILD_DISK): $(BUILD_EXEC) $(ATRBOOT) $(DISK_EXTRA_DEPS_$(PLATFORM_UC)) | $(R2R_PD)
 	$(RM) $@
+	$(RM) -rf $(CACHE_PLATFORM)/disk
 	$(MKDIR_P) $(CACHE_PLATFORM)/disk
 	cp $< $(CACHE_PLATFORM)/disk
-	dir2atr -m -S -B $(ATRBOOT) $@ $(CACHE_PLATFORM)/disk
+	$(call require,$(DISK_TOOL),$(DISK_TOOL_INFO))
+	$(DISK_TOOL) -m -S -B $(ATRBOOT) $@ $(CACHE_PLATFORM)/disk
 	make -f $(PLATFORM_MK) $(PLATFORM)/disk-post
 
 PICOBOOT_DOWNLOAD_URL = https://github.com/FujiNetWIFI/assets/releases/download/picobin

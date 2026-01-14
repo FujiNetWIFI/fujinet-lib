@@ -1,6 +1,8 @@
 EXECUTABLE = $(R2R_PD)/$(PRODUCT_BASE).bin
 DISK = $(R2R_PD)/$(PRODUCT_BASE).dsk
 LIBRARY = $(R2R_PD)/lib$(PRODUCT_BASE).$(PLATFORM).a
+DISK_TOOL = decb
+DISK_TOOL_INFO = https://github.com/nitros9project/toolshed
 
 MWD := $(realpath $(dir $(lastword $(MAKEFILE_LIST)))..)
 include $(MWD)/common.mk
@@ -11,6 +13,7 @@ r2r:: $(BUILD_DISK) $(BUILD_LIB) $(R2R_EXTRA_DEPS_$(PLATFORM_UC))
 
 $(BUILD_DISK): $(BUILD_EXEC) $(DISK_EXTRA_DEPS_$(PLATFORM_UC)) | $(R2R_PD)
 	$(RM) $@
-	decb dskini $@
-	decb copy -b -2 $< $@,$(shell echo $(PRODUCT_BASE) | tr '[:lower:]' '[:upper:]').BIN
+	$(call require,$(DISK_TOOL),$(DISK_TOOL_INFO))
+	$(DISK_TOOL) dskini $@
+	$(DISK_TOOL) copy -b -2 $< $@,$(shell echo $(PRODUCT_BASE) | tr '[:lower:]' '[:upper:]').BIN
 	@make -f $(PLATFORM_MK) $(PLATFORM)/disk-post

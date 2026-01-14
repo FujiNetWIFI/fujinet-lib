@@ -1,14 +1,20 @@
-# Makefile Framework
+# MekkoGX Modular Makefile Framework
 
-This directory provides a modular framework of Makefiles.
+[MekkoGX](https://github.com/fozzTexx/MekkoGX) is a cross-platform
+build template for retro and classic computers. It provides a
+collection of modular Makefiles and a top-level template project to
+simplify compiling, linking, and building disk images across multiple
+platforms.
 
 The main goal is to make it easy to:
 
-* Add new computer platforms by dropping in a new
-  platforms/<platform>.mk file.
-* Avoid per-project hacks inside platform makefiles.
-* Keep all project-specific customization in the top-level Makefile,
-  where it’s visible and easy to maintain.
+* Easily switch between different FUJINET_LIB versions by setting a
+  single variable (supports directories, releases, or Git URLs).
+* Keep platforms and toolchains fully modular: each uses a small .mk
+  file with shared logic in common.mk and tc-common.mk, making it
+  simple to add new platforms or toolchains.
+* **Keep all project-specific customization in the top-level Makefile,
+  where it’s visible and easy to maintain.**
 
 Think of this as a library of Makefiles.
 
@@ -75,9 +81,12 @@ FUJINET_LIB = 4.7.6
 
 ### Source directories (`SRC_DIRS`)
 
-`SRC_DIRS` lists the directories `make` should search for source
-files. You can use the literal `%PLATFORM%` token to have directories
-expand automatically based on the platform being built.
+`SRC_DIRS` lists the directories that `make` should search for source files.
+It supports two special features:
+
+#### 1. **Platform-aware directory expansion**
+
+Use the literal `%PLATFORM%` token to have directories expand based on the active platform.
 
 Example:
 
@@ -85,9 +94,40 @@ Example:
 SRC_DIRS = src src/%PLATFORM%
 ```
 
-> Note: `%PLATFORM%` is used instead of `$(PLATFORM)` to avoid
-  accidental expansion in unrelated directory names. See Platform
-  Combos below.
+> **Note:** `%PLATFORM%` is used instead of `$(PLATFORM)` to avoid accidental
+> expansion inside unrelated directory names.
+
+#### 2. **Recursive directory search with `/**`**
+
+Appending `/**` to any entry makes `make` recursively search *all* subdirectories.
+
+Example:
+
+```
+# Recursively search inside src/apple2/
+SRC_DIRS = src src/apple2/**
+```
+
+You can also combine both features:
+
+```
+# All dirs named "exact" under the platform prefix, recursively
+SRC_DIRS = src/%PLATFORM%/**/exact
+```
+
+---
+
+### Include directories (`INCLUDE_DIRS`)
+
+`INCLUDE_DIRS` works exactly like `SRC_DIRS`.
+It supports `%PLATFORM%` and `/**`, and all expanded paths are added to both
+`CFLAGS` and `ASFLAGS` include search paths.
+
+Example:
+
+```
+INCLUDE_DIRS = include include/%PLATFORM% include/common/**
+```
 
 ### Platform Combos (`PLATFORM_COMBOS`)
 
@@ -117,7 +157,7 @@ With `SRC_DIRS = src src/%PLATFORM%`, building for `c64` would expand `%PLATFORM
 - `src/commodore`
 - `src/eightbit`
 
-### The `r2r` Target
+### The `r2r` "Ready 2 Run" Target
 
 The `r2r` target is the **default build output** for a platform. It
 will always build the platform’s executable. For some platforms, it
