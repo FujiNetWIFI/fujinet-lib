@@ -100,23 +100,27 @@ _port_init      ENDP
 
 ;-----------------------------------------------------------------------------
 ; int port_getc(void)
-; Wait for and read one character from the UART
-; Returns: Character in AX (0-255), or -1 on error
+; Read one character from the UART if available
+; Returns: Character in AX (0-255), or -1 if no data available
 ;-----------------------------------------------------------------------------
 _port_getc      PROC    NEAR
         push    dx
 
-getc_wait:
         mov     dx, UART_LSR
         in      al, dx
         test    al, LSR_DR              ; Check if data ready
-        jz      getc_wait
+        jz      getc_no_data
 
         ; Read the character
         mov     dx, UART_RBR
         in      al, dx
         xor     ah, ah                  ; Zero extend to word
+        jmp     getc_done
 
+getc_no_data:
+        mov     ax, -1                  ; No data available
+
+getc_done:
         pop     dx
         ret
 _port_getc      ENDP
