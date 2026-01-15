@@ -1,6 +1,7 @@
 PRODUCT = fujinet.lib
 PLATFORMS = coco apple2 atari c64 msx
-#PLATFORMS += adam msdos
+PLATFORMS += msdos
+#PLATFORMS += adam
 
 # You can run 'make <platform>' to build for a specific platform,
 # or 'make <platform>/<target>' for a platform-specific target.
@@ -11,7 +12,8 @@ PLATFORMS = coco apple2 atari c64 msx
 # SRC_DIRS may use the literal %PLATFORM% token.
 # It expands to the chosen PLATFORM plus any of its combos.
 SRC_DIRS = common bus/%PLATFORM%
-EXTRA_INCLUDE = include
+INCLUDE_DIRS = include
+CFLAGS = -DBUILD_$(PLATFORM_UC)
 
 include makefiles/toplevel-rules.mk
 

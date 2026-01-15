@@ -1,6 +1,7 @@
 CC_DEFAULT ?= wcc
 AS_DEFAULT ?= wasm
 LD_DEFAULT ?= wlink OPTION quiet
+AR_DEFAULT ?= wlib
 
 include $(MWD)/tc-common.mk
 
@@ -26,7 +27,7 @@ define library-flag
 endef
 
 define link-lib
-  $(LIB) -n $1 $2
+  $(AR) -n $1 $2
 endef
 
 define link-bin
@@ -42,5 +43,5 @@ define compile
 endef
 
 define assemble
-  $(AS) -c $(ASFLAGS) -o $1 $2 2>&1
+  $(AS) -c $(ASFLAGS) -fo=$1 $2 2>&1
 endef
