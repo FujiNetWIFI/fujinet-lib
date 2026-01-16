@@ -35,17 +35,13 @@ typedef struct {
 
 FNAppKeyString appkey_buf;
 
-bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
-		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
+// fields, aux3, aux4 only used with other systems, not
+// Atari. Commented out to prevent warning about unused arguments.
+bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t /*fields*/,
+		   uint8_t aux1, uint8_t aux2, uint8_t /*aux3*/, uint8_t /*aux4*/,
 		   const void *data, size_t data_length,
 		   void *reply, size_t reply_length)
 {
-  // These arguments are for compatibility with other systems and not
-  // used on Atari. Hack to suppress the warning that they are unused.
-  (void) aux3;
-  (void) aux4;
-  (void) fields;
-
   atari_dcb->DDEVIC = device;
   atari_dcb->DUNIT = 1;
   atari_dcb->DCOMND = fuji_cmd;
