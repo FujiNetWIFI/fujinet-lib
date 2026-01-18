@@ -37,12 +37,12 @@ endef
 
 define compile
   $(CC) -l $(basename $1).lst \
-        --create-dep $(1:.o=.d).d \
+        --create-dep $(1:.o=.d) \
         -c $(CFLAGS) -t $(PLATFORM) -o $1 $2
 endef
 
 define assemble
   $(AS) -l $(basename $1).lst \
-        --create-dep $(1:.o=.d).d \
+        --create-dep $(1:.o=.d) \
         -c $(ASFLAGS) -t $(PLATFORM) -o $1 $2
 endef

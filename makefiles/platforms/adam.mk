@@ -1,5 +1,4 @@
 EXECUTABLE = $(R2R_PD)/$(PRODUCT_BASE).prg
-LIBS += -leos.lib -lsmartkeys.lib
 LIBRARY = $(R2R_PD)/$(PRODUCT_BASE).$(PLATFORM).lib
 
 MWD := $(realpath $(dir $(lastword $(MAKEFILE_LIST)))..)

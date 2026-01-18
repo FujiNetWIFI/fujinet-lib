@@ -236,7 +236,7 @@ bool fuji_enable_udpstream(uint16_t port, char *host);
  * Raw version that returns bytes for all IP etc related values.
  * @return Success status, true if all OK.
  */
-bool fuji_get_adapter_config(AdapterConfig *ac);
+#define fuji_get_adapter_config(ac) FUJICALL_RV(FUJICMD_GET_ADAPTERCONFIG, ac, sizeof(AdapterConfigExtended))
 
 /**
  * @brief Gets extended adapter config information from FN, e.g. IP, MAC, BSSID etc.
