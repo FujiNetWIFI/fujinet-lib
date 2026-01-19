@@ -3,7 +3,7 @@
 
 #include <fujinet-int.h>
 
-typedef enum {
+enum {
   FN_ERR_OK        = 0x00,      /* No error */
   FN_ERR_IO_ERROR  = 0x01,      /* There was IO error/issue with the device */
   FN_ERR_BAD_CMD   = 0x02,      /* Function called with bad arguments */
@@ -12,7 +12,8 @@ typedef enum {
   FN_ERR_NO_DEVICE = 0x05,      /* There is no network device */
 
   FN_ERR_UNKNOWN   = 0xff,      /* Device specific error we didn't handle */
-} FN_ERR;
+};
+typedef uint8_t FN_ERR;
 
 enum {
   NETWORK_SUCCESS                               = 1,
