@@ -33,7 +33,8 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
 
     read_len = network_read(devicespec, &buffer[total], avail);
     if (read_len < 0)
-      return -FN_ERR_IO_ERROR;
+      return read_len;
+
     total += read_len;
   } while (read_len);
 
@@ -46,7 +47,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
   return total;
 }
 
-uint8_t network_json_parse(const char *devicespec)
+FN_ERR network_json_parse(const char *devicespec)
 {
   uint8_t err = 0;
   uint8_t nw_unit = network_unit(devicespec);

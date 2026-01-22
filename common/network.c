@@ -35,10 +35,10 @@ FN_ERR network_open(const char *devicespec, uint8_t mode, uint8_t trans)
   if (!success)
     return FN_ERR_IO_ERROR;
 
+#if 0
   // FIXME - if this is a POST open then calling status will try do do the POST with no data!
   if (!network_unit_status(network_unit(devicespec), &nw_status))
     return FN_ERR_IO_ERROR;
-  }
 
   /* We haven't even read the file yet, it's not EOF */
   if (nw_status.errcode == NETWORK_ERROR_END_OF_FILE)
@@ -59,14 +59,16 @@ FN_ERR network_close(const char *devicespec)
 int16_t network_read_nb(const char *devicespec, void *buf, uint16_t len)
 {
   uint8_t nw_unit;
+  FN_ERR err;
 
 
   nw_unit = network_unit(devicespec);
 
   do {
     // Check how many bytes are available
-    if (!network_unit_status(network_unit(devicespec), &nw_status))
-      return -FN_ERR_IO_ERROR;
+    err = network_unit_status(network_unit(devicespec), &nw_status);
+    if (err != FN_ERR_OK)
+      return -err;
 
     if (nw_status.errcode > NETWORK_SUCCESS && !nw_status.avail) {
       fn_device_error = nw_status.errcode;
@@ -92,6 +94,8 @@ int16_t network_read(const char *devicespec, void *buf, uint16_t len)
       break;
   }
 
+  if (!total && rlen < 0)
+    return rlen;
   return total;
 }
 

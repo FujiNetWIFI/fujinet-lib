@@ -6,5 +6,6 @@
 
 FN_ERR network_unit_status(uint8_t unit, NetworkStatus *nw_status)
 {
+  // Inverting the bool converts true to FN_ERR_OK
   return !NETCALL_RV(FUJICMD_STATUS, unit, nw_status, sizeof(*nw_status));
 }
