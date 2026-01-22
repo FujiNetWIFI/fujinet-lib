@@ -70,6 +70,7 @@ enum {
   FUJICMD_QUERY                         = 0x51,
   FUJICMD_PARSE                         = 0x50,
   FUJICMD_OPEN                          = 0x4F,
+  FUJICMD_SET_MODE                      = 0x4D,
   FUJICMD_CLOSE                         = 0x43,
   FUJICMD_ACCEPT                        = 0x41,
   FUJICMD_GETCWD                        = 0x30,

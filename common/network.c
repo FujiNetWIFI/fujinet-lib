@@ -8,7 +8,7 @@
 
 NetworkStatus nw_status;
 
-uint8_t network_init()
+FN_ERR network_init()
 {
   return FN_ERR_OK;
 }
@@ -24,7 +24,7 @@ uint8_t network_unit(const char *devicespec)
   return 1;
 }
 
-uint8_t network_open(const char *devicespec, uint8_t mode, uint8_t trans)
+FN_ERR network_open(const char *devicespec, uint8_t mode, uint8_t trans)
 {
   bool success;
   uint8_t nw_unit = network_unit(devicespec);
@@ -35,8 +35,10 @@ uint8_t network_open(const char *devicespec, uint8_t mode, uint8_t trans)
   if (!success)
     return FN_ERR_IO_ERROR;
 
+  // FIXME - if this is a POST open then calling status will try do do the POST with no data!
   if (!network_unit_status(network_unit(devicespec), &nw_status))
     return FN_ERR_IO_ERROR;
+  }
 
   /* We haven't even read the file yet, it's not EOF */
   if (nw_status.errcode == NETWORK_ERROR_END_OF_FILE)
@@ -44,11 +46,12 @@ uint8_t network_open(const char *devicespec, uint8_t mode, uint8_t trans)
 
   if (nw_status.errcode > NETWORK_SUCCESS && !nw_status.avail)
     return nw_status.errcode;
+#endif
 
   return FN_ERR_OK;
 }
 
-uint8_t network_close(const char *devicespec)
+FN_ERR network_close(const char *devicespec)
 {
   return !NETCALL(FUJICMD_CLOSE, network_unit(devicespec));
 }
@@ -92,7 +95,7 @@ int16_t network_read(const char *devicespec, void *buf, uint16_t len)
   return total;
 }
 
-uint8_t network_write(const char *devicespec, const void *buf, uint16_t len)
+FN_ERR network_write(const char *devicespec, const void *buf, uint16_t len)
 {
   uint8_t nw_unit;
   uint16_t wlen;
@@ -111,12 +114,12 @@ uint8_t network_write(const char *devicespec, const void *buf, uint16_t len)
   return FN_ERR_OK;
 }
 
-uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char *devicespec, ...);
-
-uint8_t network_status(const char *devicespec, uint16_t *avail, uint8_t *status, uint8_t *err)
+FN_ERR network_status(const char *devicespec, uint16_t *avail, uint8_t *status, uint8_t *err)
 {
-  if (!network_unit_status(network_unit(devicespec), &nw_status))
-    return FN_ERR_IO_ERROR;
+  FN_ERR stat_err = network_unit_status(network_unit(devicespec), &nw_status);
+
+  if (stat_err != FN_ERR_OK)
+    return stat_err;
 
   *avail = nw_status.avail;
   *status = nw_status.status;
@@ -125,7 +128,7 @@ uint8_t network_status(const char *devicespec, uint16_t *avail, uint8_t *status,
   return FN_ERR_OK;
 }
 
-uint8_t network_accept(const char *devicespec)
+FN_ERR network_accept(const char *devicespec)
 {
   uint8_t nw_unit;
   bool success;

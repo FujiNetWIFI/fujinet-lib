@@ -8,6 +8,8 @@
 
 #include <fujinet-int.h>
 #include <fujinet-err.h>
+#include <fujinet-bus.h>
+#include <fujinet-commands.h>
 
 #ifdef __CBM__
 
@@ -162,7 +164,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
  * 
  * Assumes an open connection.
  */
-FN_ERR network_http_set_channel_mode(const char *devicespec, uint8_t mode);
+#define network_http_set_channel_mode(devicespec, mode) (NETCALL_A1_A2(FUJICMD_SET_MODE, network_unit(devicespec), 0, mode) ? FN_ERR_OK : FN_ERR_IO_ERROR)
 
 /**
  * @brief  Start adding headers.
@@ -171,7 +173,7 @@ FN_ERR network_http_set_channel_mode(const char *devicespec, uint8_t mode);
  * 
  * Assumes an open connection. After calling this, add any headers with network_http_add_header, and finally call network_http_end_add_headers
  */
-FN_ERR network_http_start_add_headers(const char *devicespec);
+#define network_http_start_add_headers(devicespec) network_http_set_channel_mode(devicespec, HTTP_CHAN_MODE_SET_HEADERS)
 
 /**
  * @brief  End adding headers.
@@ -180,7 +182,7 @@ FN_ERR network_http_start_add_headers(const char *devicespec);
  * 
  * Assumes an open connection. Completes header adding, and sets mode back to BODY
  */
-uint8_t network_http_end_add_headers(const char *devicespec);
+#define network_http_end_add_headers(devicespec) network_http_set_channel_mode(devicespec, HTTP_CHAN_MODE_BODY)
 
 /**
  * @brief  Add header to HTTP request
@@ -190,7 +192,7 @@ uint8_t network_http_end_add_headers(const char *devicespec);
  * 
  * Assumes an open connection.
  */
-FN_ERR network_http_add_header(const char *devicespec, const char *header);
+#define network_http_add_header(devicespec, header) network_write(devicespec, header, strlen(header))
 
 
 /**
@@ -223,7 +225,7 @@ FN_ERR network_http_post_bin(const char *devicespec, const uint8_t *data, uint16
  * 
  * Assumes an open connection.
  */
-FN_ERR network_http_put(const char *devicespec, const char *data);
+#define network_http_put(devicespec, data) network_http_post(devicespec, data)
 
 /**
  * @brief  Send DELETE HTTP request
@@ -233,7 +235,7 @@ FN_ERR network_http_put(const char *devicespec, const char *data);
  * 
  * This will open a connection, consumer can then query the data, and must close the connection.
  */
-FN_ERR network_http_delete(const char *devicespec, uint8_t trans);
+#define network_http_delete(devicespec, trans) network_open(devicespec, OPEN_MODE_HTTP_DELETE_H, trans)
 
 /**
  * @brief  Internal routine to get the network UNIT id from the devicespec, i.e. Nx: find the "x" value
