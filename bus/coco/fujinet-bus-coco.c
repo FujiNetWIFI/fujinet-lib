@@ -24,7 +24,7 @@ typedef struct {
 static fujibus_header fb_header;
 static fujinw_header nw_header;
 static FNAppKeyString appkey_buf;
-static unsigned char buffer[256];
+static uint8_t *fb_packet = NULL;
 
 bool fuji_net_call(uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
@@ -33,7 +33,15 @@ bool fuji_net_call(uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
 {
   uint8_t err;
   uint16_t idx, numbytes;
+  extern const char *httpbin;
 
+
+  // Use sbrk(0) to get pointer to unused memory at top of program. No
+  // need to move the sbrk() since we only need this space temporarily
+  // and nothing else will call sbrk() to try to use this space. Since
+  // we don't allocate it we also don't need to free it. Probably
+  // unsafe.
+  fb_packet = (uint8_t *) sbrk(0);
 
   nw_header.opcode = OP_NET;
   nw_header.unit = unit;
@@ -42,30 +50,30 @@ bool fuji_net_call(uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
   idx = 0;
   numbytes = fuji_field_numbytes(fields);
   if (numbytes) {
-    buffer[idx++] = aux1;
+    fb_packet[idx++] = aux1;
     numbytes--;
   }
   if (numbytes) {
-    buffer[idx++] = aux2;
+    fb_packet[idx++] = aux2;
     numbytes--;
   }
   if (numbytes) {
-    buffer[idx++] = aux3;
+    fb_packet[idx++] = aux3;
     numbytes--;
   }
   if (numbytes) {
-    buffer[idx++] = aux4;
+    fb_packet[idx++] = aux4;
     numbytes--;
   }
   if (data) {
-    memcpy(&buffer[idx], data, data_length);
+    memcpy(&fb_packet[idx], data, data_length);
     idx += data_length;
   }
 
   bus_ready();
   dwwrite((unsigned char *) &nw_header, sizeof(nw_header));
   if (idx)
-    dwwrite(buffer, idx);
+    dwwrite(fb_packet, idx);
 
   err = network_get_error(unit);
   if (err)
@@ -94,36 +102,43 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   if (device != FUJI_DEVICEID_FUJINET)
     return false;
 
+  // Use sbrk(0) to get pointer to unused memory at top of program. No
+  // need to move the sbrk() since we only need this space temporarily
+  // and nothing else will call sbrk() to try to use this space. Since
+  // we don't allocate it we also don't need to free it. Probably
+  // unsafe.
+  fb_packet = (uint8_t *) sbrk(0);
+
   fb_header.opcode = OP_FUJI;
   fb_header.cmd = fuji_cmd;
 
   idx = 0;
   numbytes = fuji_field_numbytes(fields);
   if (numbytes) {
-    buffer[idx++] = aux1;
+    fb_packet[idx++] = aux1;
     numbytes--;
   }
   if (numbytes) {
-    buffer[idx++] = aux2;
+    fb_packet[idx++] = aux2;
     numbytes--;
   }
   if (numbytes) {
-    buffer[idx++] = aux3;
+    fb_packet[idx++] = aux3;
     numbytes--;
   }
   if (numbytes) {
-    buffer[idx++] = aux4;
+    fb_packet[idx++] = aux4;
     numbytes--;
   }
   if (data) {
-    memcpy(&buffer[idx], data, data_length);
+    memcpy(&fb_packet[idx], data, data_length);
     idx += data_length;
   }
 
   bus_ready();
   dwwrite((unsigned char *) &fb_header, sizeof(fb_header));
   if (idx)
-    dwwrite(buffer, idx);
+    dwwrite(fb_packet, idx);
 
   if (fuji_get_error())
     return false;
