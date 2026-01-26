@@ -66,7 +66,7 @@ int16_t network_read_nb(const char *devicespec, void *buf, uint16_t len)
 
   do {
     // Check how many bytes are available
-    err = network_unit_status(network_unit(devicespec), &nw_status);
+    err = network_unit_status(nw_unit, &nw_status);
     if (err != FN_ERR_OK)
       return -err;
 
@@ -84,8 +84,9 @@ int16_t network_read_nb(const char *devicespec, void *buf, uint16_t len)
 
 int16_t network_read(const char *devicespec, void *buf, uint16_t len)
 {
-  int16_t rlen, total;
+  int16_t total;
   uint8_t *ubuf = (uint8_t *) buf;
+  int16_t rlen = 0;
 
 
   for (total = 0; len; total += rlen, len -= rlen) {

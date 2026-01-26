@@ -1,7 +1,9 @@
-#include "fujinet-network.h"
-#include "fujinet-bus.h"
-#include "fujinet-commands.h"
-#include "fujinet-err.h"
+#include "network_unit_status.h"
+
+#include <fujinet-network.h>
+#include <fujinet-bus.h>
+#include <fujinet-commands.h>
+#include <fujinet-err.h>
 
 #ifdef BUILD_APPLE
 #warning "MAX_JSON_QUERY_LEN should be 256 but there are bugs in iwm implementation"
@@ -10,15 +12,14 @@
 #define MAX_JSON_QUERY_LEN 256
 #endif /* BUILD_APPLE */
 
-// Open Watcom can't do far pointers in a function declaration
-static uint16_t avail;
-static uint8_t status, err;
+extern NetworkStatus nw_status;
 
 int16_t network_json_query(const char *devicespec, const char *query, char *buffer)
 {
   char c;
   int16_t total, read_len;
-  uint8_t result;
+  FN_ERR err;
+  uint16_t avail;
   uint8_t nw_unit = network_unit(devicespec);
 
 
@@ -26,17 +27,21 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
     return -FN_ERR_IO_ERROR;
 
   total = 0;
-  do {
-    result = network_status(devicespec, &avail, &status, &err);
-    if (result)
-      return -result;
+  for (;;) {
+    err = network_unit_status(nw_unit, &nw_status);
+    if (err)
+      return -err;
+
+    avail = nw_status.avail;
+    if (!avail)
+      break;
 
     read_len = network_read(devicespec, &buffer[total], avail);
     if (read_len < 0)
       return read_len;
 
     total += read_len;
-  } while (read_len);
+  }
 
   // if last char is 0x9b, 0x0A or 0x0D, then set that char to nul, else just null terminate
   c = buffer[total - 1];
