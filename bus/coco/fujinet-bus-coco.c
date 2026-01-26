@@ -33,7 +33,6 @@ bool fuji_net_call(uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
 {
   uint8_t err;
   uint16_t idx, numbytes;
-  extern const char *httpbin;
 
 
   // Use sbrk(0) to get pointer to unused memory at top of program. No
