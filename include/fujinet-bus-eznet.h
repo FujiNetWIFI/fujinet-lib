@@ -109,9 +109,12 @@
                 U16_LSB(U32_MSW(c1234)), U16_MSB(U32_MSW(c1234)),          \
                 NULL, 0, reply, replylen)
 
-#ifdef _CMOC_VERSION_
+// Both __ADAM__ and __COLECOADAM__ are required for z88dk.
+// +coleco -subtype=adam  ==  __ADAM__
+// +cpm -subtype=adam     ==  __COLECOADAM__
+#if defined(_CMOC_VERSION_) || defined(__ADAM__) || defined(__COLECOADAM__)
 
-// On CoCo all network calls *must* have aux1 and aux2
+// On CoCo and Adam all network calls *must* have aux1 and aux2
 #define NETCALL(cmd, unit)                                                 \
   NETCALL_A1_A2(cmd, unit, 0, 0)
 
@@ -130,7 +133,7 @@
 #define NETCALL_A1_RV(cmd, unit, a1, reply, replylen)                      \
   NETCALL_A1_A2(cmd, unit, a1, 0, reply, replylen)
 
-#else /* ! _CMOC_VERSION_ */
+#else /* ! (_CMOC_VERSION_ || __ADAM__ || __COLECOADAM__) */
 
 #define NETCALL(cmd, unit)                                                 \
   fuji_bus_call(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd,                   \
@@ -168,4 +171,4 @@
 		a1, 0, 0, 0,                                               \
                 NULL, 0, reply, replylen)
 
-#endif /* _CMOC_VERSION_ */
+#endif /* _CMOC_VERSION_ || __ADAM__ || __COLECOADAM__ */
