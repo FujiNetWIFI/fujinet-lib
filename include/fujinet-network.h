@@ -100,7 +100,12 @@ FN_ERR network_open(const char* devicespec, uint8_t mode, uint8_t trans);
  * @param  len length
  * @return Bytes read, or negative value of fujinet-network error code (See FN_ERR_* values) with fn_network_error containing real error code
  */
+#if defined(__ADAM__) || defined(__COLECOADAM__)
+extern int16_t network_read_nb_adam(const char *devicespec, void *buf, uint16_t len);
+#define network_read_nb(devspec, buf, len) network_read_nb_adam(devspec, buf, len)
+#else /* ! (__ADAM__ || __COLECOADAM__) */
 int16_t network_read_nb(const char* devicespec, void *buf, uint16_t len);
+#endif /* __ADAM__ || __COLECOADAM__ */
 
 /**
  * @brief  Read from channel
@@ -154,7 +159,12 @@ FN_ERR network_json_parse(const char *devicespec);
  * 
  * Assumes an open and parsed json.
  */
+#if defined(__ADAM__) || defined(__COLECOADAM__)
+extern int16_t network_json_query_adam(const char *devicespec, const char *query, char *buffer);
+#define network_json_query(devspec, query, buffer) network_json_query_adam(devspec, query, buffer)
+#else /* ! (__ADAM__ || __COLECOADAM__) */
 int16_t network_json_query(const char *devicespec, const char *query, char *buffer);
+#endif /* __ADAM__ || __COLECOADAM__ */
 
 /**
  * @brief  Sets the channel mode.
@@ -296,6 +306,7 @@ FN_ERR network_fs_rmdir(const char *devicespec);
 FN_ERR network_fs_cd(const char *devicespec);
 
 FN_ERR network_accept(const char* devicespec);
+extern size_t network_json_strip_newlines(char *buffer, size_t buflen);
 
 #define OPEN_MODE_READ          (0x04)
 #define OPEN_MODE_WRITE         (0x08)

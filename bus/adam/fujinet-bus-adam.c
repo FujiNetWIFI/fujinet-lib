@@ -1,6 +1,9 @@
+#include "fujinet-bus-adam.h"
 #include "fujinet-bus.h"
 #include "fujinet-commands.h"
 #include <string.h>
+
+#include <stdio.h> // debug
 
 #define MAX_ADAM_PACKET 512
 #define MAX_RETRIES 20
@@ -9,52 +12,6 @@
 #define DCB_TABLE_ADDR ((DCB *) 0xFEC4)
 
 #define DCB_COMPLETE_MASK 0x80
-
-enum {
-  DCB_COMMAND_IDLE   = 0x00,
-  DCB_COMMAND_STATUS = 0x01,
-  DCB_COMMAND_RESET  = 0x02,
-  DCB_COMMAND_WRITE  = 0x03,
-  DCB_COMMAND_READ   = 0x04,
-
-  DCB_STATUS_FINISH  = 0x80,
-  DCB_STATUS_KBD_NAK = 0x8C,
-  DCB_STATUS_PR_NAK  = 0x86,
-  DCB_STATUS_ETX     = 0x03,
-  DCB_STATUS_TIMEOUT = 0x9B,
-};
-
-enum {
-  ADAM_ID_FUJINET  = 0x0F,
-
-  ADAM_ID_KEYBOARD = 0x01,
-  ADAM_ID_PRINTER  = 0x02,
-  ADAM_ID_DISK     = 0x04,
-  ADAM_ID_DISK2    = 0x05,
-  ADAM_ID_DISK3    = 0x06,
-  ADAM_ID_DISK4    = 0x07,
-  ADAM_ID_TAPE     = 0x08,
-  ADAM_ID_NETWORK  = 0x09,
-};
-
-typedef struct
-{
-  uint8_t status;
-  void *buf;
-  uint16_t len;
-  uint32_t block;
-  uint8_t unit;
-  uint8_t reserved0;
-  uint8_t reserved1;
-  uint8_t reserved2;
-  uint8_t reserved3;
-  uint8_t reserved4;
-  uint8_t reserved5;
-  uint8_t dev;
-  uint16_t max_len;
-  uint8_t type;
-  uint8_t dev_status;
-} DCB;
 
 static uint8_t fb_packet[MAX_ADAM_PACKET];
 
@@ -94,16 +51,8 @@ uint8_t dcb_io(DCB *dcb, uint8_t mode, void *buffer, size_t length)
   return dcb->status;
 }
 
-bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
-		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
-		   const void *data, size_t data_length,
-		   void *reply, size_t reply_length)
+uint8_t fuji_remap_device(uint8_t device)
 {
-  DCB *dcb;
-  uint16_t idx, numbytes;
-  uint8_t status;
-
-
   if (device > 0x0F) {
     // Device ID is standard FujiNet device ID, remap it to Adam
     if (device == FUJI_DEVICEID_FUJINET)
@@ -116,13 +65,30 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
       device = device - FUJI_DEVICEID_NETWORK + ADAM_ID_NETWORK;
       // Adam currently only supports 2 network devices
       if (device >= ADAM_ID_NETWORK + 2)
-        return false;
+        return 0;
     }
     else {
       // No remap possible
-      return false;
+      return 0;
     }
   }
+
+  return device;
+}
+
+bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
+		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
+		   const void *data, size_t data_length,
+		   void *reply, size_t reply_length)
+{
+  DCB *dcb;
+  uint16_t idx, numbytes;
+  uint8_t status;
+
+
+  device = fuji_remap_device(device);
+  if (!device)
+    return false;
 
   idx = 0;
   fb_packet[idx++] = fuji_cmd;
@@ -166,14 +132,25 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   return true;
 }
 
+#if 0
 size_t fuji_bus_read(uint8_t device, void *buffer, size_t length)
 {
-  NETCALL_B12_RV(FUJICMD_READ, device - FUJI_DEVICEID_NETWORK + 1, length, buffer, length);
-  return length;
+  uint8_t status;
+  DCB *dcb;
+
+
+  device = fuji_remap_device(device);
+  dcb = dcb_find(device);
+  status = dcb_io(dcb, DCB_COMMAND_READ, buffer, length);
+  printf("DCB STATUS %02x len=%d\n", status, dcb->len);
+  if (status != DCB_STATUS_FINISH)
+    dcb->len = 0;
+  return dcb->len;
 }
+#endif
 
 size_t fuji_bus_write(uint8_t device, const void *buffer, size_t length)
 {
-  NETCALL_B12_D(FUJICMD_WRITE, device - FUJI_DEVICEID_NETWORK + 1, length, buffer, length);
+  NETCALL_D(FUJICMD_WRITE, device - FUJI_DEVICEID_NETWORK + 1, buffer, length);
   return length;
 }

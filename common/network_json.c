@@ -14,6 +14,23 @@
 
 extern NetworkStatus nw_status;
 
+size_t network_json_strip_newlines(char *buffer, size_t buflen)
+{
+  uint8_t c;
+
+  // if last char is 0x9b, 0x0A or 0x0D, then set that char to nul, else just null terminate
+  while (buflen) {
+    c = buffer[buflen - 1];
+    if (c != 0x9B && c != 0x0A && c != 0x0D)
+      break;
+    buflen--;
+  }
+  buffer[buflen] = '\0';
+
+  return buflen;
+}
+
+#if !defined(__ADAM__) && !defined(__COLECOADAM__)
 int16_t network_json_query(const char *devicespec, const char *query, char *buffer)
 {
   char c;
@@ -43,14 +60,9 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
     total += read_len;
   }
 
-  // if last char is 0x9b, 0x0A or 0x0D, then set that char to nul, else just null terminate
-  c = buffer[total - 1];
-  if (c == 0x9B || c == 0x0A || c == 0x0D)
-    total--;
-  buffer[total] = '\0';
-
-  return total;
+  return network_json_strip_newlines(buffer, total);
 }
+#endif /* ! (__ADAM__ || __COLECOADAM__) */
 
 FN_ERR network_json_parse(const char *devicespec)
 {

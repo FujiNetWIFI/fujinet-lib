@@ -56,6 +56,7 @@ FN_ERR network_close(const char *devicespec)
   return !NETCALL(FUJICMD_CLOSE, network_unit(devicespec));
 }
 
+#if !defined(__ADAM__) && !defined(__COLECOADAM__)
 int16_t network_read_nb(const char *devicespec, void *buf, uint16_t len)
 {
   uint8_t nw_unit;
@@ -81,6 +82,7 @@ int16_t network_read_nb(const char *devicespec, void *buf, uint16_t len)
 
   return fuji_bus_read(FUJI_DEVICEID_NETWORK + nw_unit - 1, buf, len);
 }
+#endif /* ! (__ADAM__ || __COLECOADAM__) */
 
 int16_t network_read(const char *devicespec, void *buf, uint16_t len)
 {
