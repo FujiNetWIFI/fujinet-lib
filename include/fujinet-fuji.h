@@ -232,6 +232,12 @@ bool fuji_enable_udpstream(uint16_t port, char *host);
 #define fuji_error() (fn_device_error != FN_ERR_OK)
 
 /**
+ * @brief Generate a randomized GUID.
+ * @return success status of request
+ */
+#define fuji_generate_guid(guid) FUJICALL_RV(FUJICMD_GENERATE_GUID, guid, MAX_GUID_LEN)
+
+/**
  * @brief Gets adapter config information from FN, e.g. IP, MAC, BSSID etc.
  * Raw version that returns bytes for all IP etc related values.
  * @return Success status, true if all OK.
