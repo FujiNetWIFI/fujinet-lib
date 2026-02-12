@@ -370,7 +370,7 @@ bool fuji_open_directory_filter(uint8_t hostSlot, const char *path, const char *
  * @brief Reset FN
  * @return true if successful, false if there was an error from FN
  */
-bool fuji_reset(void);
+#define fuji_reset() FUJICALL(FUJICMD_RESET)
 
 /**
  * @brief Scans network for SSIDs and sets count accordingly.
