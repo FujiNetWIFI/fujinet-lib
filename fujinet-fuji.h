@@ -54,6 +54,7 @@
 #define FILE_MAXLEN    36
 #define SSID_MAXLEN    33 /* 32 + NULL */
 #define MAX_APPKEY_LEN 64
+#define MAX_GUID_LEN   37
 
 #ifdef __CBM__
     #define MAX_PASSWORD_LEN 65
@@ -114,6 +115,7 @@
 #define FUJICMD_GET_ADAPTERCONFIG_EXTENDED 0xC4
 #define FUJICMD_HASH_COMPUTE_NO_CLEAR      0xC3
 #define FUJICMD_HASH_CLEAR                 0xC2
+#define FUJICMD_GENERATE_GUID              0xBB
 #define FUJICMD_SET_STATUS                 0x81
 
 enum WifiStatus
@@ -317,6 +319,12 @@ bool fuji_enable_udpstream(uint16_t port, char *host);
  * @return ERROR status, true if there was an error in last operation.
  */
 bool fuji_error(void);
+
+/**
+ * @brief Generate a randomized GUID.
+ * @return success status of request
+ */
+bool fuji_generate_guid(char *buffer);
 
 /**
  * @brief Gets adapter config information from FN, e.g. IP, MAC, BSSID etc.
