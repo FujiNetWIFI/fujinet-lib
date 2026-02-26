@@ -12,14 +12,16 @@ typedef struct {
 
 static fujibus_packet fb_packet;
 
-uint8_t fn_device_error;
+//uint8_t fn_device_error;
 
+#if 0
 bool fuji_net_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
 		   const void *data, size_t data_length,
 		   void *reply, size_t reply_length)
 {
 }
+#endif
 
 bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
@@ -28,6 +30,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 {
   uint16_t wlen, rlen;
   uint16_t idx, numbytes;
+  uint8_t cbm_chan, cbm_dev;
   bool success = true;
 
 
@@ -57,12 +60,20 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
     idx += data_length;
   }
 
-  if (fuji_cbm_open(CBM_CMD_CHANNEL, CBM_DEV_FUJI, CBM_CMD_CHANNEL, 2,
-		    (unsigned char *) &fb_packet) != 0)
+  if (device >= FUJI_DEVICEID_NETWORK  && device <= FUJI_DEVICEID_NETWORK_LAST) {
+    cbm_chan = device - FUJI_DEVICEID_NETWORK + CBM_DATA_CHANNEL_0;
+    cbm_dev = CBM_DEV_NETWORK;
+  }
+  else {
+    cbm_chan = CBM_CMD_CHANNEL;
+    cbm_dev = CBM_DEV_FUJI;
+  }
+
+  if (fuji_cbm_open(cbm_chan, cbm_dev, cbm_chan, 2, (unsigned char *) &fb_packet) != 0)
     return false;
 
   if (idx) {
-    wlen = cbm_write(CBM_CMD_CHANNEL, fb_packet.data, idx);
+    wlen = cbm_write(cbm_chan, fb_packet.data, idx);
     if (wlen != idx)
       success = false;
   }

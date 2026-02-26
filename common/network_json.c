@@ -33,7 +33,6 @@ size_t network_json_strip_newlines(char *buffer, size_t buflen)
 #if !defined(__ADAM__) && !defined(__COLECOADAM__)
 int16_t network_json_query(const char *devicespec, const char *query, char *buffer)
 {
-  char c;
   int16_t total, read_len;
   FN_ERR err;
   uint16_t avail;
