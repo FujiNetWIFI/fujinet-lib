@@ -189,7 +189,7 @@ uint16_t fuji_bus_write(uint8_t device, const void *buffer, size_t length)
 
 bool fuji_bus_appkey_read(void *string, uint16_t *length)
 {
- // Caller may not have room for length header so use our own buffer to read
+  // Caller may not have room for length header so use our own buffer to read
   if (!FUJICALL_RV(FUJICMD_READ_APPKEY, &appkey_buf, sizeof(appkey_buf)))
     return false;
   *length = appkey_buf.length;
