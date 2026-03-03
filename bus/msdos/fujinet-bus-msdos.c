@@ -4,25 +4,23 @@
 
 #include <stdio.h> // debug
 
-#define FUJI_DIR_NONE    0x00
-#define FUJI_DIR_READ    0x40
-#define FUJI_DIR_WRITE   0x80
-
 enum {
-  PACKET_ACK = 'A',
-  PACKET_NAK = 'N',
   PACKET_COMPLETE = 'C',
   PACKET_ERROR = 'E',
 };
 
-extern int fujiF5w(uint16_t direction, uint16_t devcom,
+#define FUJI_DIR_NONE    0x00
+#define FUJI_DIR_READ    0x40
+#define FUJI_DIR_WRITE   0x80
+
+extern int fujiF5w(uint16_t descrdir, uint16_t devcom,
                   uint16_t aux12, uint16_t aux34, void far *buffer, uint16_t length);
 #pragma aux fujiF5w = \
   "int 0xf5" \
   parm [dx] [ax] [cx] [si] [es bx] [di] \
   modify [ax]
-#define fujiF5(dx, dev, cmd, a12, a34, buf, len) \
-  fujiF5w(dx, cmd << 8 | dev, a12, a34, buf, len)
+#define fujiF5(dir, dev, cmd, descr, a12, a34, buf, len)         \
+  fujiF5w(descr << 8 | dir, cmd << 8 | dev, a12, a34, buf, len)
 
 bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
@@ -48,7 +46,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   else
     direction = FUJI_DIR_NONE;
 
-  rcode = fujiF5(direction, device, fuji_cmd,
+  rcode = fujiF5(direction, device, fuji_cmd, fields,
                  (aux2 << 8) | aux1,
                  (aux4 << 8) | aux3,
                  buffer, length);
