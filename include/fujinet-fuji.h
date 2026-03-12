@@ -217,7 +217,7 @@ extern FNStatus _fuji_status;
  * @brief Creates a new disk from the given structure.
  * @return Success status, true if all OK.
  */
-#define fuji_create_new(new_disk) FUJICALL_D(FUJICMD_NEW_DISK, new_disk, sizeof(new_disk))
+#define fuji_create_new(new_disk) FUJICALL_D(FUJICMD_NEW_DISK, new_disk, sizeof(NewDisk))
 
 #define fuji_disable_device(d) FUJICALL_A1(FUJICMD_DISABLE_DEVICE, d)
 #define fuji_enable_device(d) FUJICALL_A1(FUJICMD_ENABLE_DEVICE, d)
