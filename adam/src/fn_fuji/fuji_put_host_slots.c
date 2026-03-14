@@ -5,13 +5,14 @@
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
 #include "fujinet-network-adam.h"
+#include "response.h"
 
 bool fuji_put_host_slots(HostSlot *h, size_t size)
 {
   unsigned char phs[257] = {0xF3};
   uint8_t err = 0;
 
-  memcpy(&phs[1],d,256);
+  memcpy(&phs[1],h,256);
 
   while(1)
     {

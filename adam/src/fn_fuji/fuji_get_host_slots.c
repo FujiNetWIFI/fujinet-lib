@@ -5,6 +5,7 @@
 #include "fujinet-fuji.h"
 #include "fujinet-network.h"
 #include "fujinet-network-adam.h"
+#include "response.h"
 
 bool fuji_get_host_slots(HostSlot *h, size_t size)
 {
