@@ -410,7 +410,12 @@ bool fuji_open_directory_filter(uint8_t hostSlot, const char *path, const char *
  * @brief Sets current directory position
  * @return success status of request.
  */
+#ifdef _CMOC_VERSION_
+#define fuji_set_directory_position(pos) \
+    FUJICALL_A1_A2(FUJICMD_SET_DIRECTORY_POSITION, U16_MSB(pos), U16_LSB(pos))
+#else
 #define fuji_set_directory_position(pos) FUJICALL_B12(FUJICMD_SET_DIRECTORY_POSITION, pos)
+#endif
 
 #ifdef __ATARI__
 /**
