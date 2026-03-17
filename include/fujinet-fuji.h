@@ -443,7 +443,7 @@ bool fuji_set_sio_external_clock(uint16_t rate);
  * @brief Set the SSID information from NetConfig structure
  * @return success status of request
  */
-#define fuji_set_ssid(nc) FUJICALL_D(FUJICMD_SET_SSID, nc, sizeof(NetConfig))
+#define fuji_set_ssid(nc) FUJICALL_A1_D(FUJICMD_SET_SSID, 0, nc, sizeof(NetConfig))
 
 /**
  * @brief Gets the FNStatus information from FUJI device.
