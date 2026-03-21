@@ -308,6 +308,11 @@ FN_ERR network_fs_cd(const char *devicespec);
 FN_ERR network_accept(const char* devicespec);
 extern size_t network_json_strip_newlines(char *buffer, size_t buflen);
 
+/* Returns true if the network has data/error ready */
+extern bool network_proceed(void);
+/* Returns true if the hardware supports checking a proceed pin */
+extern bool network_has_proceed(void);
+
 #define OPEN_MODE_READ          (0x04)
 #define OPEN_MODE_WRITE         (0x08)
 #define OPEN_MODE_RW            (0x0C)
