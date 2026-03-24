@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [4.10.0] 2026-02-20
+
+- [coco] Fix to network_http_set_channel_mode to fix json parsing (Thom Cherryhomes)
+- [msdos] Fix msdos network return vals (Thom Cherryhomes)
+- [adam/apple/coco/commodore/msdos/pmd85] Added fuji_generate_guid() method (Rich Stephens)
+- [coco] Add clock_get_time for coco (Only supports SIMPLE_BINARY format) (Rich Stephens)
+
 ## [4.9.0] 2025-11-23
 
 - [coco] Implemented fuji_copy_file (Rich Stephens)
