@@ -85,6 +85,8 @@ enum {
   FUJICMD_LOCK                          = 0x23,
   FUJICMD_DELETE                        = 0x21,
   FUJICMD_RENAME                        = 0x20,
+  FUJICMD_NAK                           = 0x15, // ASCII NAK
+  FUJICMD_ACK                           = 0x06, // ASCII ACK
 
   APETIMECMD_GETTZTIME                  = 0x9A,
   APETIMECMD_SETTZ                      = 0x99,

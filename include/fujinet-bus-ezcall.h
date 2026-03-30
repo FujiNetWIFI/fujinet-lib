@@ -83,7 +83,7 @@ enum {
   fuji_bus_call(dev, cmd, FUJI_FIELD_B12 | FUJI_FIELD_REPLY, NATIVE_SPLIT_U16(b12),         \
                 reply, replylen)
 
-#elif defined(BUILD_MSDOS) || defined(BUILD_ADAM)
+#elif defined(BUILD_MSDOS) || defined(BUILD_ADAM) || defined(BUILD_LYNX)
 
 #define DEVCALL(dev, cmd)                                                                   \
   fuji_bus_call(dev, cmd, FUJI_FIELD_NONE, 0, 0, 0, 0, NULL, 0)

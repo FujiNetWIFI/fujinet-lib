@@ -1,5 +1,5 @@
 PRODUCT = fujinet.lib
-PLATFORMS = coco apple2 atari c64 msx
+PLATFORMS = coco apple2 atari c64 msx lynx
 PLATFORMS += msdos
 PLATFORMS += adam
 

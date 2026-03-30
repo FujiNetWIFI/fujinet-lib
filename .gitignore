@@ -35,6 +35,7 @@
 *.i*86
 *.x86_64
 *.hex
+*.lnx
 
 # Debug files
 *.dSYM/
@@ -62,6 +63,7 @@ dkms.conf
 \#*
 test
 test.*
+!test.c
 *.orig
 *.rej
 _cache/
