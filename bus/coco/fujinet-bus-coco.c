@@ -26,13 +26,30 @@ static fujinw_header nw_header;
 static FNAppKeyString appkey_buf;
 static uint8_t *fb_packet = NULL;
 
+static uint16_t pack_payload(uint8_t *buf, uint8_t fields,
+                             uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
+                             const void *data, size_t data_length)
+{
+  uint16_t idx = 0;
+  uint16_t numbytes = fuji_field_numbytes(fields);
+  if (numbytes) { buf[idx++] = aux1; numbytes--; }
+  if (numbytes) { buf[idx++] = aux2; numbytes--; }
+  if (numbytes) { buf[idx++] = aux3; numbytes--; }
+  if (numbytes) { buf[idx++] = aux4; numbytes--; }
+  if (data) {
+    memcpy(&buf[idx], data, data_length);
+    idx += data_length;
+  }
+  return idx;
+}
+
 bool fuji_net_call(uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
 		   const void *data, size_t data_length,
 		   void *reply, size_t reply_length)
 {
   uint8_t err;
-  uint16_t idx, numbytes;
+  uint16_t idx;
 
 
   // Use sbrk(0) to get pointer to unused memory at top of program. No
@@ -46,28 +63,7 @@ bool fuji_net_call(uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
   nw_header.unit = unit;
   nw_header.cmd = fuji_cmd;
 
-  idx = 0;
-  numbytes = fuji_field_numbytes(fields);
-  if (numbytes) {
-    fb_packet[idx++] = aux1;
-    numbytes--;
-  }
-  if (numbytes) {
-    fb_packet[idx++] = aux2;
-    numbytes--;
-  }
-  if (numbytes) {
-    fb_packet[idx++] = aux3;
-    numbytes--;
-  }
-  if (numbytes) {
-    fb_packet[idx++] = aux4;
-    numbytes--;
-  }
-  if (data) {
-    memcpy(&fb_packet[idx], data, data_length);
-    idx += data_length;
-  }
+  idx = pack_payload(fb_packet, fields, aux1, aux2, aux3, aux4, data, data_length);
 
   bus_ready();
   dwwrite((unsigned char *) &nw_header, sizeof(nw_header));
@@ -91,14 +87,14 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   const void *data, size_t data_length,
 		   void *reply, size_t reply_length)
 {
-  uint16_t idx, numbytes;
+  uint16_t idx;
 
 
   if (device >= FUJI_DEVICEID_NETWORK  && device <= FUJI_DEVICEID_NETWORK_LAST)
     return fuji_net_call(device - FUJI_DEVICEID_NETWORK + 1, fuji_cmd, fields,
                          aux1, aux2, aux3, aux4, data, data_length, reply, reply_length);
 
-  if (device != FUJI_DEVICEID_FUJINET)
+  if (device != FUJI_DEVICEID_CLOCK && device != FUJI_DEVICEID_FUJINET)
     return false;
 
   // Use sbrk(0) to get pointer to unused memory at top of program. No
@@ -108,43 +104,32 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   // unsafe.
   fb_packet = (uint8_t *) sbrk(0);
 
-  fb_header.opcode = OP_FUJI;
+  if (device == FUJI_DEVICEID_CLOCK)
+    fb_header.opcode = OP_CLOCK;
+  else
+    fb_header.opcode = OP_FUJI;
+
   fb_header.cmd = fuji_cmd;
 
-  idx = 0;
-  numbytes = fuji_field_numbytes(fields);
-  if (numbytes) {
-    fb_packet[idx++] = aux1;
-    numbytes--;
-  }
-  if (numbytes) {
-    fb_packet[idx++] = aux2;
-    numbytes--;
-  }
-  if (numbytes) {
-    fb_packet[idx++] = aux3;
-    numbytes--;
-  }
-  if (numbytes) {
-    fb_packet[idx++] = aux4;
-    numbytes--;
-  }
-  if (data) {
-    memcpy(&fb_packet[idx], data, data_length);
-    idx += data_length;
-  }
+  idx = pack_payload(fb_packet, fields, aux1, aux2, aux3, aux4, data, data_length);
 
   bus_ready();
   dwwrite((unsigned char *) &fb_header, sizeof(fb_header));
   if (idx)
     dwwrite(fb_packet, idx);
 
-  if (fuji_get_error())
-    return false;
-
-  if (reply)
-    return (bool) fuji_get_response((unsigned char *) reply, reply_length);
-
+  if (device == FUJI_DEVICEID_CLOCK)
+  {
+    if (reply)
+      return dwread((byte *)reply, reply_length) ? true : false;
+  }
+  else
+  {
+    if (fuji_get_error())
+      return false;
+    if (reply)
+      return (bool)fuji_get_response((unsigned char *)reply, reply_length);
+  }
   return true;
 }
 

@@ -9,6 +9,7 @@
  */
 #define OP_FUJI 0xE2
 #define OP_NET 0xE3
+#define OP_CLOCK 0xE5
 
 /**
  * @brief Read string to s from DriveWire with expected length l

@@ -61,9 +61,6 @@ enum {
   FUJICMD_HASH_CLEAR                    = 0xC2,
   FUJICMD_GENERATE_GUID                 = 0xBB,
   FUJICMD_GET_DEVICE1_FULLPATH          = 0xA0,
-  FUJICMD_APETIME_GETTZTIME             = 0x9A,
-  FUJICMD_APETIME_SETTZ                 = 0x99,
-  FUJICMD_APETIME_GETTIME               = 0x93,
   FUJICMD_SET_STATUS                    = 0x81,
   FUJICMD_WRITE                         = 0x57,
   FUJICMD_STATUS                        = 0x53,
@@ -82,6 +79,24 @@ enum {
   FUJICMD_SEEK                          = 0x25,
   FUJICMD_DELETE                        = 0x21,
   FUJICMD_RENAME                        = 0x20,
+
+  APETIMECMD_GETTZTIME                  = 0x9A,
+  APETIMECMD_SETTZ                      = 0x99,
+  APETIMECMD_GETTIME                    = 0x93,
+  APETIMECMD_GET_ISO_UTC_ALT            = 0x7A, // z
+  APETIMECMD_SETTZ_ALT                  = 0x74, // t
+  APETIMECMD_GET_SOS_ALT                = 0x73, // s
+  APETIMECMD_GET_PRODOS_ALT             = 0x70, // p
+  APETIMECMD_GET_ISO_LOCAL_ALT          = 0x69, // i
+  APETIMECMD_GET_ATARI_ALT              = 0x61, // a
+  APETIMECMD_GET_ISO_UTC                = 0x5A, // Z
+  APETIMECMD_SETTZ_ALT2                 = 0x54, // T
+  APETIMECMD_GET_SOS                    = 0x53, // S
+  APETIMECMD_GET_PRODOS                 = 0x50, // P
+  APETIMECMD_GETTZ_LEN                  = 0x4C, // L
+  APETIMECMD_GET_ISO_LOCAL              = 0x49, // I
+  APETIMECMD_GET_GENERAL                = 0x47, // G
+  APETIMECMD_GET_ATARI                  = 0x41, // A
 };
 
 #endif /* FUJINET_COMMAND_H */
