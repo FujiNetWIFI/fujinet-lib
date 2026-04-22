@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - adam
+          - apple2
+          - atari
+          - c64
+          - coco
+          - msdos
+          - msx
+
+    container:
+      image: fozztexx/defoogi:1.4.5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: make ${{ matrix.platform }}/r2r
+
+      # PR case: normal artifact upload
+      - name: Upload artifact for ${{ matrix.platform }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}
+          path: r2r/${{ matrix.platform }}/**
