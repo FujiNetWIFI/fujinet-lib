@@ -184,5 +184,11 @@ bool fuji_bus_appkey_read(void *string, uint16_t *length)
 
 bool fuji_bus_appkey_write(void *string, uint16_t length)
 {
-  return FUJICALL_B12_D(FUJICMD_WRITE_APPKEY, length, string, MAX_APPKEY_LEN);
+  // The drivewire firmware decodes WRITE_APPKEY's length MSB-first
+  // (`lenh<<8 | lenl`), matching the stable fujinet-lib's struct-copy
+  // wire format. FUJICALL_B12_D would send LSB-first, so use
+  // FUJICALL_A1_A2_D with the bytes in MSB,LSB order instead.
+  return FUJICALL_A1_A2_D(FUJICMD_WRITE_APPKEY,
+                          U16_MSB(length), U16_LSB(length),
+                          string, MAX_APPKEY_LEN);
 }
