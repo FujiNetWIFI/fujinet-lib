@@ -133,7 +133,7 @@ int16_t network_read_nb(const char *devicespec, uint8_t *buf, uint16_t len)
 #if defined(__ATARI__)
     sio_read(unit, buf, fetch_size);
 #elif defined(__APPLE2__)
-    sp_read_nw(sp_network, fetch_size);
+    sp_read(sp_network, fetch_size);
     memcpy(buf, sp_payload, fetch_size);
 #elif defined(__CBM__)
     cbm_read(unit + CBM_DATA_CHANNEL_0, buf, fetch_size);

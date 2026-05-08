@@ -32,4 +32,5 @@ jobs:
     - name: Compile CONFIG
       working-directory: fn-config
       run: |
+        mkdir _cache
         make FUJINET_LIB=$GITHUB_WORKSPACE/fn-lib/build PLATFORMS="adam apple2 atari c64 coco"

@@ -4,7 +4,7 @@
 #include "fujinet-bus-apple2.h"
 #include "fujinet-network-apple2.h"
 
-uint8_t network_open(const char* devicespec, uint8_t mode, uint8_t trans) {
+uint8_t network_close(const char* devicespec) {
 	uint8_t nw_device;
 	uint16_t slen;
 	uint16_t payload_len;
@@ -20,16 +20,14 @@ uint8_t network_open(const char* devicespec, uint8_t mode, uint8_t trans) {
     }
 
 	sp_clr_payload();
-	// set the unit this open is for
+	// set the unit this close is for
 	network_set_unit(network_unit(devicespec));
 
 	slen = strlen(devicespec);
-	payload_len = slen + 3;  // 2 for extra control bytes, 1 for NUL string terminator
+	payload_len = slen + 1;  // + 1 for NUL string terminator
 	sp_payload[0] = payload_len & 0xFF;
 	sp_payload[1] = (payload_len >> 8) & 0xFF;
-	sp_payload[2] = mode;
-	sp_payload[3] = trans;
 
-	strncpy((char *)&sp_payload[4], devicespec, slen);
-	return sp_control(sp_network, 'O');
+	strncpy((char *)&sp_payload[2], devicespec, slen);
+	return sp_control(sp_network, 'C');
 }

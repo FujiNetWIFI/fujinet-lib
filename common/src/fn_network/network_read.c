@@ -153,7 +153,7 @@ int16_t network_read(const char *devicespec, uint8_t *buf, uint16_t len)
 #elif defined(__WATCOMC__)
 	network_read_msdos(unit, buf, fetch_size);
 #elif defined(__APPLE2__)
-        sp_read_nw(sp_network, fetch_size);
+        sp_read(sp_network, fetch_size);
         memcpy(buf, sp_payload, fetch_size);
 #elif defined(__CBM__)
         cbm_read(unit + CBM_DATA_CHANNEL_0, buf, fetch_size);

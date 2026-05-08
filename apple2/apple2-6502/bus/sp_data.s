@@ -12,8 +12,8 @@
 ; has the init routine been run?
 _sp_is_init:        .byte 0
 
-; the network sub-device id matching Nx: ranging from 1 to 8. 0 means it hasn't been specified in an open.
-_sp_nw_unit:        .byte 0
+; the network sub-device id matching Nx: ranging from 1 to 8. default to unit 1.
+_sp_nw_unit:        .byte 1
 
 .bss
 

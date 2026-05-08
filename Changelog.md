@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- [apple2] Update Network Device Channel handling. Move back to use standard SP calls and add extra ctrl command to switch the 
+           active channel. Needs updated fujinet-firmware that supports the new ctrl command. If error from ctrl command, then
+           defaults to Channel 1 [robjustice]
+
 ## [4.10.0] 2026-02-20
 
 - [coco] Fix to network_http_set_channel_mode to fix json parsing (Thom Cherryhomes)
