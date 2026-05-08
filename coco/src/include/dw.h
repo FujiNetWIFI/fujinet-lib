@@ -10,6 +10,12 @@
 #define OP_FUJI 0xE2
 #define OP_NET 0xE3
 
+typedef unsigned char (*dwvec)(unsigned char);
+
+extern dwvec dwreadvec;
+extern dwvec dwwritevec;
+
+
 /**
  * @brief Read string to s from DriveWire with expected length l
  * @param s pointer to string buffer

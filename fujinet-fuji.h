@@ -6,12 +6,29 @@
 // In general, bools return the "success" status, so true is good, false is bad.
 
 #ifdef _CMOC_VERSION_
-    #include <cmoc.h>
-    #include "stdbool-coco.h"
+
+// CMOC-specific types and definitions
+#include <cmoc.h>
+#include <coco.h>
+
+#ifndef bool
+#define bool unsigned char
+#endif /* bool */
+
+#define true  1
+#define false 0
+
+// Define standard integer types for CMOC
+#define uint8_t unsigned char
+#define int8_t signed char
+#define uint16_t unsigned short
+#define int16_t signed short
+#define uint32_t unsigned long
+#define int32_t signed long
 #else
-    #include <stddef.h>
-    #include <stdbool.h>
-    #include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdint.h>
 #endif /* _CMOC_VERSION_ */
 
 #ifdef __CBM__
@@ -37,6 +54,7 @@
 #define FILE_MAXLEN    36
 #define SSID_MAXLEN    33 /* 32 + NULL */
 #define MAX_APPKEY_LEN 64
+#define MAX_GUID_LEN   37
 
 #ifdef __CBM__
     #define MAX_PASSWORD_LEN 65
@@ -99,6 +117,7 @@
 #define FUJICMD_GET_ADAPTERCONFIG_EXTENDED 0xC4
 #define FUJICMD_HASH_COMPUTE_NO_CLEAR      0xC3
 #define FUJICMD_HASH_CLEAR                 0xC2
+#define FUJICMD_GENERATE_GUID              0xBB
 #define FUJICMD_SET_STATUS                 0x81
 
 enum WifiStatus
@@ -233,9 +252,9 @@ typedef struct
 #ifdef __ADAM__
 typedef struct
 {
-    uint8_t numDisks;
     uint8_t hostSlot;
     uint8_t deviceSlot;
+    uint32_t numBlocks;
     char filename[256];
 } NewDisk;
 #endif
@@ -302,6 +321,12 @@ bool fuji_enable_udpstream(uint16_t port, char *host);
  * @return ERROR status, true if there was an error in last operation.
  */
 bool fuji_error(void);
+
+/**
+ * @brief Generate a randomized GUID.
+ * @return success status of request
+ */
+bool fuji_generate_guid(char *buffer);
 
 /**
  * @brief Gets adapter config information from FN, e.g. IP, MAC, BSSID etc.
@@ -648,5 +673,12 @@ bool fuji_hash_add(uint8_t *data, uint16_t length);
  * @return the success status of the operation.
  */
 bool fuji_hash_calculate(hash_alg_t hash_type, bool as_hex, bool discard_data, uint8_t *output);
+
+/**
+ * @brief  The default timeout for fuji commands. Platform dependent on if it does anything.
+ * The value defaults to 0x0F. No setter. This isn't java.
+ */
+extern uint8_t fn_default_timeout;
+
 
 #endif /* FN_FUJI_H */

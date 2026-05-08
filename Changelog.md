@@ -2,6 +2,68 @@
 
 ## [Unreleased]
 
+- [msdos] Add appkey support [Eric Carr]
+- [apple2] Update Network Device Channel handling. Move back to use standard SP calls and add extra ctrl command to switch the 
+           active channel. Needs updated fujinet-firmware that supports the new ctrl command. If error from ctrl command, then
+           defaults to Channel 1 [robjustice]
+
+## [4.10.0] 2026-02-20
+
+- [coco] Fix to network_http_set_channel_mode to fix json parsing (Thom Cherryhomes)
+- [msdos] Fix msdos network return vals (Thom Cherryhomes)
+- [adam/apple/coco/commodore/msdos/pmd85] Added fuji_generate_guid() method (Rich Stephens)
+- [coco] Add clock_get_time for coco (Only supports SIMPLE_BINARY format) (Rich Stephens)
+
+## [4.9.0] 2025-11-23
+
+- [coco] Implemented fuji_copy_file (Rich Stephens)
+
+## [4.8.3] 2025-11-23
+
+- [coco] Add isprint debug function
+- [msdos] fix return value and zero memory in network calls
+- [coco/msdos] ensure network_json_query returns C string by nulling last char
+- [coco] fix some includes
+- [workflows] compile against fujinet-config as test
+
+## [4.8.2] 2025-11-16
+
+- [pmd85] Add back to targets list to generate library on release
+- [coco] Fix bug in fuji_set_appkey_details that overwrote the first byte of data of a project that includes fujinet-lib
+- [coco] Remove unneccesary makefile block for mac - make runs fine on mac
+- [coco] Removed legacy -D_CMOC_VERSION_=1 CFLAG, which floods output with "macro redefined" warnings. CMOC already defines this.
+- [build] Guarded hex_dump.c with flag `FN_LIB_DEBUG` which can be enabled via `application.mk`.
+          Added additional docs to `README.md` to explain this.
+          Added comments to top of `build.mk` to explain a little bit about paths that are included.
+          Cosolidated the CFLAGS/ASMFLAGS inclusion in `build.mk` into common pattern.
+          The fix included putting a space after the args in `compiler-cc65.mk` so it was separated from the parameter correctly.
+
+## [4.8.1] 2025-11-01
+
+- [coco] rollback dragon changes for dwread/write that broke coco. Dragon will need testing and future fix potentially by Eric Carr
+- [coco] some dodgy changes for xcode on a mac so it compiles by Andy Diller
+
+## [4.8.0] - 2025-10-30
+
+- [atari] Fix bug in return status being marked ok after extended error 144
+- [fuji] Add field for default timeout (fn_default_timeout), only currently useful for atari. sets timlo (which still defaults to $0F). set before doing any network of fuji device command
+- [tests] updated unit testing to create minimal setup tests, added tests for above changes
+
+## [4.7.9] - 2025-09-23
+
+- [coco] CoCo: Fix fuji_set_directory_position (#41) [Rich Stephens]
+- [release] Add random name generator to releases (#39) [Mark Fisher]
+
+## [4.7.8] - 2025-09-23
+
+- [release] Added github workflow to create PR artifacts and release on tag [FoxxTexx]
+- [msdos] Fix MS-DOS compiling. (#36) [FozzTexx]
+- [coco] Fixes to coco wifi functions, and to fujinet-fuji.h (#33) [Rich Stephens]
+- [adam] Add fn_network support for Adam, merge with Thom's changes (#32) [geoffdaddy]
+- [msdos] implement network. (#31) [Thomas Cherryhomes]
+- [adam] Implement fuji adam (#30) [Thomas Cherryhomes]
+
+
 ## [4.7.7] - 2025-06-18
 
 - [atari] Fix return codes from clock_get_time, clock_get_time_tz

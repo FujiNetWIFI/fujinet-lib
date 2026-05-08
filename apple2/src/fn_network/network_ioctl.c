@@ -4,6 +4,7 @@
 #include <string.h>
 #include "fujinet-network.h"
 #include "fujinet-bus-apple2.h"
+#include "fujinet-network-apple2.h"
 
 extern uint8_t __argsize__;
 extern uint8_t bad_unit(void);
@@ -50,8 +51,8 @@ uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char* devic
     len = (uint16_t) va_arg(args, int);
     va_end(args);
 
-    // find the Nx: unit id
-    sp_nw_unit = network_unit(devicespec);
+    // set the Nx: unit id
+    network_set_unit(network_unit(devicespec));
 
     // construct the payload
     sp_clr_payload();
@@ -69,5 +70,5 @@ uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char* devic
         memcpy(sp_payload + offset, buffer, len - offset + 2);
     }
 
-    return fn_error(sp_control_nw(sp_network, cmd));
+    return fn_error(sp_control(sp_network, cmd));
 }

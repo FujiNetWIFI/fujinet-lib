@@ -4,5 +4,6 @@
 
 uint8_t network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char* devicespec, ...)
 {
+//TODO
 	return 0;
 }

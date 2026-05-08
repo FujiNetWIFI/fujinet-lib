@@ -6,8 +6,8 @@
  */
 
 #include <cmoc.h>
-
-typedef unsigned char byte;
+#include <coco.h>
+#include "dw.h"
 
 byte dwread(byte *s, int l)
 {

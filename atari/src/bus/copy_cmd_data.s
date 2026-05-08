@@ -1,6 +1,8 @@
         .export         _copy_network_cmd_data
         .export         _copy_fuji_cmd_data
 
+        .import         _fn_default_timeout
+
         .include        "device.inc"
         .include        "macros.inc"
         .include        "zp.inc"
@@ -30,8 +32,7 @@ common:
         mva     #$00, IO_DCB::dbuflo
         sta     IO_DCB::dbufhi
 
-        ; almost all devices use $0f
-        mva     #$0f, IO_DCB::dtimlo
+        mva     _fn_default_timeout, IO_DCB::dtimlo
 
         ; copy bytes of table into DCB
         ldy     #5      ; 6 bytes to copy
@@ -42,7 +43,6 @@ l1:
         bpl     l1
 
         rts
-
 
 .rodata
 ; which DCB entries to write to, indexed from DDEVIC

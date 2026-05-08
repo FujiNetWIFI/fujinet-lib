@@ -7,6 +7,8 @@
 
 #include <cmoc.h>
 #include <coco.h>
+#include "dw.h"
+
 
 byte dwwrite(byte *s, int l)
 {

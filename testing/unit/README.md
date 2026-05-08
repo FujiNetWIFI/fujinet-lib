@@ -1,5 +1,11 @@
 # running unit tests
 
+Unit tests are a work in progress and use the soft65c02 project.
+
+The repo for installing the unit test framework is https://github.com/chanmix51/soft65c02
+You will need rust, and to follow the installation instructions for soft65c02.
+When installed, you will have 2 executables on the path; soft65c02_unit, soft65c02_tester.
+
 ## running individual tests
 
 ```bash
@@ -16,4 +22,5 @@ make unit-test
 
 ## creating unit tests
 
-Unit tests go in `testing/unit/tests`
+Unit tests go in `testing/unit/<platform>/<device>/<function>/`
+

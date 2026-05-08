@@ -10,7 +10,7 @@
 
         .include        "macros.inc"
         .include        "zp.inc"
-        .macpack        cpu
+        .include        "cpu.inc"
 
 ; Find the SmartPort device that has a FujiNet NETWORK adapter on it.
 ; Really we should search for the FUJI device on it, but historically that was

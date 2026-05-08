@@ -2,6 +2,7 @@
 #include <string.h>
 #include "fujinet-network.h"
 #include "fujinet-bus-apple2.h"
+#include "fujinet-network-apple2.h"
 
 extern uint8_t bad_unit(void);
 
@@ -14,9 +15,9 @@ uint8_t network_status(const char *devicespec, uint16_t *bw, uint8_t *c, uint8_t
 	}
 
 	fn_device_error = 0;
-	sp_nw_unit = network_unit(devicespec);
+	network_set_unit(network_unit(devicespec));
 
-	err_status = sp_status_nw(sp_network, 'S'); // network status
+	err_status = sp_status(sp_network, 'S'); // network status
 
 	*bw = ((uint16_t)sp_payload[1] << 8) | sp_payload[0];
 	*c = sp_payload[2];

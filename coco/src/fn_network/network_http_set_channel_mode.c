@@ -12,8 +12,8 @@ uint8_t network_http_set_channel_mode(const char *devicespec, uint8_t mode)
         uint8_t opcode;
         uint8_t unit;
         uint8_t cmd;
-        uint8_t mode;
         uint8_t unused;
+        uint8_t mode;   // Aux2 sets mode.
     } hscm;
 
     hscm.opcode = OP_NET;
@@ -24,6 +24,6 @@ uint8_t network_http_set_channel_mode(const char *devicespec, uint8_t mode)
 
     bus_ready();
     dwwrite((uint8_t *)&hscm, sizeof(hscm));
-    
+
     return network_get_error(hscm.unit);
 }

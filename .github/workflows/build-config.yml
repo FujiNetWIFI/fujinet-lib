@@ -1,0 +1,36 @@
+name: Verify CONFIG compiles
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "CONFIG check"
+    runs-on: ubuntu-latest
+    container:
+      image: fozztexx/defoogi:1.4.5
+
+    steps:
+    - name: Checkout this repository
+      uses: actions/checkout@v4
+      with:
+        path: fn-lib
+
+    - name: Checkout CONFIG
+      uses: actions/checkout@v4
+      with:
+        repository: FujiNetWIFI/fujinet-config
+        path: fn-config
+
+    - name: Build fn-lib
+      working-directory: fn-lib
+      run: |
+        make
+
+    - name: Compile CONFIG
+      working-directory: fn-config
+      run: |
+        mkdir -p _cache
+        make FUJINET_LIB=$GITHUB_WORKSPACE/fn-lib/build PLATFORMS="adam apple2 atari c64 coco"

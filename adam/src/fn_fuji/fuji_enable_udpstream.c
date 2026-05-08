@@ -4,5 +4,6 @@
 
 bool fuji_enable_udpstream(uint16_t port, char *host)
 {
-	return true;
+  // Not implemented on ADAM for now.
+  return true;
 }

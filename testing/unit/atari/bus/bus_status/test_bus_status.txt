@@ -1,0 +1,69 @@
+/////////////////////////////////////////////////////////////////
+marker $$testing bus_status when DSTATS is 0$$
+/////////////////////////////////////////////////////////////////
+
+memory load atari "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// initialise state
+memory write $nw_status_was_called 0x(0)
+// set DSTATS to 0
+memory write #0x0303 0x(0)
+
+// setup the application
+run init until CP = $end_setup
+
+// call the function under test
+registers set A = 1
+run $_bus_status until false
+
+assert $nw_status_was_called = 0  $$validate network_status_unit was not called for DSTATS=0$$
+assert $_fn_device_error = 0      $$check fn_device_error matches DSTATS$$
+assert A = 1                      $$return result is FN_ERR_IO_ERROR (1)$$
+
+/////////////////////////////////////////////////////////////////
+marker $$testing bus_status when DSTATS is 1$$
+/////////////////////////////////////////////////////////////////
+
+memory load atari "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// initialise state
+memory write $nw_status_was_called 0x(0)
+// set DSTATS to 1
+memory write #0x0303 0x(1)
+
+// setup the application
+run init until CP = $end_setup
+
+// call the function under test
+registers set A = 1
+run $_bus_status until false
+
+assert $nw_status_was_called = 0  $$validate network_status_unit was not called for DSTATS=1$$
+assert $_fn_device_error = 1      $$check fn_device_error matches DSTATS$$
+assert A = 0                      $$return result is FN_ERR_OK (0)$$
+
+/////////////////////////////////////////////////////////////////
+marker $$testing bus_status when DSTATS is 144$$
+/////////////////////////////////////////////////////////////////
+
+memory load atari "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// initialise state
+memory write $nw_status_was_called 0x(0)
+// set DSTATS to 144
+memory write #0x0303 0x(90)
+
+// setup the application
+run init until CP = $end_setup
+
+// call the function under test
+registers set A = 1
+run $_bus_status until false
+
+assert $nw_status_was_called = 1  $$validate network_status_unit was called for DSTATS=144$$
+assert $_fn_device_error = 144    $$check fn_device_error matches DSTATS$$
+// this was the bug in _bus_status
+assert A = 1                      $$return result is FN_ERR_IO_ERROR (1)$$

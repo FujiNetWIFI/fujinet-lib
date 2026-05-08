@@ -1,0 +1,14 @@
+# this could also be "none" but allows for including atari include files which are guarded
+target: apple2
+compiler: cc65
+
+config_file: ./base.cfg
+
+# setup files for a basic application
+src_files:
+  - ./crt0.s
+
+asm_include_paths:
+  - ${WS_ROOT}
+  - ${WS_ROOT}/apple2/src/common/inc
+  - ${WS_ROOT}/common/inc

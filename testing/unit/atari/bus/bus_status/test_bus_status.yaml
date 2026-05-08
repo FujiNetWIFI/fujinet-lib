@@ -1,0 +1,18 @@
+name: test bus bus_status
+
+configs:
+  - ${UNIT_TEST_DIR}/base_configs/min_sp/base.yaml
+
+src_files:
+  - ${WS_ROOT}/atari/src/bus/bus_status.s
+  - ${WS_ROOT}/common/src/fn_fuji/fn_data.c
+  - ${WS_ROOT}/atari/src/bus/fn_error.s
+  - ${WS_ROOT}/atari/src/fn_fuji/fuji_error.s
+  - ${UNIT_TEST_DIR}/atari/mocks/network_status_unit.s
+
+test_script: test_bus_status.txt
+
+asm_include_paths:
+  - ${WS_ROOT}
+  - ${WS_ROOT}/atari/src/include
+  - ${WS_ROOT}/common/inc

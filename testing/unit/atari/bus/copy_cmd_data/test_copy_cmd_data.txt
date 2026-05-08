@@ -1,0 +1,102 @@
+/////////////////////////////////////////////////////////////////
+marker $$testing _copy_fuji_cmd_data uses default timlo of $0F and device $70$$
+/////////////////////////////////////////////////////////////////
+
+memory load atari "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// clear IO_DCB
+memory fill #0x0300~#0x030C 0x00
+
+// write our data to be copied
+symbols add cmd_table = 0x1F00
+memory write $cmd_table 0x(a0,a1,a2,a3,a4,a5)
+
+// setup the application
+run init until CP = $end_setup
+
+// call the function under test, takes parameter of our data table of 6 bytes
+registers set A = <$cmd_table
+registers set X = >$cmd_table
+run $_copy_fuji_cmd_data until false
+
+// check data was written from table area to IO_DCB
+assert #0x0300 ~ 0x(70,01,a0,a1,00,00,0f,00,a2,a3,a4,a5,00) $$IO_DCB setup correctly$$
+
+/////////////////////////////////////////////////////////////////
+marker $$testing _copy_fuji_cmd_data uses set timlo $69 and device 70$$
+/////////////////////////////////////////////////////////////////
+
+memory load atari "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// clear IO_DCB
+memory fill #0x0300~#0x030C 0x00
+
+// write our data to be copied
+symbols add cmd_table = 0x1F00
+memory write $cmd_table 0x(a0,a1,a2,a3,a4,a5)
+memory write $_fn_default_timeout 0x(69)
+
+// setup the application
+run init until CP = $end_setup
+
+// call the function under test, takes parameter of our data table of 6 bytes
+registers set A = <$cmd_table
+registers set X = >$cmd_table
+run $_copy_fuji_cmd_data until false
+
+// check data was written from table area to IO_DCB
+assert #0x0300 ~ 0x(70,01,a0,a1,00,00,69,00,a2,a3,a4,a5,00) $$IO_DCB setup correctly$$
+
+/////////////////////////////////////////////////////////////////
+marker $$testing _copy_network_cmd_data uses default timlo of $0F and device $71$$
+/////////////////////////////////////////////////////////////////
+
+memory load atari "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// clear IO_DCB
+memory fill #0x0300~#0x030C 0x00
+
+// write our data to be copied
+symbols add cmd_table = 0x1F00
+memory write $cmd_table 0x(a0,a1,a2,a3,a4,a5)
+
+// setup the application
+run init until CP = $end_setup
+
+// call the function under test, takes parameter of our data table of 6 bytes
+registers set A = <$cmd_table
+registers set X = >$cmd_table
+run $_copy_network_cmd_data until false
+
+// check data was written from table area to IO_DCB
+assert #0x0300 ~ 0x(71,00,a0,a1,00,00,0f,00,a2,a3,a4,a5,00) $$IO_DCB setup correctly$$
+
+/////////////////////////////////////////////////////////////////
+marker $$testing _copy_network_cmd_data uses set timlo $69 and device $71$$
+/////////////////////////////////////////////////////////////////
+
+memory load atari "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// clear IO_DCB
+memory fill #0x0300~#0x030C 0x00
+
+// write our data to be copied
+symbols add cmd_table = 0x1F00
+memory write $cmd_table 0x(a0,a1,a2,a3,a4,a5)
+memory write $_fn_default_timeout 0x(69)
+
+// setup the application
+run init until CP = $end_setup
+
+// call the function under test, takes parameter of our data table of 6 bytes
+registers set A = <$cmd_table
+registers set X = >$cmd_table
+run $_copy_network_cmd_data until false
+
+// check data was written from table area to IO_DCB
+assert #0x0300 ~ 0x(71,00,a0,a1,00,00,69,00,a2,a3,a4,a5,00) $$IO_DCB setup correctly$$
+

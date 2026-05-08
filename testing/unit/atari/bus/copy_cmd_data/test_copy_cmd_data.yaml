@@ -1,0 +1,15 @@
+name: test bus copy_cmd_data
+
+configs:
+  - ${UNIT_TEST_DIR}/base_configs/min_sp/base.yaml
+
+src_files:
+  - ${WS_ROOT}/atari/src/bus/copy_cmd_data.s
+  - ${WS_ROOT}/common/src/fn_fuji/fn_data.c
+
+test_script: test_copy_cmd_data.txt
+
+asm_include_paths:
+  - ${WS_ROOT}
+  - ${WS_ROOT}/atari/src/include
+  - ${WS_ROOT}/common/inc

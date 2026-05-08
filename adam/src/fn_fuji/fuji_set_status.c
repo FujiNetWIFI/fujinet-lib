@@ -4,5 +4,5 @@
 
 bool fuji_set_status()
 {
-	return true;
+  return true;
 }
