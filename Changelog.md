@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- [msdos] Add appkey support [Eric Carr]
 - [apple2] Update Network Device Channel handling. Move back to use standard SP calls and add extra ctrl command to switch the 
            active channel. Needs updated fujinet-firmware that supports the new ctrl command. If error from ctrl command, then
            defaults to Channel 1 [robjustice]
