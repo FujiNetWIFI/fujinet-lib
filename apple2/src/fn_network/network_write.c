@@ -2,6 +2,7 @@
 #include <string.h>
 #include "fujinet-network.h"
 #include "fujinet-bus-apple2.h"
+#include "fujinet-network-apple2.h"
 
 extern uint8_t bad_unit(void);
 
@@ -21,7 +22,7 @@ uint8_t network_write(const char *devicespec, const uint8_t *buf, uint16_t len) 
 		return fn_error(SP_ERR_BAD_CMD);		
 	}
 
-	sp_nw_unit = network_unit(devicespec);
+	network_set_unit(network_unit(devicespec));
 
 	while (len > 0) {
 		buf_len = MIN(len, 512);
@@ -30,7 +31,7 @@ uint8_t network_write(const char *devicespec, const uint8_t *buf, uint16_t len) 
 		// 	sp_clr_payload();
 		// }
 		memcpy(sp_payload, buf + sent_len, buf_len);
-		err = sp_write_nw(sp_network, buf_len);
+		err = sp_write(sp_network, buf_len);
 		if (err != 0) {
 			return fn_error(err);
 		}
