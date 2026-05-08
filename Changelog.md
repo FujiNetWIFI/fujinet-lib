@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- [msdos] Add appkey support [Eric Carr]
+
 ## [4.10.0] 2026-02-20
 
 - [coco] Fix to network_http_set_channel_mode to fix json parsing (Thom Cherryhomes)
