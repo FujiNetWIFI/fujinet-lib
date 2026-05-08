@@ -1,12 +1,9 @@
         .export         _sp_control
-        .export         _sp_control_nw
         .export         sp_dispatch
         .export         _sp_dispatch_address
         .export         _sp_status
-        .export         _sp_status_nw
 
         .import         _sp_cmdlist
-        .import         _sp_nw_unit
         .import         _sp_payload
         .import         _sp_count
         .import         _sp_error
@@ -20,28 +17,6 @@ _sp_control:
         ldy     #SP_CONTROL_PARAM_COUNT
         ldx     #SP_CMD_CONTROL
         bne     do_common
-
-; int8_t sp_control_nw(uint8_t dest, uint8_t ctrlcode)
-_sp_control_nw:
-        pha
-        lda     _sp_nw_unit
-        sta     _sp_cmdlist+5                   ; sp_cmdlist[5] = sp_nw_unit;
-        pla
-
-        ldy     #SP_CONTROL_PARAM_COUNT_NW
-        ldx     #SP_CMD_CONTROL
-        bne     do_common
-
-; int8_t sp_status_nw(uint8_t dest, uint8_t statcode)
-_sp_status_nw:
-        pha
-        lda     _sp_nw_unit
-        sta     _sp_cmdlist+5                   ; sp_cmdlist[5] = sp_nw_unit;
-        pla
-
-        ldy     #SP_STATUS_PARAM_COUNT_NW
-        ldx     #SP_CMD_STATUS
-        beq     do_common
 
 ; int8_t sp_status(uint8_t dest, uint8_t statcode)
 ; this is called quite often, so make it the fall through case

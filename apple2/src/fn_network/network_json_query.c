@@ -2,6 +2,7 @@
 #include <string.h>
 #include "fujinet-network.h"
 #include "fujinet-bus-apple2.h"
+#include "fujinet-network-apple2.h"
 
 extern uint8_t bad_unit(void);
 
@@ -18,18 +19,18 @@ int16_t network_json_query(const char *devicespec, const char *query, char *s) {
 		return -bad_unit();
 	}
 
-	sp_nw_unit = network_unit(devicespec);
+	network_set_unit(network_unit(devicespec));
 	query_len = strlen(query) + 1; // add 1 for nul
 	sp_payload[0] = query_len & 0xFF;
 	sp_payload[1] = query_len >> 8;
 
 	strncpy((char *)sp_payload + 2, (const char *) query, query_len);
-	err = sp_control_nw(sp_network, 'Q'); // perform JSON Query
+	err = sp_control(sp_network, 'Q'); // perform JSON Query
 	if (err != 0) {
 		goto do_sp_error;
 	}
 
-	err = sp_status_nw(sp_network, 'S'); // get network status, which tells us bytes waiting
+	err = sp_status(sp_network, 'S'); // get network status, which tells us bytes waiting
 	if (err != 0) {
 		goto do_sp_error;
 	}
@@ -41,7 +42,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *s) {
 		goto do_sp_error;
 	}
 
-	err = sp_read_nw(sp_network, read_len);
+	err = sp_read(sp_network, read_len);
 	memcpy(s, sp_payload, read_len);
 
 	// if last char is 0x9b, 0x0A or 0x0D, then set that char to nul, else just null terminate

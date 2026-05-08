@@ -3,6 +3,16 @@
 ## [Unreleased]
 
 - [msdos] Add appkey support [Eric Carr]
+- [apple2] Update Network Device Channel handling. Move back to use standard SP calls and add extra ctrl command to switch the 
+           active channel. Needs updated fujinet-firmware that supports the new ctrl command. If error from ctrl command, then
+           defaults to Channel 1 [robjustice]
+
+## [4.10.0] 2026-02-20
+
+- [coco] Fix to network_http_set_channel_mode to fix json parsing (Thom Cherryhomes)
+- [msdos] Fix msdos network return vals (Thom Cherryhomes)
+- [adam/apple/coco/commodore/msdos/pmd85] Added fuji_generate_guid() method (Rich Stephens)
+- [coco] Add clock_get_time for coco (Only supports SIMPLE_BINARY format) (Rich Stephens)
 
 ## [4.9.0] 2025-11-23
 
