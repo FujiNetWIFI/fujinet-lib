@@ -13,6 +13,8 @@
 .proc _fuji_mount_all
         setax   #t_fuji_mount_all
         jsr     _copy_fuji_cmd_data
+	lda	$3f
+	sta	$0306	; dtimlo override for longer
         jsr     _bus
         jmp     _fuji_success
 .endproc
