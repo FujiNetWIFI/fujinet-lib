@@ -22,7 +22,9 @@ PLATFORM := $(basename $(notdir $(lastword $(PLATFORM_MK))))
 PLATFORM_UC := $(shell echo "$(PLATFORM)" | tr '[:lower:]' '[:upper:]')
 $(info Building for PLATFORM=$(PLATFORM))
 
-include $(MWD)/../Makefile
+MEKKO_CONFIG ?= Makefile
+$(info MEKKO_CONFIG=$(MEKKO_CONFIG))
+include $(CURDIR)/$(MEKKO_CONFIG)
 
 # Define GIT_VERSION to be used in macro define to CFLAGS, includes
 # tag if available, short commit hash, appends '*' if changes haven't
@@ -65,8 +67,14 @@ MKDIR_P ?= mkdir -p
 #   c64+=commodore,eightbit -> c64 commodore eightbit
 # PLATFORM_COMBOS is a flat list of entries like "dragon+=coco"
 # $1 = the platform to expand
-get_combos = $(foreach e,$(PLATFORM_COMBOS),\
-  $(if $(filter $1+=%, $(e)), $(lastword $(subst +=, ,$(e)))))
+comma := ,
+define get_combos
+$(foreach e,$(PLATFORM_COMBOS), \
+  $(if $(filter $1+=%,$(e)), \
+    $(subst $(comma), ,$(lastword $(subst +=, ,$(e)))) \
+  ) \
+)
+endef
 
 # Expands patterns with %PLATFORM% to the platform + its combos
 expand_platform_pattern = \
@@ -105,11 +113,21 @@ OBJS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(CFILES)) \
         $(patsubst %.s,$(OBJ_DIR)/%.o,$(NORM_AFILES)) \
         $(patsubst %.pas,$(OBJ_DIR)/%.o,$(PFILES))
 
-$(BUILD_EXEC):: $(OBJS) $(EXECUTABLE_EXTRA_DEPS_$(PLATFORM_UC)) | $(R2R_PD)
+R2R_EXTRA_DEPS += $(R2R_EXTRA_DEPS_$(PLATFORM_UC))
+DISK_EXTRA_DEPS += $(DISK_EXTRA_DEPS_$(PLATFORM_UC))
+DISK_EXTRA_FILES += $(DISK_EXTRA_FILES_$(PLATFORM_UC))
+EXECUTABLE_EXTRA_DEPS += $(EXECUTABLE_EXTRA_DEPS_$(PLATFORM_UC))
+LIBRARY_EXTRA_DEPS += $(LIBRARY_EXTRA_DEPS_$(PLATFORM_UC))
+EXTRA_C_DEPS += $(EXTRA_C_DEPS_$(PLATFORM_UC))
+EXTRA_S_DEPS += $(EXTRA_S_DEPS_$(PLATFORM_UC))
+EXTRA_ASM_DEPS += $(EXTRA_ASM_DEPS_$(PLATFORM_UC))
+EXTRA_PAS_DEPS += $(EXTRA_PAS_DEPS_$(PLATFORM_UC))
+
+$(BUILD_EXEC):: $(OBJS) $(EXECUTABLE_EXTRA_DEPS) | $(R2R_PD)
 	$(call link-bin,$@,$(OBJS))
 	@$(MAKE) -f $(PLATFORM_MK) $(PLATFORM)/executable-post
 
-$(BUILD_LIB):: $(OBJS) $(LIBRARY_EXTRA_DEPS_$(PLATFORM_UC)) | $(R2R_PD)
+$(BUILD_LIB):: $(OBJS) $(LIBRARY_EXTRA_DEPS) | $(R2R_PD)
 	$(call link-lib,$@,$(OBJS))
 	@$(MAKE) -f $(PLATFORM_MK) $(PLATFORM)/library-post
 
@@ -118,16 +136,16 @@ AUTO_DIRS := $(OBJ_DIR) $(R2R_PD) $(CACHE_PLATFORM)
 $(AUTO_DIRS):
 	$(MKDIR_P) $@
 
-$(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: %.c $(EXTRA_C_DEPS) | $(OBJ_DIR)
 	@$(MKDIR_P) $(dir $@)
 	$(call compile,$@,$<)
-$(OBJ_DIR)/%.o: %.s | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: %.s $(EXTRA_S_DEPS) | $(OBJ_DIR)
 	@$(MKDIR_P) $(dir $@)
 	$(call assemble,$@,$<)
-$(OBJ_DIR)/%.o: %.asm | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: %.asm $(EXTRA_ASM_DEPS) | $(OBJ_DIR)
 	@$(MKDIR_P) $(dir $@)
 	$(call assemble,$@,$<)
-$(OBJ_DIR)/%.o: %.pas | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: %.pas $(EXTRA_PAS_DEPS) | $(OBJ_DIR)
 	@$(MKDIR_P) $(dir $@)
 	$(call compile-pas,$@,$<)
 
@@ -202,3 +220,15 @@ else
     endif
   endif
 endif # FUJINET_LIB
+
+HIRESTXT_LIB ?= __UNDEFINED__
+ifeq ($(HIRESTXT_LIB),__UNDEFINED__)
+  $(info HIRESTXT_LIB not defined)
+else
+  ifneq ($(filter coco dragon,$(PLATFORM)),)
+    $(eval $(subst |,$(_newline),$(shell PLATFORM=$(PLATFORM) CACHE_DIR=$(CACHE_DIR) \
+        $(MWD)/hirestxtlib.py $(HIRESTXT_LIB) | tr '\n' '|')))
+  else
+    $(info HIRESTXT_LIB ignored for PLATFORM=$(PLATFORM) (coco/dragon only))
+  endif
+endif # HIRESTXT_LIB
