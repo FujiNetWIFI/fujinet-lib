@@ -20,8 +20,7 @@ PLATFORMS += msdos
 # - a URL to a git repo
 # - empty which will use whatever is the latest
 # - undefined, no fujinet-lib will be used
-FUJINET_LIB =
-#FUJINET_LIB = https://github.com/FozzTexx/fujinet-lib-experimental.git
+FUJINET_LIB = ..
 
 # HIRESTXT_LIB can be
 # - a version number such as 0.5.0.2

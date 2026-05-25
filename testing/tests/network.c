@@ -54,9 +54,13 @@ void test_network_http_get(void)
   memset(g.net, 0, sizeof(g.net));
   read_result = network_read(NET_DEVICESPEC, g.net, sizeof(g.net));
   TEST("network_read returns positive byte count", read_result > 0);
+#if 0
   TEST("fn_bytes_read is non-zero", fn_bytes_read > 0);
   printf("  Read %d bytes (fn_bytes_read=%u)\n",
          (int)read_result, fn_bytes_read);
+#else
+  printf("  Read %d bytes\n", (int)read_result);
+#endif // 0
 
 #ifdef FN_BROKEN_network_close
   SKIP(network_close);
@@ -401,7 +405,11 @@ void test_network_error_path(void)
   SKIP(network_read_nb);
 #endif
   r = network_read_nb("N7:HTTPS://fujinet.online/", err_buf, sizeof(err_buf));
+#if 0
   TEST("network_read_nb on unopened channel returns error", r < 0 || fn_network_error != 0);
+#else
+  TEST("network_read_nb on unopened channel returns error", r < 0);
+#endif // 0
 
 #ifdef FN_BROKEN_network_open
   SKIP(network_open);

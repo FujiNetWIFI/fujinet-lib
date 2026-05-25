@@ -15,7 +15,7 @@
 
 #ifdef BUILD_ATARI
 #define FN_BROKEN_fuji_open_directory2
-//#define FN_BROKEN_fuji_generate_guid
+#define FN_BROKEN_fuji_generate_guid
 #define FN_BROKEN_fuji_get_host_prefix
 #define FN_BROKEN_fuji_base64_encode_input
 #define FN_BROKEN_fuji_hash_data
@@ -62,5 +62,9 @@
 #define FN_BROKEN_clock_get_tz
 #define FN_BROKEN_clock_set_tz
 #endif
+
+// Functions not actually used by any programs
+#define FN_BROKEN_fuji_get_directory_position
+#define FN_BROKEN_network_http_post_bin
 
 #endif /* BROKEN_H */

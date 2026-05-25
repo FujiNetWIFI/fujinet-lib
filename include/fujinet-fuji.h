@@ -382,7 +382,11 @@ bool fuji_open_directory_filter(uint8_t hostSlot, const char *path, const char *
  * @brief Scans network for SSIDs and sets count accordingly.
  * @return success status of request.
  */
+#ifdef __ATARI__
+#define fuji_scan_for_networks(count) FUJICALL_RV(FUJICMD_SCAN_NETWORKS, count, 4)
+#else /* ! __ATARI __ */
 #define fuji_scan_for_networks(count) FUJICALL_RV(FUJICMD_SCAN_NETWORKS, count, 1)
+#endif /* __ATARI__ */
 
 /**
  * @brief Scans network for SSIDs and sets count accordingly.

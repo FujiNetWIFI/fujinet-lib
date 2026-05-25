@@ -59,7 +59,7 @@ PC_DEFAULT = $(PC_$(TOOLCHAIN_UC))
 endif
 
 R2R_PD := $(R2R_DIR)/$(PLATFORM)
-OBJ_DIR := $(BUILD_DIR)/$(PRODUCT)$(PLATFORM)
+OBJ_DIR := $(BUILD_DIR)/$(PRODUCT)/$(PLATFORM)
 CACHE_PLATFORM := $(CACHE_DIR)/$(PLATFORM)
 MKDIR_P ?= mkdir -p
 
@@ -214,7 +214,7 @@ else
         $(FUJINET_LIB) | tr '\n' '|')))
   ifeq ($(strip $(FUJINET_LIB_LDLIB)),)
     ifeq ($(FUJINET_LIB_OPTIONAL),)
-      $(error fujinet-lib not available)
+      $(error fujinet-lib not available for $(PLATFORM))
     else
       $(info fujinet-lib not available, but skipping because FUJINET_LIB_SKIP_MISSING is set)
     endif
