@@ -157,7 +157,7 @@ void test_network_http_post(void)
 
 #ifdef FN_BROKEN_network_http_post_bin
   SKIP(network_http_post_bin);
-#endif
+#else
   err = network_http_post_bin(NET_POST_URL, bin_data, sizeof(bin_data));
   TEST("network_http_post_bin succeeds", err == FN_ERR_OK);
 
@@ -167,6 +167,7 @@ void test_network_http_post(void)
 
   err = network_close(NET_POST_URL);
   TEST("network_close after binary POST succeeds", err == FN_ERR_OK);
+#endif
 
   END_OF_TEST();
 }

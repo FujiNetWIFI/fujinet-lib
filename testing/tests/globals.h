@@ -7,6 +7,10 @@
 
 #include <fujinet-fuji.h>
 
+#ifndef MAX_FILENAME_LEN
+#define MAX_FILENAME_LEN 256
+#endif
+
 /*
  * All large buffers live in a single union.  Tests run sequentially so
  * buffers needed by different test functions can overlap freely.  Where a
@@ -31,54 +35,64 @@
  *   dir          -- directory path/filter buffer (258 bytes)
  */
 
+#include "constants.h"
+
 typedef union {
-    uint8_t net[512];
+  uint8_t net[512];
 
-    struct {
-        AdapterConfig         ac;
-        AdapterConfigExtended ace;
-    } adapter;
+  struct {
+    AdapterConfig         ac;
+    AdapterConfigExtended ace;
+  } adapter;
 
-    struct {
-        HostSlot   hosts[8];
-        HostSlot   hosts2[8];
-        DeviceSlot devices[8];
-    } slots;
+  struct {
+    HostSlot   hosts[MAX_HOSTS];
+    HostSlot   hosts2[MAX_HOSTS];
+    DeviceSlot devices[MAX_DISKS];
+  } slots;
 
-    struct {
-        uint8_t write[64];
-        uint8_t read[66];
-    } appkey;
+  struct {
+    uint8_t write[64];
+    uint8_t read[66];
+  } appkey;
 
-    struct {
-        char enc[32];
-        char dec[32];
-    } b64;
+  struct {
+    char enc[32];
+    char dec[32];
+  } b64;
 
-    struct {
-        uint8_t md5[33];
-        uint8_t sha1[41];
-        uint8_t sha256[65];
-        uint8_t sha512[129];
-        uint8_t inc1[65];
-        uint8_t inc2[65];
-    } hash;
+  union {
+    uint8_t md5[33];
+    uint8_t sha1[41];
+    uint8_t sha256[65];
+    uint8_t sha512[129];
+  } hash;
 
-    uint8_t clock_fmt[32];
+  struct {
+    uint8_t inc1[65];
+    uint8_t inc2[65];
+  } hash_verify;
 
-    struct {
-        uint8_t utc[32];
-        uint8_t ny[32];
-        uint8_t tok[32];
-        char    sys_tz[64];
-    } clock_tz_call;
+  uint8_t clock_fmt[32];
 
-    struct {
-        char original[64];
-        char readback[64];
-    } clock_tz_set;
+  struct {
+    uint8_t utc[32];
+    uint8_t ny[32];
+    uint8_t tok[32];
+    char    sys_tz[64];
+  } clock_tz_call;
 
-    char dir[258];
+  struct {
+    char original[64];
+    char readback[64];
+  } clock_tz_set;
+
+  struct {
+    char prefix[MAX_FILENAME_LEN];
+    char read_back[MAX_FILENAME_LEN];
+  } host_prefix;
+
+  char dir[258];
 } buf_union;
 
 extern buf_union g;

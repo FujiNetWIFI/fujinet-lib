@@ -52,7 +52,7 @@ void test_clock_simple_binary(void)
 
   SECTION("clock_get_time SIMPLE_BINARY");
 
-#ifdef FN_BROKEN_clock_get_time
+#ifdef FN_BROKEN_clock_get_time_SIMPLE_BINARY
   SKIP(clock_get_time);
 #else
   memset(g.clock_fmt, 0, sizeof(g.clock_fmt));
@@ -80,7 +80,7 @@ void test_clock_prodos_binary(void)
 
   SECTION("clock_get_time PRODOS_BINARY");
 
-#ifdef FN_BROKEN_clock_get_time
+#ifdef FN_BROKEN_clock_get_time_PRODOS_BINARY
   SKIP(clock_get_time);
 #else
   memset(g.clock_fmt, 0, sizeof(g.clock_fmt));
@@ -101,7 +101,7 @@ void test_clock_apetime_binary(void)
 
   SECTION("clock_get_time APETIME_BINARY");
 
-#ifdef FN_BROKEN_clock_get_time
+#ifdef FN_BROKEN_clock_get_time_APETIME_BINARY
   SKIP(clock_get_time);
 #else
   memset(g.clock_fmt, 0, sizeof(g.clock_fmt));
@@ -128,7 +128,7 @@ void test_clock_tz_iso_string(void)
 
   SECTION("clock_get_time TZ_ISO_STRING");
 
-#ifdef FN_BROKEN_clock_get_time
+#ifdef FN_BROKEN_clock_get_time_TZ_ISO_STRING
   SKIP(clock_get_time);
 #else
   memset(g.clock_fmt, 0, sizeof(g.clock_fmt));
@@ -153,7 +153,7 @@ void test_clock_utc_iso_string(void)
 
   SECTION("clock_get_time UTC_ISO_STRING");
 
-#ifdef FN_BROKEN_clock_get_time
+#ifdef FN_BROKEN_clock_get_time_UTC_ISO_STRING
   SKIP(clock_get_time);
 #else
   memset(g.clock_fmt, 0, sizeof(g.clock_fmt));
@@ -174,7 +174,7 @@ void test_clock_apple3_sos(void)
 
   SECTION("clock_get_time APPLE3_SOS_BINARY");
 
-#ifdef FN_BROKEN_clock_get_time
+#ifdef FN_BROKEN_clock_get_time_APPLE3_SOS_BINARY
   SKIP(clock_get_time);
 #else
   memset(g.clock_fmt, 0, sizeof(g.clock_fmt));

@@ -71,14 +71,14 @@ int main(void)
 #if FUJI_TESTS
   /* fuji.h */
   test_fuji_status();
-  test_fuji_directory_ops();
   test_fuji_adapter_config();
-  test_fuji_wifi();
-  test_fuji_network_scan();
-  test_fuji_guid();
   test_fuji_host_device_slots();
   test_fuji_host_prefix();
+  test_fuji_directory_ops();
+  test_fuji_wifi();
+  test_fuji_network_scan();
   test_fuji_appkey();
+  test_fuji_guid();
   test_fuji_base64();
   test_fuji_hashing();
 #endif // FUJI_TESTS

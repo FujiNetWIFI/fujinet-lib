@@ -2,11 +2,13 @@
 #define CONSTANTS_H
 
 #define MAX_HOSTS 8
-#ifdef BUILD_COCO
+#if defined(BUILD_COCO)
 #define MAX_DISKS 4
-#else /* ! BUILD_COCO */
+#elif defined(BUILD_APPLE2)
+#define MAX_DISKS 10
+#else
 #define MAX_DISKS 8
-#endif /* BUILD_COCO */
+#endif
 
 /* Network device specs used across tests */
 #define NET_DEVICESPEC  "N1:HTTPS://fujinet.online/"

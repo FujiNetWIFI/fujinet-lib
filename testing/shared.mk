@@ -20,7 +20,7 @@ PLATFORMS += msdos
 # - a URL to a git repo
 # - empty which will use whatever is the latest
 # - undefined, no fujinet-lib will be used
-FUJINET_LIB = ..
+FUJINET_LIB =
 
 # HIRESTXT_LIB can be
 # - a version number such as 0.5.0.2
@@ -44,6 +44,7 @@ PLATFORM_COMBOS = \
 include ../makefiles/toplevel-rules.mk
 
 CFLAGS += -DBUILD_$(PLATFORM_UC)
+LDFLAGS_EXTRA_COCO = --limit=7C00
 
 # If you need to add extra platform-specific steps, do it below:
 #   coco/r2r:: coco/custom-step1

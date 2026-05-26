@@ -176,21 +176,19 @@ void test_fuji_host_device_slots(void)
 
 void test_fuji_host_prefix(void)
 {
-  char prefix[64];
-  char read_back[64];
   bool ok;
 
   SECTION("fuji host prefix");
 
-  memset(prefix,    0, sizeof(prefix));
-  memset(read_back, 0, sizeof(read_back));
+  memset(g.host_prefix.prefix,    0, sizeof(g.host_prefix.prefix));
+  memset(g.host_prefix.read_back, 0, sizeof(g.host_prefix.read_back));
 
 #ifdef FN_BROKEN_fuji_get_host_prefix
   SKIP(fuji_get_host_prefix);
 #endif
-  ok = fuji_get_host_prefix(0, prefix);
+  ok = fuji_get_host_prefix(0, g.host_prefix.prefix);
   TEST("fuji_get_host_prefix succeeds", ok);
-  printf("  Current prefix slot 0: '%s'\n", prefix);
+  printf("  Current prefix slot 0: '%s'\n", g.host_prefix.prefix);
 
 #ifdef FN_BROKEN_fuji_set_host_prefix
   SKIP(fuji_set_host_prefix);
@@ -198,12 +196,12 @@ void test_fuji_host_prefix(void)
   ok = fuji_set_host_prefix(0, (char *) "/test_prefix");
   TEST("fuji_set_host_prefix succeeds", ok);
 
-  ok = fuji_get_host_prefix(0, read_back);
+  ok = fuji_get_host_prefix(0, g.host_prefix.read_back);
   TEST("fuji_get_host_prefix reads back set value", ok);
-  TEST("Set prefix matches read-back value", strcmp(read_back, "/test_prefix") == 0);
+  TEST("Set prefix matches read-back value", strcmp(g.host_prefix.read_back, "/test_prefix") == 0);
 
   /* Restore original */
-  fuji_set_host_prefix(0, prefix);
+  fuji_set_host_prefix(0, g.host_prefix.prefix);
 
   END_OF_TEST();
 }
