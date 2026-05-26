@@ -1,6 +1,7 @@
 #ifndef FUJINET_FUJI_H
 #define FUJINET_FUJI_H
 
+#include "fujinet-version.h"
 #include "fujinet-commands.h"
 #include "fujinet-const.h"
 #include "fujinet-err.h"
@@ -278,7 +279,7 @@ bool fuji_get_device_enabled_status(uint8_t d);
  * @brief Fetch the current directory position for paging through directories into pos.
  * @return success status of request
  */
-bool fuji_get_directory_position(uint16_t *pos);
+#define fuji_get_directory_position(pos) FUJICALL_RV(FUJICMD_GET_DIRECTORY_POSITION, pos, sizeof(uint16_t))
 
 /**
  * @brief Fetch the host prefix for given host slot id.
@@ -506,15 +507,15 @@ void fuji_set_appkey_details(uint16_t creator_id, uint8_t app_id, enum AppKeySiz
 
 // Base64
 // ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success
-bool fuji_base64_decode_compute(void);
-bool fuji_base64_decode_input(char *s, uint16_t len);
-bool fuji_base64_decode_length(unsigned long *len);
-bool fuji_base64_decode_output(char *s, uint16_t len);
+#define fuji_base64_decode_compute(void) FUJICALL(FUJICMD_BASE64_DECODE_COMPUTE)
+#define fuji_base64_decode_input(s, len) FUJICALL_D(FUJICMD_BASE64_DECODE_INPUT, s, len)
+#define fuji_base64_decode_length(len) FUJICALL_RV(FUJICMD_BASE64_DECODE_LENGTH, len, sizeof(unsigned long))
+#define fuji_base64_decode_output(s, len) FUJICALL_RV(FUJICMD_BASE64_DECODE_OUTPUT, s, len)
 
-bool fuji_base64_encode_compute(void);
-bool fuji_base64_encode_input(char *s, uint16_t len);
-bool fuji_base64_encode_length(unsigned long *len);
-bool fuji_base64_encode_output(char *s, uint16_t len);
+#define fuji_base64_encode_compute(void) FUJICALL(FUJICMD_BASE64_ENCODE_COMPUTE)
+#define fuji_base64_encode_input(s, len) FUJICALL_D(FUJICMD_BASE64_ENCODE_INPUT, s, len)
+#define fuji_base64_encode_length(len) FUJICALL_RV(FUJICMD_BASE64_ENCODE_LENGTH, len, sizeof(unsigned long))
+#define fuji_base64_encode_output(s, len) FUJICALL_RV(FUJICMD_BASE64_ENCODE_OUTPUT, s, len)
 
 ////////////////////////////////////////////////////////////////
 // These are very low level functions and should only be used internally.
