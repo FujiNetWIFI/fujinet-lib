@@ -36,26 +36,11 @@
 #include <stdio.h>
 #endif /* _CMOC_VERSION_ */
 
-#ifdef UNUSED
-#ifndef _CMOC_VERSION_
-#include <stdio.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include <stdlib.h>
-#endif /* _CMOC_VERSION_ */
-
-#ifdef BUILD_APPLE2
-#include <apple2.h>
-#endif /* BUILD_APPLE2 */
-
-#include "fujinet-fuji.h"
-#include "fujinet-network.h"
-#include "fujinet-clock.h"
-
-#include "broken.h"
-
-#endif /* UNUSED */
+#include <fujinet-fuji.h>
+#ifndef FNLIB_VERSION_FULL
+#warning "Guessing at fujinet-lib version"
+#define FNLIB_VERSION_FULL "vClassic"
+#endif
 
 /* =========================================================================
  * main
@@ -112,7 +97,8 @@ int main(void)
   test_clock_get_time_tz();
 #endif // CLOCK_TESTS
 
-  printf("\n=== All %d tests passed ===\n", tests_run);
+  printf("\n=== All %d tests passed, %d skipped ===\n", tests_run, tests_skipped);
+  printf("fujinet-lib version %s\n", FNLIB_VERSION_FULL);
 
   end_testing(0);
   return 0;

@@ -43,8 +43,13 @@ void test_fuji_base64(void)
 #ifdef FN_BROKEN_fuji_base64_encode_output
   SKIP(fuji_base64_encode_output);
 #endif
-  if (ok && enc_len)
-    fuji_base64_encode_output(g.b64.enc, (uint16_t) enc_len);
+  if (ok && enc_len) {
+    printf("Clearing encode %ld\n", enc_len);
+    for (; enc_len; enc_len -= in_len) {
+      in_len = enc_len > sizeof(g.net) ? sizeof(g.net) : (uint16_t) enc_len;
+      fuji_base64_encode_output((char *) g.net, in_len);
+    }
+  }
 
 #ifdef FN_BROKEN_fuji_base64_decode_length
   SKIP(fuji_base64_decode_length);
@@ -54,8 +59,13 @@ void test_fuji_base64(void)
 #ifdef FN_BROKEN_fuji_base64_decode_output
   SKIP(fuji_base64_decode_output);
 #endif
-  if (ok && dec_len)
-    fuji_base64_decode_output(g.b64.dec, (uint16_t) dec_len);
+  if (ok && dec_len) {
+    printf("Clearing decode %ld\n", dec_len);
+    for (; dec_len; enc_len -= in_len) {
+      in_len = dec_len > sizeof(g.net) ? sizeof(g.net) : (uint16_t) dec_len;
+      fuji_base64_decode_output((char *) g.net, in_len);
+    }
+  }
 
   in_len = (uint16_t)strlen(input);
 

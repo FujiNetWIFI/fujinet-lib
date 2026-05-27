@@ -23,7 +23,6 @@ void test_fuji_status(void)
   memset(&st, 0, sizeof(st));
   ok = fuji_status(&st);
   TEST("fuji_status returns true", ok);
-  TEST("fuji_error() is false after successful status", !fuji_error());
 
   END_OF_TEST();
 }

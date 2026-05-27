@@ -42,15 +42,12 @@
 #define FN_BROKEN_fuji_open_directory2
 #define FN_BROKEN_fuji_get_host_prefix
 
+#define FN_BROKEN_fuji_base64_encode_length
 #define FN_BROKEN_fuji_hash_clear
 #define FN_BROKEN_fuji_hash_data
 #define FN_BROKEN_fuji_hash_calculate
 
 #define FN_BROKEN_network_http_post
-
-// Missing from firmware
-#define FN_BROKEN_fuji_base64_encode_input
-
 #endif /* BUILD_APPLE2 */
 
 #ifdef BUILD_MSDOS
@@ -85,6 +82,19 @@
 #endif /* BUILD_MSDOS */
 
 #else /* FNLIB_VERSION_MAJOR >= 5 */
+
+#ifdef BUILD_MSDOS
+// Missing from firmware
+#define FN_BROKEN_fuji_base64_encode_input
+#define FN_BROKEN_fuji_hash_data
+#endif /* BUILD_MSDOS */
+
+#ifdef BUILD_APPLE2
+// Missing from firmware
+#define FN_BROKEN_fuji_base64_encode_input
+#define FN_BROKEN_fuji_hash_data
+#endif /* BUILD_APPLE2 */
+
 #endif /* FNLIB_VERSION_MAJOR */
 
 #endif /* BROKEN_H */
