@@ -22,3 +22,5 @@ include makefiles/toplevel-rules.mk
 #   coco/r2r:: coco/custom-step2
 # or
 #   apple2/disk: apple2/custom-step1 apple2/custom-step2
+
+RELEASE_VERSION ?= $(shell awk '/FNLIB_VERSION_FULL/{ gsub(/"/, "", $$3); print $$3 }' include/fujinet-version.h)
