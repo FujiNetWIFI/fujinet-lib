@@ -227,12 +227,6 @@ extern FNStatus _fuji_status;
 bool fuji_enable_udpstream(uint16_t port, char *host);
 
 /**
- * @brief Returns true if last operation had an error.
- * @return ERROR status, true if there was an error in last operation.
- */
-#define fuji_error() (fn_device_error != FN_ERR_OK)
-
-/**
  * @brief Generate a randomized GUID.
  * @return success status of request
  */
@@ -460,7 +454,7 @@ bool fuji_set_sio_external_clock(uint16_t rate);
  * @return success status of the status request
  * NOTE: The actual status VALUE is in 'status', the return is just whether the command to fetch the status succeeded, it could succeed, but the status value holds an error.
  */
-#define fuji_status(status) FUJICALL_RV(FUJICMD_STATUS, status, sizeof(FNStatus))
+#define fuji_status(status) FUJICALL_A1_RV(FUJICMD_STATUS, 0, status, sizeof(FNStatus))
 
 #ifdef __CBM__
 // DEBUGGING
@@ -508,25 +502,23 @@ void fuji_set_appkey_details(uint16_t creator_id, uint8_t app_id, enum AppKeySiz
 // Base64
 // ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success
 #define fuji_base64_decode_compute(void) FUJICALL(FUJICMD_BASE64_DECODE_COMPUTE)
-#define fuji_base64_decode_input(s, len) FUJICALL_D(FUJICMD_BASE64_DECODE_INPUT, s, len)
+#define fuji_base64_decode_input(s, len) FUJICALL_B12_D(FUJICMD_BASE64_DECODE_INPUT, len, s, len)
 #define fuji_base64_decode_length(len) FUJICALL_RV(FUJICMD_BASE64_DECODE_LENGTH, len, sizeof(unsigned long))
-#define fuji_base64_decode_output(s, len) FUJICALL_RV(FUJICMD_BASE64_DECODE_OUTPUT, s, len)
+#define fuji_base64_decode_output(s, len) FUJICALL_B12_RV(FUJICMD_BASE64_DECODE_OUTPUT, len, s, len)
 
 #define fuji_base64_encode_compute(void) FUJICALL(FUJICMD_BASE64_ENCODE_COMPUTE)
-#define fuji_base64_encode_input(s, len) FUJICALL_D(FUJICMD_BASE64_ENCODE_INPUT, s, len)
+#define fuji_base64_encode_input(s, len) FUJICALL_B12_D(FUJICMD_BASE64_ENCODE_INPUT, len, s, len)
 #define fuji_base64_encode_length(len) FUJICALL_RV(FUJICMD_BASE64_ENCODE_LENGTH, len, sizeof(unsigned long))
-#define fuji_base64_encode_output(s, len) FUJICALL_RV(FUJICMD_BASE64_ENCODE_OUTPUT, s, len)
+#define fuji_base64_encode_output(s, len) FUJICALL_B12_RV(FUJICMD_BASE64_ENCODE_OUTPUT, len, s, len)
 
 ////////////////////////////////////////////////////////////////
 // These are very low level functions and should only be used internally.
 // Please use the new interface functions below this section.
 ////////////////////////////////////////////////////////////////
 // All return success status (true = worked)
-//bool fuji_hash_compute(uint8_t type);
 #define fuji_hash_compute(type) FUJICALL_A1(FUJICMD_HASH_COMPUTE, type)
-//bool fuji_hash_compute_no_clear(uint8_t type);
 #define fuji_hash_compute_no_clear(type) FUJICALL_A1(FUJICMD_HASH_COMPUTE_NO_CLEAR, type)
-bool fuji_hash_input(const void *data, uint16_t len);
+#define fuji_hash_input(data, len) FUJICALL_B12_D(FUJICMD_HASH_INPUT, len, data, len)
 // this requires compute to have been called to set the hashing algorithm - don't use!
 // ALSO, there is no way to get the return value with this signature
 

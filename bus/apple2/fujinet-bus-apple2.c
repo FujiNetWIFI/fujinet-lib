@@ -48,15 +48,11 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   else if (device == FUJI_DEVICEID_VOICE)
     sp_id = sp_get_voice_id();
 #endif /* VOICE_SUPPORTED */
-  else {
-    fn_device_error = FN_ERR_NO_DEVICE;
+  else
     return false;
-  }
 
-  if (sp_id == 0) {
-    fn_device_error = FN_ERR_OFFLINE;
+  if (sp_id == 0)
     return false;
-  }
 
   // FIXME - I think there's a couple of commands that don't have a
   //         reply value but used SP_STATUS instead of SP_CONTROL
@@ -101,13 +97,12 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
     else
       sp_status(sp_id, fuji_cmd);
     if (!sp_error && reply) {
-		if (sp_count < reply_length)
-			reply_length = sp_count;
+      if (sp_count < reply_length)
+        reply_length = sp_count;
       memcpy(reply, &sp_payload[0], reply_length);
-	}
+    }
   }
 
-  fn_device_error = fn_error(sp_error);
   return !sp_error;
 }
 
@@ -120,10 +115,8 @@ uint16_t fuji_bus_read(uint8_t device, void *buffer, size_t length)
   if (!length)
     return 0;
 
-  if (sp_get_fuji_id() == 0) {
-    fn_device_error = FN_ERR_OFFLINE;
+  if (sp_get_fuji_id() == 0)
     return 0;
-  }
 
   if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
     sp_id = sp_network;
@@ -136,8 +129,6 @@ uint16_t fuji_bus_read(uint8_t device, void *buffer, size_t length)
     err = sp_read_nw(sp_id, length);
   else
     err = sp_read(sp_id, length);
-
-  fn_device_error = fn_error(sp_error);
 
   if (err)
     return 0;
@@ -156,10 +147,8 @@ uint16_t fuji_bus_write(uint8_t device, const void *buffer, size_t length)
   if (!length)
     return 0;
 
-  if (sp_get_fuji_id() == 0) {
-    fn_device_error = FN_ERR_OFFLINE;
+  if (sp_get_fuji_id() == 0)
     return 0;
-  }
 
   if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
     sp_id = sp_network;
@@ -173,8 +162,6 @@ uint16_t fuji_bus_write(uint8_t device, const void *buffer, size_t length)
     err = sp_write_nw(sp_id, length);
   else
     err = sp_write(sp_id, length);
-
-  fn_device_error = fn_error(sp_error);
 
   if (err)
     return 0;
@@ -192,7 +179,6 @@ uint16_t fuji_bus_write(uint8_t device, const void *buffer, size_t length)
 bool fuji_bus_appkey_read(void *string, uint16_t *length)
 {
   sp_status(sp_fuji_id, FUJICMD_READ_APPKEY);
-  fn_device_error = fn_error(sp_error);
   if (sp_error)
     return false;
   memcpy(string, &sp_payload[0], sp_count);

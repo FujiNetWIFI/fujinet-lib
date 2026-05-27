@@ -124,58 +124,55 @@
 #define FUJICALL_B12(cmd, b12)                                          \
   fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd,                             \
                 FUJI_FIELD_B12,                                         \
-                U16_LSB(b12), U16_MSB(b12), 0, 0,                       \
+                NATIVE_SPLIT_U16(b12), 0, 0,                            \
                 NULL, 0, NULL, 0)
 
 #define FUJICALL_B12_D(cmd, b12, data, len)                             \
   fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd,                             \
                 FUJI_FIELD_B12,                                         \
-                U16_LSB(b12), U16_MSB(b12), 0, 0,                       \
+                NATIVE_SPLIT_U16(b12), 0, 0,                            \
                 data, len, NULL, 0)
 
 #define FUJICALL_B12_RV(cmd, b12, reply, replylen)                      \
   fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd,                             \
                 FUJI_FIELD_B12,                                         \
-                U16_LSB(b12), U16_MSB(b12), 0, 0,                       \
+                NATIVE_SPLIT_U16(b12), 0, 0,                            \
                 NULL, 0, reply, replylen)
 
 #define FUJICALL_B12_B34(cmd, b12, b34)                                 \
   fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd,                             \
                 FUJI_FIELD_B12_B34,                                     \
-		U16_LSB(b12), U16_MSB(b12), U16_LSB(b34), U16_MSB(b34), \
+		NATIVE_SPLIT_U16(b12), NATIVE_SPLIT_U16(b34),           \
                 NULL, 0, NULL, 0)
 
 #define FUJICALL_B12_B34_D(cmd, b12, b34, data, len)			\
   fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd,                             \
                 FUJI_FIELD_B12_B34,                                     \
-		U16_LSB(b12), U16_MSB(b12), U16_LSB(b34), U16_MSB(b34), \
+		NATIVE_SPLIT_U16(b12), NATIVE_SPLIT_U16(b34),           \
                 data, len, NULL, 0)
 
 #define FUJICALL_B12_B34_RV(cmd, b12, b34, reply, replylen)             \
   fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd,                             \
                 FUJI_FIELD_B12_B34,                                     \
-		U16_LSB(b12), U16_MSB(b12), U16_LSB(b34), U16_MSB(b34), \
+		NATIVE_SPLIT_U16(b12), NATIVE_SPLIT_U16(b34),           \
                 NULL, 0, reply, replylen)
 
 #define FUJICALL_C1234(cmd, c1234)                                      \
   fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd,                             \
                 FUJI_FIELD_C1234,                                       \
-                U16_LSB(U32_LSW(c1234)), U16_MSB(U32_LSW(c1234)),       \
-                U16_LSB(U32_MSW(c1234)), U16_MSB(U32_MSW(c1234)),       \
+                NATIVE_SPLIT_U32(U32_LSW(c1234)),                       \
                 NULL, 0, NULL, 0)
 
 #define FUJICALL_C1234_D(cmd, c1234, data, len)                         \
   fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd,                             \
                 FUJI_FIELD_C1234,                                       \
-                U16_LSB(U32_LSW(c1234)), U16_MSB(U32_LSW(c1234)),       \
-                U16_LSB(U32_MSW(c1234)), U16_MSB(U32_MSW(c1234)),       \
+                NATIVE_SPLIT_U32(U32_LSW(c1234)),                       \
                 data, len, NULL, 0)
 
 #define FUJICALL_C1234_RV(cmd, c1234, reply, replylen)                  \
   fuji_bus_call(FUJI_DEVICEID_FUJINET, cmd,                             \
                 FUJI_FIELD_C1234,                                       \
-                U16_LSB(U32_LSW(c1234)), U16_MSB(U32_LSW(c1234)),       \
-                U16_LSB(U32_MSW(c1234)), U16_MSB(U32_MSW(c1234)),       \
+                NATIVE_SPLIT_U32(U32_LSW(c1234)),                       \
                 NULL, 0, reply, replylen)
 
 #include <fujinet-bus-eznet.h>

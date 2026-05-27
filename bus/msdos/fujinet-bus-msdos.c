@@ -2,8 +2,6 @@
 #include "fujinet-commands.h"
 #include "portio.h"
 
-#include <stdio.h> // debug
-
 enum {
   PACKET_COMPLETE = 'C',
   PACKET_ERROR = 'E',

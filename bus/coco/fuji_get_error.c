@@ -23,7 +23,7 @@ bool fuji_get_error(void)
     bus_ready();
     dwwrite((uint8_t *)&sec, sizeof(sec));
 
-    /* handle dwread() return value (update fn_device_error, it can be checked later, if necessary)
+    /* handle dwread() return value
      * 0 -> BUS_ERROR(144) -> FN_ERR_IO_ERROR(1) -> true
      * 1 -> err -> translate err to FN_ERR_xxx -> true to indicate that the error has occurred
      */

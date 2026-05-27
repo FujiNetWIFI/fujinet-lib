@@ -71,10 +71,8 @@ int16_t network_read_nb(const char *devicespec, void *buf, uint16_t len)
     if (err != FN_ERR_OK)
       return -err;
 
-    if (nw_status.errcode > NETWORK_SUCCESS && !nw_status.avail) {
-      fn_device_error = nw_status.errcode;
+    if (nw_status.errcode > NETWORK_SUCCESS && !nw_status.avail)
       return 0;
-    }
   } while (!nw_status.avail);
 
   if (len > nw_status.avail)

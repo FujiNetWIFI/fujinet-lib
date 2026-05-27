@@ -3,8 +3,6 @@
 #include <string.h>
 #endif /* _CMOC_VERSION_ */
 
-static uint8_t hash_buf[256];
-
 // Open Watcom can't do far pointers in a function declaration
 static uint8_t c;
 
@@ -21,7 +19,7 @@ bool fuji_hash_data(hash_alg_t hash_type, uint8_t *input, uint16_t length,
     return false;
 
   fuji_hash_length(as_hex, &c, 1);
-  
+
   // conveniently, as_hex is 1 or 0 when used as uint8_t
 
   // hash_len is only really required for systems that ask for fixed
@@ -54,25 +52,4 @@ bool fuji_hash_calculate(hash_alg_t hash_type, bool as_hex, bool discard_data, u
     fuji_hash_clear();
 
   return is_success;
-}
-
-bool fuji_hash_input(const void *data, uint16_t len)
-{
-  uint16_t count;
-  const uint8_t *ptr;
-
-
-  ptr = (const uint8_t *) data;
-  while (len) {
-    count = len <= sizeof(hash_buf) - 2 ? len : sizeof(hash_buf) - 2;
-    memcpy(&hash_buf[2], ptr, count);
-    hash_buf[0] = U16_LSB(count);
-    hash_buf[1] = U16_MSB(count);
-    if (!FUJICALL_D(FUJICMD_HASH_INPUT, hash_buf, count + 2))
-      return false;
-    len -= count;
-    ptr += count;
-  }
-
-  return true;
 }
