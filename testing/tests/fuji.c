@@ -147,10 +147,11 @@ void test_fuji_host_device_slots(void)
 
 #ifdef FN_BROKEN_fuji_get_host_slots
   SKIP(fuji_get_host_slots);
-#endif
+#else
   ok = fuji_get_host_slots(&g.slots.hosts[0], MAX_HOSTS);
   TEST("fuji_get_host_slots succeeds", ok);
   printf("  Host slot 0: %s\n", (char *)g.slots.hosts[0]);
+#endif
 
 #ifdef FN_BROKEN_fuji_get_device_slots
   SKIP(fuji_get_device_slots);
@@ -160,7 +161,7 @@ void test_fuji_host_device_slots(void)
 
 #ifdef FN_BROKEN_fuji_put_host_slots
   SKIP(fuji_put_host_slots);
-#endif
+#else
   write_ok = fuji_put_host_slots(&g.slots.hosts[0], MAX_HOSTS);
   TEST("fuji_put_host_slots round-trip succeeds", write_ok);
 
@@ -169,6 +170,7 @@ void test_fuji_host_device_slots(void)
   TEST("Re-read host slots after write succeeds", ok);
   TEST("Host slot data unchanged after write-back",
        memcmp(g.slots.hosts, g.slots.hosts2, sizeof(g.slots.hosts)) == 0);
+#endif
 
   END_OF_TEST();
 }
@@ -214,12 +216,13 @@ void test_fuji_appkey(void)
 
 #ifdef FN_BROKEN_fuji_set_appkey_details
   SKIP(fuji_set_appkey_details);
-#endif
+#else
   fuji_set_appkey_details(0x5445, 0x01, DEFAULT);
+#endif
 
 #ifdef FN_BROKEN_fuji_write_appkey
   SKIP(fuji_write_appkey);
-#endif
+#else
   memset(g.appkey.write, 0xAB, sizeof(g.appkey.write));
   g.appkey.write[0]  = 'F';
   g.appkey.write[1]  = 'N';
@@ -229,10 +232,11 @@ void test_fuji_appkey(void)
 
   ok = fuji_write_appkey(0, sizeof(g.appkey.write), g.appkey.write);
   TEST("fuji_write_appkey succeeds", ok);
+#endif
 
 #ifdef FN_BROKEN_fuji_read_appkey
   SKIP(fuji_read_appkey);
-#endif
+#else
   memset(g.appkey.read, 0, sizeof(g.appkey.read));
   count = 0;
   ok = fuji_read_appkey(0, &count, g.appkey.read);
@@ -240,6 +244,7 @@ void test_fuji_appkey(void)
   TEST("fuji_read_appkey returned 64 bytes", count == 64);
   TEST("Appkey data first 4 bytes match", memcmp(g.appkey.read, g.appkey.write, 4) == 0);
   TEST("Appkey data last byte matches", g.appkey.read[63] == 0xFF);
+#endif
 
   END_OF_TEST();
 }

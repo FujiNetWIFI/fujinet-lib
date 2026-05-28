@@ -81,6 +81,40 @@
 
 #endif /* BUILD_MSDOS */
 
+#ifdef BUILD_ADAM
+#define FN_BROKEN_fuji_get_host_slots
+#define FN_BROKEN_fuji_put_host_slots
+
+#define FN_BROKEN_network_close
+#define FN_BROKEN_network_http_add_header
+#define FN_BROKEN_network_http_delete
+#define FN_BROKEN_network_http_end_add_headers
+#define FN_BROKEN_network_http_post
+#define FN_BROKEN_network_http_post_bin
+#define FN_BROKEN_network_http_put
+#define FN_BROKEN_network_http_set_channel_mode
+#define FN_BROKEN_network_http_start_add_headers
+#define FN_BROKEN_network_init
+#define FN_BROKEN_network_json_parse
+#define FN_BROKEN_network_json_query
+#define FN_BROKEN_network_open
+#define FN_BROKEN_network_read
+#define FN_BROKEN_network_read_nb
+#define FN_BROKEN_network_status
+#define FN_BROKEN_network_unit
+#define FN_BROKEN_network_write
+
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY
+#define FN_BROKEN_clock_get_time_PRODOS_BINARY
+#define FN_BROKEN_clock_get_time_APETIME_BINARY
+#define FN_BROKEN_clock_get_time_TZ_ISO_STRING
+#define FN_BROKEN_clock_get_time_UTC_ISO_STRING
+#define FN_BROKEN_clock_get_time_APPLE3_SOS_BINARY
+#define FN_BROKEN_clock_get_time_tz
+#define FN_BROKEN_clock_get_tz
+#define FN_BROKEN_clock_set_tz
+#endif /* BUILD_ADAM */
+
 #else /* FNLIB_VERSION_MAJOR >= 5 */
 
 #ifdef BUILD_MSDOS

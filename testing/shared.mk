@@ -1,4 +1,4 @@
-#PLATFORMS += adam
+PLATFORMS += adam
 #PLATFORMS += adam_cpm
 PLATFORMS += apple2
 PLATFORMS += atari
