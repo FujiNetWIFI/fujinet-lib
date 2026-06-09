@@ -1,7 +1,12 @@
 # Changelog
 
-## [Unreleased]
+## [4.11.0] 2026-06-08
 
+- [vic20] Add vic20 target (Thom Cherryhomes)
+- [plus4] Add plus4 target (Thom Cherryhomes)
+- [Adam] Fix build error for Adam target (Geoff Oltmans)
+- [all] Implement Host prefix commands (Thom Cherryhomes)
+- [Adam] Add missing response.h include, fix memcpy args (Chris Osborn)
 - [msdos] Add appkey support [Eric Carr]
 - [apple2] Update Network Device Channel handling. Move back to use standard SP calls and add extra ctrl command to switch the 
            active channel. Needs updated fujinet-firmware that supports the new ctrl command. If error from ctrl command, then
