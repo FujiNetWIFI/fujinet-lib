@@ -142,7 +142,7 @@ void test_fuji_guid(void)
 
 #ifdef FN_BROKEN_fuji_generate_guid
   SKIP(fuji_generate_guid);
-#endif
+#else
   memset(guid1, 0, sizeof(guid1));
   memset(guid2, 0, sizeof(guid2));
 
@@ -154,6 +154,7 @@ void test_fuji_guid(void)
   TEST("GUID2 length is 36", strlen(guid2) == 36);
   TEST("GUIDs are unique", strcmp(guid1, guid2) != 0);
   printf("  GUID1: %s\n  GUID2: %s\n", guid1, guid2);
+#endif
 
   END_OF_TEST();
 }

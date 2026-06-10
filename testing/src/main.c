@@ -72,7 +72,7 @@ int main(void)
   /* network.h */
   test_network_init();
   test_network_write();
-#if 0
+#if ERROR_PATH_WORKS
   test_network_error_path();
 #endif
   test_network_http_get();

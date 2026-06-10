@@ -115,6 +115,20 @@
 #define FN_BROKEN_clock_set_tz
 #endif /* BUILD_ADAM */
 
+#ifdef BUILD_C64
+#define FN_BROKEN_fuji_generate_guid
+
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY
+#define FN_BROKEN_clock_get_time_PRODOS_BINARY
+#define FN_BROKEN_clock_get_time_APETIME_BINARY
+#define FN_BROKEN_clock_get_time_TZ_ISO_STRING
+#define FN_BROKEN_clock_get_time_UTC_ISO_STRING
+#define FN_BROKEN_clock_get_time_APPLE3_SOS_BINARY
+#define FN_BROKEN_clock_get_time_tz
+#define FN_BROKEN_clock_get_tz
+#define FN_BROKEN_clock_set_tz
+#endif /* BUILD_C64 */
+
 #else /* FNLIB_VERSION_MAJOR >= 5 */
 
 #ifdef BUILD_MSDOS
@@ -125,8 +139,8 @@
 
 #ifdef BUILD_APPLE2
 // Missing from firmware
-#define FN_BROKEN_fuji_base64_encode_input
-#define FN_BROKEN_fuji_hash_data
+//#define FN_BROKEN_fuji_base64_encode_input
+//#define FN_BROKEN_fuji_hash_data
 #endif /* BUILD_APPLE2 */
 
 #endif /* FNLIB_VERSION_MAJOR */

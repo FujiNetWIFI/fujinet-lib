@@ -12,7 +12,7 @@
 
 void test_fuji_status(void)
 {
-  FNStatus st;
+  FNStatus st, blank;
   bool ok;
 
   SECTION("fuji_status");
@@ -20,9 +20,12 @@ void test_fuji_status(void)
 #ifdef FN_BROKEN_fuji_status
   SKIP(fuji_status);
 #endif
-  memset(&st, 0, sizeof(st));
+  memset(&st, 0xFF, sizeof(st));
+  memcpy(&blank, &st, sizeof(st));
   ok = fuji_status(&st);
   TEST("fuji_status returns true", ok);
+  TEST("fuji_status wrote data into status buffer",
+       memcmp(&st, &blank, sizeof(st)) != 0);
 
   END_OF_TEST();
 }
@@ -223,27 +226,42 @@ void test_fuji_appkey(void)
 #ifdef FN_BROKEN_fuji_write_appkey
   SKIP(fuji_write_appkey);
 #else
-  memset(g.appkey.write, 0xAB, sizeof(g.appkey.write));
-  g.appkey.write[0]  = 'F';
-  g.appkey.write[1]  = 'N';
-  g.appkey.write[2]  = 'T';
-  g.appkey.write[3]  = 'E';
-  g.appkey.write[63] = 0xFF;
-
-  ok = fuji_write_appkey(0, sizeof(g.appkey.write), g.appkey.write);
-  TEST("fuji_write_appkey succeeds", ok);
-#endif
-
 #ifdef FN_BROKEN_fuji_read_appkey
   SKIP(fuji_read_appkey);
 #else
+
+  /* --- First write: fill with 0xAB, distinctive bytes at start and end --- */
+  memset(g.appkey.write, 0xAB, sizeof(g.appkey.write));
+  g.appkey.write[0]  = 0x01;
+  g.appkey.write[63] = 0x02;
+
+  ok = fuji_write_appkey(0, sizeof(g.appkey.write), g.appkey.write);
+  TEST("fuji_write_appkey (first) succeeds", ok);
+
   memset(g.appkey.read, 0, sizeof(g.appkey.read));
   count = 0;
   ok = fuji_read_appkey(0, &count, g.appkey.read);
-  TEST("fuji_read_appkey succeeds", ok);
-  TEST("fuji_read_appkey returned 64 bytes", count == 64);
-  TEST("Appkey data first 4 bytes match", memcmp(g.appkey.read, g.appkey.write, 4) == 0);
-  TEST("Appkey data last byte matches", g.appkey.read[63] == 0xFF);
+  TEST("fuji_read_appkey (first) succeeds", ok);
+  TEST("fuji_read_appkey (first) returned 64 bytes", count == 64);
+  TEST("fuji_read_appkey (first) data matches write",
+       memcmp(g.appkey.read, g.appkey.write, 64) == 0);
+
+  /* --- Second write: invert the pattern to prove read reflects new data --- */
+  memset(g.appkey.write, 0x54, sizeof(g.appkey.write));
+  g.appkey.write[0]  = 0x03;
+  g.appkey.write[63] = 0x04;
+
+  ok = fuji_write_appkey(0, sizeof(g.appkey.write), g.appkey.write);
+  TEST("fuji_write_appkey (second) succeeds", ok);
+
+  memset(g.appkey.read, 0, sizeof(g.appkey.read));
+  count = 0;
+  ok = fuji_read_appkey(0, &count, g.appkey.read);
+  TEST("fuji_read_appkey (second) succeeds", ok);
+  TEST("fuji_read_appkey (second) returned 64 bytes", count == 64);
+  TEST("fuji_read_appkey (second) data matches new write",
+       memcmp(g.appkey.read, g.appkey.write, 64) == 0);
+#endif
 #endif
 
   END_OF_TEST();
