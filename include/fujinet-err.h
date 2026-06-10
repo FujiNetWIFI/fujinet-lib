@@ -50,10 +50,4 @@ enum {
   NETWORK_ERROR_COULD_NOT_ALLOCATE_BUFFERS      = 255,
 };
 
-/**
- * Device specific error. This is the raw code from any device errors before they are converted to
- * simpler device-agnostic network library errors.
- */
-extern uint8_t fn_device_error;
-
 #endif /* FUJINET_ERR_H */
