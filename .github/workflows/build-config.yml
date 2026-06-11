@@ -17,6 +17,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         path: fn-lib
+        ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
     - name: Checkout CONFIG
       uses: actions/checkout@v4
@@ -32,5 +33,4 @@ jobs:
     - name: Compile CONFIG
       working-directory: fn-config
       run: |
-        mkdir -p _cache
-        make FUJINET_LIB=$GITHUB_WORKSPACE/fn-lib/build PLATFORMS="adam apple2 atari c64 coco"
+        make FUJINET_LIB=$GITHUB_WORKSPACE/fn-lib/build PLATFORMS="adam apple2 atari c64 coco" all
