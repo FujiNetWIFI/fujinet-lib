@@ -44,7 +44,7 @@ PLATFORM_COMBOS = \
 include ../makefiles/toplevel-rules.mk
 
 CFLAGS += -DBUILD_$(PLATFORM_UC)
-LDFLAGS_EXTRA_COCO = --limit=7C00
+LDFLAGS_EXTRA_COCO = --org=0E00 --limit=7C00
 
 # If you need to add extra platform-specific steps, do it below:
 #   coco/r2r:: coco/custom-step1
