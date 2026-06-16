@@ -2,6 +2,8 @@
  * Minimal test harness
  * ========================================================================= */
 
+#include "harness.h"
+
 #ifdef _CMOC_VERSION_
 #include <coco.h>
 #else
@@ -30,5 +32,6 @@ void test_abort(void)
   printf("\n*** ABORTED after first failure ***\n");
   printf("=== Results: %d passed, %d skipped, %d failed, %d total ===\n",
          tests_passed, tests_skipped, tests_failed, tests_run);
+  printf("fujinet-lib version %s\n", FNLIB_VERSION_FULL);
   end_testing(1);
 }

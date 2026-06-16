@@ -1,6 +1,12 @@
 #ifndef HARNESS_H
 #define HARNESS_H
 
+#include <fujinet-fuji.h>
+#ifndef FNLIB_VERSION_FULL
+#warning "Guessing at fujinet-lib version"
+#define FNLIB_VERSION_FULL "vClassic"
+#endif
+
 #define TEST(name, expr)                                        \
     do {                                                        \
       tests_run++;                                              \

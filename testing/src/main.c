@@ -36,12 +36,6 @@
 #include <stdio.h>
 #endif /* _CMOC_VERSION_ */
 
-#include <fujinet-fuji.h>
-#ifndef FNLIB_VERSION_FULL
-#warning "Guessing at fujinet-lib version"
-#define FNLIB_VERSION_FULL "vClassic"
-#endif
-
 /* =========================================================================
  * main
  * ========================================================================= */
