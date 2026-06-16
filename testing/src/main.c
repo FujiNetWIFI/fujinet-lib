@@ -66,6 +66,7 @@ int main(void)
   test_fuji_guid();
   test_fuji_base64();
   test_fuji_hashing();
+  test_fuji_copy_file();
 #endif // FUJI_TESTS
 
 #if NETWORK_TESTS
