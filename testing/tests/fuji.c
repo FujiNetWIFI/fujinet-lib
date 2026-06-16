@@ -414,9 +414,10 @@ void test_fuji_copy_file(void)
   ok = fuji_mount_host_slot(sd_idx);
   TEST("fuji_mount_host_slot (SD) succeeds", ok);
 
-  memset(g.dir, 0, 49);
-  ok = fuji_open_directory_filter(src_idx, "/COCO/", "lobby.dsk");
-  TEST("fuji_open_directory_filter TNFS /COCO/ succeeds", ok);
+  strcpy(g.dir, "/COCO/");
+  strcpy(g.dir + 7, "lobby.dsk");
+  ok = fuji_open_directory(src_idx, g.dir);
+  TEST("fuji_open_directory TNFS /COCO/lobby.dsk succeeds", ok);
   if (ok) {
     fuji_read_directory(49, 0x80, g.dir);
     if ((unsigned char)g.dir[0] != 0x7F) {
@@ -450,8 +451,8 @@ void test_fuji_copy_file(void)
   TEST("fuji_copy_file (COCO/lobby.dsk -> SD lobby.dsk) succeeds", copy_ok);
 
   memset(g.dir, 0, 49);
-  ok = fuji_open_directory_filter(sd_idx, "/", "lobby.dsk");
-  TEST("fuji_open_directory_filter SD / succeeds", ok);
+  ok = fuji_open_directory(sd_idx, "/");
+  TEST("fuji_open_directory SD / succeeds", ok);
   if (ok) {
     /* SDFS doesn't filter at open time; scan until we find lobby.dsk or EOF. */
     for (scan = 0; scan < 64; scan++) {
