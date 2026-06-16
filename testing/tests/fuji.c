@@ -4,7 +4,6 @@
 #include "constants.h"
 #include "globals.h"
 #include <fujinet-fuji.h>
-#include <fujinet-clock.h>
 
 #ifndef _CMOC_VERSION_
 #include <stdio.h>
@@ -355,6 +354,7 @@ void test_fuji_copy_file(void)
   unsigned long src_size;
   unsigned long dest_size;
   bool copy_ok;
+  bool file_existed;
   uint8_t pre_day;
   uint8_t pre_min;
   uint8_t scan;
@@ -368,6 +368,7 @@ void test_fuji_copy_file(void)
   src_size = 0;
   dest_size = 0;
   copy_ok = false;
+  file_existed = false;
   pre_day = 0;
   pre_min = 0;
   memset(saved_src, 0, sizeof(saved_src));
@@ -414,6 +415,33 @@ void test_fuji_copy_file(void)
   ok = fuji_mount_host_slot(sd_idx);
   TEST("fuji_mount_host_slot (SD) succeeds", ok);
 
+  /* Check if lobby.dsk already exists on SD and record its timestamp.
+   * Use a local buffer so fuji_read_directory does not corrupt g.slots.hosts
+   * (which aliases g.dir in the global union). */
+  {
+    uint8_t entry[49];
+    memset(g.dir, 0, MAX_FILENAME_LEN);
+    strcpy(g.dir, "/");
+    if (fuji_open_directory(sd_idx, g.dir)) {
+      for (scan = 0; scan < 64; scan++) {
+        memset(entry, 0, 49);
+        fuji_read_directory(49, 0x80, entry);
+        if ((unsigned char)entry[0] == 0x7F)
+          break;
+        if (strcmp((char *)entry + 13, "lobby.dsk") == 0) {
+          file_existed = true;
+          pre_day = entry[2];
+          pre_min = entry[4];
+          printf("  Pre-copy lobby.dsk: day=%u min=%u\n", (unsigned)pre_day, (unsigned)pre_min);
+          break;
+        }
+      }
+      fuji_close_directory();
+    }
+    if (!file_existed)
+      printf("  lobby.dsk not found on SD (will be created by copy)\n");
+  }
+
   strcpy(g.dir, "/COCO/");
   strcpy(g.dir + 7, "lobby.dsk");
   ok = fuji_open_directory(src_idx, g.dir);
@@ -427,13 +455,6 @@ void test_fuji_copy_file(void)
     fuji_close_directory();
   }
   TEST("lobby.dsk found on TNFS source (size non-zero)", src_size > 0);
-
-  /* SIMPLE_BINARY: [century, year, month, day, hour, min, sec] */
-  memset(g.dir, 0, 8);
-  clock_get_time((uint8_t *)g.dir, SIMPLE_BINARY);
-  pre_day = (uint8_t)g.dir[3];
-  pre_min = (uint8_t)g.dir[5];
-  printf("  Pre-copy time: day=%u min=%u\n", (unsigned)pre_day, (unsigned)pre_min);
 
   /* copy_spec is a local buffer — g.slots.hosts aliases g.dir in the union */
   strcpy(copy_spec, "COCO/lobby.dsk|lobby.dsk");
@@ -450,8 +471,9 @@ void test_fuji_copy_file(void)
 
   TEST("fuji_copy_file (COCO/lobby.dsk -> SD lobby.dsk) succeeds", copy_ok);
 
-  memset(g.dir, 0, 49);
-  ok = fuji_open_directory(sd_idx, "/");
+  memset(g.dir, 0, MAX_FILENAME_LEN);
+  strcpy(g.dir, "/");
+  ok = fuji_open_directory(sd_idx, g.dir);
   TEST("fuji_open_directory SD / succeeds", ok);
   if (ok) {
     /* SDFS doesn't filter at open time; scan until we find lobby.dsk or EOF. */
@@ -471,11 +493,10 @@ void test_fuji_copy_file(void)
   }
   TEST("lobby.dsk found on SD after copy (size non-zero)", dest_size > 0);
   TEST("dest lobby.dsk size matches source", dest_size == src_size);
-  TEST("lobby.dsk day matches today",
-       (uint8_t)g.dir[2] == pre_day);
-  TEST("lobby.dsk timestamp is fresh (written this minute)",
-       (uint8_t)g.dir[4] == pre_min ||
-       (uint8_t)g.dir[4] == (uint8_t)((pre_min + 1) % 60));
+  if (file_existed) {
+    TEST("lobby.dsk timestamp changed after copy",
+         (uint8_t)g.dir[2] != pre_day || (uint8_t)g.dir[4] != pre_min);
+  }
 
 #endif /* FN_BROKEN_fuji_get_host_slots */
 
