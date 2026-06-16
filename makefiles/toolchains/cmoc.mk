@@ -10,6 +10,9 @@ ASFLAGS +=
 LDFLAGS +=
 
 CFLAGS += -DGIT_VERSION='"$(GIT_VERSION)"'
+ifneq ($(FUJINET_LIB_VERSION),)
+  CFLAGS += -DFNLIB_VERSION_FULL='"$(FUJINET_LIB_VERSION)"'
+endif
 
 # Needed because of using sed on error messages
 SHELL = /bin/bash -o pipefail

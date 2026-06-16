@@ -13,6 +13,9 @@ ifneq ($(FUJINET_LIB),__UNDEFINED__)
 endif
 
 CFLAGS += -DGIT_VERSION=\"$(GIT_VERSION)\"
+ifneq ($(FUJINET_LIB_VERSION),)
+  CFLAGS += -DFNLIB_VERSION_FULL=\"$(FUJINET_LIB_VERSION)\"
+endif
 
 define include-dir-flag
   -I$1
