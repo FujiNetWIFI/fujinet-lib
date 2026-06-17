@@ -37,3 +37,32 @@ jobs:
         with:
           name: ${{ matrix.platform }}
           path: r2r/${{ matrix.platform }}/**
+
+  compile-tests:
+    needs: build
+    runs-on: ubuntu-latest
+
+    container:
+      image: fozztexx/defoogi:1.4.5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build lib
+        run: make
+
+      - name: Compile tests
+        run: make -C testing
+
+  compile-tests-current-fujinet-lib:
+    needs: build
+    runs-on: ubuntu-latest
+
+    container:
+      image: fozztexx/defoogi:1.4.5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile tests with FUJINET_LIB unset to use latest fujinet-lib release
+        run: make -C testing FUJINET_LIB=
