@@ -16,9 +16,10 @@
 #include <fujinet-fuji.h>
 
 #if FNLIB_VERSION_MAJOR < 5
+// ===========================
 
 #ifdef BUILD_ATARI
-#define FN_BROKEN_fuji_open_directory2
+#define FN_BROKEN_fuji_open_directory_filter
 #define FN_BROKEN_fuji_generate_guid
 #endif /* BUILD_ATARI */
 
@@ -39,7 +40,7 @@
 #endif /* BUILD_COCO */
 
 #ifdef BUILD_APPLE2
-#define FN_BROKEN_fuji_open_directory2
+#define FN_BROKEN_fuji_open_directory_filter
 #define FN_BROKEN_fuji_get_host_prefix
 
 #define FN_BROKEN_fuji_base64_encode_length
@@ -82,8 +83,17 @@
 #endif /* BUILD_MSDOS */
 
 #ifdef BUILD_ADAM
+#define FN_BROKEN_fuji_status
+#define FN_BROKEN_fuji_get_adapter_config
+#define FN_BROKEN_fuji_get_host_prefix
 #define FN_BROKEN_fuji_get_host_slots
-#define FN_BROKEN_fuji_put_host_slots
+#define FN_BROKEN_fuji_mount_host_slot
+#define FN_BROKEN_fuji_get_wifi_status
+#define FN_BROKEN_fuji_scan_for_networks
+
+#define FN_BROKEN_fuji_generate_guid
+#define FN_BROKEN_fuji_base64_encode_length
+#define FN_BROKEN_fuji_hash_data
 
 #define FN_BROKEN_network_close
 #define FN_BROKEN_network_http_add_header
@@ -129,7 +139,9 @@
 #define FN_BROKEN_clock_set_tz
 #endif /* BUILD_C64 */
 
+// ===========================
 #else /* FNLIB_VERSION_MAJOR >= 5 */
+// ===========================
 
 #ifdef BUILD_MSDOS
 // Missing from firmware
@@ -143,6 +155,13 @@
 //#define FN_BROKEN_fuji_hash_data
 #endif /* BUILD_APPLE2 */
 
+#ifdef BUILD_ADAM
+#define FN_BROKEN_fuji_set_appkey_details
+#define FN_BROKEN_fuji_write_appkey
+#define FN_BROKEN_fuji_write_appkey
+#endif /* BUILD_ADAM */
+
+// ===========================
 #endif /* FNLIB_VERSION_MAJOR */
 
 #endif /* BROKEN_H */

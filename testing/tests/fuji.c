@@ -5,6 +5,10 @@
 #include "globals.h"
 #include <fujinet-fuji.h>
 
+#if FNLIB_VERSION_MAJOR < 5
+#define fuji_open_directory_filter fuji_open_directory2
+#endif
+
 #ifndef _CMOC_VERSION_
 #include <stdio.h>
 #include <string.h>
@@ -328,11 +332,11 @@ void test_fuji_directory_ops(void)
   ok = fuji_close_directory();
   TEST("fuji_close_directory succeeds", ok);
 
-#ifdef FN_BROKEN_fuji_open_directory2
-  SKIP(fuji_open_directory2);
+#ifdef FN_BROKEN_fuji_open_directory_filter
+  SKIP(fuji_open_directory_filter);
 #endif
-  ok = fuji_open_directory2(0, (char *) "/", NULL);
-  TEST("fuji_open_directory2('/', NULL) succeeds", ok);
+  ok = fuji_open_directory_filter(0, (char *) "/", NULL);
+  TEST("fuji_open_directory_filter('/', NULL) succeeds", ok);
 
   ok = fuji_close_directory();
   TEST("fuji_close_directory (second open) succeeds", ok);
@@ -373,8 +377,8 @@ void test_fuji_copy_file(void)
   pre_min = 0;
   memset(saved_src, 0, sizeof(saved_src));
 
-#ifdef FN_BROKEN_fuji_get_host_slots
-  SKIP(fuji_get_host_slots);
+#ifdef FN_BROKEN_fuji_copy_file
+  SKIP(fuji_copy_file);
 #else
 
   ok = fuji_get_host_slots(&g.slots.hosts[0], MAX_HOSTS);
