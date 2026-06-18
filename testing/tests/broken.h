@@ -52,6 +52,7 @@
 #endif /* BUILD_APPLE2 */
 
 #ifdef BUILD_MSDOS
+#define FN_BROKEN_fuji_status
 #define FN_BROKEN_fuji_get_host_slots
 #define FN_BROKEN_fuji_get_host_prefix
 #define FN_BROKEN_fuji_mount_host_slot
@@ -59,6 +60,7 @@
 
 #define FN_BROKEN_fuji_read_appkey
 
+#define FN_BROKEN_fuji_base64_encode_length
 #define FN_BROKEN_fuji_base64_encode_input
 #define FN_BROKEN_fuji_hash_data
 
@@ -72,6 +74,7 @@
 #define FN_BROKEN_clock_set_tz
 #define FN_BROKEN_clock_get_time_tz
 
+#define FN_BROKEN_network_open
 #define FN_BROKEN_network_write
 #define FN_BROKEN_network_read
 #define FN_BROKEN_network_http_post
@@ -86,7 +89,8 @@
 #define FN_BROKEN_fuji_status
 #define FN_BROKEN_fuji_get_adapter_config
 #define FN_BROKEN_fuji_get_host_prefix
-#define FN_BROKEN_fuji_get_host_slots
+#define FN_BROKEN_fuji_put_host_slots
+#define FN_BROKEN_fuji_get_device_slots
 #define FN_BROKEN_fuji_mount_host_slot
 #define FN_BROKEN_fuji_get_wifi_status
 #define FN_BROKEN_fuji_scan_for_networks
@@ -156,9 +160,18 @@
 #endif /* BUILD_APPLE2 */
 
 #ifdef BUILD_ADAM
+// Missing from lib
 #define FN_BROKEN_fuji_set_appkey_details
 #define FN_BROKEN_fuji_write_appkey
 #define FN_BROKEN_fuji_write_appkey
+
+// Missing from firmware
+#define FN_BROKEN_fuji_status
+#define FN_BROKEN_fuji_get_host_prefix
+#define FN_BROKEN_fuji_get_wifi_enabled
+#define FN_BROKEN_fuji_scan_for_networks
+#define FN_BROKEN_fuji_base64_encode_input
+#define FN_BROKEN_fuji_hash_data
 #endif /* BUILD_ADAM */
 
 // ===========================

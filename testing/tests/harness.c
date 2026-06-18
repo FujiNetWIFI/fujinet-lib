@@ -3,12 +3,14 @@
  * ========================================================================= */
 
 #include "harness.h"
+#include "globals.h"
 
 #ifdef _CMOC_VERSION_
 #include <coco.h>
 #else
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #endif /* _CMOC_VERSION_ */
 
 int tests_run     = 0;
@@ -18,13 +20,32 @@ int tests_failed  = 0;
 
 void end_testing(int code)
 {
-#ifdef BUILD_ATARI
-  (void) code;
-  while (1)
-    ;
-#else
+  printf("Press any key to exit\n");
+#ifdef _CMOC_VERSION_
+  while (true)
+  {
+    if (inkey())
+      break;
+  }
+#else /* ! _CMOC_VERSION_ */
+  getc(stdin);
+#endif /* _CMOC_VERSION_ */
   exit(code);
+}
+
+void print_versions()
+{
+  printf("fujinet-lib version %s\n", FNLIB_VERSION_FULL);
+
+#ifndef FN_BROKEN_fuji_get_adapter_config_extended
+  if (!fuji_get_adapter_config_extended(&g.adapter.ace))
+      strcpy(g.adapter.ace.fn_version, "FAIL");
+#else
+  strcpy(g.adapter.ace.fn_version, "BROKEN");
 #endif
+  printf("FujiNet: %-14s\n", g.adapter.ace.fn_version);
+
+  return;
 }
 
 void test_abort(void)
@@ -32,6 +53,6 @@ void test_abort(void)
   printf("\n*** ABORTED after first failure ***\n");
   printf("=== Results: %d passed, %d skipped, %d failed, %d total ===\n",
          tests_passed, tests_skipped, tests_failed, tests_run);
-  printf("fujinet-lib version %s\n", FNLIB_VERSION_FULL);
+  print_versions();
   end_testing(1);
 }

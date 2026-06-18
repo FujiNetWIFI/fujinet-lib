@@ -391,7 +391,7 @@ void test_network_write(void)
 #ifdef FN_BROKEN_network_write
   SKIP(network_write);
 #else
-  err = network_write(NET_TCP_SPEC, msg, sizeof(msg) - 1);
+  err = network_write(NET_TCP_SPEC, msg, strlen((const char *) msg));
   TEST("network_write succeeds", err == FN_ERR_OK);
 #endif
 
@@ -399,7 +399,7 @@ void test_network_write(void)
   SKIP(network_read);
 #else
   memset(g.net, 0, sizeof(g.net));
-  r = network_read(NET_TCP_SPEC, g.net, sizeof(msg) - 1);
+  r = network_read(NET_TCP_SPEC, g.net, strlen((const char *) msg));
   TEST("network_read echoed data", r > 0);
   if (r > 0) {
     TEST("Echo matches sent message", memcmp(g.net, msg, r) == 0);

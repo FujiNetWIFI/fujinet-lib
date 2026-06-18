@@ -93,7 +93,7 @@ int main(void)
 #endif // CLOCK_TESTS
 
   printf("\n=== All %d tests passed, %d skipped ===\n", tests_run, tests_skipped);
-  printf("fujinet-lib version %s\n", FNLIB_VERSION_FULL);
+  print_versions();
 
   end_testing(0);
   return 0;

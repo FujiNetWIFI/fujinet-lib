@@ -381,6 +381,9 @@ void test_fuji_copy_file(void)
   SKIP(fuji_copy_file);
 #else
 
+#ifdef FN_BROKEN_fuji_get_host_slots
+  SKIP(fuji_get_host_slots);
+#else
   ok = fuji_get_host_slots(&g.slots.hosts[0], MAX_HOSTS);
   TEST("fuji_get_host_slots succeeds", ok);
 
@@ -503,6 +506,7 @@ void test_fuji_copy_file(void)
   }
 
 #endif /* FN_BROKEN_fuji_get_host_slots */
+#endif /* FN_BROKEN_fuji_copy_file */
 
   END_OF_TEST();
 }
