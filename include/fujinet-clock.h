@@ -18,15 +18,16 @@
  * implementation. Keep TIMEFORMAT_COUNT in sync with the enum.
  */
 typedef enum time_format_t {
-    SIMPLE_BINARY,      /* 7 bytes: Y(century), Y(hundreds), M, D, H, M, S */
-    PRODOS_BINARY,      /* 4 bytes: ProDOS format */
-    APETIME_BINARY,     /* 6 bytes: D, M, Y, H, M, S */
-    TZ_ISO_STRING,      /* ISO string with current FN timezone, null terminated */
-    UTC_ISO_STRING,     /* ISO string in UTC, null terminated */
-    APPLE3_SOS_BINARY   /* Apple3 SOS string: YYYYMMDD0HHMMSS000, null terminated */
+    SIMPLE_BINARY,            /* 7 bytes: Y(century), Y(hundreds), M, D, H, M, S */
+    PRODOS_BINARY,            /* 4 bytes: ProDOS format */
+    APETIME_BINARY,           /* 6 bytes: D, M, Y, H, M, S */
+    TZ_ISO_STRING,            /* ISO string with current FN timezone, null terminated */
+    UTC_ISO_STRING,           /* ISO string in UTC, null terminated */
+    APPLE3_SOS_BINARY,        /* Apple3 SOS string: YYYYMMDD0HHMMSS000, null terminated */
+    SIMPLE_BINARY_WITH_HUNDREDTHS /* 8 bytes: Y(century), Y(hundreds), M, D, H, M, S, hundredths (0-99) */
 } TimeFormat;
 
-#define TIMEFORMAT_COUNT 6
+#define TIMEFORMAT_COUNT 7
 
 #define CLK_CMD_SIMPLE_BINARY      APETIMECMD_SETTZ_ALT2
 #define CLK_CMD_PRODOS_BINARY      APETIMECMD_GET_PRODOS
@@ -38,6 +39,7 @@ typedef enum time_format_t {
 #define CLK_CMD_TZ_ISO_STRING      APETIMECMD_GET_ISO_LOCAL
 #define CLK_CMD_UTC_ISO_STRING     APETIMECMD_GET_ISO_UTC
 #define CLK_CMD_APPLE3_SOS_BINARY  APETIMECMD_GET_SOS
+#define CLK_CMD_SIMPLE_BINARY_WITH_HUNDREDTHS APETIMECMD_GET_SIMPLE_HUNDREDTHS
 
 /**
  * @brief  Set the FN clock's system timezone

@@ -6,7 +6,8 @@ static const uint8_t _clk_cmd[TIMEFORMAT_COUNT] = {
   CLK_CMD_APETIME_BINARY,
   CLK_CMD_TZ_ISO_STRING,
   CLK_CMD_UTC_ISO_STRING,
-  CLK_CMD_APPLE3_SOS_BINARY
+  CLK_CMD_APPLE3_SOS_BINARY,
+  CLK_CMD_SIMPLE_BINARY_WITH_HUNDREDTHS
 };
 
 const uint8_t *clk_cmd = _clk_cmd;
@@ -19,7 +20,7 @@ const uint8_t *clk_cmd = _clk_cmd;
 #include <string.h>
 #endif
 
-static const uint8_t clk_reply_len[TIMEFORMAT_COUNT] = { 7, 4, 6, 25, 25, 19 };
+static const uint8_t clk_reply_len[TIMEFORMAT_COUNT] = { 7, 4, 6, 25, 25, 19, 8 };
 
 static uint8_t clock_set_alternate_tz(const char *tz)
 {

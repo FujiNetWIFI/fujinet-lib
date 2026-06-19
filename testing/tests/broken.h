@@ -21,6 +21,7 @@
 #ifdef BUILD_ATARI
 #define FN_BROKEN_fuji_open_directory_filter
 #define FN_BROKEN_fuji_generate_guid
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
 #endif /* BUILD_ATARI */
 
 #ifdef BUILD_COCO
@@ -34,6 +35,7 @@
 #define FN_BROKEN_clock_get_time_TZ_ISO_STRING
 #define FN_BROKEN_clock_get_time_UTC_ISO_STRING
 #define FN_BROKEN_clock_get_time_APPLE3_SOS_BINARY
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
 #define FN_BROKEN_clock_get_tz
 #define FN_BROKEN_clock_set_tz
 #define FN_BROKEN_clock_get_time_tz
@@ -49,6 +51,7 @@
 #define FN_BROKEN_fuji_hash_calculate
 
 #define FN_BROKEN_network_http_post
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
 #endif /* BUILD_APPLE2 */
 
 #ifdef BUILD_MSDOS
@@ -70,6 +73,7 @@
 #define FN_BROKEN_clock_get_time_TZ_ISO_STRING
 #define FN_BROKEN_clock_get_time_UTC_ISO_STRING
 #define FN_BROKEN_clock_get_time_APPLE3_SOS_BINARY
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
 #define FN_BROKEN_clock_get_tz
 #define FN_BROKEN_clock_set_tz
 #define FN_BROKEN_clock_get_time_tz
@@ -124,6 +128,7 @@
 #define FN_BROKEN_clock_get_time_TZ_ISO_STRING
 #define FN_BROKEN_clock_get_time_UTC_ISO_STRING
 #define FN_BROKEN_clock_get_time_APPLE3_SOS_BINARY
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
 #define FN_BROKEN_clock_get_time_tz
 #define FN_BROKEN_clock_get_tz
 #define FN_BROKEN_clock_set_tz
@@ -138,6 +143,7 @@
 #define FN_BROKEN_clock_get_time_TZ_ISO_STRING
 #define FN_BROKEN_clock_get_time_UTC_ISO_STRING
 #define FN_BROKEN_clock_get_time_APPLE3_SOS_BINARY
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
 #define FN_BROKEN_clock_get_time_tz
 #define FN_BROKEN_clock_get_tz
 #define FN_BROKEN_clock_set_tz
