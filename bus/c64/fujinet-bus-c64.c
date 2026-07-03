@@ -90,7 +90,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   return success;
 }
 
-uint16_t fuji_bus_read(uint8_t device, void *buffer, size_t length)
+uint16_t network_bus_read(uint8_t device, void *buffer, size_t length)
 {
   uint16_t rlen;
   printf("FUJI_BUS_READ %u\n", length);
@@ -99,7 +99,7 @@ uint16_t fuji_bus_read(uint8_t device, void *buffer, size_t length)
   return rlen;
 }
 
-uint16_t fuji_bus_write(uint8_t device, const void *buffer, size_t length)
+uint16_t network_bus_write(uint8_t device, const void *buffer, size_t length)
 {
   return cbm_write(device - FUJI_DEVICEID_NETWORK + 1 + CBM_DATA_CHANNEL_0, buffer, length);
 }

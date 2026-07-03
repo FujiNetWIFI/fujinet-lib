@@ -78,7 +78,7 @@ int16_t network_read_nb(const char *devicespec, void *buf, uint16_t len)
   if (len > nw_status.avail)
     len = nw_status.avail;
 
-  return fuji_bus_read(FUJI_DEVICEID_NETWORK + nw_unit - 1, buf, len);
+  return network_bus_read(FUJI_DEVICEID_NETWORK + nw_unit - 1, buf, len);
 }
 #endif /* ! (__ADAM__ || __COLECOADAM__) */
 
@@ -109,7 +109,7 @@ FN_ERR network_write(const char *devicespec, const void *buf, uint16_t len)
 
   nw_unit = network_unit(devicespec);
   while (len) {
-    wlen = fuji_bus_write(FUJI_DEVICEID_NETWORK + nw_unit - 1, ubuf, len);
+    wlen = network_bus_write(FUJI_DEVICEID_NETWORK + nw_unit - 1, ubuf, len);
     if (len && !wlen)
       return FN_ERR_IO_ERROR;
     len -= wlen;

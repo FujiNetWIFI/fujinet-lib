@@ -106,7 +106,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   return !sp_error;
 }
 
-uint16_t fuji_bus_read(uint8_t device, void *buffer, size_t length)
+uint16_t network_bus_read(uint8_t device, void *buffer, size_t length)
 {
   uint16_t err;
   uint8_t sp_id = sp_fuji_id;
@@ -138,7 +138,7 @@ uint16_t fuji_bus_read(uint8_t device, void *buffer, size_t length)
   return length;
 }
 
-uint16_t fuji_bus_write(uint8_t device, const void *buffer, size_t length)
+uint16_t network_bus_write(uint8_t device, const void *buffer, size_t length)
 {
   uint16_t err;
   uint8_t sp_id = sp_fuji_id;
