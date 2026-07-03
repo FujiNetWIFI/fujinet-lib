@@ -1,9 +1,11 @@
-#include "fujinet-bus.h"
 #include "fujinet-fuji-coco.h"
-#include "fujinet-commands.h"
-#include "fujinet-const.h"
 #include "fujinet-network-coco.h"
 #include "dw.h"
+
+#include <fujinet-int.h>
+#include <fujinet-bus.h>
+#include <fujinet-commands.h>
+#include <fujinet-const.h>
 
 typedef struct {
   uint16_t length;
@@ -12,153 +14,110 @@ typedef struct {
 
 typedef struct {
   uint8_t opcode;
-  uint8_t cmd;
+  union {
+    uint8_t cmd;
+    struct {
+      uint8_t unit;
+      uint8_t cmd;
+    } net;
+  } fn;
 } fujibus_header;
 
-typedef struct {
-  byte opcode;
-  byte unit;
-  byte cmd;
-} fujinw_header;
-
 static fujibus_header fb_header;
-static fujinw_header nw_header;
 static FNAppKeyString appkey_buf;
-static uint8_t *fb_packet = NULL;
-
-static uint16_t pack_payload(uint8_t *buf, uint8_t fields,
-                             uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
-                             const void *data, size_t data_length)
-{
-  uint16_t idx = 0;
-  uint16_t numbytes = fuji_field_numbytes(fields);
-  if (numbytes) { buf[idx++] = aux1; numbytes--; }
-  if (numbytes) { buf[idx++] = aux2; numbytes--; }
-  if (numbytes) { buf[idx++] = aux3; numbytes--; }
-  if (numbytes) { buf[idx++] = aux4; numbytes--; }
-  if (data) {
-    memcpy(&buf[idx], data, data_length);
-    idx += data_length;
-  }
-  return idx;
-}
-
-bool fuji_net_call(uint8_t unit, uint8_t fuji_cmd, uint8_t fields,
-		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
-		   const void *data, size_t data_length,
-		   void *reply, size_t reply_length)
-{
-  uint8_t err;
-  uint16_t idx;
-
-
-  // Use sbrk(0) to get pointer to unused memory at top of program. No
-  // need to move the sbrk() since we only need this space temporarily
-  // and nothing else will call sbrk() to try to use this space. Since
-  // we don't allocate it we also don't need to free it. Probably
-  // unsafe.
-  fb_packet = (uint8_t *) sbrk(0);
-
-  nw_header.opcode = OP_NET;
-  nw_header.unit = unit;
-  nw_header.cmd = fuji_cmd;
-
-  idx = pack_payload(fb_packet, fields, aux1, aux2, aux3, aux4, data, data_length);
-
-  bus_ready();
-  dwwrite((unsigned char *) &nw_header, sizeof(nw_header));
-  if (idx)
-    dwwrite(fb_packet, idx);
-
-  err = network_get_error(unit);
-  if (err)
-    return false;
-
-  if (reply) {
-    err = network_get_response(unit, (unsigned char *) reply, reply_length);
-    return !err;
-  }
-
-  return true;
-}
 
 bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
 		   const void *data, size_t data_length,
 		   void *reply, size_t reply_length)
 {
-  uint16_t idx;
+  uint8_t numbytes, idx;
+  uint8_t header_len;
+  bool success;
+  uint8_t aux[4];
 
 
-  if (device >= FUJI_DEVICEID_NETWORK  && device <= FUJI_DEVICEID_NETWORK_LAST)
-    return fuji_net_call(device - FUJI_DEVICEID_NETWORK + 1, fuji_cmd, fields,
-                         aux1, aux2, aux3, aux4, data, data_length, reply, reply_length);
+  if (device >= FUJI_DEVICEID_NETWORK
+      && device <= FUJI_DEVICEID_NETWORK_LAST) {
+    fb_header.opcode = OP_NET;
+    fb_header.fn.net.unit = device - FUJI_DEVICEID_NETWORK + 1;
+    fb_header.fn.net.cmd = fuji_cmd;
+    header_len = 3;
+  }
+  else {
+    if (device == FUJI_DEVICEID_CLOCK)
+      fb_header.opcode = OP_CLOCK;
+    else if (device == FUJI_DEVICEID_FUJINET)
+      fb_header.opcode = OP_FUJI;
+    else
+      return false;
 
-  if (device != FUJI_DEVICEID_CLOCK && device != FUJI_DEVICEID_FUJINET)
-    return false;
-
-  // Use sbrk(0) to get pointer to unused memory at top of program. No
-  // need to move the sbrk() since we only need this space temporarily
-  // and nothing else will call sbrk() to try to use this space. Since
-  // we don't allocate it we also don't need to free it. Probably
-  // unsafe.
-  fb_packet = (uint8_t *) sbrk(0);
-
-  if (device == FUJI_DEVICEID_CLOCK)
-    fb_header.opcode = OP_CLOCK;
-  else
-    fb_header.opcode = OP_FUJI;
-
-  fb_header.cmd = fuji_cmd;
-
-  idx = pack_payload(fb_packet, fields, aux1, aux2, aux3, aux4, data, data_length);
+    fb_header.fn.cmd = fuji_cmd;
+    header_len = 2;
+  }
 
   bus_ready();
-  dwwrite((unsigned char *) &fb_header, sizeof(fb_header));
+  dwwrite((unsigned char *) &fb_header, header_len);
+  numbytes = fuji_field_numbytes(fields);
+  idx = 0;
+  if (numbytes) { aux[idx++] = aux1; numbytes--; }
+  if (numbytes) { aux[idx++] = aux2; numbytes--; }
+  if (numbytes) { aux[idx++] = aux3; numbytes--; }
+  if (numbytes) { aux[idx++] = aux4; numbytes--; }
   if (idx)
-    dwwrite(fb_packet, idx);
+    dwwrite(aux, idx);
+  if (data && data_length)
+    dwwrite((uint8_t *) data, data_length);
 
-  if (device == FUJI_DEVICEID_CLOCK)
-  {
+  if (device == FUJI_DEVICEID_CLOCK) {
     if (reply)
-      return dwread((byte *)reply, reply_length) ? true : false;
+      return dwread((uint8_t *) reply, reply_length);
+    return true;
   }
-  else
-  {
-    if (fuji_get_error())
-      return false;
-    if (reply)
-      return (bool)fuji_get_response((unsigned char *)reply, reply_length);
+
+  if (header_len == 3) { // FUJI_DEVICEID_NETWORK
+    success = !network_get_error(fb_header.fn.net.unit);
+    if (success && reply)
+      success = !network_get_response(fb_header.fn.net.unit,
+                                      (uint8_t *) reply,
+                                      reply_length);
   }
-  return true;
+  else {
+    success = !fuji_get_error();
+    if (success && reply)
+      success = fuji_get_response((uint8_t *) reply,
+                                  reply_length);
+  }
+
+  return success;
 }
 
 uint16_t network_bus_read(uint8_t device, void *buffer, size_t length)
 {
-  nw_header.opcode = OP_NET;
-  nw_header.unit = device - FUJI_DEVICEID_NETWORK + 1;
-  nw_header.cmd = FUJICMD_READ;
+  fb_header.opcode = OP_NET;
+  fb_header.fn.net.unit = device - FUJI_DEVICEID_NETWORK + 1;
+  fb_header.fn.net.cmd = FUJICMD_READ;
 
   bus_ready();
-  dwwrite((uint8_t *) &nw_header, sizeof(nw_header));
+  dwwrite((uint8_t *) &fb_header, sizeof(fb_header));
   dwwrite((uint8_t *) &length, sizeof(length));
-  network_get_response(nw_header.unit, (uint8_t *) buffer, length);
+  network_get_response(fb_header.fn.net.unit, (uint8_t *) buffer, length);
 
   return length;
 }
 
 uint16_t network_bus_write(uint8_t device, const void *buffer, size_t length)
 {
-  nw_header.opcode = OP_NET;
-  nw_header.unit = device - FUJI_DEVICEID_NETWORK + 1;
-  nw_header.cmd = FUJICMD_WRITE;
+  fb_header.opcode = OP_NET;
+  fb_header.fn.net.unit = device - FUJI_DEVICEID_NETWORK + 1;
+  fb_header.fn.net.cmd = FUJICMD_WRITE;
 
   bus_ready();
-  dwwrite((uint8_t *) &nw_header, sizeof(nw_header));
+  dwwrite((uint8_t *) &fb_header, sizeof(fb_header));
   dwwrite((uint8_t *) &length, sizeof(length));
   dwwrite((uint8_t *) buffer, length);
 
-  if (network_get_error(nw_header.unit))
+  if (network_get_error(fb_header.fn.net.unit))
     length = 0;
   return length;
 }
