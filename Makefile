@@ -24,3 +24,8 @@ include makefiles/toplevel-rules.mk
 #   apple2/disk: apple2/custom-step1 apple2/custom-step2
 
 RELEASE_VERSION ?= $(shell awk '/FNLIB_VERSION_FULL/{ gsub(/"/, "", $$3); print $$3 }' include/fujinet-version.h)
+
+.PHONY: testing
+
+testing:
+	$(MAKE) -C testing clean all

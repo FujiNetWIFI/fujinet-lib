@@ -24,7 +24,7 @@ typedef struct {
 } fujibus_header;
 
 static fujibus_header fb_header;
-static FNAppKeyString appkey_buf;
+FNAppKeyString appkey_buf;
 
 bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
@@ -120,34 +120,4 @@ uint16_t network_bus_write(uint8_t device, const void *buffer, size_t length)
   if (network_get_error(fb_header.fn.net.unit))
     length = 0;
   return length;
-}
-
-/*
-  appkeys are variable length strings. CoCo drivewire is serial but
-  drivewireFuji in the FujiNet firmware seems to be using fixed length
-  packets with a header to indicate the true length of the key, same
-  as Atari SIO. On write the aux1/aux2 fields are combined into a
-  uint16_t. On read, there is an extra 2 bytes of header to indicate
-  how much of the fixed block represents the string.
-*/
-
-bool fuji_bus_appkey_read(void *string, uint16_t *length)
-{
-  // Caller may not have room for length header so use our own buffer to read
-  if (!FUJICALL_RV(FUJICMD_READ_APPKEY, &appkey_buf, sizeof(appkey_buf)))
-    return false;
-  *length = appkey_buf.length;
-  memmove(string, appkey_buf.data, appkey_buf.length);
-  return true;
-}
-
-bool fuji_bus_appkey_write(void *string, uint16_t length)
-{
-  // The drivewire firmware decodes WRITE_APPKEY's length MSB-first
-  // (`lenh<<8 | lenl`), matching the stable fujinet-lib's struct-copy
-  // wire format. FUJICALL_B12_D would send LSB-first, so use
-  // FUJICALL_A1_A2_D with the bytes in MSB,LSB order instead.
-  return FUJICALL_A1_A2_D(FUJICMD_WRITE_APPKEY,
-                          U16_MSB(length), U16_LSB(length),
-                          string, MAX_APPKEY_LEN);
 }
