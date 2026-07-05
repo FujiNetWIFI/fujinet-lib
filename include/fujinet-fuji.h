@@ -206,7 +206,7 @@ extern FNStatus _fuji_status;
  * @brief Closes the currently open directory
  * @return Success status, true if all OK.
  */
-#define fuji_close_directory() FUJICALL(FUJICMD_CLOSE_DIRECTORY)
+extern bool fuji_close_directory(void);
 
 /**
  * @brief Copies a file from given src to dst, with supplied path in copy_spec
@@ -365,7 +365,7 @@ bool fuji_open_directory_filter(uint8_t hostSlot, const char *path, const char *
  * @brief Fill buffer with directory information.
  * @return success status of request
  */
-#define fuji_read_directory(maxlen, aux2, buffer) FUJICALL_A1_A2_RV(FUJICMD_READ_DIR_ENTRY, maxlen, aux2, buffer, maxlen)
+extern bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer);
 
 /**
  * @brief Reset FN
@@ -409,12 +409,7 @@ bool fuji_open_directory_filter(uint8_t hostSlot, const char *path, const char *
  * @brief Sets current directory position
  * @return success status of request.
  */
-#ifdef _CMOC_VERSION_
-#define fuji_set_directory_position(pos) \
-    FUJICALL_A1_A2(FUJICMD_SET_DIRECTORY_POSITION, U16_MSB(pos), U16_LSB(pos))
-#else
-#define fuji_set_directory_position(pos) FUJICALL_B12(FUJICMD_SET_DIRECTORY_POSITION, pos)
-#endif
+extern bool fuji_set_directory_position(uint16_t pos);
 
 #ifdef __ATARI__
 /**
