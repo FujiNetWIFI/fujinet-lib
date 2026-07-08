@@ -11,6 +11,7 @@ static const uint8_t _clk_cmd[TIMEFORMAT_COUNT] = {
 };
 
 const uint8_t *clk_cmd = _clk_cmd;
+const uint8_t clk_reply_len[TIMEFORMAT_COUNT] = { 7, 4, 6, 25, 25, 19, 8 };
 
 #ifndef BUILD_APPLE2
 
@@ -19,8 +20,6 @@ const uint8_t *clk_cmd = _clk_cmd;
 #else
 #include <string.h>
 #endif
-
-static const uint8_t clk_reply_len[TIMEFORMAT_COUNT] = { 7, 4, 6, 25, 25, 19, 8 };
 
 static uint8_t clock_set_alternate_tz(const char *tz)
 {
