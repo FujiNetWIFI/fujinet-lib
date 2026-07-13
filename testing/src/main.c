@@ -20,13 +20,14 @@
  *   - Stack locals are kept under 64 bytes; anything larger is a static global
  */
 
-#if !FUJI_TESTS && !NETWORK_TESTS && !CLOCK_TESTS
+#if !FUJI_TESTS && !NETWORK_TESTS && !CLOCK_TESTS && !DISK_TESTS
 #error "You need to choose some tests"
 #endif
 
 #include "fuji.h"
 #include "network.h"
 #include "clock.h"
+#include "fdsk.h"
 #include "init_video.h"
 #include "harness.h"
 
@@ -60,8 +61,12 @@ int main(void)
   test_fuji_guid();
   test_fuji_base64();
   test_fuji_hashing();
-  test_fuji_copy_file();
 #endif // FUJI_TESTS
+
+#if DISK_TESTS
+  /* fdsk.h */
+  test_fuji_copy_file();
+#endif // DISK_TESTS
 
 #if NETWORK_TESTS
   /* network.h */

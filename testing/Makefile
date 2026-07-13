@@ -1,4 +1,4 @@
-SUBPROJECTS = testlib fuji network clock
+SUBPROJECTS = testlib fuji network clock fdsk
 
 .PHONY: all $(SUBPROJECTS)
 
