@@ -18,6 +18,7 @@ void test_fuji_copy_file(void)
   uint8_t sd_idx;
   bool found_src;
   bool found_sd;
+  bool src_preexisting;
   uint8_t *slot;
   uint8_t saved_src[32];
   char copy_spec[40];
@@ -35,6 +36,7 @@ void test_fuji_copy_file(void)
   sd_idx = 0;
   found_src = false;
   found_sd = false;
+  src_preexisting = false;
   src_size = 0;
   dest_size = 0;
   copy_ok = false;
@@ -53,12 +55,27 @@ void test_fuji_copy_file(void)
   ok = fuji_get_host_slots(&g.slots.hosts[0], MAX_HOSTS);
   TEST("fuji_get_host_slots succeeds", ok);
 
-  /* CMOC: g.slots.hosts[i][j] strides by 1 byte; use pointer decay instead. */
+  /* CMOC: g.slots.hosts[i][j] strides by 1 byte; use pointer decay instead.
+   * Prefer an existing tnfs.fujinet.online slot; only borrow an empty one
+   * if none exists, so there's nothing to restore afterward. */
   for (i = 0; i < MAX_HOSTS; i++) {
     slot = (uint8_t *)g.slots.hosts[i];
-    if (slot[0] == '\0' && !found_src) {
+    if (strncmp((char *)slot, TNFS_COPY_SOURCE_HOST, 32) == 0) {
       src_idx = i;
       found_src = true;
+      src_preexisting = true;
+      break;
+    }
+  }
+
+  if (!found_src) {
+    for (i = 0; i < MAX_HOSTS; i++) {
+      slot = (uint8_t *)g.slots.hosts[i];
+      if (slot[0] == '\0') {
+        src_idx = i;
+        found_src = true;
+        break;
+      }
     }
   }
 
@@ -71,16 +88,19 @@ void test_fuji_copy_file(void)
     }
   }
   TEST("SD host slot found", found_sd);
-  printf("  src slot %u  sd slot %u\n",
-         (unsigned)(src_idx + 1), (unsigned)(sd_idx + 1));
+  printf("  src slot %u  sd slot %u  (%s)\n",
+         (unsigned)(src_idx + 1), (unsigned)(sd_idx + 1),
+         src_preexisting ? "already present" : "temporary");
 
-  slot = (uint8_t *)g.slots.hosts[src_idx];
-  memcpy(saved_src, slot, 32);
-  memset(slot, 0, 32);
-  strcpy((char *)slot, "tnfs.fujinet.online");
+  if (!src_preexisting) {
+    slot = (uint8_t *)g.slots.hosts[src_idx];
+    memcpy(saved_src, slot, 32);
+    memset(slot, 0, 32);
+    strcpy((char *)slot, TNFS_COPY_SOURCE_HOST);
 
-  ok = fuji_put_host_slots(&g.slots.hosts[0], MAX_HOSTS);
-  TEST("fuji_put_host_slots (with source) succeeds", ok);
+    ok = fuji_put_host_slots(&g.slots.hosts[0], MAX_HOSTS);
+    TEST("fuji_put_host_slots (with source) succeeds", ok);
+  }
 
   ok = fuji_mount_host_slot(src_idx);
   TEST("fuji_mount_host_slot (TNFS) succeeds", ok);
@@ -98,10 +118,15 @@ void test_fuji_copy_file(void)
     if (fuji_open_directory(sd_idx, g.dir)) {
       for (scan = 0; scan < 64; scan++) {
         memset(entry, 0, 49);
-        fuji_read_directory(49, 0x80, entry);
+        ok = fuji_read_directory(49, 0x80, entry);
+        if (!ok) {
+          printf("  fuji_read_directory failed during pre-copy SD scan (entry %u)\n",
+                 (unsigned)scan);
+          break;
+        }
         if ((unsigned char)entry[0] == 0x7F)
           break;
-        if (strcmp((char *)entry + 13, "lobby.dsk") == 0) {
+        if (strcmp((char *)entry + DIRENTRY_FILENAME_OFFSET, "lobby.dsk") == 0) {
           file_existed = true;
           pre_day = entry[2];
           pre_min = entry[4];
@@ -135,11 +160,20 @@ void test_fuji_copy_file(void)
          (unsigned)(src_idx + 1), (unsigned)(sd_idx + 1), copy_spec);
   copy_ok = fuji_copy_file(src_idx + 1, sd_idx + 1, copy_spec);
 
-  /* Re-read first — g.slots.hosts/g.dir alias in the union. */
-  fuji_get_host_slots(&g.slots.hosts[0], MAX_HOSTS);
-  slot = (uint8_t *)g.slots.hosts[src_idx];
-  memcpy(slot, saved_src, 32);
-  fuji_put_host_slots(&g.slots.hosts[0], MAX_HOSTS);
+  if (!src_preexisting) {
+    /* Re-read first — g.slots.hosts/g.dir alias in the union. */
+    ok = fuji_get_host_slots(&g.slots.hosts[0], MAX_HOSTS);
+    TEST("fuji_get_host_slots (restore re-read) succeeds", ok);
+    if (ok) {
+      /* Only patch and write back if the re-read actually refreshed the
+       * buffer — otherwise g.slots.hosts still holds stale union data from
+       * the TNFS source stat above, and writing it back would corrupt the
+       * other 7 host slots on the device. */
+      slot = (uint8_t *)g.slots.hosts[src_idx];
+      memcpy(slot, saved_src, 32);
+      fuji_put_host_slots(&g.slots.hosts[0], MAX_HOSTS);
+    }
+  }
   fuji_mount_host_slot(sd_idx);
 
   TEST("fuji_copy_file (COCO/lobby.dsk -> SD lobby.dsk) succeeds", copy_ok);
@@ -152,10 +186,15 @@ void test_fuji_copy_file(void)
     /* SDFS doesn't filter at open time; scan until we find lobby.dsk or EOF. */
     for (scan = 0; scan < 64; scan++) {
       memset(g.dir, 0, 49);
-      fuji_read_directory(49, 0x80, g.dir);
+      ok = fuji_read_directory(49, 0x80, g.dir);
+      if (!ok) {
+        printf("  fuji_read_directory failed during post-copy SD scan (entry %u)\n",
+               (unsigned)scan);
+        break;
+      }
       if ((unsigned char)g.dir[0] == 0x7F)
         break;
-      if (strcmp(g.dir + 13, "lobby.dsk") == 0) {
+      if (strcmp(g.dir + DIRENTRY_FILENAME_OFFSET, "lobby.dsk") == 0) {
         memcpy(&dest_size, (uint8_t *)g.dir + 6, sizeof(unsigned long));
         printf("  Dest size:   %lu bytes  day=%u min=%u\n",
                dest_size, (unsigned)(uint8_t)g.dir[2], (unsigned)(uint8_t)g.dir[4]);
