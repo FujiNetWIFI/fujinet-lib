@@ -13,11 +13,10 @@
  * ========================================================================= */
 
 void print_hex_diff(const char *label,
-                    const uint8_t *print_buf, uint8_t print_len,
-                    const uint8_t *cmp_buf, uint8_t cmp_len)
+                    const uint8_t *print_buf, size_t print_len,
+                    const uint8_t *cmp_buf, size_t cmp_len)
 {
   int outer, inner, idx;
-  uint8_t c;
   bool is_diff, in_diff_hex;
 
 
@@ -30,8 +29,7 @@ void print_hex_diff(const char *label,
       idx = outer + inner;
 
       if (idx < print_len) {
-        c = print_buf[idx];
-        is_diff = (idx >= cmp_len || c != cmp_buf[idx]);
+        is_diff = idx >= cmp_len || print_buf[idx] != cmp_buf[idx];
 
         if (is_diff && !in_diff_hex) {
           printf("[");
@@ -44,7 +42,7 @@ void print_hex_diff(const char *label,
         else
           printf(" ");
 
-        printf("%02x", c);
+        printf("%02x", print_buf[idx]);
       }
       else {
         if (in_diff_hex) {
@@ -59,6 +57,9 @@ void print_hex_diff(const char *label,
     printf("%c|", in_diff_hex ? ']' : ' ');
 
     for (inner = 0; inner < COLUMNS && (outer + inner) < print_len; inner++) {
+      uint8_t c;
+
+
       c = print_buf[inner + outer];
       printf("%c", c >= ' ' && c <= 0x7f ? c : '.');
     }
@@ -69,8 +70,8 @@ void print_hex_diff(const char *label,
   return;
 }
 
-void cmp_hex(const char *label1, const uint8_t *buf1, uint8_t len1,
-             const char *label2, const uint8_t *buf2, uint8_t len2)
+void cmp_hex(const char *label1, const uint8_t *buf1, size_t len1,
+             const char *label2, const uint8_t *buf2, size_t len2)
 {
   print_hex_diff(label1, buf1, len1, buf2, len2);
   print_hex_diff(label2, buf2, len2, buf1, len1);

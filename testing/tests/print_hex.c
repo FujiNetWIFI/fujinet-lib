@@ -11,7 +11,7 @@
 /* =========================================================================
  * Helper: print a byte array as hex
  * ========================================================================= */
-void print_hex(const char *label, const uint8_t *buf, uint8_t len)
+void print_hex(const char *label, const uint8_t *buf, size_t len)
 {
   int outer, inner;
   uint8_t c;

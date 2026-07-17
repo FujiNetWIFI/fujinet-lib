@@ -3,12 +3,26 @@
 #include "harness.h"
 #include "constants.h"
 #include "globals.h"
+#include "cmp_hex.h"
 #include <fujinet-network.h>
 
 #ifndef _CMOC_VERSION_
 #include <stdio.h>
 #include <string.h>
 #endif /* _CMOC_VERSION_ */
+
+// OPEN_TRANS_ translate mode translates from the platform's BASIC line ending
+// to the requested line ending, not from the C/printf style.
+#if defined(__APPLE2__) || defined(_CMOC_VERSION_) \
+  || defined(__ADAM__) || defined(__COLECOADAM__)
+#define BASIC_LINE_ENDING "\r"
+#elif defined(__WATCOMC__)
+#define BASIC_LINE_ENDING "\r\n"
+#else
+#define BASIC_LINE_ENDING "\n"
+#endif
+
+#define ECHO_MSG "FujiNet integration test" BASIC_LINE_ENDING
 
 void test_network_init(void)
 {
@@ -370,7 +384,7 @@ void test_network_write(void)
 {
   uint8_t err;
   int16_t r;
-  static const uint8_t msg[] = "FujiNet integration test\n";
+  static const uint8_t msg[] = ECHO_MSG;
 
   SECTION("network_write (raw TCP)");
 
@@ -395,6 +409,8 @@ void test_network_write(void)
   r = network_read(NET_TCP_SPEC, g.net, strlen((const char *) msg));
   TEST("network_read echoed data", r > 0);
   if (r > 0) {
+    if (memcmp(g.net, msg, r) != 0)
+      cmp_hex("orig", msg, strlen((const char *) msg), "recv", g.net, r);
     TEST("Echo matches sent message", memcmp(g.net, msg, r) == 0);
   }
 #endif

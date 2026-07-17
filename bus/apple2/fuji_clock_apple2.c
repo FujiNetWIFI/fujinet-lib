@@ -26,20 +26,30 @@ uint8_t clock_get_tz(char *tz)
 
 uint8_t clock_get_time(uint8_t *time_data, TimeFormat format)
 {
+  bool success;
+
+
   if ((uint8_t) format >= TIMEFORMAT_COUNT)
     return FN_ERR_BAD_CMD;
-  return CLKCALL_RV(clk_cmd[format], time_data, clk_reply_len[format])
-         ? FN_ERR_OK : FN_ERR_IO_ERROR;
+  success = CLKCALL_RV(clk_cmd[format], time_data, clk_reply_len[format]);
+  if (success)
+    time_data[clk_reply_len[format]] = 0;
+  return success ? FN_ERR_OK : FN_ERR_IO_ERROR;
 }
 
 uint8_t clock_get_time_tz(uint8_t *time_data, const char *tz, TimeFormat format)
 {
   uint8_t rc;
+  bool success;
+
+
   if ((uint8_t) format >= TIMEFORMAT_COUNT)
     return FN_ERR_BAD_CMD;
   rc = clock_set_alternate_tz(tz);
   if (rc != FN_ERR_OK)
     return rc;
-  return CLKCALL_RV(CLK_ALTIFYERIZE(clk_cmd[format]), time_data, clk_reply_len[format])
-         ? FN_ERR_OK : FN_ERR_IO_ERROR;
+  success = CLKCALL_RV(CLK_ALTIFYERIZE(clk_cmd[format]), time_data, clk_reply_len[format]);
+  if (success)
+    time_data[clk_reply_len[format]] = 0;
+  return success ? FN_ERR_OK : FN_ERR_IO_ERROR;
 }

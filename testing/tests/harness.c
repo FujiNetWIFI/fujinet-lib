@@ -46,20 +46,16 @@ void print_versions()
   printf("tests git commit ID %s\n", GIT_VERSION);
 #endif
 
-  err = true;
   strcpy(g.adapter.ace.fn_version, "BROKEN");
 #ifndef FN_BROKEN_fuji_get_adapter_config_extended
-  err = fuji_get_adapter_config_extended(&g.adapter.ace) == 0;
-  if (err)
+  if (!fuji_get_adapter_config_extended(&g.adapter.ace))
     strcpy(g.adapter.ace.fn_version, "FAIL");
 #endif
   printf("FujiNet: %-14s\n", g.adapter.ace.fn_version);
 
-  err = true;
   strcpy((char *) g.clock_fmt, "BROKEN");
 #ifndef FN_BROKEN_clock_get_time_UTC_ISO_STRING
-  err = clock_get_time(g.clock_fmt, UTC_ISO_STRING) != FN_ERR_OK;
-  if (err)
+  if (!clock_get_time(g.clock_fmt, UTC_ISO_STRING) != FN_ERR_OK)
     strcpy((char *) g.clock_fmt, "FAIL");
 #endif
   printf("  UTC ISO: %s\n", (char *)g.clock_fmt);
