@@ -2,8 +2,11 @@
  * Minimal test harness
  * ========================================================================= */
 
+#include "broken.h"
+
 #include "harness.h"
 #include "globals.h"
+#include <fujinet-clock.h>
 
 #ifdef _CMOC_VERSION_
 #include <coco.h>
@@ -35,15 +38,31 @@ void end_testing(int code)
 
 void print_versions()
 {
-  printf("fujinet-lib version %s\n", FNLIB_VERSION_FULL);
+  bool err;
 
-#ifndef FN_BROKEN_fuji_get_adapter_config_extended
-  if (!fuji_get_adapter_config_extended(&g.adapter.ace))
-      strcpy(g.adapter.ace.fn_version, "FAIL");
-#else
+
+  printf("fujinet-lib version %s\n", FNLIB_VERSION_FULL);
+#ifdef GIT_VERSION
+  printf("tests git commit ID %s\n", GIT_VERSION);
+#endif
+
+  err = true;
   strcpy(g.adapter.ace.fn_version, "BROKEN");
+#ifndef FN_BROKEN_fuji_get_adapter_config_extended
+  err = fuji_get_adapter_config_extended(&g.adapter.ace) == 0;
+  if (err)
+    strcpy(g.adapter.ace.fn_version, "FAIL");
 #endif
   printf("FujiNet: %-14s\n", g.adapter.ace.fn_version);
+
+  err = true;
+  strcpy((char *) g.clock_fmt, "BROKEN");
+#ifndef FN_BROKEN_clock_get_time_UTC_ISO_STRING
+  err = clock_get_time(g.clock_fmt, UTC_ISO_STRING) != FN_ERR_OK;
+  if (err)
+    strcpy((char *) g.clock_fmt, "FAIL");
+#endif
+  printf("  UTC ISO: %s\n", (char *)g.clock_fmt);
 
   return;
 }

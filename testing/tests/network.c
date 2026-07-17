@@ -377,14 +377,7 @@ void test_network_write(void)
 #ifdef FN_BROKEN_network_open
   SKIP(network_open);
 #else
-  err = network_open(NET_TCP_SPEC, OPEN_MODE_RW,
-#ifdef BUILD_ATARI
-                     OPEN_TRANS_LF
-#else
-#warning "OPEN_TRANS_LF should work on ALL platforms"
-                     OPEN_TRANS_NONE
-#endif // BUILD_ATARI
-                     );
+  err = network_open(NET_TCP_SPEC, OPEN_MODE_RW, OPEN_TRANS_LF);
   TEST("network_open (TCP RW) succeeds", err == FN_ERR_OK);
 #endif
 
