@@ -118,7 +118,7 @@ void test_fuji_copy_file(void)
     if (fuji_open_directory(sd_idx, g.dir)) {
       for (scan = 0; scan < 64; scan++) {
         memset(entry, 0, 49);
-        ok = fuji_read_directory(49, 0x80, entry);
+        ok = fuji_read_directory(49, 0x80, (char *) entry);
         if (!ok) {
           printf("  fuji_read_directory failed during pre-copy SD scan (entry %u)\n",
                  (unsigned)scan);

@@ -13,7 +13,7 @@
  * (addtl=0x80) entry. The header preceding the filename is NOT the same
  * size on every bus backend -- each one packs its own
  * set_additional_direntry_details() struct (see fujinet-firmware
- * lib/device/<bus>/*Fuji.cpp):
+ * lib/device/<bus>/___Fuji.cpp):
  *   - rs232 (msdos):   timestamp(6) + size u32(4) + flags(1) + mediatype(1) = 12
  *   - iec (c64):       timestamp(6) + size u16(2) + flags(1) + mediatype(1) = 10
  *   - everyone else:   timestamp(6) + size u32(4) + is_dir(1) + is_trunc(1) + mediatype(1) = 13

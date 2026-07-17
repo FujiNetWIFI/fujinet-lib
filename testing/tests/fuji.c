@@ -2,6 +2,7 @@
 #include "harness.h"
 #include "constants.h"
 #include "globals.h"
+#include "cmp_hex.h"
 #include <fujinet-fuji.h>
 
 #if FNLIB_VERSION_MAJOR < 5
@@ -12,6 +13,9 @@
 #include <stdio.h>
 #include <string.h>
 #endif /* _CMOC_VERSION_ */
+
+#define TEST_FILENAME "/test_filename"
+#define TEST_PREFIX   "/test_prefix"
 
 void test_fuji_status(void)
 {
@@ -203,8 +207,19 @@ void test_fuji_device_filename(void)
 
   SECTION("fuji device filename");
 
+  // Need fuji_get_device_slots to find out what mode & host was
+  // assigned to device slot in order to restore the original
+#ifdef FN_BROKEN_fuji_get_device_slots
+  SKIP(fuji_get_device_slots);
+#else
+
+  ok = fuji_get_device_slots(g.dslots.devices, MAX_DISKS);
+  host_slot = g.dslots.devices[0].hostSlot;
+  mode = g.dslots.devices[0].mode;
+
   memset(g.device_filename.filename,  0, sizeof(g.device_filename.filename));
   memset(g.device_filename.read_back, 0, sizeof(g.device_filename.read_back));
+#endif
 
 #ifdef FN_BROKEN_fuji_get_device_filename
   SKIP(fuji_get_device_filename);
@@ -213,31 +228,24 @@ void test_fuji_device_filename(void)
   TEST("fuji_get_device_filename succeeds", ok);
   printf("  Current filename slot 0: '%s'\n", g.device_filename.filename);
 
-#ifdef FN_BROKEN_fuji_set_device_filename
+#if defined(FN_BROKEN_fuji_set_device_filename) || defined(FN_BROKEN_fuji_get_device_slots)
   SKIP(fuji_set_device_filename);
-#endif
-
-  // Need fuji_get_device_slots to find out what mode & host was
-  // assigned to device slot in order to restore the original
-#ifdef FN_BROKEN_fuji_get_device_slots
-  SKIP(fuji_get_device_slots);
-#endif
-
-  ok = fuji_get_device_slots(g.dslots.devices, MAX_DISKS);
-  host_slot = g.dslots.devices[0].hostSlot;
-  mode = g.dslots.devices[0].mode;
-
-  ok = fuji_set_device_filename(DISK_ACCESS_MODE_READ, 0, 0, (char *) "/test_filename");
+#else
+  ok = fuji_set_device_filename(DISK_ACCESS_MODE_READ, 0, 0, (char *) TEST_FILENAME);
   TEST("fuji_set_device_filename succeeds", ok);
 
   ok = fuji_get_device_filename(0, g.device_filename.read_back);
   TEST("fuji_get_device_filename reads back set value", ok);
-  TEST("Set filename matches read-back value", strcmp(g.device_filename.read_back, "/test_filename") == 0);
+  TEST("Set filename matches read-back value", strcmp(g.device_filename.read_back, TEST_FILENAME) == 0);
 
   // FIXME - make sure mode and host match too
 
   /* Restore original */
   fuji_set_device_filename(mode, host_slot, 0, g.device_filename.filename);
+  ok = fuji_get_device_filename(0, g.device_filename.read_back);
+  TEST("fuji_get_device_filename reads back original value", ok);
+  TEST("Set filename matches read-back value", strcmp(g.device_filename.read_back, g.device_filename.filename) == 0);
+#endif
 
   END_OF_TEST();
 }
@@ -261,12 +269,12 @@ void test_fuji_host_prefix(void)
 #ifdef FN_BROKEN_fuji_set_host_prefix
   SKIP(fuji_set_host_prefix);
 #endif
-  ok = fuji_set_host_prefix(0, (char *) "/test_prefix");
+  ok = fuji_set_host_prefix(0, (char *) TEST_PREFIX);
   TEST("fuji_set_host_prefix succeeds", ok);
 
   ok = fuji_get_host_prefix(0, g.host_prefix.read_back);
   TEST("fuji_get_host_prefix reads back set value", ok);
-  TEST("Set prefix matches read-back value", strcmp(g.host_prefix.read_back, "/test_prefix") == 0);
+  TEST("Set prefix matches read-back value", strcmp(g.host_prefix.read_back, TEST_PREFIX) == 0);
 
   /* Restore original */
   fuji_set_host_prefix(0, g.host_prefix.prefix);
