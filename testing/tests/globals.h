@@ -48,8 +48,12 @@ typedef union {
   struct {
     HostSlot   hosts[MAX_HOSTS];
     HostSlot   hosts2[MAX_HOSTS];
+  } hslots;
+
+  struct {
     DeviceSlot devices[MAX_DISKS];
-  } slots;
+    DeviceSlot devices2[MAX_DISKS];
+  } dslots;
 
   struct {
     uint8_t write[64];
@@ -91,6 +95,11 @@ typedef union {
     char prefix[MAX_FILENAME_LEN];
     char read_back[MAX_FILENAME_LEN];
   } host_prefix;
+
+  struct {
+    char filename[MAX_FILENAME_LEN];
+    char read_back[MAX_FILENAME_LEN];
+  } device_filename;
 
   char dir[258];
 } buf_union;

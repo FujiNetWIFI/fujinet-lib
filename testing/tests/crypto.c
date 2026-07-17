@@ -10,7 +10,7 @@
 #endif /* _CMOC_VERSION_ */
 
 #define BASE64_IN  "Hello, FujiNet!"
-#define BASE64_OUT "SGVsbG8sIEZ1amlOZXQh\012"
+#define BASE64_OUT "SGVsbG8sIEZ1amlOZXQh"
 #define MD5_OUT    "98d6da021c1a0b081b52de3b8207a823"
 #define SHA1_OUT   "954382c7aa0a0d3252faf234ba4911f2aed22e39"
 #define SHA256_OUT "3631e38122de15b2e5b4ae209ba1eb7c79b0e756" \
@@ -19,6 +19,22 @@
                    "7928189736e00e81d269484d5a5d8a40723a157e" \
                    "f55d1992fd2929b213770eada5501434a592d75a" \
                    "d1f935fd"
+
+size_t strip_trailing_newlines(char *buffer, size_t buflen)
+{
+  uint8_t c;
+
+  // if last char is 0x9b, 0x0A or 0x0D, then set that char to nul, else just null terminate
+  while (buflen) {
+    c = buffer[buflen - 1];
+    if (c != 0x9B && c != 0x0A && c != 0x0D)
+      break;
+    buflen--;
+  }
+  buffer[buflen] = '\0';
+
+  return buflen;
+}
 
 void test_fuji_base64(void)
 {
@@ -96,6 +112,7 @@ void test_fuji_base64(void)
   ok = fuji_base64_encode_output(g.b64.enc, (uint16_t)enc_len);
   TEST("fuji_base64_encode_output succeeds", ok);
   g.b64.enc[(uint16_t) enc_len] = '\0';
+  strip_trailing_newlines(g.b64.enc, (uint16_t) enc_len);
   printf("  Base64 encoded: %s\n", g.b64.enc);
   TEST("Base64 output matches expected value", strcmp(g.b64.enc, BASE64_OUT) == 0);
 

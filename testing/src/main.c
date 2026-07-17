@@ -53,6 +53,7 @@ int main(void)
   test_fuji_status();
   test_fuji_adapter_config();
   test_fuji_host_device_slots();
+  test_fuji_device_filename();
   test_fuji_host_prefix();
   test_fuji_directory_ops();
   test_fuji_wifi();

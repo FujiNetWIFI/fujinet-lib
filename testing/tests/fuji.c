@@ -1,5 +1,4 @@
 #include "broken.h"
-
 #include "harness.h"
 #include "constants.h"
 #include "globals.h"
@@ -149,35 +148,96 @@ void test_fuji_host_device_slots(void)
 
   SECTION("fuji host and device slots");
 
-  memset(g.slots.hosts,   0, sizeof(g.slots.hosts));
-  memset(g.slots.devices, 0, sizeof(g.slots.devices));
+  memset(g.hslots.hosts,   0, sizeof(g.hslots.hosts));
 
 #ifdef FN_BROKEN_fuji_get_host_slots
   SKIP(fuji_get_host_slots);
 #else
-  ok = fuji_get_host_slots(&g.slots.hosts[0], MAX_HOSTS);
+  ok = fuji_get_host_slots(&g.hslots.hosts[0], MAX_HOSTS);
   TEST("fuji_get_host_slots succeeds", ok);
-  printf("  Host slot 0: %s\n", (char *)g.slots.hosts[0]);
+  printf("  Host slot 0: %s\n", (char *)g.hslots.hosts[0]);
 #endif
-
-#ifdef FN_BROKEN_fuji_get_device_slots
-  SKIP(fuji_get_device_slots);
-#endif
-  ok = fuji_get_device_slots(g.slots.devices, MAX_DISKS);
-  TEST("fuji_get_device_slots succeeds", ok);
 
 #ifdef FN_BROKEN_fuji_put_host_slots
   SKIP(fuji_put_host_slots);
 #else
-  write_ok = fuji_put_host_slots(&g.slots.hosts[0], MAX_HOSTS);
+  write_ok = fuji_put_host_slots(&g.hslots.hosts[0], MAX_HOSTS);
   TEST("fuji_put_host_slots round-trip succeeds", write_ok);
 
-  memset(g.slots.hosts2, 0, sizeof(g.slots.hosts2));
-  ok = fuji_get_host_slots(&g.slots.hosts2[0], MAX_HOSTS);
+  memset(g.hslots.hosts2, 0, sizeof(g.hslots.hosts2));
+  ok = fuji_get_host_slots(&g.hslots.hosts2[0], MAX_HOSTS);
   TEST("Re-read host slots after write succeeds", ok);
   TEST("Host slot data unchanged after write-back",
-       memcmp(g.slots.hosts, g.slots.hosts2, sizeof(g.slots.hosts)) == 0);
+       memcmp(g.hslots.hosts, g.hslots.hosts2, sizeof(g.hslots.hosts)) == 0);
 #endif
+
+  memset(g.dslots.devices, 0, sizeof(g.dslots.devices));
+
+#ifdef FN_BROKEN_fuji_get_device_slots
+  SKIP(fuji_get_device_slots);
+#else
+  ok = fuji_get_device_slots(g.dslots.devices, MAX_DISKS);
+  TEST("fuji_get_device_slots succeeds", ok);
+#endif
+
+#ifdef FN_BROKEN_fuji_put_device_slots
+  SKIP(fuji_put_device_slots);
+#else
+  write_ok = fuji_put_device_slots(&g.dslots.devices[0], MAX_DISKS);
+  TEST("fuji_put_device_slots round-trip succeeds", write_ok);
+
+  memset(g.dslots.devices2, 0, sizeof(g.dslots.devices2));
+  ok = fuji_get_device_slots(&g.dslots.devices2[0], MAX_DISKS);
+  TEST("Re-read device slots after write succeeds", ok);
+  TEST("Device slot data unchanged after write-back",
+       memcmp(g.dslots.devices, g.dslots.devices2, sizeof(g.dslots.devices)) == 0);
+#endif
+
+  END_OF_TEST();
+}
+
+void test_fuji_device_filename(void)
+{
+  bool ok;
+  uint8_t mode, host_slot;
+
+  SECTION("fuji device filename");
+
+  memset(g.device_filename.filename,  0, sizeof(g.device_filename.filename));
+  memset(g.device_filename.read_back, 0, sizeof(g.device_filename.read_back));
+
+#ifdef FN_BROKEN_fuji_get_device_filename
+  SKIP(fuji_get_device_filename);
+#endif
+  ok = fuji_get_device_filename(0, g.device_filename.filename);
+  TEST("fuji_get_device_filename succeeds", ok);
+  printf("  Current filename slot 0: '%s'\n", g.device_filename.filename);
+
+#ifdef FN_BROKEN_fuji_set_device_filename
+  SKIP(fuji_set_device_filename);
+#endif
+
+  // Need fuji_get_device_slots to find out what mode & host was
+  // assigned to device slot in order to restore the original
+#ifdef FN_BROKEN_fuji_get_device_slots
+  SKIP(fuji_get_device_slots);
+#endif
+
+  ok = fuji_get_device_slots(g.dslots.devices, MAX_DISKS);
+  host_slot = g.dslots.devices[0].hostSlot;
+  mode = g.dslots.devices[0].mode;
+
+  ok = fuji_set_device_filename(DISK_ACCESS_MODE_READ, 0, 0, (char *) "/test_filename");
+  TEST("fuji_set_device_filename succeeds", ok);
+
+  ok = fuji_get_device_filename(0, g.device_filename.read_back);
+  TEST("fuji_get_device_filename reads back set value", ok);
+  TEST("Set filename matches read-back value", strcmp(g.device_filename.read_back, "/test_filename") == 0);
+
+  // FIXME - make sure mode and host match too
+
+  /* Restore original */
+  fuji_set_device_filename(mode, host_slot, 0, g.device_filename.filename);
 
   END_OF_TEST();
 }

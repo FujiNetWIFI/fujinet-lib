@@ -155,8 +155,8 @@
 
 #ifdef BUILD_MSDOS
 // Missing from firmware
-#define FN_BROKEN_fuji_base64_encode_input
-#define FN_BROKEN_fuji_hash_data
+//#define FN_BROKEN_fuji_base64_encode_input
+//#define FN_BROKEN_fuji_hash_data
 #endif /* BUILD_MSDOS */
 
 #ifdef BUILD_APPLE2
@@ -169,15 +169,14 @@
 // Missing from lib
 #define FN_BROKEN_fuji_set_appkey_details
 #define FN_BROKEN_fuji_write_appkey
-#define FN_BROKEN_fuji_write_appkey
 
 // Missing from firmware
 #define FN_BROKEN_fuji_status
 #define FN_BROKEN_fuji_get_host_prefix
 #define FN_BROKEN_fuji_get_wifi_enabled
 #define FN_BROKEN_fuji_scan_for_networks
-#define FN_BROKEN_fuji_base64_encode_input
-#define FN_BROKEN_fuji_hash_data
+//#define FN_BROKEN_fuji_base64_encode_input
+//#define FN_BROKEN_fuji_hash_data
 #endif /* BUILD_ADAM */
 
 // ===========================

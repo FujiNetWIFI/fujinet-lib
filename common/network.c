@@ -6,6 +6,12 @@
 #include <fujinet-const.h>
 #include <fujinet-err.h>
 
+#if defined(__ADAM__) || defined(__COLECOADAM__)
+#define NETWORK_OPEN_LEN strlen(devicespec)
+#else
+#define NETWORK_OPEN_LEN MAX_FILENAME_LEN
+#endif /* __ADAM__ || __COLECOADAM__ */
+
 NetworkStatus nw_status;
 
 FN_ERR network_init()
@@ -31,7 +37,7 @@ FN_ERR network_open(const char *devicespec, uint8_t mode, uint8_t trans)
 
 
   success = NETCALL_A1_A2_D(FUJICMD_OPEN, nw_unit,
-			    mode, trans, devicespec, MAX_FILENAME_LEN);
+			    mode, trans, devicespec, NETWORK_OPEN_LEN);
   if (!success)
     return FN_ERR_IO_ERROR;
 

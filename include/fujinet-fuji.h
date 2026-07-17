@@ -259,7 +259,11 @@ bool fuji_get_device_enabled_status(uint8_t d);
  * Note: BUFFER MUST BE ABLE TO ACCEPT UP TO 256 BYTE STRING
  * @return Success status, true if all OK.
  */
+#if defined(__ADAM__) || defined(__COLECOADAM__)
+#define fuji_get_device_filename(ds, buffer) FUJICALL_A1_RV(FUJICMD_GET_DEVICE_FULLPATH, ds, buffer, MAX_FILENAME_LEN)
+#else
 #define fuji_get_device_filename(ds, buffer) FUJICALL_RV(FUJICMD_GET_DEVICE1_FULLPATH + ds, buffer, MAX_FILENAME_LEN)
+#endif /* __ADAM__ || __COLECOADAM__ */
 
 /**
  * @brief Sets ALL device slot information into pointer d.
@@ -401,6 +405,9 @@ extern bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer);
  */
 #ifdef __ATARI__
 #define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_A2_D(FUJICMD_SET_DEVICE_FULLPATH, ds, (hs << 4) | (mode), buffer, MAX_FILENAME_LEN)
+#elif defined(__ADAM__) || defined(__COLECOADAM__)
+// mode and hs are ignored on Adam
+#define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_D(FUJICMD_SET_DEVICE_FULLPATH, ds, buffer, strlen(buffer))
 #else /* !__ATARI__ */
 #define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_A2_A3_D(FUJICMD_SET_DEVICE_FULLPATH, ds, hs, mode, buffer, MAX_FILENAME_LEN)
 #endif /* __ATARI__ */
