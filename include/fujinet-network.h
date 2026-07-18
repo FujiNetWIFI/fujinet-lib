@@ -312,6 +312,8 @@ extern size_t network_json_strip_newlines(char *buffer, size_t buflen);
 extern bool network_proceed(void);
 /* Returns true if the hardware supports checking a proceed pin */
 extern bool network_has_proceed(void);
+/* Set the native end-of-line string for use with translation */
+extern FN_ERR network_set_eol(const char *devicespec, const char *eol);
 
 #define OPEN_MODE_READ          (0x04)
 #define OPEN_MODE_WRITE         (0x08)

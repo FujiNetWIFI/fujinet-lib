@@ -98,6 +98,8 @@ enum {
   APETIMECMD_GET_ISO_LOCAL              = 0x49, // I
   APETIMECMD_GET_GENERAL                = 0x47, // G
   APETIMECMD_GET_ATARI                  = 0x41, // A
+
+  NETCMD_SET_EOL                        = 0x4C, // L
 };
 
 #endif /* FUJINET_COMMAND_H */

@@ -10,6 +10,7 @@ extern void test_network_http_channel_mode(void);
 extern void test_network_json(void);
 extern void test_network_http_put_delete(void);
 extern void test_network_write(void);
+extern void test_network_set_eol(void);
 extern void test_network_unit(void);
 extern void test_network_error_path(void);
 

@@ -73,6 +73,7 @@ int main(void)
   /* network.h */
   test_network_init();
   test_network_write();
+  test_network_set_eol();
 #if ERROR_PATH_WORKS
   test_network_error_path();
 #endif

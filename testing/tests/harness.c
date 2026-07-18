@@ -38,9 +38,6 @@ void end_testing(int code)
 
 void print_versions()
 {
-  bool err;
-
-
   printf("fujinet-lib version %s\n", FNLIB_VERSION_FULL);
 #ifdef GIT_VERSION
   printf("tests git commit ID %s\n", GIT_VERSION);
@@ -55,7 +52,7 @@ void print_versions()
 
   strcpy((char *) g.clock_fmt, "BROKEN");
 #ifndef FN_BROKEN_clock_get_time_UTC_ISO_STRING
-  if (!clock_get_time(g.clock_fmt, UTC_ISO_STRING) != FN_ERR_OK)
+  if (clock_get_time(g.clock_fmt, UTC_ISO_STRING) != FN_ERR_OK)
     strcpy((char *) g.clock_fmt, "FAIL");
 #endif
   printf("  UTC ISO: %s\n", (char *)g.clock_fmt);

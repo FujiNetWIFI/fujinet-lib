@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "globals.h"
 #include "cmp_hex.h"
+#include "print_hex.h"
 #include <fujinet-network.h>
 
 #ifndef _CMOC_VERSION_
@@ -22,7 +23,9 @@
 #define BASIC_LINE_ENDING "\n"
 #endif
 
-#define ECHO_MSG "FujiNet integration test" BASIC_LINE_ENDING
+#define ECHO_MSG "FujiNet integration test"
+//#define ALT_LINE_ENDING "\n#"
+#define ALT_LINE_ENDING "\x0d\x0a"
 
 void test_network_init(void)
 {
@@ -63,6 +66,7 @@ void test_network_http_get(void)
   err = network_status(NET_DEVICESPEC, &bw, &conn, &nerr);
   TEST("network_status after open succeeds", err == FN_ERR_OK);
   printf("  bytes_waiting=%u conn=%u net_error=%u\n", bw, conn, nerr);
+  TEST("network no error", nerr == NETWORK_SUCCESS);
 #endif
 
 #ifdef FN_BROKEN_network_read
@@ -114,6 +118,8 @@ void test_network_http_get_nonblocking(void)
 #else
   err = network_status(NET_DEVICESPEC, &bw, &conn, &nerr);
   TEST("network_status (nb) succeeds", err == FN_ERR_OK);
+  printf("  bytes_waiting=%u conn=%u net_error=%u\n", bw, conn, nerr);
+  TEST("network no error", nerr == NETWORK_SUCCESS);
 #endif
 
 #ifdef FN_BROKEN_network_read_nb
@@ -294,6 +300,8 @@ void test_network_json(void)
   uint8_t err;
   char result[64];
   int16_t n;
+  uint16_t bw;
+  uint8_t conn, nerr;
 
   SECTION("network JSON parse and query");
 
@@ -309,6 +317,16 @@ void test_network_json(void)
 #else
   err = network_json_parse(NET_JSON_URL);
   TEST("network_json_parse succeeds", err == FN_ERR_OK);
+#endif
+
+  bw = 0; conn = 0; nerr = 0;
+#ifdef FN_BROKEN_network_status
+  SKIP(network_status);
+#else
+  err = network_status(NET_DEVICESPEC, &bw, &conn, &nerr);
+  TEST("network_status after parse succeeds", err == FN_ERR_OK);
+  printf("  bytes_waiting=%u conn=%u net_error=%u\n", bw, conn, nerr);
+  TEST("network no error", nerr == NETWORK_SUCCESS || nerr == NETWORK_ERROR_END_OF_FILE);
 #endif
 
 #ifdef FN_BROKEN_network_json_query
@@ -380,11 +398,46 @@ void test_network_http_put_delete(void)
   END_OF_TEST();
 }
 
+void echo_check(const uint8_t *msg)
+{
+  uint8_t err;
+  int16_t r, w;
+
+#ifdef FN_BROKEN_network_write
+  SKIP(network_write);
+#else
+  w = strlen((const char *) msg);
+  err = network_write(NET_TCP_SPEC, msg, w);
+  TEST("network_write succeeds", err == FN_ERR_OK);
+#endif
+
+#ifdef FN_BROKEN_network_read
+  SKIP(network_read);
+#else
+  memset(g.net, 0, sizeof(g.net));
+  r = network_read(NET_TCP_SPEC, g.net, w);
+  TEST("network_read echoed data", r > 0);
+  if (r > 0) {
+    if (memcmp(g.net, msg, w) != 0)
+      cmp_hex("orig", msg, w, "recv", g.net, r);
+    TEST("Echo matches sent message", memcmp(g.net, msg, w) == 0);
+  }
+#endif
+
+#ifdef FN_BROKEN_network_close
+  SKIP(network_close);
+#else
+  err = network_close(NET_TCP_SPEC);
+  TEST("network_close TCP succeeds", err == FN_ERR_OK);
+#endif
+
+  END_OF_TEST();
+}
+
 void test_network_write(void)
 {
   uint8_t err;
-  int16_t r;
-  static const uint8_t msg[] = ECHO_MSG;
+  static const uint8_t msg[] = ECHO_MSG BASIC_LINE_ENDING;
 
   SECTION("network_write (raw TCP)");
 
@@ -395,32 +448,43 @@ void test_network_write(void)
   TEST("network_open (TCP RW) succeeds", err == FN_ERR_OK);
 #endif
 
-#ifdef FN_BROKEN_network_write
-  SKIP(network_write);
+  echo_check(msg);
+
+  END_OF_TEST();
+}
+
+void test_network_set_eol(void)
+{
+  uint8_t err;
+  static const uint8_t msg[] = ECHO_MSG ALT_LINE_ENDING;
+
+  SECTION("network_set_eol (raw TCP)");
+
+#ifdef FN_BROKEN_network_open
+  SKIP(network_open);
 #else
-  err = network_write(NET_TCP_SPEC, msg, strlen((const char *) msg));
-  TEST("network_write succeeds", err == FN_ERR_OK);
+  err = network_open(NET_TCP_SPEC, OPEN_MODE_RW, OPEN_TRANS_LF);
+  TEST("network_open (TCP RW) succeeds", err == FN_ERR_OK);
 #endif
 
-#ifdef FN_BROKEN_network_read
-  SKIP(network_read);
+#ifdef FN_BROKEN_network_set_eol
+  SKIP(network_set_eol);
 #else
-  memset(g.net, 0, sizeof(g.net));
-  r = network_read(NET_TCP_SPEC, g.net, strlen((const char *) msg));
-  TEST("network_read echoed data", r > 0);
-  if (r > 0) {
-    if (memcmp(g.net, msg, r) != 0)
-      cmp_hex("orig", msg, strlen((const char *) msg), "recv", g.net, r);
-    TEST("Echo matches sent message", memcmp(g.net, msg, r) == 0);
-  }
+  err = network_set_eol(NET_TCP_SPEC, ALT_LINE_ENDING);
+  TEST("network_set_eol succeeds", err == FN_ERR_OK);
+  print_hex("ALT EOL", ALT_LINE_ENDING, strlen(ALT_LINE_ENDING));
+
+  echo_check(msg);
+  TEST("why no break", 0);
+
+#ifdef FN_BROKEN_network_set_eol
+  SKIP(network_set_eol);
+#else
+  err = network_set_eol(NET_TCP_SPEC, "");
+  TEST("network_set_eol reset succeeds", err == FN_ERR_OK);
 #endif
 
-#ifdef FN_BROKEN_network_close
-  SKIP(network_close);
-#else
-  err = network_close(NET_TCP_SPEC);
-  TEST("network_close TCP succeeds", err == FN_ERR_OK);
-#endif
+#endif // FN_BROKEN_network_set_eol
 
   END_OF_TEST();
 }

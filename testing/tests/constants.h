@@ -2,12 +2,35 @@
 #define CONSTANTS_H
 
 /* Network device specs used across tests */
+#define NET_TCP_SPEC    "N1:TCP://tcpbin.com:4242/"
+
+// Adam can't handle large web sites
 //#define NET_DEVICESPEC  "N1:HTTPS://fujinet.online/"
+
+#define HTTPBIN_ORG_IS_DOWN 0
+
+#if HTTPBIN_ORG_IS_DOWN
+// If httpbin.org is down, run your own server with docker:
+//  `docker run -p 8080:80 kennethreitz/httpbin`
+
+#ifndef NET_DEVICESPEC
+#define NET_DEVICESPEC  "N1:http://localhost:8080/get"
+#endif
+#define NET_JSON_URL    "N1:http://localhost:8080/json"
+#define NET_POST_URL    "N1:http://localhost:8080/post"
+#define NET_DELETE_URL  "N1:http://localhost:8080/delete"
+
+#else
+// httpbin.org is working
+
+#ifndef NET_DEVICESPEC
 #define NET_DEVICESPEC  "N1:HTTPS://httpbin.org/get"
+#endif
+
 #define NET_JSON_URL    "N1:HTTPS://httpbin.org/json"
 #define NET_POST_URL    "N1:HTTPS://httpbin.org/post"
 #define NET_DELETE_URL  "N1:HTTPS://httpbin.org/delete"
-#define NET_TCP_SPEC    "N1:TCP://tcpbin.com:4242/"
+#endif
 
 /* Byte offset of the filename within a fuji_read_directory() extended
  * (addtl=0x80) entry. The header preceding the filename is NOT the same
@@ -43,5 +66,11 @@
 #define DISK_ACCESS_MODE_READ    0x01
 #define DISK_ACCESS_MODE_WRITE   0x02
 #define DISK_ACCESS_MODE_MOUNTED 0x40
+
+/* Not defined by old fujinet-lib */
+#if FNLIB_VERSION_MAJOR < 5
+#define NETWORK_SUCCESS 1
+#define NETWORK_ERROR_END_OF_FILE 136
+#endif
 
 #endif /* CONSTANTS_H */

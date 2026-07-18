@@ -22,6 +22,7 @@
 #define FN_BROKEN_fuji_open_directory_filter
 #define FN_BROKEN_fuji_generate_guid
 #define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
+#define FN_BROKEN_network_set_eol
 #endif /* BUILD_ATARI */
 
 #ifdef BUILD_COCO
@@ -29,6 +30,8 @@
 #define FN_BROKEN_fuji_get_directory_position
 #define FN_BROKEN_fuji_get_host_prefix
 #define FN_BROKEN_fuji_base64_encode_output
+
+#define FN_BROKEN_network_set_eol
 
 #define FN_BROKEN_clock_get_time_PRODOS_BINARY
 #define FN_BROKEN_clock_get_time_APETIME_BINARY
@@ -51,6 +54,7 @@
 #define FN_BROKEN_fuji_hash_calculate
 
 #define FN_BROKEN_network_http_post
+#define FN_BROKEN_network_set_eol
 #define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
 #endif /* BUILD_APPLE2 */
 
@@ -121,6 +125,7 @@
 #define FN_BROKEN_network_status
 #define FN_BROKEN_network_unit
 #define FN_BROKEN_network_write
+#define FN_BROKEN_network_set_eol
 
 #define FN_BROKEN_clock_get_time_SIMPLE_BINARY
 #define FN_BROKEN_clock_get_time_PRODOS_BINARY
@@ -136,6 +141,8 @@
 
 #ifdef BUILD_C64
 #define FN_BROKEN_fuji_generate_guid
+
+#define FN_BROKEN_network_set_eol
 
 #define FN_BROKEN_clock_get_time_SIMPLE_BINARY
 #define FN_BROKEN_clock_get_time_PRODOS_BINARY
@@ -161,6 +168,7 @@
 
 #ifdef BUILD_APPLE2
 // Missing from firmware
+#define FN_BROKEN_network_set_eol
 //#define FN_BROKEN_fuji_base64_encode_input
 //#define FN_BROKEN_fuji_hash_data
 #endif /* BUILD_APPLE2 */
@@ -177,7 +185,13 @@
 #define FN_BROKEN_fuji_scan_for_networks
 //#define FN_BROKEN_fuji_base64_encode_input
 //#define FN_BROKEN_fuji_hash_data
+#define FN_BROKEN_network_set_eol
 #endif /* BUILD_ADAM */
+
+#ifdef BUILD_COCO
+// Missing from firmware
+#define FN_BROKEN_network_set_eol
+#endif /* BUILD_COCO */
 
 // ===========================
 #endif /* FNLIB_VERSION_MAJOR */
