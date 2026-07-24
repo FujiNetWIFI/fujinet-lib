@@ -472,10 +472,9 @@ void test_network_set_eol(void)
 #else
   err = network_set_eol(NET_TCP_SPEC, ALT_LINE_ENDING);
   TEST("network_set_eol succeeds", err == FN_ERR_OK);
-  print_hex("ALT EOL", ALT_LINE_ENDING, strlen(ALT_LINE_ENDING));
+  print_hex("ALT EOL", (uint8_t *)ALT_LINE_ENDING, strlen(ALT_LINE_ENDING));
 
   echo_check(msg);
-  TEST("why no break", 0);
 
 #ifdef FN_BROKEN_network_set_eol
   SKIP(network_set_eol);

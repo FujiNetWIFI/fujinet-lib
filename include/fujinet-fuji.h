@@ -259,11 +259,7 @@ bool fuji_get_device_enabled_status(uint8_t d);
  * Note: BUFFER MUST BE ABLE TO ACCEPT UP TO 256 BYTE STRING
  * @return Success status, true if all OK.
  */
-#if defined(__ADAM__) || defined(__COLECOADAM__)
 #define fuji_get_device_filename(ds, buffer) FUJICALL_A1_RV(FUJICMD_GET_DEVICE_FULLPATH, ds, buffer, MAX_FILENAME_LEN)
-#else
-#define fuji_get_device_filename(ds, buffer) FUJICALL_RV(FUJICMD_GET_DEVICE1_FULLPATH + ds, buffer, MAX_FILENAME_LEN)
-#endif /* __ADAM__ || __COLECOADAM__ */
 
 /**
  * @brief Sets ALL device slot information into pointer d.
