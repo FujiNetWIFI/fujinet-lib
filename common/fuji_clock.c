@@ -1,4 +1,4 @@
-#include "fujinet-clock.h"
+#include <fujinet-clock.h>
 
 static const uint8_t _clk_cmd[TIMEFORMAT_COUNT] = {
   CLK_CMD_SIMPLE_BINARY,

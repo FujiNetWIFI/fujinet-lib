@@ -1,19 +1,12 @@
-#include <fujinet-fuji.h>
+#include "fuji_appkey.h"
+
 #include <fujinet-appkey.h>
+#include <fujinet-fuji.h>
 
-static uint16_t ak_creator_id;
-static uint8_t ak_app_id;
-static enum AppKeySize ak_appkey_size;
-
-typedef struct {
-  uint16_t creator;
-  uint8_t app_id;
-  uint8_t key_id;
-  uint8_t mode;
-  uint8_t reserved;
-} FNAppKeyID;
-
-static FNAppKeyID appkey;
+uint16_t ak_creator_id;
+uint8_t ak_app_id;
+enum AppKeySize ak_appkey_size;
+FNAppKeyID appkey;
 
 static void init_appkey(uint8_t key_id, uint8_t mode)
 {
@@ -33,10 +26,7 @@ bool fuji_read_appkey(uint8_t key_id, uint16_t *length, uint8_t *data)
   init_appkey(key_id, 0);
   if (!FUJICALL_D(FUJICMD_OPEN_APPKEY, &appkey, sizeof(appkey)))
     return false;
-
-  if (!fuji_bus_appkey_read(data, length))
-    return false;
-  return true;
+  return fuji_bus_appkey_read(data, length);
 }
 
 bool fuji_write_appkey(uint8_t key_id, uint16_t length, uint8_t *data)
@@ -45,11 +35,4 @@ bool fuji_write_appkey(uint8_t key_id, uint16_t length, uint8_t *data)
   if (!FUJICALL_D(FUJICMD_OPEN_APPKEY, &appkey, sizeof(appkey)))
     return false;
   return fuji_bus_appkey_write(data, length);
-}
-
-void fuji_set_appkey_details(uint16_t creator_id, uint8_t app_id, enum AppKeySize keysize)
-{
-  ak_appkey_size = keysize;
-  ak_app_id = app_id;
-  ak_creator_id = creator_id;
 }

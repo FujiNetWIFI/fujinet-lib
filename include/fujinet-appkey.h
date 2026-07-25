@@ -3,6 +3,7 @@
 
 #ifdef _CMOC_VERSION_
 #include <fujinet-const.h>
+#include <fujinet-int.h>
 typedef struct {
   uint16_t length;
   uint8_t data[MAX_APPKEY_LEN];

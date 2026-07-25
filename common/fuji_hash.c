@@ -1,14 +1,14 @@
-#include "fujinet-fuji.h"
+#include <fujinet-fuji.h>
 #ifndef _CMOC_VERSION_
 #include <string.h>
 #endif /* _CMOC_VERSION_ */
 
-// Open Watcom can't do far pointers in a function declaration
-static uint8_t c;
-
 bool fuji_hash_data(hash_alg_t hash_type, uint8_t *input, uint16_t length,
                     bool as_hex, uint8_t *output)
 {
+  uint8_t c;
+
+
   if (!fuji_hash_clear())
     return false;
 
@@ -29,27 +29,4 @@ bool fuji_hash_data(hash_alg_t hash_type, uint8_t *input, uint16_t length,
     return false;
 
   return true;
-}
-
-bool fuji_hash_calculate(hash_alg_t hash_type, bool as_hex, bool discard_data, uint8_t *output)
-{
-  bool is_success;
-
-
-  is_success = discard_data ? fuji_hash_compute((uint8_t) hash_type)
-    : fuji_hash_compute_no_clear((uint8_t) hash_type);
-  if (!is_success)
-    return false;
-
-  fuji_hash_length(as_hex, &c, 1);
-
-  // conveniently, as_hex is 1 or 0 when used as uint8_t
-  // hash_len is only really required for systems that ask for fixed block sizes of data from the FujiNet, e.g. atari.
-  if (!fuji_hash_output(as_hex, output, c))
-    return false;
-
-  if (discard_data)
-    fuji_hash_clear();
-
-  return is_success;
 }
