@@ -47,11 +47,4 @@ uint8_t network_get_response(uint8_t unit, uint8_t *buf, int len);
 
 uint8_t network_get_error(uint8_t unit);
 
-/**
- * @brief Return Network unit, given devicespec
- * @param deivcespec C string containing N: devicespec.
- * @return unit number (1-255)
- */
-uint8_t network_unit(const char *devicespec);
-
 #endif /* FUJINET_NETWORK_COCO_H */

@@ -14,6 +14,4 @@ typedef struct {
   } fn;
 } fujibus_header;
 
-extern fujibus_header fb_header;
-
 #endif /* FB_HEADER_H */

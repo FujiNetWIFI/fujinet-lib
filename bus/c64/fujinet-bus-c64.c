@@ -1,6 +1,7 @@
 #include "fujinet-fuji.h"
 #include "fujinet-cbm.h"
 #include <string.h>
+#include <stdarg.h>
 
 #include <stdio.h> // debug
 
@@ -23,39 +24,35 @@ bool fuji_net_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 }
 #endif
 
-bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
-		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
-		   const void *data, size_t data_length,
-		   void *reply, size_t reply_length)
+bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
 {
   uint16_t wlen, rlen;
   uint16_t idx, numbytes;
   uint8_t cbm_chan, cbm_dev;
+  va_list ap;
   bool success = true;
 
 
   fb_packet.opcode = 0x01;
   fb_packet.cmd = fuji_cmd;
 
+  va_start(ap, fields);
+
   idx = 0;
   numbytes = fuji_field_numbytes(fields);
-  if (numbytes) {
-    fb_packet.data[idx++] = aux1;
-    numbytes--;
-  }
-  if (numbytes) {
-    fb_packet.data[idx++] = aux2;
-    numbytes--;
-  }
-  if (numbytes) {
-    fb_packet.data[idx++] = aux3;
-    numbytes--;
-  }
-  if (numbytes) {
-    fb_packet.data[idx++] = aux4;
-    numbytes--;
-  }
-  if (data) {
+  if (numbytes > 0)
+    fb_packet.data[idx++] = va_arg(ap, uint8_t);
+  if (numbytes > 1)
+    fb_packet.data[idx++] = va_arg(ap, uint8_t);
+  if (numbytes > 2)
+    fb_packet.data[idx++] = va_arg(ap, uint8_t);
+  if (numbytes > 3)
+    fb_packet.data[idx++] = va_arg(ap, uint8_t);
+  if (fields & FUJI_FIELD_DATA) {
+    const uint8_t *data = va_arg(ap, uint8_t *);
+    const uint16_t data_length = va_arg(ap, uint16_t);
+
+
     memcpy(&fb_packet.data[idx], data, data_length);
     idx += data_length;
   }
@@ -69,8 +66,10 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
     cbm_dev = CBM_DEV_FUJI;
   }
 
-  if (fuji_cbm_open(cbm_chan, cbm_dev, cbm_chan, 2, (unsigned char *) &fb_packet) != 0)
+  if (fuji_cbm_open(cbm_chan, cbm_dev, cbm_chan, 2, (unsigned char *) &fb_packet) != 0) {
+    va_end(ap);
     return false;
+  }
 
   if (idx) {
     wlen = cbm_write(cbm_chan, fb_packet.data, idx);
@@ -78,11 +77,17 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
       success = false;
   }
 
-  if (success && reply) {
+  if (success && (fields & FUJI_FIELD_REPLY)) {
+    uint8_t *reply = va_arg(ap, uint8_t *);
+    uint16_t reply_length = va_arg(ap, uint16_t);
+
+
     rlen = cbm_read(CBM_CMD_CHANNEL, reply, reply_length);
     if (rlen != reply_length)
       success = false;
   }
+
+  va_end(ap);
 
   // FIXME - does it matter if we don't bother to close it?
   cbm_close(CBM_CMD_CHANNEL);

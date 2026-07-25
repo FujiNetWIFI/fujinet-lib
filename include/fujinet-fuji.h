@@ -365,7 +365,7 @@ bool fuji_open_directory_filter(uint8_t hostSlot, const char *path, const char *
  * @brief Fill buffer with directory information.
  * @return success status of request
  */
-extern bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, char *buffer);
+extern bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, void *buffer);
 
 /**
  * @brief Reset FN
@@ -495,7 +495,11 @@ bool fuji_write_appkey(uint8_t key_id, uint16_t count, uint8_t *data);
  * @param  app_id the id of the application from the creator
  * @param  keysize type: AppKeySize, set to DEFAULT for 64 byte appkeys, or SIZE_256 for 256 byte keys
  */
-void fuji_set_appkey_details(uint16_t creator_id, uint8_t app_id, enum AppKeySize keysize);
+extern uint16_t ak_creator_id;
+extern uint8_t ak_app_id;
+extern enum AppKeySize ak_appkey_size;
+#define fuji_set_appkey_details(creator, app, size) \
+  ( ak_creator_id = creator, ak_app_id = app,  ak_appkey_size = size )
 
 // Base64
 // ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success

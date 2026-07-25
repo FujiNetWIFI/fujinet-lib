@@ -78,8 +78,7 @@ uint8_t fuji_remap_device(uint8_t device)
 
 bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
-		   const void *data, size_t data_length,
-		   void *reply, size_t reply_length)
+		   const void *buf, size_t buf_length)
 {
   DCB *dcb;
   uint16_t idx, numbytes;
@@ -94,25 +93,17 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   fb_packet[idx++] = fuji_cmd;
 
   numbytes = fuji_field_numbytes(fields);
-  if (numbytes) {
+  if (numbytes > 0)
     fb_packet[idx++] = aux1;
-    numbytes--;
-  }
-  if (numbytes) {
+  if (numbytes > 1)
     fb_packet[idx++] = aux2;
-    numbytes--;
-  }
-  if (numbytes) {
+  if (numbytes > 2)
     fb_packet[idx++] = aux3;
-    numbytes--;
-  }
-  if (numbytes) {
+  if (numbytes > 3)
     fb_packet[idx++] = aux4;
-    numbytes--;
-  }
-  if (data) {
-    memcpy(&fb_packet[idx], data, data_length);
-    idx += data_length;
+  if (fields & FUJI_FIELD_DATA) {
+    memcpy(&fb_packet[idx], buf, buf_length);
+    idx += buf_length;
   }
 
   dcb = dcb_find(device);
@@ -123,8 +114,8 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   if (status != DCB_STATUS_FINISH)
     return false;
 
-  if (reply) {
-    status = dcb_io(dcb, DCB_COMMAND_READ, reply, reply_length);
+  if (fields & FUJI_FIELD_REPLY) {
+    status = dcb_io(dcb, DCB_COMMAND_READ, (void *) buf, buf_length);
     if (status != DCB_STATUS_FINISH)
       return false;
   }

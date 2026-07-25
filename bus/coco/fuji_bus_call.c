@@ -8,13 +8,11 @@
 
 fujibus_header fb_header;
 
-bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
-		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
-		   const void *data, size_t data_length,
-		   void *reply, size_t reply_length)
+bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
 {
   uint8_t header_len;
   uint8_t aux[4];
+  va_list ap;
 
 
   if (device >= FUJI_DEVICEID_NETWORK
@@ -39,39 +37,59 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   bus_ready();
   dwwrite((unsigned char *) &fb_header, header_len);
 
+  va_start(ap, fields);
+
   {
     uint8_t numbytes = fuji_field_numbytes(fields);
 
-    if (numbytes > 0) aux[0] = aux1;
-    if (numbytes > 1) aux[1] = aux2;
-    if (numbytes > 2) aux[2] = aux3;
-    if (numbytes > 3) aux[3] = aux4;
+    if (numbytes > 0) aux[0] = va_arg(ap, uint8_t);
+    if (numbytes > 1) aux[1] = va_arg(ap, uint8_t);
+    if (numbytes > 2) aux[2] = va_arg(ap, uint8_t);
+    if (numbytes > 3) aux[3] = va_arg(ap, uint8_t);
     if (numbytes)
       dwwrite(aux, numbytes);
   }
 
-  if (data && data_length)
-    dwwrite((uint8_t *) data, data_length);
+  if (fields & FUJI_FIELD_DATA) {
+    const uint8_t *data = va_arg(ap, uint8_t *);
+    const uint16_t data_length = va_arg(ap, uint16_t);
 
-  if (device == FUJI_DEVICEID_CLOCK) {
+    if (data && data_length)
+      dwwrite((uint8_t *) data, data_length);
+  }
+
+  {
+    uint8_t *reply = NULL;
+    uint16_t reply_length = 0;
+
+
+    if (fields & FUJI_FIELD_REPLY) {
+      reply = va_arg(ap, uint8_t *);
+      reply_length = va_arg(ap, uint16_t);
+    }
+
+    va_end(ap);
+
+    if (device == FUJI_DEVICEID_CLOCK) {
+      if (reply)
+        return dwread((uint8_t *) reply, reply_length);
+      return true;
+    }
+
+    if (header_len == 3) { // FUJI_DEVICEID_NETWORK
+      if (network_get_error(fb_header.fn.net.unit))
+        return false;
+      if (reply
+          && network_get_response(fb_header.fn.net.unit, (uint8_t *) reply, reply_length))
+        return false;
+      return true;
+    }
+
+    if (fuji_get_error())
+      return false;
     if (reply)
-      return dwread((uint8_t *) reply, reply_length);
-    return true;
+      return fuji_get_response((uint8_t *) reply, reply_length);
   }
-
-  if (header_len == 3) { // FUJI_DEVICEID_NETWORK
-    if (network_get_error(fb_header.fn.net.unit))
-      return false;
-    if (reply
-        && network_get_response(fb_header.fn.net.unit, (uint8_t *) reply, reply_length))
-      return false;
-    return true;
-  }
-
-  if (fuji_get_error())
-    return false;
-  if (reply)
-    return fuji_get_response((uint8_t *) reply, reply_length);
 
   return true;
 }

@@ -18,36 +18,23 @@ extern int fujiF5w(uint16_t descrdir, uint16_t devcom,
   parm [dx] [ax] [cx] [si] [es bx] [di] \
   modify [ax]
 #define fujiF5(dir, dev, cmd, descr, a12, a34, buf, len)         \
-  fujiF5w(descr << 8 | dir, cmd << 8 | dev, a12, a34, buf, len)
+  fujiF5w((descr) << 8 | (dir), (cmd) << 8 | (dev), a12, a34, buf, len)
 
 bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
-		   const void *data, size_t data_length,
-		   void *reply, size_t reply_length)
+		   const void *buf, size_t buf_length)
 {
-  int rcode;;
-  uint8_t direction;
-  void far *buffer = NULL;
-  size_t length = 0;
+  int rcode;
+  uint8_t direction = FUJI_DIR_NONE;
 
 
-  if (data) {
-    direction = FUJI_DIR_WRITE;
-    buffer = data;
-    length = data_length;
-  }
-  else if (reply) {
-    direction = FUJI_DIR_READ;
-    buffer = reply;
-    length = reply_length;
-  }
-  else
-    direction = FUJI_DIR_NONE;
+  if (fields & (FUJI_FIELD_DATA | FUJI_FIELD_REPLY))
+    direction = fields & FUJI_FIELD_DATA ? FUJI_DIR_WRITE : FUJI_DIR_READ;
 
-  rcode = fujiF5(direction, device, fuji_cmd, fields,
+  rcode = fujiF5(direction, device, fuji_cmd, fields & 0x07,
                  (aux2 << 8) | aux1,
                  (aux4 << 8) | aux3,
-                 buffer, length);
+                 (void *) buf, buf_length);
 
   return rcode == PACKET_COMPLETE;
 }

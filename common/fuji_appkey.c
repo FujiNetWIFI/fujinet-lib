@@ -1,12 +1,18 @@
-#include "fuji_appkey.h"
-
 #include <fujinet-appkey.h>
 #include <fujinet-fuji.h>
+
+typedef struct {
+  uint16_t creator;
+  uint8_t app_id;
+  uint8_t key_id;
+  uint8_t mode;
+  uint8_t reserved;
+} FNAppKeyID;
 
 uint16_t ak_creator_id;
 uint8_t ak_app_id;
 enum AppKeySize ak_appkey_size;
-FNAppKeyID appkey;
+static FNAppKeyID appkey;
 
 static void init_appkey(uint8_t key_id, uint8_t mode)
 {

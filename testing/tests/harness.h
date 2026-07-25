@@ -42,6 +42,7 @@ fn_skipped:                                     \
 
 extern int tests_run, tests_passed, tests_skipped, tests_failed;
 
+extern void begin_testing();
 extern void end_testing(int code);
 extern void print_versions();
 extern void test_abort(void);

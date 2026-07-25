@@ -21,6 +21,11 @@ int tests_passed  = 0;
 int tests_skipped = 0;
 int tests_failed  = 0;
 
+void begin_testing()
+{
+  tests_run = tests_passed = tests_skipped = tests_failed = 0;
+}
+
 void end_testing(int code)
 {
   printf("Press any key to exit\n");

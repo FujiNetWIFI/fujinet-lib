@@ -48,6 +48,8 @@ int main(void)
   printf("=== FujiNet Integration Tests ===\n");
   printf("NOTE: Requires a connected, WiFi-enabled FujiNet device.\n");
 
+  begin_testing();
+
 #if FUJI_TESTS
   /* fuji.h */
   test_fuji_status();

@@ -11,13 +11,10 @@
 
 FN_ERR network_open(const char *devicespec, uint8_t mode, uint8_t trans)
 {
-  bool success;
   uint8_t nw_unit = network_unit(devicespec);
 
 
-  success = NETCALL_A1_A2_D(FUJICMD_OPEN, nw_unit,
-			    mode, trans, devicespec, NETWORK_OPEN_LEN);
-  if (!success)
+  if (!NETCALL_A1_A2_D(FUJICMD_OPEN, nw_unit, mode, trans, devicespec, NETWORK_OPEN_LEN))
     return FN_ERR_IO_ERROR;
 
 #if 0

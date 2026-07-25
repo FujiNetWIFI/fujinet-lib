@@ -7,6 +7,7 @@
 #include "fujinet-commands.h"
 #include "portio.h"
 #include <string.h>
+#include <stdarg.h>
 
 #ifdef UNUSED
 #define COLUMNS 16
@@ -163,15 +164,13 @@ uint8_t fuji_calc_checksum(void *ptr, uint16_t len)
   return (uint8_t) chk;
 }
 
-bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
-		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
-		   const void *data, size_t data_length,
-		   void *reply, size_t reply_length)
+bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
 {
   int code;
   uint8_t ck1, ck2;
   uint16_t rlen;
   uint16_t idx, numbytes;
+  va_list ap;
 
 
   fb_packet = (fujibus_packet *) (fb_buffer + 1); // +1 for SLIP_END
@@ -189,29 +188,27 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   hexdump((uint8_t *) fb_packet, sizeof(fujibus_header));
 #endif /* UNUSED */
 
+  va_start(ap, fields);
+
   idx = 0;
   numbytes = fuji_field_numbytes(fields);
 #ifdef UNUSED
   printf("numbytes: %d %d\n", fields, numbytes);
   hexdump(fuji_field_numbytes_table, 8);
 #endif /* UNUSED */
-  if (numbytes) {
-    fb_packet->data[idx++] = aux1;
-    numbytes--;
-  }
-  if (numbytes) {
-    fb_packet->data[idx++] = aux2;
-    numbytes--;
-  }
-  if (numbytes) {
-    fb_packet->data[idx++] = aux3;
-    numbytes--;
-  }
-  if (numbytes) {
-    fb_packet->data[idx++] = aux4;
-    numbytes--;
-  }
-  if (data) {
+  if (numbytes > 0)
+    fb_packet->data[idx++] = va_arg(ap, uint8_t);
+  if (numbytes > 1)
+    fb_packet->data[idx++] = va_arg(ap, uint8_t);
+  if (numbytes > 2)
+    fb_packet->data[idx++] = va_arg(ap, uint8_t);
+  if (numbytes > 3)
+    fb_packet->data[idx++] = va_arg(ap, uint8_t);
+  if (fields & FUJI_FIELD_DATA) {
+    const uint8_t *data = va_arg(ap, uint8_t *);
+    const uint16_t data_length = va_arg(ap, uint16_t);
+
+
     memcpy(&fb_packet->data[idx], data, data_length);
     idx += data_length;
   }
@@ -258,7 +255,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   }
 
   rlen = port_get_until(fb_packet, (fb_buffer + sizeof(fb_buffer)) - ((uint8_t *) fb_packet),
-                 SLIP_END, TIMEOUT_SLOW);
+                        SLIP_END, TIMEOUT_SLOW);
 #ifdef UNUSED
   printf("Packet reply: %d\n", rlen);
   hexdump((uint8_t *) fb_packet, sizeof(fujibus_header));
@@ -296,11 +293,17 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 
   // FIXME - validate that fb_packet->fields is zero?
 
-  if (reply_length && rlen) {
+  if (rlen && (fields & FUJI_FIELD_REPLY)) {
+    uint8_t *reply = va_arg(ap, uint8_t *);
+    uint16_t reply_length = va_arg(ap, uint16_t);
+
+
     if (reply_length < rlen)
       rlen = reply_length;
     memcpy(reply, fb_packet->data, rlen);
   }
+
+  va_end(ap);
 
   return true;
 }
