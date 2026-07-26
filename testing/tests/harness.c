@@ -54,6 +54,7 @@ void print_versions()
     strcpy(g.adapter.ace.fn_version, "FAIL");
 #endif
   printf("FujiNet: %-14s\n", g.adapter.ace.fn_version);
+  printf("Platform: %s\n", PLATFORM);
 
   strcpy((char *) g.clock_fmt, "BROKEN");
 #ifndef FN_BROKEN_clock_get_time_UTC_ISO_STRING
