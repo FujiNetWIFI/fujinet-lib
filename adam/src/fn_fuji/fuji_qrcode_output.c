@@ -1,0 +1,50 @@
+#include <stdbool.h>
+#include <stdint.h>
+#include <eos.h>
+#include <string.h>
+#include "fujinet-fuji.h"
+#include "fujinet-network.h"
+#include "fujinet-network-adam.h"
+#include "response.h"
+
+bool fuji_qrcode_output(char *s, uint16_t len)
+{
+  uint8_t err = 0;
+  uint16_t o = 0;
+
+  // Send command
+
+  while(1)
+    {
+      err = eos_write_character_device(FUJINET_DEVICE_ID,"\xBF",1);
+
+      if (err == ADAMNET_TIMEOUT)
+        continue;
+      else if (err == ADAMNET_OK)
+        break;
+      else
+        return FN_ERR_IO_ERROR;
+    }
+
+  // Get response
+
+  while(len)
+    {
+      uint16_t l = (len > RESPONSE_SIZE ? RESPONSE_SIZE : len);
+
+      err = eos_read_character_device(FUJINET_DEVICE_ID,response,RESPONSE_SIZE);
+
+      if (err == ADAMNET_TIMEOUT)
+        continue;
+      else if (err == ADAMNET_OK)
+        {
+          memcpy(&s[o],&response[0],l);
+          len -= l;
+          o += l;
+        }
+      else
+        return FN_ERR_IO_ERROR;
+    }
+
+  return FN_ERR_OK;
+}
