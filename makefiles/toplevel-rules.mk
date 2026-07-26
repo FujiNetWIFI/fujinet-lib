@@ -5,7 +5,7 @@ BUILD_DIR = build
 CACHE_DIR = _cache
 RELEASE_DIR = release
 
-MAKEFILE_DIR = $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+MAKEFILE_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
 # Make a list of the things we want to build which combine R2R dir, app name, and platform
 APP_TARGETS := $(foreach p, $(PLATFORMS), $(R2R_DIR)/$(p)/$(PRODUCT))
