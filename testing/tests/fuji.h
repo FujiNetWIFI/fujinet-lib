@@ -12,6 +12,7 @@ extern void test_fuji_host_prefix(void);
 extern void test_fuji_appkey(void);
 extern void test_fuji_base64(void);
 extern void test_fuji_hashing(void);
+extern void test_fuji_qrcode(void);
 extern void test_fuji_directory_ops(void);
 
 #endif /* FUJI_H */

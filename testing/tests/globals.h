@@ -28,6 +28,8 @@
  *   b64          -- base64 encode and decode buffers (sequential)
  *   hash         -- all six hash output buffers; sha256 must survive until
  *                   compared with inc1/inc2 so all six are distinct fields
+ *   qrcode_verify-- low-level vs. qrcode_create() output buffers; both must
+ *                   coexist for the byte-for-byte comparison between them
  *   clock_fmt    -- single time buffer reused across format tests
  *   clock_tz_call-- four buffers that must coexist for the strcmp at the end
  *                   of test_clock_get_time_tz
@@ -76,6 +78,11 @@ typedef union {
     uint8_t inc1[65];
     uint8_t inc2[65];
   } hash_verify;
+
+  struct {
+    uint8_t output1[256];
+    uint8_t output2[256];
+  } qrcode_verify;
 
   uint8_t clock_fmt[32];
 

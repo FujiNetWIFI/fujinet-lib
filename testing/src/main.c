@@ -64,6 +64,7 @@ int main(void)
   test_fuji_guid();
   test_fuji_base64();
   test_fuji_hashing();
+  test_fuji_qrcode();
 #endif // FUJI_TESTS
 
 #if DISK_TESTS

@@ -18,6 +18,13 @@
 #if FNLIB_VERSION_MAJOR < 5
 // ===========================
 
+// QR codes were added in v5.0.0; not present at all before that.
+#define FN_BROKEN_fuji_qrcode_input
+#define FN_BROKEN_fuji_qrcode_encode
+#define FN_BROKEN_fuji_qrcode_length
+#define FN_BROKEN_fuji_qrcode_output
+#define FN_BROKEN_qrcode_create
+
 #ifdef BUILD_ATARI
 #define FN_BROKEN_fuji_open_directory_filter
 #define FN_BROKEN_fuji_generate_guid
