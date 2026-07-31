@@ -1,4 +1,4 @@
-SUBPROJECTS = testlib fuji network clock fdsk
+SUBPROJECTS = testlib fuji network clock fdsk qrcode
 
 .PHONY: all $(SUBPROJECTS)
 
