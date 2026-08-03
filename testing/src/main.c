@@ -24,6 +24,8 @@
 #error "You need to choose some tests"
 #endif
 
+#include "broken.h"
+
 #include "fuji.h"
 #include "network.h"
 #include "clock.h"

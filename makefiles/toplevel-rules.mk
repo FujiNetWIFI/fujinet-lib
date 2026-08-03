@@ -7,8 +7,16 @@ RELEASE_DIR = release
 
 MAKEFILE_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
+# PRODUCTS names several binaries sharing one disk, PRODUCTS_DISK_NAME
+ifneq ($(strip $(PRODUCTS)),)
+  PRODUCTS_DISK_NAME ?= $(if $(strip $(PRODUCT)),$(PRODUCT),$(firstword $(filter-out %.lib,$(PRODUCTS))))
+  MEKKO_TARGET := $(PRODUCTS_DISK_NAME)
+else
+  MEKKO_TARGET := $(PRODUCT)
+endif
+
 # Make a list of the things we want to build which combine R2R dir, app name, and platform
-APP_TARGETS := $(foreach p, $(PLATFORMS), $(R2R_DIR)/$(p)/$(PRODUCT))
+APP_TARGETS := $(foreach p, $(PLATFORMS), $(R2R_DIR)/$(p)/$(MEKKO_TARGET))
 
 .PHONY: all clean release FORCE
 
@@ -25,12 +33,12 @@ endif
 
 # Use % wildcard match to platform specific app so we don't have to
 # spell out every single platform variation
-$(R2R_DIR)/%/$(PRODUCT): FORCE
+$(R2R_DIR)/%/$(MEKKO_TARGET): FORCE
 	$(MAKE) -f $(MAKEFILE_DIR)/platforms/$*.mk \
 	  $(if $(MEKKO_CONFIG),MEKKO_CONFIG=$(MEKKO_CONFIG)) r2r
 
 # Convenience: allow `make coco` (or apple2) as a shortcut
-$(PLATFORMS): %: $(R2R_DIR)/%/$(PRODUCT)
+$(PLATFORMS): %: $(R2R_DIR)/%/$(MEKKO_TARGET)
 
 # ------------------------------------------------------------------------
 # Pattern rule to support "make <platform>/<target>" syntax.

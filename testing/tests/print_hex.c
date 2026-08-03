@@ -1,3 +1,5 @@
+#include "broken.h"
+
 #include "print_hex.h"
 #ifdef _CMOC_VERSION_
 #include <coco.h>

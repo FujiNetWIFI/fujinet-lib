@@ -1,4 +1,4 @@
-EXECUTABLE = $(R2R_PD)/$(PRODUCT_BASE).abs
+EXEC_SUFFIX = .abs
 LIBRARY = $(R2R_PD)/$(PRODUCT_BASE).$(PLATFORM).lib
 
 MWD := $(realpath $(dir $(lastword $(MAKEFILE_LIST)))..)

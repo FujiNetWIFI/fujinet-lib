@@ -31,8 +31,28 @@ include $(CURDIR)/$(MEKKO_CONFIG)
 # been commited
 GIT_VERSION := $(shell git rev-parse --short HEAD)$(shell git status --porcelain | grep -q '^[ MADRCU]' && echo '*')
 
+# A pass with MEKKO_PRODUCT set builds that one product, without it the
+# pass builds the disk from all of PRODUCTS
+ifeq ($(strip $(MEKKO_PRODUCT)),)
+  MEKKO_MULTI := $(if $(strip $(PRODUCTS)),1,)
+else
+  PRODUCT := $(MEKKO_PRODUCT)
+endif
+
+# <product>_CFLAGS is appended to CFLAGS, and so on for any variable
+ifneq ($(MEKKO_MULTI),1)
+  ifneq ($(strip $(PRODUCT)),)
+    $(foreach v,$(filter $(PRODUCT)_%,$(.VARIABLES)), \
+      $(eval $(patsubst $(PRODUCT)_%,%,$(v)) += $(value $(v))))
+  endif
+endif
+
 IS_LIBRARY := $(if $(filter %.lib,$(PRODUCT)),1,0)
-ifeq ($(IS_LIBRARY),1)
+ifeq ($(MEKKO_MULTI),1)
+  PRODUCT := $(PRODUCTS_DISK_NAME)
+  PRODUCT_BASE = $(PRODUCT)
+  BUILD_DISK = $(DISK)
+else ifeq ($(IS_LIBRARY),1)
   PRODUCT_BASE = $(basename $(PRODUCT))
   BUILD_LIB = $(LIBRARY)
 else
@@ -62,6 +82,18 @@ R2R_PD := $(R2R_DIR)/$(PLATFORM)
 OBJ_DIR := $(BUILD_DIR)/$(PRODUCT)/$(PLATFORM)
 CACHE_PLATFORM := $(CACHE_DIR)/$(PLATFORM)
 MKDIR_P ?= mkdir -p
+
+# Lets the disk pass name executables it did not build itself
+EXECUTABLE ?= $(R2R_PD)/$(PRODUCT_BASE)$(EXEC_SUFFIX)
+
+# Library products are built but not copied onto the disk
+ifeq ($(MEKKO_MULTI),1)
+  DISK_EXECUTABLES ?= $(foreach p,$(filter-out %.lib,$(PRODUCTS)),$(R2R_PD)/$(p)$(EXEC_SUFFIX))
+else
+  DISK_EXECUTABLES ?= $(BUILD_EXEC)
+endif
+
+DISK_BOOT_EXEC ?= $(firstword $(DISK_EXECUTABLES))
 
 # Expand PLATFORM_COMBOS entries into a lookup form
 #   c64+=commodore,eightbit -> c64 commodore eightbit
@@ -162,6 +194,26 @@ clean::
 debug::
 	echo 'What should debug target do?'
 	exit 1
+
+.PHONY: product products
+product: $(BUILD_EXEC) $(BUILD_LIB)
+
+# Built in the order PRODUCTS lists them so a library can come first
+products:
+	@for p in $(PRODUCTS); do \
+	  $(MAKE) -f $(PLATFORM_MK) MEKKO_CONFIG=$(MEKKO_CONFIG) MEKKO_PRODUCT=$$p product \
+	    || exit 1; \
+	done
+
+ifeq ($(MEKKO_MULTI),1)
+r2r:: products
+ifneq ($(strip $(BUILD_DISK)),)
+$(BUILD_DISK): products
+endif
+
+clean::
+	rm -rf $(foreach p,$(PRODUCTS),$(BUILD_DIR)/$(p)/$(PLATFORM))
+endif
 
 # These targets allow adding platform-specific steps from the top-level Makefile.
 # Examples:
