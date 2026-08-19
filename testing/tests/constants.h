@@ -18,6 +18,7 @@
 #endif
 #define NET_JSON_URL    "N1:http://localhost:8080/json"
 #define NET_POST_URL    "N1:http://localhost:8080/post"
+#define NET_PUT_URL     "N1:http://localhost:8080/put"
 #define NET_DELETE_URL  "N1:http://localhost:8080/delete"
 
 #else
@@ -29,6 +30,7 @@
 
 #define NET_JSON_URL    "N1:HTTPS://httpbin.org/json"
 #define NET_POST_URL    "N1:HTTPS://httpbin.org/post"
+#define NET_PUT_URL     "N1:HTTPS://httpbin.org/put"
 #define NET_DELETE_URL  "N1:HTTPS://httpbin.org/delete"
 #endif
 

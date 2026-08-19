@@ -1,6 +1,7 @@
 PRODUCTS = fnlib-test.lib flibtest fnettest fclktest fdsktest fqrctest
 PRODUCTS_DISK_NAME = fntests
 
+PLATFORMS += adam
 PLATFORMS += adam_cpm
 PLATFORMS += apple2
 PLATFORMS += atari

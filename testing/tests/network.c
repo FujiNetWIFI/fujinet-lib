@@ -359,21 +359,21 @@ void test_network_http_put_delete(void)
 #ifdef FN_BROKEN_network_open
   SKIP(network_open);
 #else
-  err = network_open(NET_POST_URL, OPEN_MODE_HTTP_PUT, OPEN_TRANS_NONE);
+  err = network_open(NET_PUT_URL, OPEN_MODE_HTTP_PUT_H, OPEN_TRANS_NONE);
   TEST("network_open (PUT) succeeds", err == FN_ERR_OK);
 #endif
 
 #ifdef FN_BROKEN_network_http_put
   SKIP(network_http_put);
 #else
-  err = network_http_put(NET_POST_URL, "fujinet=put_test");
+  err = network_http_put(NET_PUT_URL, "fujinet=put_test");
   TEST("network_http_put succeeds", err == FN_ERR_OK);
 #endif
 
 #ifdef FN_BROKEN_network_close
   SKIP(network_close);
 #else
-  err = network_close(NET_POST_URL);
+  err = network_close(NET_PUT_URL);
   TEST("network_close after PUT succeeds", err == FN_ERR_OK);
 #endif
 
@@ -418,6 +418,8 @@ void echo_check(const uint8_t *msg)
   r = network_read(NET_TCP_SPEC, g.net, w);
   TEST("network_read echoed data", r > 0);
   if (r > 0) {
+    if (r > w + 1)
+      r = w + 1;
     if (memcmp(g.net, msg, w) != 0)
       cmp_hex("orig", msg, w, "recv", g.net, r);
     TEST("Echo matches sent message", memcmp(g.net, msg, w) == 0);
