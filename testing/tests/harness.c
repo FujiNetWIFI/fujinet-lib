@@ -57,8 +57,22 @@ void print_versions()
   printf("Platform: %s\n", PLATFORM);
 
   strcpy((char *) g.clock_fmt, "BROKEN");
-#ifndef FN_BROKEN_clock_get_time_UTC_ISO_STRING
+#if !defined(FN_BROKEN_clock_get_time_UTC_ISO_STRING)
   if (clock_get_time(g.clock_fmt, UTC_ISO_STRING) != FN_ERR_OK)
+    strcpy((char *) g.clock_fmt, "FAIL");
+#elif !defined(FN_BROKEN_fuji_get_time)
+  if (fuji_get_time(g.clock_fmt)) {
+    int year, month, day, hour, minute, second;
+    year = g.clock_fmt[0] * 100 + g.clock_fmt[1];
+    month = g.clock_fmt[2];
+    day = g.clock_fmt[3];
+    hour = g.clock_fmt[4];
+    minute = g.clock_fmt[5];
+    second = g.clock_fmt[6];
+    sprintf(g.clock_fmt, "%04d-%02d-%02dT%02d:%02d:%02d",
+            year, month, day, hour, minute, second);
+  }
+  else
     strcpy((char *) g.clock_fmt, "FAIL");
 #endif
   printf("  UTC ISO: %s\n", (char *)g.clock_fmt);

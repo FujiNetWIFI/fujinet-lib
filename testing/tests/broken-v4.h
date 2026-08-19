@@ -1,0 +1,157 @@
+#if FNLIB_VERSION_MAJOR < 5
+
+// QR codes were added in v5.0.0; not present at all before that.
+#define FN_BROKEN_fuji_qrcode_input
+#define FN_BROKEN_fuji_qrcode_encode
+#define FN_BROKEN_fuji_qrcode_length
+#define FN_BROKEN_fuji_qrcode_output
+#define FN_BROKEN_qrcode_create
+
+#ifdef BUILD_ATARI
+#define FN_BROKEN_fuji_open_directory_filter
+#define FN_BROKEN_fuji_generate_guid
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
+#define FN_BROKEN_network_set_eol
+#endif /* BUILD_ATARI */
+
+#ifdef BUILD_COCO
+#define FN_BROKEN_fuji_status
+#define FN_BROKEN_fuji_get_directory_position
+#define FN_BROKEN_fuji_get_host_prefix
+#define FN_BROKEN_fuji_base64_encode_output
+
+#define FN_BROKEN_fuji_get_time
+
+#define FN_BROKEN_network_set_eol
+
+#define FN_BROKEN_clock_get_time_PRODOS_BINARY
+#define FN_BROKEN_clock_get_time_APETIME_BINARY
+#define FN_BROKEN_clock_get_time_TZ_ISO_STRING
+#define FN_BROKEN_clock_get_time_UTC_ISO_STRING
+#define FN_BROKEN_clock_get_time_APPLE3_SOS_BINARY
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
+#define FN_BROKEN_clock_get_tz
+#define FN_BROKEN_clock_set_tz
+#define FN_BROKEN_clock_get_time_tz
+#endif /* BUILD_COCO */
+
+#ifdef BUILD_APPLE2
+#define FN_BROKEN_fuji_open_directory_filter
+#define FN_BROKEN_fuji_get_host_prefix
+
+#define FN_BROKEN_fuji_base64_encode_length
+#define FN_BROKEN_fuji_hash_clear
+#define FN_BROKEN_fuji_hash_data
+#define FN_BROKEN_fuji_hash_calculate
+
+#define FN_BROKEN_network_http_post
+#define FN_BROKEN_network_set_eol
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
+#endif /* BUILD_APPLE2 */
+
+#ifdef BUILD_MSDOS
+#define FN_BROKEN_fuji_status
+#define FN_BROKEN_fuji_get_host_slots
+#define FN_BROKEN_fuji_get_host_prefix
+#define FN_BROKEN_fuji_mount_host_slot
+#define FN_BROKEN_fuji_get_scan_result
+
+#define FN_BROKEN_fuji_read_appkey
+
+#define FN_BROKEN_fuji_base64_encode_length
+#define FN_BROKEN_fuji_base64_encode_input
+#define FN_BROKEN_fuji_hash_data
+
+#define FN_BROKEN_fuji_get_time
+
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY
+#define FN_BROKEN_clock_get_time_PRODOS_BINARY
+#define FN_BROKEN_clock_get_time_APETIME_BINARY
+#define FN_BROKEN_clock_get_time_TZ_ISO_STRING
+#define FN_BROKEN_clock_get_time_UTC_ISO_STRING
+#define FN_BROKEN_clock_get_time_APPLE3_SOS_BINARY
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
+#define FN_BROKEN_clock_get_tz
+#define FN_BROKEN_clock_set_tz
+#define FN_BROKEN_clock_get_time_tz
+
+#define FN_BROKEN_network_open
+#define FN_BROKEN_network_write
+#define FN_BROKEN_network_read
+#define FN_BROKEN_network_http_post
+#define FN_BROKEN_network_http_start_add_headers
+#define FN_BROKEN_network_http_set_channel_mode
+#define FN_BROKEN_network_json_parse
+#define FN_BROKEN_network_http_put
+
+#endif /* BUILD_MSDOS */
+
+#if defined(BUILD_ADAM) || defined(BUILD_ADAM_CPM)
+#define FN_BROKEN_fuji_status
+#define FN_BROKEN_fuji_get_adapter_config
+#define FN_BROKEN_fuji_get_host_prefix
+#define FN_BROKEN_fuji_put_host_slots
+#define FN_BROKEN_fuji_get_device_slots
+#define FN_BROKEN_fuji_mount_host_slot
+#define FN_BROKEN_fuji_get_wifi_status
+#define FN_BROKEN_fuji_scan_for_networks
+
+#define FN_BROKEN_fuji_generate_guid
+#define FN_BROKEN_fuji_base64_encode_length
+#define FN_BROKEN_fuji_hash_data
+
+#define FN_BROKEN_fuji_get_time
+
+#define FN_BROKEN_network_close
+#define FN_BROKEN_network_http_add_header
+#define FN_BROKEN_network_http_delete
+#define FN_BROKEN_network_http_end_add_headers
+#define FN_BROKEN_network_http_post
+#define FN_BROKEN_network_http_post_bin
+#define FN_BROKEN_network_http_put
+#define FN_BROKEN_network_http_set_channel_mode
+#define FN_BROKEN_network_http_start_add_headers
+#define FN_BROKEN_network_init
+#define FN_BROKEN_network_json_parse
+#define FN_BROKEN_network_json_query
+#define FN_BROKEN_network_open
+#define FN_BROKEN_network_read
+#define FN_BROKEN_network_read_nb
+#define FN_BROKEN_network_status
+#define FN_BROKEN_network_unit
+#define FN_BROKEN_network_write
+#define FN_BROKEN_network_set_eol
+
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY
+#define FN_BROKEN_clock_get_time_PRODOS_BINARY
+#define FN_BROKEN_clock_get_time_APETIME_BINARY
+#define FN_BROKEN_clock_get_time_TZ_ISO_STRING
+#define FN_BROKEN_clock_get_time_UTC_ISO_STRING
+#define FN_BROKEN_clock_get_time_APPLE3_SOS_BINARY
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
+#define FN_BROKEN_clock_get_time_tz
+#define FN_BROKEN_clock_get_tz
+#define FN_BROKEN_clock_set_tz
+#endif /* BUILD_ADAM || BUILD_ADAM_CPM */
+
+#ifdef BUILD_C64
+#define FN_BROKEN_fuji_generate_guid
+#define FN_BROKEN_fuji_get_host_prefix
+
+#define FN_BROKEN_fuji_get_time
+
+#define FN_BROKEN_network_set_eol
+
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY
+#define FN_BROKEN_clock_get_time_PRODOS_BINARY
+#define FN_BROKEN_clock_get_time_APETIME_BINARY
+#define FN_BROKEN_clock_get_time_TZ_ISO_STRING
+#define FN_BROKEN_clock_get_time_UTC_ISO_STRING
+#define FN_BROKEN_clock_get_time_APPLE3_SOS_BINARY
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
+#define FN_BROKEN_clock_get_time_tz
+#define FN_BROKEN_clock_get_tz
+#define FN_BROKEN_clock_set_tz
+#endif /* BUILD_C64 */
+
+#endif // FNLIB_VERSION_MAJOR < 5

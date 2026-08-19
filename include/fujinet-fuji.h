@@ -601,4 +601,6 @@ bool fuji_hash_data(hash_alg_t hash_type, uint8_t *input, uint16_t length, bool 
  */
 bool fuji_hash_calculate(hash_alg_t hash_type, bool as_hex, bool discard_data, uint8_t *output);
 
+#define fuji_get_time(buffer) FUJICALL_RV(FUJICMD_GET_TIME, buffer, 7)
+
 #endif /* FUJINET_FUJI_H */
