@@ -69,6 +69,10 @@ int main(void)
   test_fuji_hashing();
 #endif // FUJI_TESTS
 
+#if QR_TESTS
+  test_fuji_qrcode();
+#endif // QR_TESTS
+
 #if DISK_TESTS
   /* fdsk.h */
   test_fuji_copy_file();

@@ -15,15 +15,6 @@ static fujibus_packet fb_packet;
 
 //uint8_t fn_device_error;
 
-#if 0
-bool fuji_net_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
-		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
-		   const void *data, size_t data_length,
-		   void *reply, size_t reply_length)
-{
-}
-#endif
-
 bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
 {
   uint16_t wlen, rlen;
@@ -33,7 +24,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
   bool success = true;
 
 
-  fb_packet.opcode = 0x01;
+  fb_packet.opcode = OPCODE_NO_PAYLOAD;
   fb_packet.cmd = fuji_cmd;
 
   va_start(ap, fields);
@@ -57,7 +48,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
     idx += data_length;
   }
 
-  if (device >= FUJI_DEVICEID_NETWORK  && device <= FUJI_DEVICEID_NETWORK_LAST) {
+  if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
     cbm_chan = device - FUJI_DEVICEID_NETWORK + CBM_DATA_CHANNEL_0;
     cbm_dev = CBM_DEV_NETWORK;
   }
@@ -65,6 +56,9 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
     cbm_chan = CBM_CMD_CHANNEL;
     cbm_dev = CBM_DEV_FUJI;
   }
+
+  if (idx)
+    fb_packet.opcode = OPCODE_HAS_PAYLOAD;
 
   if (fuji_cbm_open(cbm_chan, cbm_dev, cbm_chan, 2, (unsigned char *) &fb_packet) != 0) {
     va_end(ap);
@@ -83,8 +77,6 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
 
 
     rlen = cbm_read(CBM_CMD_CHANNEL, reply, reply_length);
-    if (rlen != reply_length)
-      success = false;
   }
 
   va_end(ap);
@@ -116,6 +108,7 @@ uint16_t network_bus_write(uint8_t device, const void *buffer, size_t length)
   length field, no block size, no padding.
 */
 
+#ifdef OBSOLETE
 bool fuji_bus_appkey_read(void *string, uint16_t *length)
 {
   uint16_t rlen;
@@ -123,8 +116,15 @@ bool fuji_bus_appkey_read(void *string, uint16_t *length)
 
   rlen = cbm_read(CBM_CMD_CHANNEL, string, MAX_APPKEY_LEN);
   *length = rlen;
+  printf("appkey read %d\n", rlen);
   return true;
 }
+#else
+bool fuji_bus_appkey_read(void *, uint16_t *)
+{
+  return false;
+}
+#endif /* OBSOLETE */
 
 bool fuji_bus_appkey_write(void *string, uint16_t length)
 {

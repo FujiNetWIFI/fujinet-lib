@@ -315,6 +315,9 @@ void test_fuji_appkey(void)
   ok = fuji_read_appkey(0, &count, g.appkey.read);
   TEST("fuji_read_appkey (first) succeeds", ok);
   TEST("fuji_read_appkey (first) returned 64 bytes", count == 64);
+  if ( memcmp(g.appkey.read, g.appkey.write, 64) != 0)
+    cmp_hex("read", g.appkey.read, 64,
+            "writ", g.appkey.write, 64);
   TEST("fuji_read_appkey (first) data matches write",
        memcmp(g.appkey.read, g.appkey.write, 64) == 0);
 

@@ -12,9 +12,9 @@ typedef struct {
 uint16_t ak_creator_id;
 uint8_t ak_app_id;
 enum AppKeySize ak_appkey_size;
-static FNAppKeyID appkey;
+FNAppKeyID appkey;
 
-static void init_appkey(uint8_t key_id, uint8_t mode)
+void init_appkey(uint8_t key_id, uint8_t mode)
 {
   uint8_t idx = 0;
 
@@ -27,7 +27,7 @@ static void init_appkey(uint8_t key_id, uint8_t mode)
   return;
 }
 
-bool fuji_read_appkey(uint8_t key_id, uint16_t *length, uint8_t *data)
+bool fuji_read_appkey_common(uint8_t key_id, uint16_t *length, uint8_t *data)
 {
   init_appkey(key_id, 0);
   if (!FUJICALL_D(FUJICMD_OPEN_APPKEY, &appkey, sizeof(appkey)))

@@ -452,7 +452,11 @@ bool fuji_set_sio_external_clock(uint16_t rate);
  * @return success status of the status request
  * NOTE: The actual status VALUE is in 'status', the return is just whether the command to fetch the status succeeded, it could succeed, but the status value holds an error.
  */
+#ifdef __CBM__
+#define fuji_status(status) FUJICALL_RV(FUJICMD_STATUS, status, sizeof(FNStatus))
+#else
 #define fuji_status(status) FUJICALL_A1_RV(FUJICMD_STATUS, 0, status, sizeof(FNStatus))
+#endif /* __CBM__ */
 
 #ifdef __CBM__
 // DEBUGGING
@@ -478,7 +482,13 @@ bool fuji_unmount_host_slot(uint8_t hs);
  * @param  data a pointer to the memory to write the data back to. WARNING: The data buffer needs to be at least 2 more bytes larger than the keysize.
  * @return success status of the call. If either the initial OPEN or subsequent READ fail, will return false.
  */
-bool fuji_read_appkey(uint8_t key_id, uint16_t *count, uint8_t *data);
+#ifdef __CBM__
+extern bool fuji_read_appkey_c64(uint8_t key_id, uint16_t *count, uint8_t *data);
+#define fuji_read_appkey(k, c, d) fuji_read_appkey_c64(k, c, d)
+#else
+extern bool fuji_read_appkey_common(uint8_t key_id, uint16_t *count, uint8_t *data);
+#define fuji_read_appkey(k, c, d) fuji_read_appkey_common(k, c, d)
+#endif /* __CBM__ */
 
 /**
  * @brief  Writes to an appkey using the provided details previously setup with fuji_set_appkey_details.

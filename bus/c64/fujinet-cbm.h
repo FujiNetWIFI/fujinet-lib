@@ -7,6 +7,11 @@
 
 #include "fujinet-pet-charmap.h"
 
+enum {
+  OPCODE_NO_PAYLOAD  = 0x01,
+  OPCODE_HAS_PAYLOAD = 0x02,
+};
+
 #define CBM_DEV_FUJI          30
 #define CBM_DEV_NETWORK       16
 

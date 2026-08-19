@@ -2,6 +2,7 @@
 
 #include "harness.h"
 #include "globals.h"
+#include "cmp_hex.h"
 #include <fujinet-fuji.h>
 
 #ifndef _CMOC_VERSION_
@@ -10,15 +11,44 @@
 #endif /* _CMOC_VERSION_ */
 
 #define BASE64_IN  "Hello, FujiNet!"
+#ifdef __CBM__
+// cc65 converts ASCII to PETSCII in compiled strings so binary sent
+// to base64/hash is different and will get different results
+#define BASE64_OUT "yEVMTE8sIMZVSknORVQh"
+#define MD5_OUT    "43190c26e0caed2fb43227ff67cd877e"
+#define SHA1_OUT   "a5a7164bfec52e72c3292f4511114b7b9600d8e9"
+#define SHA256_OUT "daa8b721f5485d27e9ef31dc8a322d2d" \
+                   "39febce3162312eb943ed75dbbbf0519"
+#define SHA512_OUT "6a9ca84062a034b20504080dcae56046" \
+                   "d1561856ef2886b5fdee9a0334e2928a" \
+                   "4a87db9c4aef86cad972ffdc3a9d2630" \
+                   "87d8391520ac2385c2cdeb22f2a13dc6"
+#else
 #define BASE64_OUT "SGVsbG8sIEZ1amlOZXQh"
 #define MD5_OUT    "98d6da021c1a0b081b52de3b8207a823"
 #define SHA1_OUT   "954382c7aa0a0d3252faf234ba4911f2aed22e39"
-#define SHA256_OUT "3631e38122de15b2e5b4ae209ba1eb7c79b0e756" \
-                   "fd9bc7149ce83da8aba6ddc6"
-#define SHA512_OUT "8230a7a465c8ef21e6d89c423e5cb06f1f8b183b" \
-                   "7928189736e00e81d269484d5a5d8a40723a157e" \
-                   "f55d1992fd2929b213770eada5501434a592d75a" \
-                   "d1f935fd"
+#define SHA256_OUT "3631e38122de15b2e5b4ae209ba1eb7c" \
+                   "79b0e756fd9bc7149ce83da8aba6ddc6"
+#define SHA512_OUT "8230a7a465c8ef21e6d89c423e5cb06f" \
+                   "1f8b183b7928189736e00e81d269484d" \
+                   "5a5d8a40723a157ef55d1992fd2929b2" \
+                   "13770eada5501434a592d75ad1f935fd"
+#endif /* __CBM__ */
+
+#ifdef __CBM__
+void cc65_petscii_workaround(uint8_t *str)
+{
+  size_t idx;
+  uint8_t c;
+
+
+  for (idx = 0; str[idx]; idx++) {
+    c = str[idx];
+    if (c >= 0x61 && c <= 0x7a)
+      str[idx] = c + 0x60;
+  }
+}
+#endif /* __CBM__ */
 
 size_t strip_trailing_newlines(char *buffer, size_t buflen)
 {
@@ -113,8 +143,15 @@ void test_fuji_base64(void)
   TEST("fuji_base64_encode_output succeeds", ok);
   g.b64.enc[(uint16_t) enc_len] = '\0';
   strip_trailing_newlines(g.b64.enc, (uint16_t) enc_len);
-  printf("  Base64 encoded: %s\n", g.b64.enc);
+#ifdef __CBM__
+  //cc65_petscii_workaround((uint8_t *) g.b64.enc);
+#endif /* __CBM__ */
+  if (strcmp(g.b64.enc, BASE64_OUT) != 0) {
+    cmp_hex("rcv", (uint8_t *) g.b64.enc, strlen(g.b64.enc),
+            "exp", (uint8_t *) BASE64_OUT, strlen(BASE64_OUT));
+  }
   TEST("Base64 output matches expected value", strcmp(g.b64.enc, BASE64_OUT) == 0);
+  printf("  Base64 encoded: %s\n", g.b64.enc);
 
 #ifdef FN_BROKEN_fuji_base64_decode_input
   SKIP(fuji_base64_decode_input);
@@ -142,8 +179,12 @@ void test_fuji_base64(void)
   ok = fuji_base64_decode_output(g.b64.dec, (uint16_t)dec_len);
   TEST("fuji_base64_decode_output succeeds", ok);
   g.b64.dec[(uint16_t) dec_len] = '\0';
-  printf("  Base64 decoded: %s\n", g.b64.dec);
+  if (strcmp(g.b64.dec, input) != 0) {
+    cmp_hex("rcv", (uint8_t *) g.b64.dec, strlen(g.b64.dec),
+            "exp", (uint8_t *) input, strlen(input));
+  }
   TEST("Decoded output matches original input", strcmp(g.b64.dec, input) == 0);
+  printf("  Base64 decoded: %s\n", g.b64.dec);
 
   END_OF_TEST();
 }

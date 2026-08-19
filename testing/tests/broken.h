@@ -154,6 +154,7 @@
 
 #ifdef BUILD_C64
 #define FN_BROKEN_fuji_generate_guid
+#define FN_BROKEN_fuji_get_host_prefix
 
 #define FN_BROKEN_network_set_eol
 
@@ -173,31 +174,21 @@
 #else /* FNLIB_VERSION_MAJOR >= 5 */
 // ===========================
 
-#ifdef BUILD_MSDOS
-// Missing from firmware
-//#define FN_BROKEN_fuji_base64_encode_input
-//#define FN_BROKEN_fuji_hash_data
-#endif /* BUILD_MSDOS */
-
 #ifdef BUILD_APPLE2
 // Missing from firmware
 #define FN_BROKEN_network_set_eol
-//#define FN_BROKEN_fuji_base64_encode_input
-//#define FN_BROKEN_fuji_hash_data
 #endif /* BUILD_APPLE2 */
 
 #if defined(BUILD_ADAM) || defined(BUILD_ADAM_CPM)
 // Missing from lib
-#define FN_BROKEN_fuji_set_appkey_details
-#define FN_BROKEN_fuji_write_appkey
+//#define FN_BROKEN_fuji_set_appkey_details
+//#define FN_BROKEN_fuji_write_appkey
 
 // Missing from firmware
 #define FN_BROKEN_fuji_status
 #define FN_BROKEN_fuji_get_host_prefix
 #define FN_BROKEN_fuji_get_wifi_enabled
 #define FN_BROKEN_fuji_scan_for_networks
-//#define FN_BROKEN_fuji_base64_encode_input
-//#define FN_BROKEN_fuji_hash_data
 #define FN_BROKEN_network_set_eol
 #endif /* BUILD_ADAM || BUILD_ADAM_CPM */
 
