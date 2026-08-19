@@ -7,7 +7,7 @@
 // Adam can't handle large web sites
 //#define NET_DEVICESPEC  "N1:HTTPS://fujinet.online/"
 
-#define HTTPBIN_ORG_ALT 1
+#define HTTPBIN_ORG_ALT 4
 
 #if HTTPBIN_ORG_ALT == 1
 #ifndef NET_DEVICESPEC
@@ -41,6 +41,17 @@
 #define NET_POST_URL    "N1:http://10.4.0.1:7357/post"
 #define NET_PUT_URL     "N1:http://10.4.0.1:7357/put"
 #define NET_DELETE_URL  "N1:http://10.4.0.1:7357/delete"
+
+#elif HTTPBIN_ORG_ALT == 4
+// Handles binary POST bodies correctly, unlike testotronic
+
+#ifndef NET_DEVICESPEC
+#define NET_DEVICESPEC  "N1:https://httpbin.dev/get"
+#endif
+#define NET_JSON_URL    "N1:https://httpbin.dev/json"
+#define NET_POST_URL    "N1:https://httpbin.dev/post"
+#define NET_PUT_URL     "N1:https://httpbin.dev/put"
+#define NET_DELETE_URL  "N1:https://httpbin.dev/delete"
 
 #else
 // httpbin.org is working

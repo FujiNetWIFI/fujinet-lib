@@ -349,6 +349,47 @@ void test_network_json(void)
   END_OF_TEST();
 }
 
+void test_network_http_put_plain(void)
+{
+  uint8_t err;
+  int16_t r;
+
+  SECTION("network HTTP PUT without headers");
+
+#ifdef FN_BROKEN_network_open
+  SKIP(network_open);
+#else
+  err = network_open(NET_PUT_URL, OPEN_MODE_HTTP_PUT, OPEN_TRANS_NONE);
+  TEST("network_open (plain PUT) succeeds", err == FN_ERR_OK);
+#endif
+
+#ifdef FN_BROKEN_network_http_put
+  SKIP(network_http_put);
+#else
+  err = network_http_put(NET_PUT_URL, "fujinet=put_test");
+  TEST("network_http_put succeeds", err == FN_ERR_OK);
+#endif
+
+#ifdef FN_BROKEN_network_read
+  SKIP(network_read);
+#else
+  /* The calls above report success even when the body never reaches the
+   * server, so the response is what proves the request was sent. */
+  memset(g.net, 0, sizeof(g.net));
+  r = network_read(NET_PUT_URL, g.net, sizeof(g.net));
+  TEST("network_read after plain PUT returns data", r > 0);
+#endif
+
+#ifdef FN_BROKEN_network_close
+  SKIP(network_close);
+#else
+  err = network_close(NET_PUT_URL);
+  TEST("network_close after plain PUT succeeds", err == FN_ERR_OK);
+#endif
+
+  END_OF_TEST();
+}
+
 void test_network_http_put_delete(void)
 {
   uint8_t err;

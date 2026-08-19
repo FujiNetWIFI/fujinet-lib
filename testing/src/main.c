@@ -93,6 +93,7 @@ int main(void)
   test_network_http_headers();
   test_network_http_channel_mode();
   test_network_json();
+  test_network_http_put_plain();
   test_network_http_put_delete();
   test_network_unit();
 #endif // NETWORK_TESTS
