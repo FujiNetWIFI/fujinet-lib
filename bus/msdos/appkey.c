@@ -11,6 +11,16 @@ typedef struct {
 
 static FNAppKeyString appkey_buf;
 
+#ifdef MSDOS_VARIABLE_LENGTH_APPKEY_READ
+bool fuji_bus_appkey_read(void *string, uint16_t *length)
+{
+  extern uint16_t fuji_bus_call_rlen;
+  if (!FUJICALL_RV(FUJICMD_READ_APPKEY, string, MAX_APPKEY_LEN))
+    return false;
+  *length = fuji_bus_call_rlen;
+  return true;
+}
+#else
 /*
   appkeys are variable length strings. The protocol allows for
   variable length packets but there's currently no way to find out how
@@ -27,6 +37,7 @@ bool fuji_bus_appkey_read(void *string, uint16_t *length)
   memmove(string, appkey_buf.data, appkey_buf.length);
   return true;
 }
+#endif // MSDOS_VARIABLE_LENGTH_APPKEY_READ
 
 bool fuji_bus_appkey_write(void *string, uint16_t length)
 {
