@@ -7,9 +7,18 @@
 // Adam can't handle large web sites
 //#define NET_DEVICESPEC  "N1:HTTPS://fujinet.online/"
 
-#define HTTPBIN_ORG_IS_DOWN 0
+#define HTTPBIN_ORG_ALT 1
 
-#if HTTPBIN_ORG_IS_DOWN
+#if HTTPBIN_ORG_ALT == 1
+#ifndef NET_DEVICESPEC
+#define NET_DEVICESPEC  "N1:https://httpbin.testotronic.com/get"
+#endif
+#define NET_JSON_URL    "N1:https://httpbin.testotronic.com/json"
+#define NET_POST_URL    "N1:https://httpbin.testotronic.com/post"
+#define NET_PUT_URL     "N1:https://httpbin.testotronic.com/put"
+#define NET_DELETE_URL  "N1:https://httpbin.testotronic.com/delete"
+
+#elif HTTPBIN_ORG_ALT == 2
 // If httpbin.org is down, run your own server with docker:
 //  `docker run -p 8080:80 kennethreitz/httpbin`
 
@@ -20,6 +29,18 @@
 #define NET_POST_URL    "N1:http://localhost:8080/post"
 #define NET_PUT_URL     "N1:http://localhost:8080/put"
 #define NET_DELETE_URL  "N1:http://localhost:8080/delete"
+
+#elif HTTPBIN_ORG_ALT == 3
+// If httpbin.org is down, run your own server with docker:
+//  `docker run -p 7357:80 kennethreitz/httpbin`
+
+#ifndef NET_DEVICESPEC
+#define NET_DEVICESPEC  "N1:http://10.4.0.1:7357/get"
+#endif
+#define NET_JSON_URL    "N1:http://10.4.0.1:7357/json"
+#define NET_POST_URL    "N1:http://10.4.0.1:7357/post"
+#define NET_PUT_URL     "N1:http://10.4.0.1:7357/put"
+#define NET_DELETE_URL  "N1:http://10.4.0.1:7357/delete"
 
 #else
 // httpbin.org is working
@@ -71,7 +92,7 @@
 
 /* Not defined by old fujinet-lib */
 #if FNLIB_VERSION_MAJOR < 5
-#define NETWORK_SUCCESS 1
+#define NETWORK_SUCCESS 0
 #define NETWORK_ERROR_END_OF_FILE 136
 #endif
 
