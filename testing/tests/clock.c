@@ -232,20 +232,20 @@ void test_clock_get_time_tz(void)
   TEST("clock_get_time_tz(UTC, ISO) succeeds", err == FN_ERR_OK);
   printf("  UTC time:   %s\n", (char *)g.clock_tz_call.utc);
 
-  err = clock_get_time_tz(g.clock_tz_call.ny, "America/New_York", TZ_ISO_STRING);
-  TEST("clock_get_time_tz(New_York, ISO) succeeds", err == FN_ERR_OK);
+  err = clock_get_time_tz(g.clock_tz_call.ny, "EST5EDT,M3.2.0,M11.1.0", TZ_ISO_STRING);
+  TEST("clock_get_time_tz(Eastern, ISO) succeeds", err == FN_ERR_OK);
   printf("  NY time:    %s\n", (char *)g.clock_tz_call.ny);
 
-  err = clock_get_time_tz(g.clock_tz_call.tok, "Asia/Tokyo", TZ_ISO_STRING);
+  err = clock_get_time_tz(g.clock_tz_call.tok, "JST-9", TZ_ISO_STRING);
   TEST("clock_get_time_tz(Tokyo, ISO) succeeds", err == FN_ERR_OK);
   printf("  Tokyo time: %s\n", (char *)g.clock_tz_call.tok);
 
-  TEST("UTC and New_York times differ", strcmp((char *)g.clock_tz_call.utc, (char *)g.clock_tz_call.ny) != 0);
+  TEST("UTC and Eastern times differ", strcmp((char *)g.clock_tz_call.utc, (char *)g.clock_tz_call.ny) != 0);
   TEST("UTC and Tokyo times differ", strcmp((char *)g.clock_tz_call.utc, (char *)g.clock_tz_call.tok) != 0);
 
   memset(g.clock_tz_call.sys_tz, 0, sizeof(g.clock_tz_call.sys_tz));
   clock_get_tz(g.clock_tz_call.sys_tz);
-  TEST("clock_get_time_tz did not change system TZ to Asia/Tokyo", strcmp(g.clock_tz_call.sys_tz, "Asia/Tokyo") != 0);
+  TEST("clock_get_time_tz did not change system TZ to Tokyo", strcmp(g.clock_tz_call.sys_tz, "JST-9") != 0);
 #endif
 
   END_OF_TEST();
