@@ -10,6 +10,7 @@
 #include <fujinet-err.h>
 #include <fujinet-bus.h>
 #include <fujinet-commands.h>
+#include <fujinet-const.h>
 
 #ifdef __CBM__
 
@@ -260,35 +261,46 @@ uint8_t network_unit(const char *devicespec);
  * @param devicespec Pointer to device specification e.g. "N1:TNFS://TMA-2/foo.txt"
  * @return fujinet-network error code (see FN_ERR_* values)
  */
-FN_ERR network_fs_delete(const char *devicespec);
+#if defined(__ADAM__) || defined(__COLECOADAM__)
+#include <string.h>
+#define NETWORK_FS_LEN(devicespec) strlen(devicespec)
+#else
+#define NETWORK_FS_LEN(devicespec) MAX_FILENAME_LEN
+#endif /* __ADAM__ || __COLECOADAM__ */
+
+#define network_fs_command(cmd, devicespec)                             \
+  (NETCALL_D(cmd, network_unit(devicespec), devicespec,                 \
+             NETWORK_FS_LEN(devicespec)) ? FN_ERR_OK : FN_ERR_IO_ERROR)
+
+#define network_fs_delete(devicespec) network_fs_command(FUJICMD_DELETE, devicespec)
 
 /**
  * @brief Rename file on FS endpoint (e.g. TNFS, FTP, HTTPS, SMB)
  * @param devicespec Pointer to device specification, with new name after comma, e.g. "N1:TNFS://TMA-2/foo.txt,bar.txt"
  * @return fujinet-network error code (see FN_ERR_* values)
  */
-FN_ERR network_fs_rename(const char *devicespec);
+#define network_fs_rename(devicespec) network_fs_command(FUJICMD_RENAME, devicespec)
 
 /**
  * @brief Lock file (make read only) on FS (e.g. TNFS, FTP, HTTPS, SMB)
  * @param devicespec Pointer to device specification "N1:TNFS://TMA-2/foo.txt"
  * @return fujinet-network error code (see FN_ERR_* values)
  */
-FN_ERR network_fs_lock(const char *devicespec);
+#define network_fs_lock(devicespec) network_fs_command(FUJICMD_LOCK, devicespec)
 
 /**
  * @brief Unlock file (make read/write) on FS (e.g. TNFS, FTP, HTTPS, SMB)
  * @param devicespec Pointer to device specification "N1:TNFS://TMA-2/foo.txt"
  * @return fujinet-network error code (see FN_ERR_* values)
  */
-FN_ERR network_fs_unlock(const char *devicespec);
+#define network_fs_unlock(devicespec) network_fs_command(FUJICMD_UNLOCK, devicespec)
 
 /**
  * @brief Make directory on FS (e.g. TNFS, FTP, HTTPS, SMB)
  * @param devicespec pointer to devicespec "N1:TNFS://TMA-2/newdir"
  * @return fujinet-network error code (see FN_ERR_* values)
  */
-FN_ERR network_fs_mkdir(const char *devicespec);
+#define network_fs_mkdir(devicespec) network_fs_command(FUJICMD_MKDIR, devicespec)
 
 /**
  * @brief Remove directory on FS (e.g. TNFS, FTP, HTTPS, SMB)
@@ -296,14 +308,14 @@ FN_ERR network_fs_mkdir(const char *devicespec);
  * @return fujinet-network error code (see FN_ERR_* values)
  * @verbose Directory must be empty!
  */
-FN_ERR network_fs_rmdir(const char *devicespec);
+#define network_fs_rmdir(devicespec) network_fs_command(FUJICMD_RMDIR, devicespec)
 
 /**
  * @brief Change directory on FS (e.g. TNFS, FTP, HTTPS, SMB)
  * @param devicespec Pointer to devicespec "N1:TNFS://TMA-2/dir"
  * @return fujinet-network error code (see FN_ERR_* values)
  */
-FN_ERR network_fs_cd(const char *devicespec);
+#define network_fs_cd(devicespec) network_fs_command(FUJICMD_CHDIR, devicespec)
 
 FN_ERR network_accept(const char* devicespec);
 extern size_t network_json_strip_newlines(char *buffer, size_t buflen);

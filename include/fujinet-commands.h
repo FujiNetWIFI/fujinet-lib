@@ -81,6 +81,8 @@ enum {
   FUJICMD_MKDIR                         = 0x2A,
   FUJICMD_TELL                          = 0x26,
   FUJICMD_SEEK                          = 0x25,
+  FUJICMD_UNLOCK                        = 0x24,
+  FUJICMD_LOCK                          = 0x23,
   FUJICMD_DELETE                        = 0x21,
   FUJICMD_RENAME                        = 0x20,
 

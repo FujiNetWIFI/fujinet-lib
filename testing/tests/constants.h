@@ -87,6 +87,25 @@
 
 #define TNFS_COPY_SOURCE_HOST "tnfs.fujinet.online"
 
+/* Public WebDAV test server used by the network_fs tests. Anything created
+ * at the root is removed by the server within 72 hours. Reached through
+ * webdavserver.net rather than ajaxfilebrowser.com, whose certificate is
+ * issued for webdavserver.net. */
+#define WEBDAV_HOST     "www.webdavserver.net"
+#define WEBDAV_ROOT     "N1:HTTPS://" WEBDAV_HOST "/"
+
+/* PROPFIND, a WebDAV directory listing over N: with nothing mounted.
+ * fujinet-network.h names the other HTTP open modes but not this one. */
+/* Exact filenames, no size column and no 8.3 crunching. Passed as the
+ * translation byte, which selects the listing format. */
+#ifndef DIR_FORMAT_RAW
+#define DIR_FORMAT_RAW (0x83)
+#endif
+
+#ifndef OPEN_MODE_HTTP_PROPFIND
+#define OPEN_MODE_HTTP_PROPFIND (0x06)
+#endif
+
 /* Constants that should be defined by fujinet-lib */
 #define MAX_HOSTS 8
 #if defined(BUILD_COCO)

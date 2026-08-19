@@ -20,7 +20,8 @@
  *   - Stack locals are kept under 64 bytes; anything larger is a static global
  */
 
-#if !FUJI_TESTS && !NETWORK_TESTS && !CLOCK_TESTS && !DISK_TESTS && !QRCODE_TESTS
+#if !FUJI_TESTS && !NETWORK_TESTS && !CLOCK_TESTS && !DISK_TESTS && !QRCODE_TESTS \
+  && !FS_TESTS
 #error "You need to choose some tests"
 #endif
 
@@ -31,6 +32,7 @@
 #include "clock.h"
 #include "fdsk.h"
 #include "qrcode.h"
+#include "fs.h"
 #include "init_video.h"
 #include "harness.h"
 
@@ -101,6 +103,16 @@ int main(void)
   test_network_http_put_delete();
   test_network_unit();
 #endif // NETWORK_TESTS
+
+#if FS_TESTS
+  /* fs.h */
+  test_fs_make_test_dir();
+  test_fs_create_files();
+  test_fs_read_files();
+  test_fs_rename_delete();
+  test_fs_dir_lifecycle();
+  test_fs_lock_unlock();
+#endif // FS_TESTS
 
 #if CLOCK_TESTS
   /* clock.h */

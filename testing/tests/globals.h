@@ -109,6 +109,15 @@ typedef union {
   } device_filename;
 
   char dir[258];
+
+  /* The network calls send MAX_FILENAME_LEN bytes regardless of the string
+   * length, so these must be that big or they get read past. */
+  struct {
+    char base[MAX_FILENAME_LEN];
+    char path[MAX_FILENAME_LEN];
+    char listing[192];
+    char data[32];
+  } fs;
 } buf_union;
 
 extern buf_union g;
