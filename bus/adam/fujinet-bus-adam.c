@@ -1,6 +1,7 @@
 #include "fujinet-bus-adam.h"
 #include "fujinet-bus.h"
 #include "fujinet-commands.h"
+#include "fujinet-const.h"
 #include <string.h>
 
 #include <stdio.h> // debug
@@ -144,4 +145,43 @@ size_t network_bus_write(uint8_t device, const void *buffer, size_t length)
 {
   NETCALL_D(FUJICMD_WRITE, device - FUJI_DEVICEID_NETWORK + 1, buffer, length);
   return length;
+}
+
+/*
+  appkeys are variable length strings. Because SmartPort supports
+  variable length data packets, aux1/aux2 aren't used to send the
+  length of the string. Instead only the string data is sent with no
+  length field, no block size, no padding.
+*/
+
+bool fuji_bus_appkey_read(void *string, uint16_t *length)
+{
+  DCB *dcb;
+  uint8_t status, device;
+
+
+  device = fuji_remap_device(FUJI_DEVICEID_FUJINET);
+  if (!device)
+    return false;
+
+  dcb = dcb_find(device);
+  if (!dcb)
+    return false;
+
+  fb_packet[0] = FUJICMD_READ_APPKEY;
+  status = dcb_io(dcb, DCB_COMMAND_WRITE, fb_packet, 1);
+  if (status != DCB_STATUS_FINISH)
+    return false;
+
+  status = dcb_io(dcb, DCB_COMMAND_READ, string, MAX_APPKEY_LEN);
+  if (status != DCB_STATUS_FINISH)
+    return false;
+
+  *length = dcb->len;
+  return true;
+}
+
+bool fuji_bus_appkey_write(void *string, uint16_t length)
+{
+  return FUJICALL_D(FUJICMD_WRITE_APPKEY, string, length);
 }
