@@ -7,7 +7,6 @@
 #include <stdio.h> // debug
 
 #define MAX_ADAM_PACKET 512
-#define MAX_RETRIES 20
 
 #define DCB_COUNT_ADDR ((uint8_t *) 0xFEC3)
 #define DCB_TABLE_ADDR ((DCB *) 0xFEC4)
@@ -32,12 +31,13 @@ DCB *dcb_find(uint8_t device)
   return NULL;
 }
 
-uint8_t dcb_io(DCB *dcb, uint8_t mode, void *buffer, size_t length)
+uint8_t dcb_io(DCB *dcb, uint8_t mode, void *buffer, size_t length,
+	       uint_fast16_t retries)
 {
-  uint_fast8_t count;
+  uint_fast16_t count;
 
 
-  for (count = 0; count < MAX_RETRIES; count++) {
+  for (count = 0; count < retries; count++) {
     dcb->len = length;
     dcb->buf = buffer;
     dcb->status = mode;
@@ -77,6 +77,16 @@ uint8_t fuji_remap_device(uint8_t device)
   return device;
 }
 
+/* AdamNet completes a write on delivery, not on completion. */
+uint8_t bus_ready(DCB *dcb, uint_fast16_t retries)
+{
+  while (retries--)
+    if (dcb_io(dcb, DCB_COMMAND_STATUS, NULL, 0, 1) == DCB_STATUS_FINISH)
+      return true;
+
+  return false;
+}
+
 bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
 		   const void *buf, size_t buf_length)
@@ -111,12 +121,13 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   if (!dcb)
     return false;
 
-  status = dcb_io(dcb, DCB_COMMAND_WRITE, fb_packet, idx);
+  status = dcb_io(dcb, DCB_COMMAND_WRITE, fb_packet, idx, MAX_RETRIES);
   if (status != DCB_STATUS_FINISH)
     return false;
 
   if (fields & FUJI_FIELD_REPLY) {
-    status = dcb_io(dcb, DCB_COMMAND_READ, (void *) buf, buf_length);
+    status = dcb_io(dcb, DCB_COMMAND_READ, (void *) buf, buf_length,
+		    fuji_cmd == FUJICMD_COPY_FILE ? COPY_RETRIES : MAX_RETRIES);
     if (status != DCB_STATUS_FINISH)
       return false;
   }
@@ -133,7 +144,7 @@ size_t network_bus_read(uint8_t device, void *buffer, size_t length)
 
   device = fuji_remap_device(device);
   dcb = dcb_find(device);
-  status = dcb_io(dcb, DCB_COMMAND_READ, buffer, length);
+  status = dcb_io(dcb, DCB_COMMAND_READ, buffer, length, MAX_RETRIES);
   printf("DCB STATUS %02x len=%d\n", status, dcb->len);
   if (status != DCB_STATUS_FINISH)
     dcb->len = 0;
@@ -169,11 +180,11 @@ bool fuji_bus_appkey_read(void *string, uint16_t *length)
     return false;
 
   fb_packet[0] = FUJICMD_READ_APPKEY;
-  status = dcb_io(dcb, DCB_COMMAND_WRITE, fb_packet, 1);
+  status = dcb_io(dcb, DCB_COMMAND_WRITE, fb_packet, 1, MAX_RETRIES);
   if (status != DCB_STATUS_FINISH)
     return false;
 
-  status = dcb_io(dcb, DCB_COMMAND_READ, string, MAX_APPKEY_LEN);
+  status = dcb_io(dcb, DCB_COMMAND_READ, string, MAX_APPKEY_LEN, MAX_RETRIES);
   if (status != DCB_STATUS_FINISH)
     return false;
 

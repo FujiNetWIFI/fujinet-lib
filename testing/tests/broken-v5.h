@@ -12,7 +12,18 @@
 #define FN_BROKEN_fuji_get_wifi_enabled
 #define FN_BROKEN_fuji_scan_for_networks
 #define FN_BROKEN_network_set_eol
+
+// adamnet has no clock device; only the Fuji device's GET TIME exists
+#define FN_BROKEN_clock_get_time_APETIME_BINARY
+#define FN_BROKEN_clock_get_time_APPLE3_SOS_BINARY
+#define FN_BROKEN_clock_get_time_PRODOS_BINARY
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY
+#define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
+#define FN_BROKEN_clock_get_time_tz
+#define FN_BROKEN_clock_get_time_TZ_ISO_STRING
 #define FN_BROKEN_clock_get_time_UTC_ISO_STRING
+#define FN_BROKEN_clock_get_tz
+#define FN_BROKEN_clock_set_tz
 #endif /* BUILD_ADAM || BUILD_ADAM_CPM */
 
 #ifdef BUILD_COCO

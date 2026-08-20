@@ -18,7 +18,7 @@ int16_t network_read_nb_adam(const char *devicespec, void *buf, uint16_t len)
   if (!dcb)
     return 0;
 
-  status = dcb_io(dcb, DCB_COMMAND_READ, buf, len);
+  status = dcb_io(dcb, DCB_COMMAND_READ, buf, len, MAX_RETRIES);
   if (status != DCB_STATUS_FINISH)
     return 0;
   return dcb->len;

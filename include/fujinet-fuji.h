@@ -212,7 +212,12 @@ extern bool fuji_close_directory(void);
  * @brief Copies a file from given src to dst, with supplied path in copy_spec
  * @return Success status, true if all OK.
  */
+#if defined(__ADAM__) || defined(__COLECOADAM__)
+extern bool fuji_copy_file_adam(uint8_t src_slot, uint8_t dest_slot, const char *copy_spec);
+#define fuji_copy_file(src_slot, dest_slot, copy_spec) fuji_copy_file_adam(src_slot, dest_slot, copy_spec)
+#else /* ! (__ADAM__ || __COLECOADAM__) */
 #define fuji_copy_file(src_slot, dest_slot, copy_spec) FUJICALL_A1_A2_D(FUJICMD_COPY_FILE, src_slot, dest_slot, copy_spec, MAX_FILENAME_LEN)
+#endif /* __ADAM__ || __COLECOADAM__ */
 
 /**
  * @brief Creates a new disk from the given structure.
