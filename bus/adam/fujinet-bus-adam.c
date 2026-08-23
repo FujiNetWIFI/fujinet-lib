@@ -92,7 +92,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   const void *buf, size_t buf_length)
 {
   DCB *dcb;
-  uint16_t idx, numbytes;
+  uint16_t idx, numbytes, retries;
   uint8_t status;
 
 
@@ -126,8 +126,11 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
     return false;
 
   if (fields & FUJI_FIELD_REPLY) {
-    status = dcb_io(dcb, DCB_COMMAND_READ, (void *) buf, buf_length,
-		    fuji_cmd == FUJICMD_COPY_FILE ? COPY_RETRIES : MAX_RETRIES);
+    retries = MAX_RETRIES;
+    if (fuji_cmd == FUJICMD_COPY_FILE
+        || fuji_cmd == FUJICMD_SCAN_NETWORKS)
+      retries = COPY_RETRIES;
+    status = dcb_io(dcb, DCB_COMMAND_READ, (void *) buf, buf_length, retries);
     if (status != DCB_STATUS_FINISH)
       return false;
   }
