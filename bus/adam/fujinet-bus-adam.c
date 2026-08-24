@@ -60,6 +60,8 @@ uint8_t fuji_remap_device(uint8_t device)
       device = ADAM_ID_FUJINET;
     else if (device == FUJI_DEVICEID_PRINTER)
       device = ADAM_ID_PRINTER;
+    else if (device == FUJI_DEVICEID_CLOCK)
+      device = ADAM_ID_CLOCK;
     else if (device >= FUJI_DEVICEID_DISK && device <= FUJI_DEVICEID_DISK_LAST)
       device = device - FUJI_DEVICEID_DISK + ADAM_ID_DISK;
     else if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {

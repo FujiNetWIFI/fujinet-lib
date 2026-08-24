@@ -28,6 +28,7 @@ enum {
 
   ADAM_ID_KEYBOARD = 0x01,
   ADAM_ID_PRINTER  = 0x02,
+  ADAM_ID_CLOCK    = 0x03,
   ADAM_ID_DISK     = 0x04,
   ADAM_ID_DISK2    = 0x05,
   ADAM_ID_DISK3    = 0x06,
