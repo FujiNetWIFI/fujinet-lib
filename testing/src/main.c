@@ -21,13 +21,14 @@
  */
 
 #if !FUJI_TESTS && !NETWORK_TESTS && !CLOCK_TESTS && !DISK_TESTS && !QRCODE_TESTS \
-  && !FS_TESTS
+  && !FS_TESTS && !APPKEY_TESTS
 #error "You need to choose some tests"
 #endif
 
 #include "broken.h"
 
 #include "fuji.h"
+#include "appkey.h"
 #include "network.h"
 #include "clock.h"
 #include "fdsk.h"
@@ -65,11 +66,15 @@ int main(void)
   test_fuji_directory_ops();
   test_fuji_wifi();
   test_fuji_network_scan();
-  test_fuji_appkey();
   test_fuji_guid();
   test_fuji_base64();
   test_fuji_hashing();
 #endif // FUJI_TESTS
+
+#if APPKEY_TESTS
+  /* appkey.h */
+  test_fuji_appkey();
+#endif // APPKEY_TESTS
 
 #if QR_TESTS
   test_fuji_qrcode();

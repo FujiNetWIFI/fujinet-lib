@@ -1,4 +1,4 @@
-PRODUCTS = fnlib-test.lib flibtest fnettest fclktest fdsktest fqrctest fnfstest
+PRODUCTS = fnlib-test.lib flibtest fnettest fclktest fdsktest fqrctest fnfstest fapktest
 PRODUCTS_DISK_NAME = fntests
 
 PLATFORMS += adam
@@ -43,6 +43,7 @@ fclktest_SRC_DIRS = src src/%PLATFORM%
 fdsktest_SRC_DIRS = src src/%PLATFORM%
 fqrctest_SRC_DIRS = src src/%PLATFORM%
 fnfstest_SRC_DIRS = src src/%PLATFORM%
+fapktest_SRC_DIRS = src src/%PLATFORM%
 
 flibtest_CFLAGS = -DFUJI_TESTS=1
 fnettest_CFLAGS = -DNETWORK_TESTS=1
@@ -50,10 +51,11 @@ fclktest_CFLAGS = -DCLOCK_TESTS=1
 fdsktest_CFLAGS = -DDISK_TESTS=1
 fqrctest_CFLAGS = -DQRCODE_TESTS=1
 fnfstest_CFLAGS = -DFS_TESTS=1
+fapktest_CFLAGS = -DAPPKEY_TESTS=1
 
 include ../makefiles/toplevel-rules.mk
 
-# Six test binaries do not fit the default single density ATR or a 140kb
+# Seven test binaries do not fit the default single density ATR or a 140kb
 # ProDOS volume.
 DISK_TOOL_FLAGS_ATARI = -D -m -b MyPicoDos406
 DISK_SIZE = 800kb

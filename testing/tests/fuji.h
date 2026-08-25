@@ -9,7 +9,6 @@ extern void test_fuji_guid(void);
 extern void test_fuji_host_device_slots(void);
 extern void test_fuji_device_filename(void);
 extern void test_fuji_host_prefix(void);
-extern void test_fuji_appkey(void);
 extern void test_fuji_base64(void);
 extern void test_fuji_hashing(void);
 extern void test_fuji_directory_ops(void);

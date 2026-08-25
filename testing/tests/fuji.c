@@ -2,7 +2,6 @@
 #include "harness.h"
 #include "constants.h"
 #include "globals.h"
-#include "cmp_hex.h"
 #include <fujinet-fuji.h>
 
 #if FNLIB_VERSION_MAJOR < 5
@@ -282,66 +281,6 @@ void test_fuji_host_prefix(void)
 
   /* Restore original */
   fuji_set_host_prefix(0, g.host_prefix.prefix);
-
-  END_OF_TEST();
-}
-
-void test_fuji_appkey(void)
-{
-  bool ok;
-  uint16_t count;
-
-  SECTION("fuji appkey read/write");
-
-#ifdef FN_BROKEN_fuji_set_appkey_details
-  SKIP(fuji_set_appkey_details);
-#else
-  fuji_set_appkey_details(0x5445, 0x01, DEFAULT);
-#endif
-
-#ifdef FN_BROKEN_fuji_write_appkey
-  SKIP(fuji_write_appkey);
-#else
-#ifdef FN_BROKEN_fuji_read_appkey
-  SKIP(fuji_read_appkey);
-#else
-
-  /* --- First write: fill with 0xAB, distinctive bytes at start and end --- */
-  memset(g.appkey.write, 0xAB, sizeof(g.appkey.write));
-  g.appkey.write[0]  = 0x01;
-  g.appkey.write[63] = 0x02;
-
-  ok = fuji_write_appkey(0, sizeof(g.appkey.write), g.appkey.write);
-  TEST("fuji_write_appkey (first) succeeds", ok);
-
-  memset(g.appkey.read, 0, sizeof(g.appkey.read));
-  count = 0;
-  ok = fuji_read_appkey(0, &count, g.appkey.read);
-  TEST("fuji_read_appkey (first) succeeds", ok);
-  TEST("fuji_read_appkey (first) returned 64 bytes", count == 64);
-  if ( memcmp(g.appkey.read, g.appkey.write, 64) != 0)
-    cmp_hex("read", g.appkey.read, 64,
-            "writ", g.appkey.write, 64);
-  TEST("fuji_read_appkey (first) data matches write",
-       memcmp(g.appkey.read, g.appkey.write, 64) == 0);
-
-  /* --- Second write: invert the pattern to prove read reflects new data --- */
-  memset(g.appkey.write, 0x54, sizeof(g.appkey.write));
-  g.appkey.write[0]  = 0x03;
-  g.appkey.write[63] = 0x04;
-
-  ok = fuji_write_appkey(0, sizeof(g.appkey.write), g.appkey.write);
-  TEST("fuji_write_appkey (second) succeeds", ok);
-
-  memset(g.appkey.read, 0, sizeof(g.appkey.read));
-  count = 0;
-  ok = fuji_read_appkey(0, &count, g.appkey.read);
-  TEST("fuji_read_appkey (second) succeeds", ok);
-  TEST("fuji_read_appkey (second) returned 64 bytes", count == 64);
-  TEST("fuji_read_appkey (second) data matches new write",
-       memcmp(g.appkey.read, g.appkey.write, 64) == 0);
-#endif
-#endif
 
   END_OF_TEST();
 }
