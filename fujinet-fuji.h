@@ -118,6 +118,10 @@
 #define FUJICMD_HASH_COMPUTE_NO_CLEAR      0xC3
 #define FUJICMD_HASH_CLEAR                 0xC2
 #define FUJICMD_GENERATE_GUID              0xBB
+#define FUJICMD_QRCODE_INPUT               0xBC
+#define FUJICMD_QRCODE_ENCODE              0xBD
+#define FUJICMD_QRCODE_LENGTH              0xBE
+#define FUJICMD_QRCODE_OUTPUT              0xBF
 #define FUJICMD_SET_STATUS                 0x81
 
 enum WifiStatus
@@ -599,6 +603,97 @@ bool fuji_base64_encode_compute(void);
 bool fuji_base64_encode_input(char *s, uint16_t len);
 bool fuji_base64_encode_length(unsigned long *len);
 bool fuji_base64_encode_output(char *s, uint16_t len);
+
+// QR code
+// ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success
+
+/**
+ * @brief Error correction level. Higher levels survive more damage but hold
+ *        less data: a version 1 symbol holds 25 alphanumeric characters at LOW
+ *        and only 10 at HIGH.
+ */
+typedef enum {
+    QR_ECC_LOW      = 0,
+    QR_ECC_MEDIUM   = 1,
+    QR_ECC_QUARTILE = 2,
+    QR_ECC_HIGH     = 3
+} qr_ecc_t;
+
+/**
+ * @brief Format \ref fuji_qrcode_output returns the encoded symbol in.
+ *
+ * BINARY and BITMAP are prefixed with a size byte (the module count per side)
+ * and then pack one bit per module. BINARY is row-major, least significant bit
+ * first within each byte; BITMAP pads each row to a whole number of bytes with
+ * the most significant bit leftmost, which suits copying into bitmap VRAM.
+ * ATASCII and PETSCII fold each 2x2 block of modules into one character.
+ */
+typedef enum {
+    QR_OUTPUT_BINARY  = 0,
+    QR_OUTPUT_ANSI    = 1,
+    QR_OUTPUT_BITMAP  = 2,
+    QR_OUTPUT_SVG     = 3,
+    QR_OUTPUT_ATASCII = 4,
+    QR_OUTPUT_PETSCII = 5
+} qr_output_mode_t;
+
+/**
+ * @brief  Append data to the QR encoder's input buffer. Call repeatedly to build up a long payload.
+ * @param  s the bytes to append
+ * @param  len number of bytes to append
+ */
+bool fuji_qrcode_input(char *s, uint16_t len);
+
+/**
+ * @brief  Encode whatever \ref fuji_qrcode_input has accumulated, and clear the input buffer.
+ * @param  version symbol version 1-40, or 0 to pick the smallest that fits. Prefer an
+ *         explicit version when the symbol has to fit a fixed display area: with 0 the
+ *         FujiNet also chooses the error correction level, overriding the ecc argument.
+ * @param  ecc \ref qr_ecc_t "error correction level", passed as a uint8_t
+ * @param  shorten replace the payload with a FujiNet-hosted short url before encoding.
+ *         Ignored on Atari and MS-DOS, whose command frames carry only two parameters.
+ *         Note the shortened url points at the FujiNet's own LAN address, so it is only
+ *         reachable from the same network.
+ */
+bool fuji_qrcode_encode(uint8_t version, uint8_t ecc, bool shorten);
+
+/**
+ * @brief  Select the output format and report how many bytes it occupies.
+ *         Changing the format re-renders the existing symbol; it does not re-encode, so
+ *         this stays valid after \ref fuji_qrcode_encode has cleared the input.
+ * @param  output_mode the \ref qr_output_mode_t "format" wanted, passed as a uint8_t
+ * @param  len set to the size in bytes of the encoded output
+ */
+bool fuji_qrcode_length(uint8_t output_mode, unsigned long *len);
+
+/**
+ * @brief  Read encoded bytes out of the FujiNet.
+ *         This is destructive: the bytes returned are removed from the FujiNet's buffer,
+ *         so a large symbol can be streamed in chunks, but it cannot be re-read.
+ * @param  s buffer to receive the bytes, allocated by the caller
+ * @param  len number of bytes to read, no more than \ref fuji_qrcode_length reported
+ */
+bool fuji_qrcode_output(char *s, uint16_t len);
+
+/**
+ * @brief  Encode a string as a QR version 1 symbol and fetch the raw module matrix.
+ *
+ *         Version 1 is 21x21 modules, the largest symbol some 8-bit displays can render.
+ *         At error correction level LOW it holds 25 alphanumeric characters (0-9, A-Z,
+ *         space and $%*+-./:), or 17 bytes if anything falls outside that set -- so an
+ *         all-uppercase url encodes far more compactly than a mixed-case one.
+ *
+ *         Requires FujiNet firmware with the QR capacity fix; earlier firmware rejects
+ *         any input over 17 characters regardless of mode.
+ *
+ * @param  s the NUL terminated string to encode
+ * @param  out receives 57 bytes: out[0] is the module count (21), and out[1..56] are the
+ *         modules, row-major, least significant bit first. Allocated by the caller.
+ */
+bool fuji_qrcode_v1(const char *s, uint8_t *out);
+
+/** @brief Size of the buffer \ref fuji_qrcode_v1 writes: 1 size byte + 21*21 bits. */
+#define FUJI_QRCODE_V1_SIZE 57
 
 ////////////////////////////////////////////////////////////////
 // These are very low level functions and should only be used internally.

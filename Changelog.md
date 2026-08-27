@@ -2,6 +2,13 @@
 
 ## [Unreleased] (Place WIP changes in this section until a release is done)
 
+- [all] Add QR code API: `fuji_qrcode_input`, `fuji_qrcode_encode`, `fuji_qrcode_length`
+  and `fuji_qrcode_output`, plus a `fuji_qrcode_v1` one-shot that encodes a string as a
+  version 1 (21x21) symbol and returns the module matrix. Implemented for atari, apple2,
+  commodore, coco, msdos and pmd85; adam returns false pending an AdamNet implementation.
+  `shorten` cannot be honoured on atari or msdos, whose command frames carry only two
+  parameters.
+
 ## [4.11.2] 2026-06-11
 
 - [c64] Fix compilation of broken host_prefix code by using malloc
