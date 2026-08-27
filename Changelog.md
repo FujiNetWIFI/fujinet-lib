@@ -6,6 +6,7 @@
   and `fuji_qrcode_output`, plus a `fuji_qrcode_v1` one-shot that encodes a string as a
   version 1 (21x21) symbol and returns the module matrix. Implemented for atari, apple2,
   commodore, coco, msdos and pmd85; adam returns false pending an AdamNet implementation.
+  `fuji_qrcode_v1` picks the strongest error correction the payload leaves room for.
   `shorten` cannot be honoured on atari or msdos, whose command frames carry only two
   parameters.
 

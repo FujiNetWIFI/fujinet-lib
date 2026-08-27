@@ -679,9 +679,13 @@ bool fuji_qrcode_output(char *s, uint16_t len);
  * @brief  Encode a string as a QR version 1 symbol and fetch the raw module matrix.
  *
  *         Version 1 is 21x21 modules, the largest symbol some 8-bit displays can render.
- *         At error correction level LOW it holds 25 alphanumeric characters (0-9, A-Z,
- *         space and $%*+-./:), or 17 bytes if anything falls outside that set -- so an
- *         all-uppercase url encodes far more compactly than a mixed-case one.
+ *         It holds 25 characters if the string is entirely within the QR alphanumeric set
+ *         (0-9, A-Z, space and $%*+-./:), but only 17 if a single character is not -- so
+ *         an all-uppercase url fits far more than a mixed-case one.
+ *
+ *         The strongest error correction the payload leaves room for is selected
+ *         automatically, since the spare capacity would otherwise go to padding and a
+ *         low-ECC symbol is harder to scan off a CRT.
  *
  *         Requires FujiNet firmware with the QR capacity fix; earlier firmware rejects
  *         any input over 17 characters regardless of mode.

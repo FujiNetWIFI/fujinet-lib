@@ -21,29 +21,81 @@
  * correction level, which is no use when the symbol has to fit a fixed display
  * area -- a version 2 symbol is 25x25 and will not fit where 21x21 does.
  *
- * The 25 character limit is the version 1 / ECC LOW alphanumeric capacity. It
- * is checked here so an over-long string fails locally and cheaply, rather than
- * after three round trips to the FujiNet.
+ * Within version 1 we then take the STRONGEST error correction the payload
+ * leaves room for. Damage tolerance is free capacity that would otherwise go to
+ * padding, and a low-ECC symbol on a CRT, photographed at an angle, is
+ * noticeably harder to scan.
  */
 
-#define QRCODE_V1_MAX_INPUT 25
+/* Version 1 capacity in characters, indexed by qr_ecc_t (LOW..HIGH), for each
+ * of the three encoding modes. Measured against libqrencode rather than copied
+ * from a table. */
+static const uint8_t qr_v1_capacity_num[4]   = { 41, 34, 27, 17 };
+static const uint8_t qr_v1_capacity_alnum[4] = { 25, 20, 16, 10 };
+static const uint8_t qr_v1_capacity_bytes[4] = { 17, 14, 11,  7 };
+
+/* Which mode the encoder will choose for this string, as a capacity table.
+ *
+ * The order matters: digits are also in the alphanumeric set, so an all-digit
+ * string has to be recognised as numeric first or it gets the smaller
+ * alphanumeric capacity and a weaker error correction level than it could
+ * carry. Anything outside the alphanumeric set forces byte mode, where a
+ * version 1 symbol holds substantially less. */
+static const uint8_t *qr_v1_capacity(const char *s, uint16_t n)
+{
+    uint16_t i;
+    char c;
+    bool numeric = true;
+
+    for (i = 0; i < n; i++) {
+        c = s[i];
+        if (c >= '0' && c <= '9')
+            continue;
+        numeric = false;
+        if (c >= 'A' && c <= 'Z')
+            continue;
+        if (c == ' ' || c == '$' || c == '%' || c == '*' ||
+            c == '+' || c == '-' || c == '.' || c == '/' || c == ':')
+            continue;
+        return qr_v1_capacity_bytes;
+    }
+
+    return numeric ? qr_v1_capacity_num : qr_v1_capacity_alnum;
+}
 
 bool fuji_qrcode_v1(const char *s, uint8_t *out)
 {
+    const uint8_t *capacity;
     unsigned long len = 0;
     uint16_t n;
+    uint8_t ecc;
 
     if (s == NULL || out == NULL)
         return false;
 
     n = (uint16_t) strlen(s);
-    if (n == 0 || n > QRCODE_V1_MAX_INPUT)
+    if (n == 0)
         return false;
+
+    capacity = qr_v1_capacity(s, n);
+
+    /* Reject locally rather than after three round trips to the FujiNet. Note
+       the limit depends on the mode: 41 characters if the string is all digits,
+       25 if it is entirely within the QR alphanumeric set, but only 17 if a
+       single character is not -- so an all-uppercase url fits far more than a
+       mixed-case one. */
+    if (n > capacity[QR_ECC_LOW])
+        return false;
+
+    for (ecc = QR_ECC_HIGH; ecc > QR_ECC_LOW; ecc--) {
+        if (n <= capacity[ecc])
+            break;
+    }
 
     if (!fuji_qrcode_input((char *) s, n))
         return false;
 
-    if (!fuji_qrcode_encode(1, QR_ECC_LOW, false))
+    if (!fuji_qrcode_encode(1, ecc, false))
         return false;
 
     if (!fuji_qrcode_length(QR_OUTPUT_BINARY, &len))
