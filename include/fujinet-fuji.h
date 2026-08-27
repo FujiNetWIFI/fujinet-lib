@@ -478,7 +478,7 @@ bool fuji_set_status(void);
  * @brief Unmounts the host in slot hs
  * @return success status of request
  */
-bool fuji_unmount_host_slot(uint8_t hs);
+#define fuji_unmount_host_slot(hs) FUJICALL_A1(FUJICMD_UNMOUNT_HOST, hs)
 
 /**
  * @brief  Opens and reads from appkey using the provided details. Writes to the data buffer, and sets count to the amount of data read if it is less than the full keysize.
