@@ -84,3 +84,23 @@ LIBS_EXTRA_MSDOS = $(call library-flag,$(TESTS_LIB_DIR)/lib$(TESTS_LIB).$(PLATFO
 #   coco/r2r:: coco/custom-step2
 # or
 #   apple2/disk: apple2/custom-step1 apple2/custom-step2
+
+# cocomenu is its own repo and keeps no built files in it, so clone and build
+COCOMENU_REPO ?= https://github.com/RichStephens/cocomenu.git
+COCOMENU_DIR = $(CACHE_DIR)/coco/cocomenu
+COCOMENU_BIN = $(COCOMENU_DIR)/cocomenu.bin
+COCOMENU_BAS = $(COCOMENU_DIR)/AUTOEXEC.BAS
+
+$(COCOMENU_DIR):
+	git clone --depth 1 $(COCOMENU_REPO) $@
+
+$(COCOMENU_BIN) $(COCOMENU_BAS): | $(COCOMENU_DIR)
+	$(MAKE) -C $(COCOMENU_DIR) $(@F)
+
+# AUTOEXEC.BAS has to stay type 0 ASCII or HDB-DOS DOAUTO will not run it.
+# NO_COCO_MENU=1 builds a plain disk with just the test binaries.
+ifndef NO_COCO_MENU
+coco/disk-post:: $(COCOMENU_BIN) $(COCOMENU_BAS)
+	$(call copy-to-disk,-b -2,$(COCOMENU_BIN),COCOMENU.BIN,$(DISK))
+	$(call copy-to-disk,-a -0 -l,$(COCOMENU_BAS),AUTOEXEC.BAS,$(DISK))
+endif
