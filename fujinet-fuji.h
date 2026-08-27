@@ -117,6 +117,10 @@
 #define FUJICMD_GET_ADAPTERCONFIG_EXTENDED 0xC4
 #define FUJICMD_HASH_COMPUTE_NO_CLEAR      0xC3
 #define FUJICMD_HASH_CLEAR                 0xC2
+#define FUJICMD_QRCODE_OUTPUT              0xBF
+#define FUJICMD_QRCODE_LENGTH              0xBE
+#define FUJICMD_QRCODE_ENCODE              0xBD
+#define FUJICMD_QRCODE_INPUT               0xBC
 #define FUJICMD_GENERATE_GUID              0xBB
 #define FUJICMD_SET_STATUS                 0x81
 
@@ -599,6 +603,42 @@ bool fuji_base64_encode_compute(void);
 bool fuji_base64_encode_input(char *s, uint16_t len);
 bool fuji_base64_encode_length(unsigned long *len);
 bool fuji_base64_encode_output(char *s, uint16_t len);
+
+// QR Code
+// ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success
+
+// Error correction level, passed to fuji_qrcode_encode
+typedef enum QRCodeEcc
+{
+    QR_ECC_LOW,
+    QR_ECC_MEDIUM,
+    QR_ECC_QUARTILE,
+    QR_ECC_HIGH
+} qr_ecc_t;
+
+// Output format requested via fuji_qrcode_length, determines the bytes returned by fuji_qrcode_output
+typedef enum QRCodeOutputMode
+{
+    QR_OUTPUT_MODE_BINARY,
+    QR_OUTPUT_MODE_ANSI,
+    QR_OUTPUT_MODE_BITMAP,
+    QR_OUTPUT_MODE_SVG,
+    QR_OUTPUT_MODE_ATASCII,
+    QR_OUTPUT_MODE_PETSCII
+} qr_output_mode_t;
+
+// Add data to be encoded. Call one or more times before fuji_qrcode_encode.
+bool fuji_qrcode_input(char *s, uint16_t len);
+
+// Generate the QR code from the data sent with fuji_qrcode_input.
+// version is 1-40 (0 auto), ecc is a qr_ecc_t, shorten runs the url through a shortener first.
+bool fuji_qrcode_encode(uint8_t version, uint8_t ecc, bool shorten);
+
+// Re-render the code in output_mode (a qr_output_mode_t) and return its byte length in len.
+bool fuji_qrcode_length(uint8_t output_mode, unsigned long *len);
+
+// Read len bytes of the rendered code into s.
+bool fuji_qrcode_output(char *s, uint16_t len);
 
 ////////////////////////////////////////////////////////////////
 // These are very low level functions and should only be used internally.
