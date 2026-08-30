@@ -16,6 +16,14 @@
 #include <string.h>
 #endif /* _CMOC_VERSION_ */
 
+#ifdef BUILD_C64
+#include "c64_find_load.h"
+#endif /* BUILD_C64 */
+
+#ifdef __CC65__
+#include <conio.h>
+#endif /* __CC65__ */
+
 int tests_run     = 0;
 int tests_passed  = 0;
 int tests_skipped = 0;
@@ -29,15 +37,25 @@ void begin_testing()
 void end_testing(int code)
 {
   printf("Press any key to exit\n");
-#ifdef _CMOC_VERSION_
+#if defined(_CMOC_VERSION_)
   while (true)
   {
     if (inkey())
       break;
   }
-#else /* ! _CMOC_VERSION_ */
+#elif defined(__CC65__)
+  cgetc();
+#else /* everything else */
   getc(stdin);
 #endif /* _CMOC_VERSION_ */
+
+#ifdef BUILD_C64
+  // The LOAD command is ridiculously long, reprint it if we can so
+  // the user can arrow up and push return instead of retyping it.
+  if (c64_load_command[0])
+    printf("  %s\n", c64_load_command);
+#endif /* BUILD_C64 */
+
   exit(code);
 }
 

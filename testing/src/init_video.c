@@ -8,6 +8,10 @@
 #include <coco.h>
 #endif /* BUILD_COCO */
 
+#ifdef BUILD_C64
+#include "c64_find_load.h"
+#endif /* BUILD_C64 */
+
 void init_video()
 {
 #if defined(BUILD_COCO)
@@ -24,5 +28,9 @@ void init_video()
   }
 #elif defined(BUILD_APPLE2)
   videomode(VIDEOMODE_80COL);
+#elif defined(BUILD_C64)
+  c64_save_load_command();
 #endif // _CMOC_VERSION_
+
+  return;
 }
