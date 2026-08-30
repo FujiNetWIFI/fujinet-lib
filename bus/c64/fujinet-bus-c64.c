@@ -49,7 +49,8 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
   }
 
   if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
-    cbm_chan = device - FUJI_DEVICEID_NETWORK + CBM_DATA_CHANNEL_0;
+    cbm_chan = CBM_CMD_CHANNEL;
+    //cbm_chan = device - FUJI_DEVICEID_NETWORK + CBM_DATA_CHANNEL_0;
     cbm_dev = CBM_DEV_NETWORK;
   }
   else {
@@ -89,16 +90,30 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
 
 uint16_t network_bus_read(uint8_t device, void *buffer, size_t length)
 {
+#if 0
   uint16_t rlen;
   printf("FUJI_BUS_READ %u\n", length);
   rlen = cbm_read(device - FUJI_DEVICEID_NETWORK + 1 + CBM_DATA_CHANNEL_0, buffer, length);
   printf("FBR GOT %u\n", rlen);
   return rlen;
+#else
+  if (!NETCALL_B12_RV(FUJICMD_READ, device - FUJI_DEVICEID_NETWORK + 1 + CBM_DATA_CHANNEL_0,
+                      length, buffer, length))
+    return 0;
+  return length;
+#endif // 0
 }
 
 uint16_t network_bus_write(uint8_t device, const void *buffer, size_t length)
 {
+#if 0
   return cbm_write(device - FUJI_DEVICEID_NETWORK + 1 + CBM_DATA_CHANNEL_0, buffer, length);
+#else
+  if (!NETCALL_D(FUJICMD_WRITE, device - FUJI_DEVICEID_NETWORK + 1 + CBM_DATA_CHANNEL_0,
+                 buffer, length))
+    return 0;
+  return length;
+#endif // 0
 }
 
 /*
