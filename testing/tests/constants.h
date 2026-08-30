@@ -3,6 +3,7 @@
 
 /* Network device specs used across tests */
 #define NET_TCP_SPEC    "N1:TCP://tcpbin.com:4242/"
+#define NET2_ECHO       "N2:TCP://tcpbin.com:4242/"
 
 // Adam can't handle large web sites
 //#define NET_DEVICESPEC  "N1:HTTPS://fujinet.online/"

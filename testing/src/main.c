@@ -110,6 +110,7 @@ int main(void)
   test_network_json();
   test_network_http_put_plain();
   test_network_http_put_delete();
+  test_multiple_network_devices();
   test_network_unit();
 #endif // NETWORK_TESTS
 

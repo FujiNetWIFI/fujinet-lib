@@ -268,8 +268,8 @@ uint8_t network_unit(const char *devicespec);
 #define NETWORK_FS_LEN(devicespec) MAX_FILENAME_LEN
 #endif /* __ADAM__ || __COLECOADAM__ */
 
-#define network_fs_command(cmd, devicespec)                             \
-  (NETCALL_D(cmd, network_unit(devicespec), devicespec,                 \
+#define network_fs_command(cmd, devicespec)                 \
+  (NETCALL_A1_A2_D(cmd, network_unit(devicespec), 0, 0, devicespec,       \
              NETWORK_FS_LEN(devicespec)) ? FN_ERR_OK : FN_ERR_IO_ERROR)
 
 #define network_fs_delete(devicespec) network_fs_command(FUJICMD_DELETE, devicespec)
