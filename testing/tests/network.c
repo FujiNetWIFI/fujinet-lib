@@ -592,7 +592,7 @@ uint16_t wait_for_data(const char *net)
 
 void dual_echo_check(const char *net1, const char *net2, const uint8_t *msg)
 {
-  uint8_t err, retry;
+  uint8_t err;
   int16_t r, w;
   char test_name[40];
 

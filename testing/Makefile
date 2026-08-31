@@ -1,8 +1,8 @@
-PRODUCTS = fnlib-test.lib flibtest fnettest fclktest fdsktest fqrctest fnfstest fapktest
+PRODUCTS = fnlib-test.lib flibtest fnettest fclktest fdsktest fqrctest fnfstest fapktest devlist
 PRODUCTS_DISK_NAME = fntests
 
 PLATFORMS += adam
-PLATFORMS += adam_cpm
+#PLATFORMS += adam_cpm
 PLATFORMS += apple2
 PLATFORMS += atari
 PLATFORMS += c64
@@ -37,13 +37,15 @@ PLATFORM_COMBOS = \
 
 fnlib-test.lib_SRC_DIRS = tests tests/%PLATFORM%
 
-flibtest_SRC_DIRS = src src/%PLATFORM%
-fnettest_SRC_DIRS = src src/%PLATFORM%
-fclktest_SRC_DIRS = src src/%PLATFORM%
-fdsktest_SRC_DIRS = src src/%PLATFORM%
-fqrctest_SRC_DIRS = src src/%PLATFORM%
-fnfstest_SRC_DIRS = src src/%PLATFORM%
-fapktest_SRC_DIRS = src src/%PLATFORM%
+MAIN_SRC_DIRS = src src/%PLATFORM%
+flibtest_SRC_DIRS = $(MAIN_SRC_DIRS)
+fnettest_SRC_DIRS = $(MAIN_SRC_DIRS)
+fclktest_SRC_DIRS = $(MAIN_SRC_DIRS)
+fdsktest_SRC_DIRS = $(MAIN_SRC_DIRS)
+fqrctest_SRC_DIRS = $(MAIN_SRC_DIRS)
+fnfstest_SRC_DIRS = $(MAIN_SRC_DIRS)
+fapktest_SRC_DIRS = $(MAIN_SRC_DIRS)
+devlist_SRC_DIRS = $(MAIN_SRC_DIRS)
 
 flibtest_CFLAGS = -DFUJI_TESTS=1
 fnettest_CFLAGS = -DNETWORK_TESTS=1
@@ -52,6 +54,7 @@ fdsktest_CFLAGS = -DDISK_TESTS=1
 fqrctest_CFLAGS = -DQRCODE_TESTS=1
 fnfstest_CFLAGS = -DFS_TESTS=1
 fapktest_CFLAGS = -DAPPKEY_TESTS=1
+devlist_CFLAGS = -DDEVLIST_TESTS=1
 
 include ../makefiles/toplevel-rules.mk
 

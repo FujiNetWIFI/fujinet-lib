@@ -21,7 +21,7 @@
  */
 
 #if !FUJI_TESTS && !NETWORK_TESTS && !CLOCK_TESTS && !DISK_TESTS && !QRCODE_TESTS \
-  && !FS_TESTS && !APPKEY_TESTS
+  && !FS_TESTS && !APPKEY_TESTS && !DEVLIST_TESTS
 #error "You need to choose some tests"
 #endif
 
@@ -34,6 +34,8 @@
 #include "fdsk.h"
 #include "qrcode.h"
 #include "fs.h"
+#include "devlist.h"
+
 #include "init_video.h"
 #include "harness.h"
 
@@ -136,6 +138,13 @@ int main(void)
   test_clock_simple_binary_with_hundredths();
   test_clock_get_time_tz();
 #endif // CLOCK_TESTS
+
+#if DEVLIST_TESTS
+  /* devlist.h */
+  test_fujinet_exists();
+  test_clock_exists();
+  test_network_exists();
+#endif // DEVLIST_TESTS
 
   printf("\n=== All %d tests passed, %d skipped ===\n", tests_run, tests_skipped);
   print_versions();
