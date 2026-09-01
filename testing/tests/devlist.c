@@ -3,6 +3,7 @@
 #include "devlist.h"
 #include "harness.h"
 #include "globals.h"
+#include "cmp_hex.h"
 
 #include <fujinet-clock.h>
 #include <fujinet-network.h>
@@ -31,7 +32,7 @@ void test_fujinet_exists(void)
   SECTION("FujiNet device");
 
 #ifdef FN_BROKEN_fuji_get_adapter_config
-  SKIP(FujiNet_online);
+  SKIP(fujinet_exists);
 #endif
   ok = fuji_get_adapter_config(&g.adapter.ac);
   TEST("FujiNet online", ok);
@@ -45,7 +46,7 @@ void test_clock_exists(void)
   SECTION("Clock device");
 
 #ifdef FN_BROKEN_clock_get_time_APETIME_BINARY
-  SKIP(Clock_online);
+  SKIP(clock_exists);
 #else
   err = clock_get_time(g.clock_fmt, APETIME_BINARY);
   TEST("Clock online", err == FN_ERR_OK);
@@ -55,21 +56,51 @@ void test_clock_exists(void)
 
 void test_network_exists(void)
 {
-  uint8_t idx, err;
-  char buffer[40];
+  uint8_t idx, err, unit;
+  char *r;
+  char buffer[40], spec[40];
 
   SECTION("N: device");
 
-#ifdef FN_BROKEN_network_fs_cd
-  SKIP(Network_online);
+#if defined(FN_BROKEN_network_fs_cd) || defined(FN_BROKEN_network_fs_pwd)
+  SKIP(network_exists);
 #else
+  // First set every network device to a unique prefix
   for (idx = 0; idx < MAX_NETWORK_DEVICES; idx++) {
-    strcpy(buffer, "Nn:/");
-    buffer[1] = '1' + idx;
+    unit = idx + '1';
+    sprintf(buffer, "N%c:/%c-check-%c", unit, unit, unit);
     err = network_fs_cd(buffer);
-    strcpy(buffer, "Network n online");
-    buffer[8] = '1' + idx;
-    TEST(buffer, err == FN_ERR_OK);
+    if (err != FN_ERR_OK)
+      break;
+  }
+  TEST("All network devices respond", err == FN_ERR_OK);
+
+  // Now check that each device still has a unique prefix
+  for (idx = 0; idx < MAX_NETWORK_DEVICES; idx++) {
+    unit = idx + '1';
+    sprintf(spec, "N%c:", unit);
+    sprintf(buffer, "/%c-check-%c", unit, unit, unit);
+    err = network_fs_pwd(spec, g.fs.path);
+    if (err != FN_ERR_OK)
+      break;
+    r = strrchr(g.fs.path, '/');
+    if (r && r > &g.fs.path[1])
+      *r = 0;
+    if (strcmp(g.fs.path, buffer) != 0)
+      cmp_hex("orig", (uint8_t *) buffer, strlen(buffer),
+              "recv", (uint8_t *) g.fs.path, strlen(g.fs.path));
+    sprintf(spec, "Network %c online", unit);
+    TEST(spec, strcmp(g.fs.path, buffer) == 0);
+  }
+  TEST("All network devices online", err == FN_ERR_OK);
+
+  // Clear prefix on all devices because it gets prepended to URLs
+  for (idx = 0; idx < MAX_NETWORK_DEVICES; idx++) {
+    unit = idx + '1';
+    sprintf(buffer, "N%c:", unit);
+    err = network_fs_cd(buffer);
+    if (err != FN_ERR_OK)
+      break;
   }
 #endif
   END_OF_TEST();
