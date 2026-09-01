@@ -3,6 +3,7 @@
 #include "harness.h"
 #include "constants.h"
 #include "globals.h"
+#include "cmp_hex.h"
 #include <fujinet-fuji.h>
 #include <fujinet-network.h>
 
@@ -157,17 +158,16 @@ static int16_t fs_get(const char *devicespec)
 
 void test_fs_make_test_dir(void)
 {
-#ifdef FN_BROKEN_network_fs
-  SECTION("network_fs_mkdir");
-  SKIP(network_fs);
-  END_OF_TEST();
-#else
   char guid[MAX_GUID_LEN];
   uint8_t err;
   bool ok;
 
   SECTION("network_fs_mkdir");
 
+#ifdef FN_BROKEN_network_fs
+  SKIP(network_fs);
+  END_OF_TEST();
+#else
 #ifdef FN_BROKEN_network_init
   SKIP(network_init);
 #else
@@ -193,6 +193,7 @@ void test_fs_make_test_dir(void)
   /* An earlier run that stopped before its teardown leaves this directory
    * behind, and mkdir on an existing one fails. Not an error if absent. */
   err = network_fs_rmdir(g.fs.base);
+  network_close(g.fs.base);
 
 #ifdef FN_BROKEN_network_fs_mkdir
   SKIP(network_fs_mkdir);
@@ -222,18 +223,70 @@ void test_fs_make_test_dir(void)
 #endif
 }
 
+void test_fs_prefix(void)
+{
+  char guid[MAX_GUID_LEN + 1];
+  uint8_t err;
+  char *r;
+
+  SECTION("network_fs_cd");
+
+#if defined(FN_BROKEN_network_fs_cd) || defined(FN_BROKEN_network_fs_pwd)
+#ifdef FN_BROKEN_network_fs_cd
+  SKIP(network_fs_cd);
+#endif
+#ifdef FN_BROKEN_network_fs_pwd
+  SKIP(network_fs_pwd);
+#endif
+#else
+  fuji_generate_guid(&guid[1]);
+  guid[0] = '/';
+
+#if 0
+  // Nothing actually checks if the directory exists when doing a cd
+  strcpy(g.fs.base, WEBDAV_ROOT);
+  strcat(g.fs.base, guid);
+  strcat(g.fs.base, "/");
+  printf("  test dir: %s\n", g.fs.base);
+
+  err = network_fs_mkdir(g.fs.base);
+  TEST("directory created for cd", err == FN_ERR_OK);
+#else
+  strcpy(g.fs.base, "N1:");
+  strcat(g.fs.base, guid);
+#endif
+
+  err = network_fs_cd(g.fs.base);
+  TEST("change directory succeeds", err == FN_ERR_OK);
+
+  err = network_fs_pwd(g.fs.base, g.fs.path);
+  TEST("getcwd succeeds", err == FN_ERR_OK);
+  r = strrchr(g.fs.path, '/');
+  if (r && r > &g.fs.path[1])
+    *r = 0;
+  if (strcmp(g.fs.path, guid) != 0)
+    cmp_hex("orig", (uint8_t *) guid, strlen(guid),
+            "recv", (uint8_t *) g.fs.path, strlen(g.fs.path));
+  TEST("working directory matches", strcmp(g.fs.path, guid) == 0);
+
+  // Reset prefix to empty otherwise it is prepended to every URL sent
+  network_fs_cd("N1:");
+#endif
+
+  END_OF_TEST();
+}
+
 void test_fs_create_files(void)
 {
-#ifdef FN_BROKEN_network_fs
-  SECTION("network_fs: subdirectory and files");
-  SKIP(network_fs);
-  END_OF_TEST();
-#else
   int16_t count;
   uint8_t err;
 
   SECTION("network_fs: subdirectory and files");
 
+#ifdef FN_BROKEN_network_fs
+  SKIP(network_fs);
+  END_OF_TEST();
+#else
   fs_path("sub/");
 #ifdef FN_BROKEN_network_fs_mkdir
   SKIP(network_fs_mkdir);
@@ -274,13 +327,12 @@ void test_fs_create_files(void)
 
 void test_fs_read_files(void)
 {
-#ifdef FN_BROKEN_network_fs
   SECTION("network_fs: read back and overwrite");
+
+#ifdef FN_BROKEN_network_fs
   SKIP(network_fs);
   END_OF_TEST();
 #else
-  SECTION("network_fs: read back and overwrite");
-
   fs_path("sub/alpha.txt");
   TEST("alpha.txt reads back", fs_get(g.fs.path) > 0);
   TEST("alpha.txt contents match", strcmp(g.fs.data, "alpha") == 0);
@@ -296,15 +348,14 @@ void test_fs_read_files(void)
 
 void test_fs_rename_delete(void)
 {
-#ifdef FN_BROKEN_network_fs
-  SECTION("network_fs: rename and delete");
-  SKIP(network_fs);
-  END_OF_TEST();
-#else
   uint8_t err;
 
   SECTION("network_fs: rename and delete");
 
+#ifdef FN_BROKEN_network_fs
+  SKIP(network_fs);
+  END_OF_TEST();
+#else
   /* rename takes both names in one devicespec, separated by a comma. */
   fs_path("sub/gamma.txt,renamed.txt");
   err = network_fs_rename(g.fs.path);
@@ -332,15 +383,14 @@ void test_fs_rename_delete(void)
 
 void test_fs_dir_lifecycle(void)
 {
-#ifdef FN_BROKEN_network_fs
-  SECTION("network_fs: mkdir and rmdir");
-  SKIP(network_fs);
-  END_OF_TEST();
-#else
   uint8_t err;
 
   SECTION("network_fs: mkdir and rmdir");
 
+#ifdef FN_BROKEN_network_fs
+  SKIP(network_fs);
+  END_OF_TEST();
+#else
   fs_path("doomed/");
   err = network_fs_mkdir(g.fs.path);
   TEST("mkdir of a throwaway directory returns FN_ERR_OK", err == FN_ERR_OK);
@@ -364,15 +414,14 @@ void test_fs_dir_lifecycle(void)
 
 void test_fs_lock_unlock(void)
 {
-#ifdef FN_BROKEN_network_fs
-  SECTION("network_fs: lock and unlock");
-  SKIP(network_fs);
-  END_OF_TEST();
-#else
   uint8_t err;
 
   SECTION("network_fs: lock and unlock");
 
+#ifdef FN_BROKEN_network_fs
+  SKIP(network_fs);
+  END_OF_TEST();
+#else
   /* HTTP overrides neither, so the base class accepts both and does
    * nothing. These record that, rather than that the file is protected. */
   fs_path("sub/alpha.txt");

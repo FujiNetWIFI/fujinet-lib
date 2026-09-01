@@ -2,6 +2,7 @@
 #define FS_H
 
 extern void test_fs_make_test_dir(void);
+extern void test_fs_prefix(void);
 extern void test_fs_create_files(void);
 extern void test_fs_read_files(void);
 extern void test_fs_rename_delete(void);

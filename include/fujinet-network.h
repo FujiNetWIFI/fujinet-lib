@@ -317,6 +317,10 @@ uint8_t network_unit(const char *devicespec);
  */
 #define network_fs_cd(devicespec) network_fs_command(FUJICMD_CHDIR, devicespec)
 
+#define network_fs_pwd(devicespec, cwd)                                 \
+  (NETCALL_RV(FUJICMD_GETCWD, network_unit(devicespec), cwd, MAX_FILENAME_LEN)     \
+   ? FN_ERR_OK : FN_ERR_IO_ERROR)
+
 FN_ERR network_accept(const char* devicespec);
 extern size_t network_json_strip_newlines(char *buffer, size_t buflen);
 

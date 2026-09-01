@@ -118,6 +118,7 @@ int main(void)
 
 #if FS_TESTS
   /* fs.h */
+  test_fs_prefix();
   test_fs_make_test_dir();
   test_fs_create_files();
   test_fs_read_files();
