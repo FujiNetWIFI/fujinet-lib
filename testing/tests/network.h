@@ -15,5 +15,6 @@ extern void test_network_set_eol(void);
 extern void test_network_unit(void);
 extern void test_network_error_path(void);
 extern void test_multiple_network_devices(void);
+extern void test_network_open_no_n_prefix(void);
 
 #endif /* NETWORK_H */

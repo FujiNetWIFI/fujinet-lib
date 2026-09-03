@@ -2,8 +2,14 @@
 #define CONSTANTS_H
 
 /* Network device specs used across tests */
+#if 0
 #define NET_TCP_SPEC    "N1:TCP://tcpbin.com:4242/"
 #define NET2_ECHO       "N2:TCP://tcpbin.com:4242/"
+#else
+// socat -v TCP-LISTEN:4242,fork EXEC:'cat'
+#define NET_TCP_SPEC    "N1:TCP://10.4.0.1:4242/"
+#define NET2_ECHO       "N2:TCP://10.4.0.1:4242/"
+#endif
 
 // Adam can't handle large web sites
 //#define NET_DEVICESPEC  "N1:HTTPS://fujinet.online/"

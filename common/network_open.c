@@ -3,12 +3,6 @@
 #include <fujinet-network.h>
 #include <fujinet-const.h>
 
-#if defined(__ADAM__) || defined(__COLECOADAM__)
-#define NETWORK_OPEN_LEN strlen(devicespec)
-#else
-#define NETWORK_OPEN_LEN MAX_FILENAME_LEN
-#endif /* __ADAM__ || __COLECOADAM__ */
-
 FN_ERR network_open(const char *devicespec, uint8_t mode, uint8_t trans)
 {
   uint8_t nw_unit = network_unit(devicespec);

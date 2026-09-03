@@ -23,9 +23,21 @@
 #define BASIC_LINE_ENDING "\n"
 #endif
 
-#define ECHO_MSG "FujiNet integration test"
+#define ECHO_MSG "... FujiNet integration test"
 //#define ALT_LINE_ENDING "\n#"
 #define ALT_LINE_ENDING "\x0d\x0a"
+
+void mark_echo_message(const char *prefix, uint8_t msg[])
+{
+  size_t len = strlen(prefix);
+  uint8_t *r = (uint8_t *) strchr((char *) msg, ' ');
+
+
+  if (r - msg < len)
+    len = r - msg;
+  memcpy(msg, prefix, len);
+  return;
+}
 
 void test_network_init(void)
 {
@@ -480,7 +492,8 @@ void echo_check(const uint8_t *msg)
 void test_network_write(void)
 {
   uint8_t err;
-  static const uint8_t msg[] = ECHO_MSG BASIC_LINE_ENDING;
+  int16_t w;
+  uint8_t msg[] = ECHO_MSG BASIC_LINE_ENDING;
 
   SECTION("network_write (raw TCP)");
 
@@ -491,7 +504,14 @@ void test_network_write(void)
   TEST("network_open (TCP RW) succeeds", err == FN_ERR_OK);
 #endif
 
+  mark_echo_message("WRT", msg);
   echo_check(msg);
+
+  w = strlen((const char *) msg);
+  err = network_write(NET_TCP_SPEC, msg, w);
+  TEST("network_write on closed connection fails", err != FN_ERR_OK);
+
+  // FIXME - test that read on closed connection fails without crashing firmware
 
   END_OF_TEST();
 }
@@ -499,7 +519,7 @@ void test_network_write(void)
 void test_network_set_eol(void)
 {
   uint8_t err;
-  static const uint8_t msg[] = ECHO_MSG ALT_LINE_ENDING;
+  uint8_t msg[] = ECHO_MSG ALT_LINE_ENDING;
 
   SECTION("network_set_eol (raw TCP)");
 
@@ -517,6 +537,7 @@ void test_network_set_eol(void)
   TEST("network_set_eol succeeds", err == FN_ERR_OK);
   print_hex("ALT EOL", (uint8_t *)ALT_LINE_ENDING, strlen(ALT_LINE_ENDING));
 
+  mark_echo_message("EOL", msg);
   echo_check(msg);
 
 #ifdef FN_BROKEN_network_set_eol
@@ -632,8 +653,7 @@ void dual_echo_check(const char *net1, const char *net2, const uint8_t *msg)
 void test_multiple_network_devices(void)
 {
   uint8_t err, err2 = FN_ERR_OK;
-  static const uint8_t msg[] = ECHO_MSG BASIC_LINE_ENDING;
-  static const uint8_t msg2[] = "ALT " ECHO_MSG BASIC_LINE_ENDING;
+  uint8_t msg[] = ECHO_MSG BASIC_LINE_ENDING;
 
   SECTION("multiple N: devices");
 
@@ -642,13 +662,43 @@ void test_multiple_network_devices(void)
   TEST("dual network_open (TCP RW) succeeds", err == FN_ERR_OK && err2 == FN_ERR_OK);
 
   // Write a message to N2 and make sure it doesn't come back on N1
+  mark_echo_message("DN2", msg);
   dual_echo_check(NET2_ECHO, NET_TCP_SPEC, msg);
 
   // Do the reverse, write to N1 and validate it is different than N2
-  dual_echo_check(NET_TCP_SPEC, NET2_ECHO, msg2);
+  mark_echo_message("DN1", msg);
+  dual_echo_check(NET_TCP_SPEC, NET2_ECHO, msg);
 
   err = network_close(NET_TCP_SPEC);
   err2 = network_close(NET2_ECHO);
+
+  END_OF_TEST();
+}
+
+void test_network_open_no_n_prefix(void)
+{
+#ifdef FN_BROKEN_network_open_no_n_prefix
+  SKIP(network_open_no_n_prefix);
+#else
+  bool ok;
+  uint8_t unit = 2;
+  uint16_t url_len;
+  char *r;
+  char url[] = NET_TCP_SPEC;
+
+
+  r = strchr(url, ':');
+  *(r - 1) = '0' + unit;
+  r++;
+#if FUJI_VARIABLE_LEN_PACKETS
+  url_len = strlen(r);
+#else // ! FUJI_VARIABLE_LEN_PACKETS
+  url_len = NETWORK_OPEN_LEN;
+#endif // FUJI_VARIABLE_LEN_PACKETS
+  ok = NETCALL_A1_A2_D(FUJICMD_OPEN, unit, OPEN_MODE_RW, OPEN_TRANS_LF, r, url_len);
+  TEST("network open without N: succeeds", ok);
+  network_close(url);
+#endif // FN_BROKEN_network_open_no_prefix
 
   END_OF_TEST();
 }

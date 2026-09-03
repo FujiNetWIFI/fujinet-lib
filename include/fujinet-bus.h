@@ -1,6 +1,12 @@
 #ifndef FUJINET_BUS_H
 #define FUJINET_BUS_H
 
+#if defined(BUILD_ATARI) || defined(BUILD_COCO)
+#define FUJI_VARIABLE_LEN_PACKETS 0
+#else
+#define FUJI_VARIABLE_LEN_PACKETS 1
+#endif
+
 // Convenience macros to fill in FujiDCB and make the call
 #include <fujinet-bus-ezcall.h>
 #include <fujinet-int.h>

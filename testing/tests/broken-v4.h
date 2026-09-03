@@ -13,6 +13,7 @@
 #define FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
 #define FN_BROKEN_network_set_eol
 #define FN_BROKEN_network_fs_pwd
+#define FN_BROKEN_network_open_no_n_prefix
 #endif /* BUILD_ATARI */
 
 #ifdef BUILD_COCO
@@ -24,6 +25,7 @@
 #define FN_BROKEN_fuji_get_time
 
 #define FN_BROKEN_network_set_eol
+#define FN_BROKEN_network_open_no_n_prefix
 
 #define FN_BROKEN_clock_get_time_PRODOS_BINARY
 #define FN_BROKEN_clock_get_time_APETIME_BINARY
@@ -47,6 +49,7 @@
 
 #define FN_BROKEN_network_http_post
 #define FN_BROKEN_network_set_eol
+#define FN_BROKEN_network_open_no_n_prefix
 
 #define FN_BROKEN_network_fs_pwd
 
@@ -87,6 +90,8 @@
 #define FN_BROKEN_network_http_set_channel_mode
 #define FN_BROKEN_network_json_parse
 #define FN_BROKEN_network_http_put
+#define FN_BROKEN_network_set_eol
+#define FN_BROKEN_network_open_no_n_prefix
 
 #endif /* BUILD_MSDOS */
 
@@ -125,6 +130,7 @@
 #define FN_BROKEN_network_unit
 #define FN_BROKEN_network_write
 #define FN_BROKEN_network_set_eol
+#define FN_BROKEN_network_open_no_n_prefix
 
 #define FN_BROKEN_network_fs_pwd
 
@@ -148,6 +154,7 @@
 
 #define FN_BROKEN_network_set_eol
 #define FN_BROKEN_network_fs_pwd
+#define FN_BROKEN_network_open_no_n_prefix
 
 #define FN_BROKEN_clock_get_time_SIMPLE_BINARY
 #define FN_BROKEN_clock_get_time_PRODOS_BINARY

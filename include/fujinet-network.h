@@ -89,13 +89,18 @@ FN_ERR network_close(const char* devicespec);
  * @return fujinet-network error code (See FN_ERR_* values)
  */
 FN_ERR network_open(const char* devicespec, uint8_t mode, uint8_t trans);
+#if FUJI_VARIABLE_LEN_PACKETS
+#define NETWORK_OPEN_LEN strlen(devicespec)
+#else
+#define NETWORK_OPEN_LEN MAX_FILENAME_LEN
+#endif /* FUJI_VARIABLE_LEN_PACKETS */
 
 /**
  * @brief  Non-blocking read from channel
- * 
+ *
  * The read will grab whatever is waiting in the FujiNet buffer. If fewer than the requested len, the return count will reflect this.
  * Errors are returned as the negative value of the FUJI standard error. fn_network_error contains the device specific error code. fn_bytes_read will be 0 on errors.
- * 
+ *
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  buf Buffer
  * @param  len length
@@ -110,11 +115,11 @@ int16_t network_read_nb(const char* devicespec, void *buf, uint16_t len);
 
 /**
  * @brief  Read from channel
- * 
+ *
  * The read will block until it has read all the bytes requested from the device, or the EOF is hit.
  * This will block waiting for as much data as it can, so that the client does not need to handle counting.
  * Errors are returned as the negative value of the error. fn_network_error contains the device specific error code. fn_bytes_read will contain the count of bytes read before error occurred.
- * 
+ *
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  buf Buffer
  * @param  len length
@@ -123,7 +128,7 @@ int16_t network_read_nb(const char* devicespec, void *buf, uint16_t len);
 int16_t network_read(const char* devicespec, void *buf, uint16_t len);
 
 /**
- * @brief  Write to network 
+ * @brief  Write to network
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  buf Buffer
  * @param  len length
@@ -146,7 +151,7 @@ FN_ERR network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char* device
  * @brief  Parse the currently open JSON location
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @return fujinet-network error code (See FN_ERR_* values)
- * 
+ *
  * This will set the channel mode to JSON, which will be unset in the close.
  */
 FN_ERR network_json_parse(const char *devicespec);
@@ -157,7 +162,7 @@ FN_ERR network_json_parse(const char *devicespec);
  * @param  query pointer to string containing json path to query, e.g. "/path/field". No need to add device drive.
  * @param  buffer pointer to receiving string, nul terminated, if no data was retrieved, sets it to an empty string
  * @return Bytes read, or negative values represent fujinet-network error code (See FN_ERR_* values)
- * 
+ *
  * Assumes an open and parsed json.
  */
 #if defined(__ADAM__) || defined(__COLECOADAM__)
@@ -172,7 +177,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  mode The mode to set
  * @return fujinet-network error code (See FN_ERR_* values)
- * 
+ *
  * Assumes an open connection.
  */
 #define network_http_set_channel_mode(devicespec, mode) (NETCALL_A1_A2(FUJICMD_SET_MODE, network_unit(devicespec), 0, mode) ? FN_ERR_OK : FN_ERR_IO_ERROR)
@@ -181,7 +186,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
  * @brief  Start adding headers.
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @return fujinet-network error code (See FN_ERR_* values)
- * 
+ *
  * Assumes an open connection. After calling this, add any headers with network_http_add_header, and finally call network_http_end_add_headers
  */
 #define network_http_start_add_headers(devicespec) network_http_set_channel_mode(devicespec, HTTP_CHAN_MODE_SET_HEADERS)
@@ -190,7 +195,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
  * @brief  End adding headers.
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @return fujinet-network error code (See FN_ERR_* values)
- * 
+ *
  * Assumes an open connection. Completes header adding, and sets mode back to BODY
  */
 #define network_http_end_add_headers(devicespec) network_http_set_channel_mode(devicespec, HTTP_CHAN_MODE_BODY)
@@ -200,7 +205,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  header pointer to string containing full header to add, e.g. "Accept: application/json"
  * @return fujinet-network error code (See FN_ERR_* values)
- * 
+ *
  * Assumes an open connection.
  */
 #define network_http_add_header(devicespec, header) network_write(devicespec, header, strlen(header))
@@ -211,7 +216,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  data text data to post
  * @return fujinet-network error code (See FN_ERR_* values)
- * 
+ *
  * Assumes an open connection.
  */
 FN_ERR network_http_post(const char *devicespec, const char *data);
@@ -223,7 +228,7 @@ FN_ERR network_http_post(const char *devicespec, const char *data);
  * @param  data binary data to post
  * @param  len length of binary data to send
  * @return fujinet-network error code (See FN_ERR_* values)
- * 
+ *
  * Assumes an open connection.
  */
 FN_ERR network_http_post_bin(const char *devicespec, const uint8_t *data, uint16_t len);
@@ -233,7 +238,7 @@ FN_ERR network_http_post_bin(const char *devicespec, const uint8_t *data, uint16
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  data data to put
  * @return fujinet-network error code (See FN_ERR_* values)
- * 
+ *
  * Assumes an open connection.
  */
 #define network_http_put(devicespec, data) network_http_post(devicespec, data)
@@ -243,7 +248,7 @@ FN_ERR network_http_post_bin(const char *devicespec, const uint8_t *data, uint16
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  trans translation value
  * @return fujinet-network error code (See FN_ERR_* values)
- * 
+ *
  * This will open a connection, consumer can then query the data, and must close the connection.
  */
 #define network_http_delete(devicespec, trans) network_open(devicespec, OPEN_MODE_HTTP_DELETE_H, trans)
@@ -252,7 +257,7 @@ FN_ERR network_http_post_bin(const char *devicespec, const uint8_t *data, uint16
  * @brief  Internal routine to get the network UNIT id from the devicespec, i.e. Nx: find the "x" value
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @return unit number
- * 
+ *
  */
 uint8_t network_unit(const char *devicespec);
 
@@ -261,12 +266,12 @@ uint8_t network_unit(const char *devicespec);
  * @param devicespec Pointer to device specification e.g. "N1:TNFS://TMA-2/foo.txt"
  * @return fujinet-network error code (see FN_ERR_* values)
  */
-#if defined(__ADAM__) || defined(__COLECOADAM__)
+#if FUJI_VARIABLE_LEN_PACKETS
 #include <string.h>
 #define NETWORK_FS_LEN(devicespec) strlen(devicespec)
 #else
 #define NETWORK_FS_LEN(devicespec) MAX_FILENAME_LEN
-#endif /* __ADAM__ || __COLECOADAM__ */
+#endif /* FUJI_VARIABLE_LEN_PACKETS */
 
 #define network_fs_command(cmd, devicespec)                 \
   (NETCALL_A1_A2_D(cmd, network_unit(devicespec), 0, 0, devicespec,       \
@@ -315,10 +320,12 @@ uint8_t network_unit(const char *devicespec);
  * @param devicespec Pointer to devicespec "N1:TNFS://TMA-2/dir"
  * @return fujinet-network error code (see FN_ERR_* values)
  */
-#define network_fs_cd(devicespec) network_fs_command(FUJICMD_CHDIR, devicespec)
+#define network_fs_cd(devicespec)                                       \
+  (NETCALL_D(FUJICMD_CHDIR, network_unit(devicespec), devicespec, NETWORK_FS_LEN(devicespec)) \
+   ? FN_ERR_OK : FN_ERR_IO_ERROR)
 
 #define network_fs_pwd(devicespec, cwd)                                 \
-  (NETCALL_RV(FUJICMD_GETCWD, network_unit(devicespec), cwd, MAX_FILENAME_LEN)     \
+  (NETCALL_RV(FUJICMD_GETCWD, network_unit(devicespec), cwd, MAX_FILENAME_LEN) \
    ? FN_ERR_OK : FN_ERR_IO_ERROR)
 
 FN_ERR network_accept(const char* devicespec);
