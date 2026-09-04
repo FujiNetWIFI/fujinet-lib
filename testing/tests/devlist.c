@@ -79,7 +79,7 @@ void test_network_exists(void)
   for (idx = 0; idx < MAX_NETWORK_DEVICES; idx++) {
     unit = idx + '1';
     sprintf(spec, "N%c:", unit);
-    sprintf(buffer, "/%c-check-%c", unit, unit, unit);
+    sprintf(buffer, "/%c-check-%c", unit, unit);
     err = network_fs_pwd(spec, g.fs.path);
     if (err != FN_ERR_OK)
       break;

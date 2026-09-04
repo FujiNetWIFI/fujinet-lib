@@ -30,7 +30,7 @@ extern FNAppKeyString appkey_buf;
 #else /* ! _CMOC_VERSION */
 
 extern bool fuji_bus_appkey_read(void *string, uint16_t *length);
-extern bool fuji_bus_appkey_write(void *string, uint16_t length);
+extern bool fuji_bus_appkey_write(const void *string, uint16_t length);
 
 #endif /* _CMOC_VERSION_ */
 

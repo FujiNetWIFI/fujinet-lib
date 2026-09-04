@@ -197,6 +197,12 @@ void test_fuji_host_device_slots(void)
        memcmp(g.dslots.devices, g.dslots.devices2, sizeof(g.dslots.devices)) == 0);
 #endif
 
+#ifdef FN_BROKEN_fuji_mount_host_slot_error
+  SKIP(fuji_mount_host_slot_error);
+#endif
+  ok = fuji_mount_host_slot(0xFF);
+  TEST("fuji_mount_host_slot with invalid host fails", !ok);
+
   END_OF_TEST();
 }
 

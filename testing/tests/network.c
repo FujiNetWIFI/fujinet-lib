@@ -507,6 +507,12 @@ void test_network_write(void)
   mark_echo_message("WRT", msg);
   echo_check(msg);
 
+#ifdef FN_BROKEN_network_open_invalid
+  SKIP(network_open_invalid);
+#endif
+  err = network_open("N1:TCP://BOGUS_HOST_NAME:1234", OPEN_MODE_RW, OPEN_TRANS_NONE);
+  TEST("network_open on invalid host fails", err != FN_ERR_OK);
+
   w = strlen((const char *) msg);
   err = network_write(NET_TCP_SPEC, msg, w);
   TEST("network_write on closed connection fails", err != FN_ERR_OK);

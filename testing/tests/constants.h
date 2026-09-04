@@ -2,7 +2,7 @@
 #define CONSTANTS_H
 
 /* Network device specs used across tests */
-#if 0
+#if 1
 #define NET_TCP_SPEC    "N1:TCP://tcpbin.com:4242/"
 #define NET2_ECHO       "N2:TCP://tcpbin.com:4242/"
 #else
