@@ -248,6 +248,12 @@ enum {
 
 #endif /* ! BUILD_ATARI */
 
+// Sends a variable length packet with data on systems that have
+// variable length packets, otherwise uses the aux1/aux2 bytes to
+// encode the length of the data using native byte endianness.
+extern bool fuji_devcall_vld(uint8_t device, uint8_t cmd, const void *data, uint16_t data_len);
+#define DEVCALL_VLD(dev, cmd, data, len) fuji_devcall_vld(dev, cmd, data, len)
+
 #include <fujinet-bus-ezfuji.h>
 #include <fujinet-bus-eznet.h>
 #include <fujinet-bus-ezclk.h>

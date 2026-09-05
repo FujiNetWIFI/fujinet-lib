@@ -7,9 +7,10 @@
 #define FUJI_VARIABLE_LEN_PACKETS 1
 #endif
 
+#include <fujinet-int.h>
+
 // Convenience macros to fill in FujiDCB and make the call
 #include <fujinet-bus-ezcall.h>
-#include <fujinet-int.h>
 
 #define FUJI_DEVICEID_FUJINET           0x70
 

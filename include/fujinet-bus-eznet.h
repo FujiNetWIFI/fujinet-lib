@@ -101,4 +101,7 @@
 
 #endif /* _CMOC_VERSION_ */
 
+#define NETCALL_VLD(cmd, unit, data, len)                        \
+  DEVCALL_VLD(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, data, len)
+
 #endif /* FUJINET_BUS_EZNET_H */

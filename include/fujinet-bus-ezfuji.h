@@ -75,4 +75,7 @@
 #define FUJICALL_C1234_RV(cmd, c1234, reply, replylen)                \
   DEVCALL_C1234_RV(FUJI_DEVICEID_FUJINET, cmd, c1234, reply, replylen)
 
+#define FUJICALL_VLD(cmd, data, len) \
+  DEVCALL_VLD(FUJI_DEVICEID_FUJINET, cmd, data, len)
+
 #endif /* FUJINET_BUS_EZFUJI_H */
