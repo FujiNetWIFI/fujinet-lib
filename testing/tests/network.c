@@ -708,3 +708,48 @@ void test_network_open_no_n_prefix(void)
 
   END_OF_TEST();
 }
+
+void test_network_status_after_close(void)
+{
+  uint8_t err;
+  uint16_t bw;
+  uint8_t conn, nerr;
+  int16_t w;
+  uint8_t msg[] = ECHO_MSG BASIC_LINE_ENDING;
+
+  SECTION("network_status after close");
+
+#if defined(FN_BROKEN_network_open) || defined(FN_BROKEN_network_write) \
+  || defined(FN_BROKEN_network_close)
+  SKIP(network_status_after_close);
+#else
+  /* Setup for the status call below, so the three calls count as one test. */
+  mark_echo_message("STC", msg);
+  w = strlen((const char *) msg);
+  err = network_open(NET_TCP_SPEC, OPEN_MODE_RW, OPEN_TRANS_LF);
+  if (err == FN_ERR_OK)
+    err = network_write(NET_TCP_SPEC, msg, w);
+  if (err == FN_ERR_OK)
+    err = network_close(NET_TCP_SPEC);
+  TEST("open, write and close before status succeed", err == FN_ERR_OK);
+#endif
+
+#ifdef FN_BROKEN_network_status
+  SKIP(network_status);
+#else
+  /* close() unbinds the protocol, so this STATUS runs with none bound. On
+   * DriveWire that path skipped transaction_accept() and tripped the NO_GET
+   * assertion, aborting the firmware mid-call (fujinet-firmware #1607). */
+  bw = 0; conn = 0; nerr = 0;
+  err = network_status(NET_TCP_SPEC, &bw, &conn, &nerr);
+  TEST("network_status after close returns", err == FN_ERR_OK);
+  printf("  bytes_waiting=%u conn=%u net_error=%u\n", bw, conn, nerr);
+#endif
+
+#ifndef FN_BROKEN_fuji_get_adapter_config
+  /* A device that hit the assertion has rebooted and answers nothing. */
+  TEST("FujiNet still responding after status", fuji_get_adapter_config(&g.adapter.ac));
+#endif
+
+  END_OF_TEST();
+}
