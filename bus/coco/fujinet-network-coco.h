@@ -25,11 +25,6 @@
 #define OP_NET 0xE3
 
 /**
- * @brief command byte for Network close
- */
-#define NETCMD_CLOSE 'C'
-
-/**
  * @brief Get response data from Network device
  * @param unit Network device unit (1-255)
  * @param buf Target buffer 

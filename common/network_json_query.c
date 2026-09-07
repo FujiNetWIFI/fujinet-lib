@@ -11,7 +11,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
   uint8_t nw_unit = network_unit(devicespec);
 
 
-  if (!NETCALL_D(FUJICMD_QUERY, nw_unit, query, MAX_JSON_QUERY_LEN))
+  if (!NETCALL_D(NETCMD_QUERY, nw_unit, query, MAX_JSON_QUERY_LEN))
     return -FN_ERR_IO_ERROR;
 
   total = 0;

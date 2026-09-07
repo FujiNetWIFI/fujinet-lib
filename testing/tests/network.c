@@ -701,7 +701,7 @@ void test_network_open_no_n_prefix(void)
 #else // ! FUJI_VARIABLE_LEN_PACKETS
   url_len = NETWORK_OPEN_LEN;
 #endif // FUJI_VARIABLE_LEN_PACKETS
-  ok = NETCALL_A1_A2_D(FUJICMD_OPEN, unit, OPEN_MODE_RW, OPEN_TRANS_LF, r, url_len);
+  ok = NETCALL_A1_A2_D(NETCMD_OPEN, unit, OPEN_MODE_RW, OPEN_TRANS_LF, r, url_len);
   TEST("network open without N: succeeds", ok);
   network_close(url);
 #endif // FN_BROKEN_network_open_no_prefix

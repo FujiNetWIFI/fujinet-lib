@@ -24,7 +24,6 @@
 /**
  * @brief Is FujiNet ready?
  */
-#define FUJICMD_READY 0x00
 void bus_ready(void);
 
 /**
@@ -33,14 +32,12 @@ void bus_ready(void);
  * @param len length of bytes to get
  * @return Success status, true if the response was received successfully.
  */
-#define FUJICMD_GET_RESPONSE 0x01
 bool fuji_get_response(uint8_t *buf, int len);
 
 /**
  * @brief Get the error code from last Fuji command
  * @return Error condition, true if error was received (or if failed to receive an error).
  */
-#define FUJICMD_SEND_ERROR 0x02
 bool fuji_get_error(void);
 
 #endif /* FUJINET_FUJI_COCO_H */

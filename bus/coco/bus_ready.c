@@ -8,6 +8,7 @@
 
 #include "dw.h"
 #include "fujinet-fuji-coco.h"
+#include <fujinet-commands.h>
 
 void bus_ready(void)
 {
@@ -18,13 +19,13 @@ void bus_ready(void)
     } rc;
 
     uint8_t z=0, r;
-    
+
     rc.opcode = OP_FUJI;
-    rc.command = FUJICMD_READY;
-    
+    rc.command = FUJICMD_DEVICE_READY;
+
     while (!z)
     {
         dwwrite((uint8_t *)&rc,sizeof(rc));
         z = dwread((uint8_t *)&r,sizeof(r));
-    }  
+    }
 }

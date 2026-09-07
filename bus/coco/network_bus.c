@@ -14,7 +14,7 @@ uint16_t network_bus_read(uint8_t device, void *buffer, size_t length)
 
   fb_header.opcode = OP_NET;
   fb_header.fn.net.unit = device - FUJI_DEVICEID_NETWORK + 1;
-  fb_header.fn.net.cmd = FUJICMD_READ;
+  fb_header.fn.net.cmd = NETCMD_READ;
 
   bus_ready();
   dwwrite((uint8_t *) &fb_header, sizeof(fb_header));
@@ -31,7 +31,7 @@ uint16_t network_bus_write(uint8_t device, const void *buffer, size_t length)
 
   fb_header.opcode = OP_NET;
   fb_header.fn.net.unit = device - FUJI_DEVICEID_NETWORK + 1;
-  fb_header.fn.net.cmd = FUJICMD_WRITE;
+  fb_header.fn.net.cmd = NETCMD_WRITE;
 
   bus_ready();
   dwwrite((uint8_t *) &fb_header, sizeof(fb_header));

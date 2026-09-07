@@ -8,7 +8,7 @@ FN_ERR network_open(const char *devicespec, uint8_t mode, uint8_t trans)
   uint8_t nw_unit = network_unit(devicespec);
 
 
-  if (!NETCALL_A1_A2_D(FUJICMD_OPEN, nw_unit, mode, trans, devicespec, NETWORK_OPEN_LEN))
+  if (!NETCALL_A1_A2_D(NETCMD_OPEN, nw_unit, mode, trans, devicespec, NETWORK_OPEN_LEN))
     return FN_ERR_IO_ERROR;
 
 #if 0

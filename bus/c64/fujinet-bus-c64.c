@@ -97,7 +97,7 @@ uint16_t network_bus_read(uint8_t device, void *buffer, size_t length)
   printf("FBR GOT %u\n", rlen);
   return rlen;
 #else
-  if (!NETCALL_B12_RV(FUJICMD_READ, device - FUJI_DEVICEID_NETWORK + 1 + CBM_DATA_CHANNEL_0,
+  if (!NETCALL_B12_RV(NETCMD_READ, device - FUJI_DEVICEID_NETWORK + 1 + CBM_DATA_CHANNEL_0,
                       length, buffer, length))
     return 0;
   return length;
@@ -109,7 +109,7 @@ uint16_t network_bus_write(uint8_t device, const void *buffer, size_t length)
 #if 0
   return cbm_write(device - FUJI_DEVICEID_NETWORK + 1 + CBM_DATA_CHANNEL_0, buffer, length);
 #else
-  if (!NETCALL_D(FUJICMD_WRITE, device - FUJI_DEVICEID_NETWORK + 1 + CBM_DATA_CHANNEL_0,
+  if (!NETCALL_D(NETCMD_WRITE, device - FUJI_DEVICEID_NETWORK + 1 + CBM_DATA_CHANNEL_0,
                  buffer, length))
     return 0;
   return length;

@@ -9,7 +9,7 @@ int16_t network_json_query_adam(const char *devicespec, const char *query, char 
   uint8_t nw_unit = network_unit(devicespec);
 
 
-  if (!NETCALL_D(FUJICMD_QUERY, nw_unit, query, strlen(query)))
+  if (!NETCALL_D(NETCMD_QUERY, nw_unit, query, strlen(query)))
     return -FN_ERR_IO_ERROR;
 
   read_len = network_read_nb_adam(devicespec, buffer, MAX_ADAM_PACKET_REPLY);
