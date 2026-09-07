@@ -156,15 +156,15 @@ enum {
 		NATIVE_SPLIT_U16(b12), NATIVE_SPLIT_U16(b34), reply, replylen)
 
 #define DEVCALL_C1234(dev, cmd, c1234)                                                      \
-  fuji_bus_call(dev, cmd, FUJI_FIELD_C1234, NATIVE_SPLIT_U32(U32_LSW(c1234)))
+  fuji_bus_call(dev, cmd, FUJI_FIELD_C1234, NATIVE_SPLIT_U32(c1234))
 
 #define DEVCALL_C1234_D(dev, cmd, c1234, data, len)                                         \
   fuji_bus_call(dev, cmd, FUJI_FIELD_C1234 | FUJI_FIELD_DATA,                               \
-                NATIVE_SPLIT_U32(U32_LSW(c1234)), data, len)
+                NATIVE_SPLIT_U32(c1234), data, len)
 
 #define DEVCALL_C1234_RV(dev, cmd, c1234, reply, replylen)                                  \
   fuji_bus_call(dev, cmd, FUJI_FIELD_C1234 | FUJI_FIELD_REPLY,                              \
-                NATIVE_SPLIT_U32(U32_LSW(c1234)), reply, replylen)
+                NATIVE_SPLIT_U32(c1234), reply, replylen)
 
 #else /* ! (BUILD_ATARI || BUILD_MSDOS || BUILD_ADAM) */
 
@@ -236,15 +236,15 @@ enum {
 		NATIVE_SPLIT_U16(b12), NATIVE_SPLIT_U16(b34), reply, replylen)
 
 #define DEVCALL_C1234(dev, cmd, c1234)                                                      \
-  fuji_bus_call(dev, cmd, FUJI_FIELD_C1234, NATIVE_SPLIT_U32(U32_LSW(c1234)))
+  fuji_bus_call(dev, cmd, FUJI_FIELD_C1234, NATIVE_SPLIT_U32(c1234))
 
 #define DEVCALL_C1234_D(dev, cmd, c1234, data, len)                                         \
   fuji_bus_call(dev, cmd, FUJI_FIELD_C1234 | FUJI_FIELD_DATA,                               \
-                NATIVE_SPLIT_U32(U32_LSW(c1234)), data, len)
+                NATIVE_SPLIT_U32(c1234), data, len)
 
 #define DEVCALL_C1234_RV(dev, cmd, c1234, reply, replylen)                                  \
   fuji_bus_call(dev, cmd, FUJI_FIELD_C1234 | FUJI_FIELD_REPLY,                              \
-                NATIVE_SPLIT_U32(U32_LSW(c1234)), reply, replylen)
+                NATIVE_SPLIT_U32(c1234), reply, replylen)
 
 #endif /* ! BUILD_ATARI */
 
