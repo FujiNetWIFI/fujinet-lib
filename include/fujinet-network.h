@@ -32,6 +32,8 @@
 
 #endif
 
+#define MAX_JSON_QUERY_LEN 256
+
 enum {
   PARSER_NONE = 0,
   PARSER_JSON = 1,
@@ -52,14 +54,29 @@ extern uint16_t fn_bytes_read;
 uint8_t fn_error(uint8_t code);
 
 /*
- * Network status values. These are set during network_read. You can capture your own using network_status.
- * bw      : bytes waiting
- * conn    : Connected status, this is 1 for still reading a particular resource, 0 when the current read has completed.
- * error   : the error status returned from FN, e.g. 136 for EOF, 1 for normal OK status (don't ask why)
+ * The status returned by the most recent device status poll (from
+ * network_status or the poll inside network_read/network_read_nb).
+ * avail   : bytes waiting
+ * status  : connected status, 1 while still reading a resource, 0 when
+ *           the current read has completed
+ * errcode : the error status returned from FN, e.g. 136 for EOF, 1
+ *           for normal OK status (don't ask why)
  */
-extern uint16_t fn_network_bw;
-extern uint8_t fn_network_conn;
-extern uint8_t fn_network_error;
+typedef struct {
+  uint16_t avail;
+  uint8_t status;
+  uint8_t errcode;
+} NetworkStatus;
+
+extern NetworkStatus nw_status;
+
+/*
+ * Convenience aliases for the nw_status fields, set during network_read.
+ * You can capture your own using network_status.
+ */
+#define fn_network_bw    (nw_status.avail)
+#define fn_network_conn  (nw_status.status)
+#define fn_network_error (nw_status.errcode)
 
 /**
  * @brief  Initialise network device
@@ -142,22 +159,11 @@ int16_t network_read(const char* devicespec, void *buf, uint16_t len);
 FN_ERR network_write(const char* devicespec, const void *buf, uint16_t len);
 
 /**
- * @brief  Device specific direct control commands
- * @param  cmd Command byte to send
- * @param  aux1 Auxiliary byte 1
- * @param  aux2 Auxiliary byte 2
- * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
- * @param  ... varargs - Device specific additional parameters to pass to the network device
- * @return fujinet-network error code (See FN_ERR_* values)
- */
-FN_ERR network_ioctl(uint8_t cmd, uint8_t aux1, uint8_t aux2, const char* devicespec, ...);
-
-/**
  * @brief  Parse the currently open JSON location
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @return fujinet-network error code (See FN_ERR_* values)
  *
- * This will set the channel mode to JSON, which will be unset in the close.
+ * This will set the parser to JSON, which will be unset in the close.
  */
 FN_ERR network_json_parse(const char *devicespec);
 
@@ -178,14 +184,16 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
 #endif /* __ADAM__ || __COLECOADAM__ */
 
 /**
- * @brief  Sets the channel mode.
+ * @brief  Sets the parser.
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  mode The mode to set
  * @return fujinet-network error code (See FN_ERR_* values)
  *
  * Assumes an open connection.
  */
-#define network_http_set_channel_mode(devicespec, mode) (NETCALL_A1_A2(NETCMD_SET_HTTP_MODE, network_unit(devicespec), 0, mode) ? FN_ERR_OK : FN_ERR_IO_ERROR)
+#define network_http_set_mode(devicespec, mode) (NETCALL_A1_A2(NETCMD_SET_HTTP_MODE, network_unit(devicespec), 0, mode) ? FN_ERR_OK : FN_ERR_IO_ERROR)
+// Legacy function name
+#define network_http_set_channel_mode network_http_set_mode
 
 /**
  * @brief  Start adding headers.
@@ -194,7 +202,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
  *
  * Assumes an open connection. After calling this, add any headers with network_http_add_header, and finally call network_http_end_add_headers
  */
-#define network_http_start_add_headers(devicespec) network_http_set_channel_mode(devicespec, HTTP_CHAN_MODE_SET_HEADERS)
+#define network_http_start_add_headers(devicespec) network_http_set_mode(devicespec, HTTP_CHAN_MODE_SET_HEADERS)
 
 /**
  * @brief  End adding headers.
@@ -203,7 +211,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
  *
  * Assumes an open connection. Completes header adding, and sets mode back to BODY
  */
-#define network_http_end_add_headers(devicespec) network_http_set_channel_mode(devicespec, HTTP_CHAN_MODE_BODY)
+#define network_http_end_add_headers(devicespec) network_http_set_mode(devicespec, HTTP_CHAN_MODE_BODY)
 
 /**
  * @brief  Add header to HTTP request
@@ -343,6 +351,142 @@ extern bool network_has_proceed(void);
 /* Set the native end-of-line string for use with translation */
 extern FN_ERR network_set_eol(const char *devicespec, const char *eol);
 
+/**
+ * @brief  Seek to an absolute byte position in the open channel (XIO 37 POINT)
+ * @param  devicespec pointer to device specification, e.g. "N1:TNFS://host/file.bin"
+ * @param  pos absolute byte position (24-bit on Atari SIO, 32-bit elsewhere)
+ * @return fujinet-network error code (See FN_ERR_* values)
+ *
+ * Only supported when parser is NONE, and only by protocols that can
+ * seek (TNFS/SD/SMB/NFS read+write; HTTP(S) read only via Range requests).
+ */
+FN_ERR network_seek(const char *devicespec, uint32_t pos);
+
+/**
+ * @brief  Report the current byte position in the open channel (XIO 38 NOTE)
+ * @param  devicespec pointer to device specification, e.g. "N1:TNFS://host/file.bin"
+ * @param  pos pointer to where to put the position
+ * @return fujinet-network error code (See FN_ERR_* values)
+ */
+FN_ERR network_tell(const char *devicespec, uint32_t *pos);
+
+/**
+ * @brief  Set the translation mode applied to subsequent opens
+ * @param  devicespec pointer to device specification, e.g. "N1:"
+ * @param  trans translation mode (0=none, 1=CR, 2=LF, 3=CRLF; 0xFF makes opens ignore their aux2)
+ * @return fujinet-network error code (See FN_ERR_* values)
+ *
+ * On SIO the value is sticky and ORed into the aux2 of subsequent opens,
+ * except for directory opens where aux2 is a format code.
+ */
+FN_ERR network_set_translation(const char *devicespec, uint8_t trans);
+
+/**
+ * @brief  Set the username used to authenticate the next open (e.g. SMB, FTP)
+ * @param  devicespec pointer to device specification, e.g. "N1:"
+ * @param  username bare username, no Nn: prefix
+ * @return fujinet-network error code (See FN_ERR_* values)
+ *
+ * Call before network_open. On fixed-length-packet platforms a full 256 byte
+ * frame is sent, so up to 256 bytes past the string must be readable.
+ */
+FN_ERR network_set_username(const char *devicespec, const char *username);
+
+/**
+ * @brief  Set the password used to authenticate the next open (e.g. SMB, FTP)
+ * @param  devicespec pointer to device specification, e.g. "N1:"
+ * @param  password bare password, no Nn: prefix
+ * @return fujinet-network error code (See FN_ERR_* values)
+ */
+FN_ERR network_set_password(const char *devicespec, const char *password);
+
+/**
+ * @brief  Set the status-poll interrupt rate (SIO PROCEED timer)
+ * @param  devicespec pointer to device specification, e.g. "N1:"
+ * @param  rate rate in milliseconds
+ * @return fujinet-network error code (See FN_ERR_* values)
+ */
+FN_ERR network_set_timer_rate(const char *devicespec, uint8_t rate);
+
+/**
+ * @brief  Close an accepted TCP client connection, keeping the server listening
+ * @param  devicespec pointer to device specification, e.g. "N1:TCP://:6502/"
+ * @return fujinet-network error code (See FN_ERR_* values)
+ *
+ * Companion to network_accept.
+ */
+FN_ERR network_close_client(const char *devicespec);
+
+/**
+ * @brief  Set the destination for an open UDP channel
+ * @param  dest_spec destination of the form "N1:host:port"
+ * @return fujinet-network error code (See FN_ERR_* values)
+ */
+FN_ERR network_udp_set_destination(const char *dest_spec);
+
+/**
+ * @brief  Get the remote "ip:port" a UDP datagram was last received from
+ * @param  devicespec pointer to device specification, e.g. "N1:UDP://:5000/"
+ * @param  buf receiving buffer, nul terminated on return (256 bytes on fixed-length platforms)
+ * @param  len buffer length
+ * @return fujinet-network error code (See FN_ERR_* values)
+ *
+ * Only implemented on FujiNet-PC builds; ESP32 firmware rejects it.
+ */
+FN_ERR network_udp_get_remote(const char *devicespec, char *buf, uint16_t len);
+
+/**
+ * @brief  Set a JSON processing parameter (Atari SIO only)
+ * @param  devicespec pointer to device specification, e.g. "N1:"
+ * @param  param 0 = query flags (values > 2 rejected), 1 = query line-ending character
+ * @param  value the value to set
+ * @return fujinet-network error code (See FN_ERR_* values)
+ */
+FN_ERR network_json_set_parameters(const char *devicespec, uint8_t param, uint8_t value);
+#define network_json_set_query_param(devicespec, flags) network_json_set_parameters(devicespec, 0, flags)
+#define network_json_set_line_ending(devicespec, ch) network_json_set_parameters(devicespec, 1, ch)
+
+/**
+ * @brief  Ask which direction a network command transfers data (Atari SIO only)
+ * @param  devicespec pointer to device specification, e.g. "N1:"
+ * @param  cmd the command byte to query
+ * @param  dstats pointer to where to put the reply: 0x00 none, 0x40 read, 0x80 write, 0xFF invalid
+ * @return fujinet-network error code (See FN_ERR_* values)
+ *
+ * Replaces the old SIO special-command inquiry mechanism.
+ */
+FN_ERR network_get_dstats(const char *devicespec, uint8_t cmd, uint8_t *dstats);
+
+/**
+ * @brief  Set the parser: PARSER_NONE, _JSON or _SGML
+ * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
+ * @param  parser to set
+ * @return fujinet-network error code (See FN_ERR_* values)
+ *
+ * Assumes an open connection. network_json_parse and network_sgml_parse
+ * set the mode themselves.
+ */
+FN_ERR network_set_parser(const char *devicespec, uint8_t mode);
+
+/**
+ * @brief  Parse the currently open channel as SGML/HTML/XML
+ * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
+ * @return fujinet-network error code (See FN_ERR_* values)
+ *
+ * Sets the parser to SGML. Query with network_sgml_query using a CSS
+ * selector; repeating the same query advances to the next match.
+ */
+FN_ERR network_sgml_parse(const char *devicespec);
+
+/**
+ * @brief  Perform SGML query with a CSS selector, e.g. "div.content a"
+ *
+ * Same wire command as network_json_query; assumes network_sgml_parse was called.
+ */
+#define network_sgml_query(devicespec, selector, buffer) network_json_query(devicespec, selector, buffer)
+
+#define network_unit_status(unit, nws) (!NETCALL_RV(FUJICMD_STATUS, unit, nws, sizeof(NetworkStatus)))
+
 #define OPEN_MODE_READ          (0x04)
 #define OPEN_MODE_WRITE         (0x08)
 #define OPEN_MODE_RW            (0x0C)
@@ -354,8 +498,6 @@ extern FN_ERR network_set_eol(const char *devicespec, const char *eol);
 #define OPEN_MODE_HTTP_PUT_H    (0x0E)
 #define OPEN_MODE_HTTP_DELETE   (0x05)
 #define OPEN_MODE_HTTP_DELETE_H (0x09)
-
-#define CHANNEL_MODE_JSON       (0xFC)
 
 #define OPEN_TRANS_NONE         (0x00)
 #define OPEN_TRANS_CR           (0x01)

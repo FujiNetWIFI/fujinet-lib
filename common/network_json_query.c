@@ -1,5 +1,3 @@
-#include "network.h"
-
 #include <fujinet-network.h>
 
 #if !defined(__ADAM__) && !defined(__COLECOADAM__)

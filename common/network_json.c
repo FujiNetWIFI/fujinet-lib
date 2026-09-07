@@ -1,5 +1,3 @@
-#include "network.h"
-
 #include <fujinet-network.h>
 #include <fujinet-bus.h>
 #include <fujinet-commands.h>

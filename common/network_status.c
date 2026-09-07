@@ -1,5 +1,3 @@
-#include "network.h"
-
 #include <fujinet-network.h>
 
 NetworkStatus nw_status;
