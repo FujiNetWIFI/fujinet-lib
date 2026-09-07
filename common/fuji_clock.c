@@ -1,6 +1,15 @@
 #include <fujinet-clock.h>
 
-static const uint8_t _clk_cmd[TIMEFORMAT_COUNT] = {
+#ifdef _CMOC_VERSION_
+#include <cmoc.h>
+#else
+#include <string.h>
+#endif
+
+#define platform_clk_get_tz_len(len_out) \
+  { if (!CLKCALL_RV(APETIMECMD_GETTZ_LEN, len_out, 1)) return FN_ERR_IO_ERROR; }
+
+const uint8_t clk_cmd[TIMEFORMAT_COUNT] = {
   CLK_CMD_SIMPLE_BINARY,
   CLK_CMD_PRODOS_BINARY,
   CLK_CMD_APETIME_BINARY,
@@ -10,55 +19,45 @@ static const uint8_t _clk_cmd[TIMEFORMAT_COUNT] = {
   CLK_CMD_SIMPLE_BINARY_WITH_HUNDREDTHS
 };
 
-const uint8_t *clk_cmd = _clk_cmd;
 const uint8_t clk_reply_len[TIMEFORMAT_COUNT] = { 7, 4, 6, 25, 25, 19, 8 };
 
-#ifndef BUILD_APPLE2
-
-#ifdef _CMOC_VERSION_
-#include <cmoc.h>
-#else
-#include <string.h>
-#endif
-
-static uint8_t clock_set_alternate_tz(const char *tz)
+static uint8_t clk_result(bool ok)
 {
-  size_t len = strlen(tz) + 1;
-  return CLKCALL_B12_D(APETIMECMD_SETTZ, len, tz, len) ? FN_ERR_OK : FN_ERR_IO_ERROR;
+  return ok ? FN_ERR_OK : FN_ERR_IO_ERROR;
 }
 
 uint8_t clock_set_tz(const char *tz)
 {
-  size_t len = strlen(tz) + 1;
-  return CLKCALL_B12_D(APETIMECMD_SETTZ_ALT, len, tz, len) ? FN_ERR_OK : FN_ERR_IO_ERROR;
+  return clk_result(PLATFORM_CLK_SET_TZ_CALL(PLATFORM_TZCMD_MAIN, tz));
 }
 
 uint8_t clock_get_tz(char *tz)
 {
   uint8_t len;
-  if (!CLKCALL_RV(APETIMECMD_GETTZ_LEN, &len, 1))
-    return FN_ERR_IO_ERROR;
-  return CLKCALL_RV(APETIMECMD_GET_GENERAL, tz, len) ? FN_ERR_OK : FN_ERR_IO_ERROR;
+
+  platform_clk_get_tz_len(&len);
+  return clk_result(CLKCALL_RV(APETIMECMD_GET_GENERAL, tz, len));
 }
 
-uint8_t clock_get_time(uint8_t *time_data, TimeFormat format)
+uint8_t clock_get_time_common(uint8_t *time_data, TimeFormat format, bool alt)
 {
+  bool success;
+
   if ((uint8_t) format >= TIMEFORMAT_COUNT)
     return FN_ERR_BAD_CMD;
-  return CLKCALL_A1_RV(clk_cmd[format], 0, time_data, clk_reply_len[format])
-         ? FN_ERR_OK : FN_ERR_IO_ERROR;
+
+  success = PLATFORM_CLK_TIME_CALL(format, alt, time_data, clk_reply_len[format]);
+  if (success)
+    time_data[clk_reply_len[format]] = 0;
+  return clk_result(success);
 }
 
 uint8_t clock_get_time_tz(uint8_t *time_data, const char *tz, TimeFormat format)
 {
-  uint8_t rc;
   if ((uint8_t) format >= TIMEFORMAT_COUNT)
     return FN_ERR_BAD_CMD;
-  rc = clock_set_alternate_tz(tz);
-  if (rc != FN_ERR_OK)
-    return rc;
-  return CLKCALL_A1_RV(clk_cmd[format], 1, time_data, clk_reply_len[format])
-         ? FN_ERR_OK : FN_ERR_IO_ERROR;
-}
 
-#endif /* !BUILD_APPLE2 */
+  if (!PLATFORM_CLK_SET_TZ_CALL(PLATFORM_TZCMD_ALT, tz))
+    return FN_ERR_IO_ERROR;
+  return clock_get_time_common(time_data, format, true);
+}
