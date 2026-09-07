@@ -29,7 +29,7 @@ extern unsigned char _ck;    // checksum byte
 extern char _r;              // response/data from FN
 #endif /* UNUSED */
 extern unsigned char _fn_error;
-
+extern uint16_t _lynx_len;   // length of last packet sent/received by fuji_bus_call
 
 // helper functions
 uint8_t _checksum(char *b, unsigned short len);
