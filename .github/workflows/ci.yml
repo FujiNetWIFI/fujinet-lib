@@ -16,12 +16,12 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - lynx
           - adam
           - apple2
           - atari
           - c64
           - coco
+          - lynx
           - msdos
           - msx
 
@@ -40,6 +40,16 @@ jobs:
         with:
           name: ${{ matrix.platform }}
           path: r2r/${{ matrix.platform }}/**
+
+  check-no-build-ifdefs:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for BUILD_ #ifdefs
+        run: python3 testing/check_no_build_ifdefs.py common
 
   compile-tests:
     needs: build
