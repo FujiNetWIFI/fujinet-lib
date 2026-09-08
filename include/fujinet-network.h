@@ -377,7 +377,8 @@ FN_ERR network_seek(const char *devicespec, uint32_t pos);
 FN_ERR network_tell_atari(const char *devicespec, uint32_t *pos);
 #define network_tell(ds, pos) network_tell_atari(ds, pos)
 #else /* ! BUILD_ATARI */
-FN_ERR network_tell(const char *devicespec, uint32_t *pos);
+FN_ERR network_tell_common(const char *devicespec, uint32_t *pos);
+#define network_tell(ds, pos) network_tell_common(ds, pos)
 #endif /* BUILD_ATARI */
 
 /**
@@ -452,9 +453,9 @@ FN_ERR network_udp_get_remote(const char *devicespec, char *buf, uint16_t len);
  * @param  value the value to set
  * @return fujinet-network error code (See FN_ERR_* values)
  */
-FN_ERR network_set_parameters(const char *devicespec, uint8_t param, uint8_t value);
-#define network_set_query_param(devicespec, flags) network_set_parameters(devicespec, 0, flags)
-#define network_set_line_ending(devicespec, ch) network_set_parameters(devicespec, 1, ch)
+FN_ERR network_set_parameter(const char *devicespec, uint8_t param, uint8_t value);
+#define network_set_query_param(devicespec, flags) network_set_parameter(devicespec, 0, flags)
+#define network_set_line_ending(devicespec, ch) network_set_parameter(devicespec, 1, ch)
 
 /**
  * @brief  Ask which direction a network command transfers data (Atari SIO only)

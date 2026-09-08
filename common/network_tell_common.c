@@ -1,6 +1,6 @@
 #include <fujinet-network.h>
 
-FN_ERR network_tell(const char *devicespec, uint32_t *pos)
+FN_ERR network_tell_common(const char *devicespec, uint32_t *pos)
 {
   uint8_t buf[4];
   uint8_t nw_unit = network_unit(devicespec);

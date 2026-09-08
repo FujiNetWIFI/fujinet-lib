@@ -281,38 +281,6 @@ void test_net2_channel_mode(void)
   END_OF_TEST();
 }
 
-void test_net2_json_parameters(void)
-{
-  uint8_t err;
-
-  SECTION("network JSON parameters");
-
-#ifdef FN_BROKEN_network_set_query_param
-  SKIP(network_set_query_param);
-#else
-  err = network_set_query_param("N1:", 0);
-  TEST("query param 0 accepted", err == FN_ERR_OK);
-
-  err = network_set_query_param("N1:", 2);
-  TEST("query param 2 accepted", err == FN_ERR_OK);
-
-  /* Firmware rejects query param values above 2 */
-  err = network_set_query_param("N1:", 3);
-  TEST("query param 3 rejected", err != FN_ERR_OK);
-
-  err = network_set_line_ending("N1:", 0x0A);
-  TEST("line ending LF accepted", err == FN_ERR_OK);
-
-  /* Restore defaults: flags 0, ATASCII EOL */
-  err = network_set_query_param("N1:", 0);
-  TEST("query param restored", err == FN_ERR_OK);
-  err = network_set_line_ending("N1:", 0x9B);
-  TEST("line ending restored", err == FN_ERR_OK);
-#endif /* FN_BROKEN_network_json_set_parameters */
-
-  END_OF_TEST();
-}
-
 void test_net2_read_count(void)
 {
   uint8_t err;

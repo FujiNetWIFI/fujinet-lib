@@ -1,8 +1,5 @@
 #if FNLIB_VERSION_MAJOR >= 5
 
-// This test makes no sense. It's trying to set parameters when there's no parser
-#define FN_BROKEN_network_json_set_parameters
-
 #ifdef BUILD_ADAM
 #define FN_BROKEN_fuji_mount_host_slot_error
 #define FN_BROKEN_network_open_invalid

@@ -132,7 +132,6 @@ int main(void)
   test_net2_udp_set_destination();
   test_net2_udp_get_remote();
   test_net2_channel_mode();
-  test_net2_json_parameters();
   test_net2_read_count();
 #endif // NETWORK2_TESTS
 

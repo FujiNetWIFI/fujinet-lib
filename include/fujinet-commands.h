@@ -105,7 +105,7 @@ enum {
   NETCMD_PASSWORD                    = 0xFE,
   NETCMD_USERNAME                    = 0xFD,
   NETCMD_SET_PARSER                  = 0xFC,
-  NETCMD_SET_PARAMETERS              = 0xFB,
+  NETCMD_SET_PARAMETER               = 0xFB,
   NETCMD_SET_CHANNEL                 = 0xFA,
   NETCMD_SET_HSIO_INDEX              = 0xE3,
   NETCMD_QUERY_ALT                   = 0x81,
