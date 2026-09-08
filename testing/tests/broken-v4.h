@@ -1,5 +1,20 @@
 #if FNLIB_VERSION_MAJOR < 5
 
+#define FN_BROKEN_network_tell
+#define FN_BROKEN_network_seek
+#define FN_BROKEN_network_set_translation
+#define FN_BROKEN_network_set_username
+#define FN_BROKEN_network_set_password
+#define FN_BROKEN_network_set_interrupt_rate
+#define FN_BROKEN_network_close_client
+#define FN_BROKEN_network_udp_set_destination
+#define FN_BROKEN_network_udp_get_remote
+#define FN_BROKEN_network_set_parser
+#define FN_BROKEN_network_set_query_param
+#define FN_BROKEN_network_set_line_ending
+#define FN_BROKEN_network_sgml_parse
+#define FN_BROKEN_network_sgml_query
+
 // QR codes were added in v5.0.0; not present at all before that.
 #define FN_BROKEN_fuji_qrcode_input
 #define FN_BROKEN_fuji_qrcode_encode

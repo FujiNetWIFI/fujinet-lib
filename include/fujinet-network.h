@@ -360,7 +360,12 @@ extern FN_ERR network_set_eol(const char *devicespec, const char *eol);
  * Only supported when parser is NONE, and only by protocols that can
  * seek (TNFS/SD/SMB/NFS read+write; HTTP(S) read only via Range requests).
  */
+#ifdef BUILD_ATARI
+FN_ERR network_seek_atari(const char *devicespec, uint32_t pos);
+#define network_seek(ds, pos) network_seek_atari(ds, pos)
+#else /* ! BUILD_ATARI */
 FN_ERR network_seek(const char *devicespec, uint32_t pos);
+#endif /* BUILD_ATARI */
 
 /**
  * @brief  Report the current byte position in the open channel (XIO 38 NOTE)
@@ -368,7 +373,12 @@ FN_ERR network_seek(const char *devicespec, uint32_t pos);
  * @param  pos pointer to where to put the position
  * @return fujinet-network error code (See FN_ERR_* values)
  */
+#ifdef BUILD_ATARI
+FN_ERR network_tell_atari(const char *devicespec, uint32_t *pos);
+#define network_tell(ds, pos) network_tell_atari(ds, pos)
+#else /* ! BUILD_ATARI */
 FN_ERR network_tell(const char *devicespec, uint32_t *pos);
+#endif /* BUILD_ATARI */
 
 /**
  * @brief  Set the translation mode applied to subsequent opens

@@ -1,4 +1,14 @@
-PRODUCTS = fnlib-test.lib flibtest fnettest fclktest fdsktest fqrctest fnfstest fapktest devlist
+PRODUCTS = fnlib-test.lib
+PRODUCTS += fujidev
+PRODUCTS += appkey
+PRODUCTS += clock
+PRODUCTS += devlist
+PRODUCTS += disk
+PRODUCTS += netfile
+PRODUCTS += net5plus
+PRODUCTS += network
+PRODUCTS += qrcode
+PRODUCTS += sgml
 PRODUCTS_DISK_NAME = fntests
 
 PLATFORMS += adam
@@ -39,22 +49,26 @@ PLATFORM_COMBOS = \
 fnlib-test.lib_SRC_DIRS = tests tests/%PLATFORM%
 
 MAIN_SRC_DIRS = src src/%PLATFORM%
-flibtest_SRC_DIRS = $(MAIN_SRC_DIRS)
-fnettest_SRC_DIRS = $(MAIN_SRC_DIRS)
-fclktest_SRC_DIRS = $(MAIN_SRC_DIRS)
-fdsktest_SRC_DIRS = $(MAIN_SRC_DIRS)
-fqrctest_SRC_DIRS = $(MAIN_SRC_DIRS)
-fnfstest_SRC_DIRS = $(MAIN_SRC_DIRS)
-fapktest_SRC_DIRS = $(MAIN_SRC_DIRS)
+fujidev_SRC_DIRS = $(MAIN_SRC_DIRS)
+appkey_SRC_DIRS = $(MAIN_SRC_DIRS)
+clock_SRC_DIRS = $(MAIN_SRC_DIRS)
 devlist_SRC_DIRS = $(MAIN_SRC_DIRS)
+disk_SRC_DIRS = $(MAIN_SRC_DIRS)
+netfile_SRC_DIRS = $(MAIN_SRC_DIRS)
+net5plus_SRC_DIRS = $(MAIN_SRC_DIRS)
+network_SRC_DIRS = $(MAIN_SRC_DIRS)
+qrcode_SRC_DIRS = $(MAIN_SRC_DIRS)
+sgml_SRC_DIRS = $(MAIN_SRC_DIRS)
 
-flibtest_CFLAGS = -DFUJI_TESTS=1
-fnettest_CFLAGS = -DNETWORK_TESTS=1
-fclktest_CFLAGS = -DCLOCK_TESTS=1
-fdsktest_CFLAGS = -DDISK_TESTS=1
-fqrctest_CFLAGS = -DQRCODE_TESTS=1
-fnfstest_CFLAGS = -DFS_TESTS=1
-fapktest_CFLAGS = -DAPPKEY_TESTS=1
+fujidev_CFLAGS = -DFUJI_TESTS=1
+network_CFLAGS = -DNETWORK_TESTS=1
+net5plus_CFLAGS = -DNETWORK2_TESTS=1
+sgml_CFLAGS = -DSGML_TESTS=1
+clock_CFLAGS = -DCLOCK_TESTS=1
+disk_CFLAGS = -DDISK_TESTS=1
+qrcode_CFLAGS = -DQRCODE_TESTS=1
+netfile_CFLAGS = -DFS_TESTS=1
+appkey_CFLAGS = -DAPPKEY_TESTS=1
 devlist_CFLAGS = -DDEVLIST_TESTS=1
 
 include ../makefiles/toplevel-rules.mk

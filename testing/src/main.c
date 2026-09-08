@@ -20,8 +20,9 @@
  *   - Stack locals are kept under 64 bytes; anything larger is a static global
  */
 
-#if !FUJI_TESTS && !NETWORK_TESTS && !CLOCK_TESTS && !DISK_TESTS && !QRCODE_TESTS \
-  && !FS_TESTS && !APPKEY_TESTS && !DEVLIST_TESTS
+#if !FUJI_TESTS && !NETWORK_TESTS && !NETWORK2_TESTS && !SGML_TESTS \
+  && !CALMAIL_TESTS && !REGRESSION_TESTS && !CLOCK_TESTS && !DISK_TESTS \
+  && !QRCODE_TESTS && !FS_TESTS && !APPKEY_TESTS && !DEVLIST_TESTS
 #error "You need to choose some tests"
 #endif
 
@@ -30,6 +31,8 @@
 #include "fuji.h"
 #include "appkey.h"
 #include "network.h"
+#include "network2.h"
+#include "sgml.h"
 #include "clock.h"
 #include "fdsk.h"
 #include "qrcode.h"
@@ -117,6 +120,28 @@ int main(void)
   test_multiple_network_devices();
   test_network_unit();
 #endif // NETWORK_TESTS
+
+#if NETWORK2_TESTS
+  /* network2.h - the v5 command additions */
+  test_net2_seek_tell();
+  test_net2_seek_errors();
+  test_net2_set_translation();
+  test_net2_login_smoke();
+  test_net2_interrupt_rate();
+  test_net2_close_client();
+  test_net2_udp_set_destination();
+  test_net2_udp_get_remote();
+  test_net2_channel_mode();
+  test_net2_json_parameters();
+  test_net2_read_count();
+#endif // NETWORK2_TESTS
+
+#if SGML_TESTS
+  /* sgml.h */
+  test_sgml_parse_query();
+  test_sgml_iterate();
+  test_sgml_colon_selector();
+#endif // SGML_TESTS
 
 #if FS_TESTS
   /* fs.h */

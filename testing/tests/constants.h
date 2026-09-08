@@ -101,6 +101,34 @@
 #define WEBDAV_HOST     "www.webdavserver.net"
 #define WEBDAV_ROOT     "N1:HTTPS://" WEBDAV_HOST "/"
 
+/* Deterministic byte stream (byte i == 'a' + i % 26) served with HTTP
+ * Range support, for the seek/tell and read-count tests */
+#define NET_RANGE_URL   "N1:https://httpbin.dev/range/1024"
+#define RANGE_BYTE(i)   ((uint8_t) ('a' + ((i) % 26)))
+
+/* Fixed HTML page (one h1: "Herman Melville - Moby-Dick") for SGML tests.
+ * Its single <p> is several KB, so only query small elements. */
+#define NET_SGML_URL    "N1:https://httpbin.dev/html"
+/* Page of four small <a> anchors ("1".."4") for SGML query iteration */
+#define NET_LINKS_URL   "N1:https://httpbin.dev/links/5/0"
+
+/* UDP channel and destination for the set-destination smoke test
+ * (no traffic is actually exchanged) */
+#define NET_UDP_SPEC    "N1:UDP://:5004/"
+#define NET_UDP_DEST    "N1:localhost:5005"
+
+/* Listening TCP channel for accept / close-client */
+#define NET_TCP_LISTEN  "N1:TCP://:6502/"
+
+/* Calendar test fixture: a small .ics is PUT here over WebDAV, then read
+ * back through the ICAL protocol (ICAL:// fetches over https). The name
+ * is per-platform so parallel test runs cannot collide. */
+#define CAL_ICS_NAME    "fncaltest-" PLATFORM ".ics"
+#define CAL_ICS_PUT_URL  "N1:HTTPS://" WEBDAV_HOST "/" CAL_ICS_NAME
+#define CAL_ICAL_BASE    "N1:ICAL://" WEBDAV_HOST "/" CAL_ICS_NAME
+#define CAL_ICAL_URL     CAL_ICAL_BASE "/MONTH/2026-09"
+#define CAL_EVENT_SUMMARY "FujiNet Test Event"
+
 /* PROPFIND, a WebDAV directory listing over N: with nothing mounted.
  * fujinet-network.h names the other HTTP open modes but not this one. */
 /* Exact filenames, no size column and no 8.3 crunching. Passed as the
