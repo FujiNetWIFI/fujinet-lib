@@ -156,7 +156,7 @@ enum {
 		NATIVE_SPLIT_U16(b12), NATIVE_SPLIT_U16(b34), reply, replylen)
 
 #define DEVCALL_C1234(dev, cmd, c1234)                                                      \
-  fuji_bus_call(dev, cmd, FUJI_FIELD_C1234, NATIVE_SPLIT_U32(c1234))
+  fuji_bus_call(dev, cmd, FUJI_FIELD_C1234, NATIVE_SPLIT_U32(c1234), NULL, 0)
 
 #define DEVCALL_C1234_D(dev, cmd, c1234, data, len)                                         \
   fuji_bus_call(dev, cmd, FUJI_FIELD_C1234 | FUJI_FIELD_DATA,                               \

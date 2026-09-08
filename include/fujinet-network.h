@@ -184,7 +184,7 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
 #endif /* __ADAM__ || __COLECOADAM__ */
 
 /**
- * @brief  Sets the parser.
+ * @brief  Sets the HTTP mode.
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  mode The mode to set
  * @return fujinet-network error code (See FN_ERR_* values)
@@ -406,7 +406,7 @@ FN_ERR network_set_password(const char *devicespec, const char *password);
  * @param  rate rate in milliseconds
  * @return fujinet-network error code (See FN_ERR_* values)
  */
-FN_ERR network_set_timer_rate(const char *devicespec, uint8_t rate);
+FN_ERR network_set_interrupt_rate(const char *devicespec, uint8_t rate);
 
 /**
  * @brief  Close an accepted TCP client connection, keeping the server listening
@@ -436,15 +436,15 @@ FN_ERR network_udp_set_destination(const char *dest_spec);
 FN_ERR network_udp_get_remote(const char *devicespec, char *buf, uint16_t len);
 
 /**
- * @brief  Set a JSON processing parameter (Atari SIO only)
+ * @brief  Set a parser processing parameter
  * @param  devicespec pointer to device specification, e.g. "N1:"
  * @param  param 0 = query flags (values > 2 rejected), 1 = query line-ending character
  * @param  value the value to set
  * @return fujinet-network error code (See FN_ERR_* values)
  */
-FN_ERR network_json_set_parameters(const char *devicespec, uint8_t param, uint8_t value);
-#define network_json_set_query_param(devicespec, flags) network_json_set_parameters(devicespec, 0, flags)
-#define network_json_set_line_ending(devicespec, ch) network_json_set_parameters(devicespec, 1, ch)
+FN_ERR network_set_parameters(const char *devicespec, uint8_t param, uint8_t value);
+#define network_set_query_param(devicespec, flags) network_set_parameters(devicespec, 0, flags)
+#define network_set_line_ending(devicespec, ch) network_set_parameters(devicespec, 1, ch)
 
 /**
  * @brief  Ask which direction a network command transfers data (Atari SIO only)
