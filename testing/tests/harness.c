@@ -24,6 +24,10 @@
 #include <conio.h>
 #endif /* __CC65__ */
 
+#ifdef BUILD_APPLE2
+extern const char *computer_model();
+#endif /* BUILD_APPLE2 */
+
 int tests_run     = 0;
 int tests_passed  = 0;
 int tests_skipped = 0;
@@ -72,7 +76,11 @@ void print_versions()
     strcpy(g.adapter.ace.fn_version, "FAIL");
 #endif
   printf("FujiNet: %-14s\n", g.adapter.ace.fn_version);
+#ifdef BUILD_APPLE2
+  printf("Platform: %s\n", computer_model());
+#else
   printf("Platform: %s\n", PLATFORM);
+#endif /* BUILD_APPLE2 */
 
   strcpy((char *) g.clock_fmt, "BROKEN");
 #if !defined(FN_BROKEN_clock_get_time_UTC_ISO_STRING)
