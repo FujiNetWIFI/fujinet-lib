@@ -68,12 +68,14 @@ static inline uint8_t fuji_field_numfields(uint8_t descr)
 #if defined(BUILD_ATARI)
 extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
                           uint8_t aux1, uint8_t aux2, const void *buf, size_t buf_length);
-#elif defined(BUILD_MSDOS) || defined(BUILD_ADAM) || defined(BUILD_LYNX)
+#elif defined(BUILD_COCO) || defined(BUILD_APPLE2) || defined(BUILD_C64) || defined(BUILD_MSX)
+#define FUJI_BUS_CALL_VARARGS 1
+extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...);
+#else /* everything else */
+#define FUJI_BUS_CALL_VARARGS 0
 extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
                           uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
                           const void *buf, size_t buf_length);
-#else /* ! (BUILD_ATARI || BUILD_MSDOS || BUILD_ADAM || BUILD_LYNX) */
-extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...);
 #endif /* BUILD_ATARI */
 extern size_t network_bus_read(uint8_t device, void *buffer, size_t length);
 extern size_t network_bus_write(uint8_t device, const void *buffer, size_t length);
