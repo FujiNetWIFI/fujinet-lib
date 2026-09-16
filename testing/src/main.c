@@ -22,7 +22,8 @@
 
 #if !FUJI_TESTS && !NETWORK_TESTS && !NETWORK2_TESTS && !SGML_TESTS \
   && !CALMAIL_TESTS && !REGRESSION_TESTS && !CLOCK_TESTS && !DISK_TESTS \
-  && !QRCODE_TESTS && !FS_TESTS && !APPKEY_TESTS && !DEVLIST_TESTS
+  && !QRCODE_TESTS && !FS_TESTS && !APPKEY_TESTS && !DEVLIST_TESTS \
+  && !PARSE_ERROR_TESTS
 #error "You need to choose some tests"
 #endif
 
@@ -33,6 +34,7 @@
 #include "network.h"
 #include "network2.h"
 #include "sgml.h"
+#include "parse_errors.h"
 #include "clock.h"
 #include "fdsk.h"
 #include "qrcode.h"
@@ -141,6 +143,21 @@ int main(void)
   test_sgml_iterate();
   test_sgml_colon_selector();
 #endif // SGML_TESTS
+
+#if PARSE_ERROR_TESTS
+  /* parse_errors.h - NDevice parser error codes (fujinet-firmware #1640) */
+  test_parse_no_parser();
+  test_parse_after_close();
+  test_parse_parser_none();
+  test_json_parse_malformed();
+  test_json_parse_empty_body();
+  test_sgml_parse_empty_body();
+  test_parse_error_not_sticky();
+  test_query_after_failed_parse();
+  test_query_no_channel();
+  test_set_parser_invalid_mode();
+  test_set_parameter_errors();
+#endif // PARSE_ERROR_TESTS
 
 #if FS_TESTS
   /* fs.h */

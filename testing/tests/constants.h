@@ -21,6 +21,7 @@
 #define NET_DEVICESPEC  "N1:https://httpbin.testotronic.com/get"
 #endif
 #define NET_JSON_URL    "N1:https://httpbin.testotronic.com/json"
+#define NET_EMPTY_URL   "N1:https://httpbin.testotronic.com/status/204"
 #define NET_POST_URL    "N1:https://httpbin.testotronic.com/post"
 #define NET_PUT_URL     "N1:https://httpbin.testotronic.com/put"
 #define NET_DELETE_URL  "N1:https://httpbin.testotronic.com/delete"
@@ -33,6 +34,7 @@
 #define NET_DEVICESPEC  "N1:http://localhost:8080/get"
 #endif
 #define NET_JSON_URL    "N1:http://localhost:8080/json"
+#define NET_EMPTY_URL   "N1:http://localhost:8080/status/204"
 #define NET_POST_URL    "N1:http://localhost:8080/post"
 #define NET_PUT_URL     "N1:http://localhost:8080/put"
 #define NET_DELETE_URL  "N1:http://localhost:8080/delete"
@@ -45,6 +47,7 @@
 #define NET_DEVICESPEC  "N1:http://10.4.0.1:7357/get"
 #endif
 #define NET_JSON_URL    "N1:http://10.4.0.1:7357/json"
+#define NET_EMPTY_URL   "N1:http://10.4.0.1:7357/status/204"
 #define NET_POST_URL    "N1:http://10.4.0.1:7357/post"
 #define NET_PUT_URL     "N1:http://10.4.0.1:7357/put"
 #define NET_DELETE_URL  "N1:http://10.4.0.1:7357/delete"
@@ -56,6 +59,7 @@
 #define NET_DEVICESPEC  "N1:https://httpbin.dev/get"
 #endif
 #define NET_JSON_URL    "N1:https://httpbin.dev/json"
+#define NET_EMPTY_URL   "N1:https://httpbin.dev/status/204"
 #define NET_POST_URL    "N1:https://httpbin.dev/post"
 #define NET_PUT_URL     "N1:https://httpbin.dev/put"
 #define NET_DELETE_URL  "N1:https://httpbin.dev/delete"
@@ -68,10 +72,16 @@
 #endif
 
 #define NET_JSON_URL    "N1:HTTPS://httpbin.org/json"
+#define NET_EMPTY_URL   "N1:HTTPS://httpbin.org/status/204"
 #define NET_POST_URL    "N1:HTTPS://httpbin.org/post"
 #define NET_PUT_URL     "N1:HTTPS://httpbin.org/put"
 #define NET_DELETE_URL  "N1:HTTPS://httpbin.org/delete"
 #endif
+
+/* NET_EMPTY_URL (defined per branch above) answers 204 with a zero-length
+ * body. FNJSON::parse() conflates an empty body with malformed JSON and
+ * FNSGML::parse() rejects an empty body outright, so it makes both parsers
+ * fail -- see the parse_errors.c tests for fujinet-firmware #1640. */
 
 /* Byte offset of the filename within a fuji_read_directory() extended
  * (addtl=0x80) entry. The header preceding the filename is NOT the same
@@ -159,6 +169,9 @@
 #if FNLIB_VERSION_MAJOR < 5
 #define NETWORK_SUCCESS 0
 #define NETWORK_ERROR_END_OF_FILE 136
+#define NETWORK_ERROR_GENERAL 144
+#define NETWORK_ERROR_NOT_CONNECTED 207
+#define NETWORK_ERROR_COULD_NOT_PARSE_JSON 213
 #endif
 
 #endif /* CONSTANTS_H */

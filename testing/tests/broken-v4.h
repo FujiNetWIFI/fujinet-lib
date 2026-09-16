@@ -15,6 +15,11 @@
 #define FN_BROKEN_network_sgml_parse
 #define FN_BROKEN_network_sgml_query
 
+// Sending a bare NET_PARSE takes the NETCALL()/NETCMD_ macros, which first
+// ship with fujinet-lib v5. A 4.x release has no way to reach the command
+// without NET_SET_PARSER in front of it.
+#define FN_BROKEN_bare_net_parse
+
 // QR codes were added in v5.0.0; not present at all before that.
 #define FN_BROKEN_fuji_qrcode_input
 #define FN_BROKEN_fuji_qrcode_encode
