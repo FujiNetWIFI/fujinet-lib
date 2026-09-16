@@ -44,25 +44,6 @@
 #endif
 
 /*
- * TEST_ERRORED -- assert that a call reported failure to the library.
- *
- * Some buses cannot say "error" at all: IEC's systemBus::transaction_error()
- * is still a no-op, so on those the call comes back FN_ERR_OK however badly
- * it went and only the STATUS byte carries the failure. Count the assertion
- * as skipped there rather than dropping it silently. The STATUS assertions
- * around it run everywhere.
- */
-#ifdef FN_BROKEN_transaction_error
-#define TEST_ERRORED(name, expr)                                        \
-    do {                                                                \
-      tests_skipped++;                                                  \
-      printf("SKIP  %s (bus cannot signal errors)\n", name);            \
-    } while (0)
-#else
-#define TEST_ERRORED(name, expr) TEST(name, expr)
-#endif /* FN_BROKEN_transaction_error */
-
-/*
  * A device that hit the pre-#1640 SIGSEGV has rebooted and answers nothing.
  * Same idiom as test_network_status_after_close in network.c.
  */
@@ -110,7 +91,7 @@ void test_parse_no_parser(void)
   network_close(NET_JSON_URL);
 
   ok = bare_parse(NET_JSON_URL);
-  TEST_ERRORED("bare NET_PARSE with no channel reports an error", !ok);
+  TEST("bare NET_PARSE with no channel reports an error", !ok);
 
   /* The pre-#1640 crash: fujidev_do_parse dereferenced a null _parser. */
   TEST_ALIVE("FujiNet still responding after NET_PARSE with no channel");
@@ -147,7 +128,7 @@ void test_parse_after_close(void)
   /* close() drops _parser as well as _protocol, so this is the null-_parser
    * path again, reached the way a real client reaches it. */
   ok = bare_parse(NET_JSON_URL);
-  TEST_ERRORED("bare NET_PARSE after close reports an error", !ok);
+  TEST("bare NET_PARSE after close reports an error", !ok);
   TEST_ALIVE("FujiNet still responding after NET_PARSE post-close");
 
   nerr = status_err(NET_JSON_URL);
@@ -179,7 +160,7 @@ void test_parse_parser_none(void)
    * error; before #1640 NDevice threw that result away. A client that skips
    * NET_SET_PARSER now gets a diagnosable failure instead of a silent no-op. */
   ok = bare_parse(NET_JSON_URL);
-  TEST_ERRORED("NET_PARSE without a parser reports an error", !ok);
+  TEST("NET_PARSE without a parser reports an error", !ok);
 
   /* No STATUS assertion: NParser::parse() leaves _parseError alone, so the
    * byte here is whatever the protocol reports, not a parse code. */
@@ -208,7 +189,7 @@ void test_json_parse_malformed(void)
   TEST("open HTML page", err == FN_ERR_OK);
 
   err = network_json_parse(NET_SGML_URL);
-  TEST_ERRORED("JSON parse of HTML reports an error", err != FN_ERR_OK);
+  TEST("JSON parse of HTML reports an error", err != FN_ERR_OK);
 
   /* The assertion that matters, and the one that works on every bus. */
   nerr = status_err(NET_SGML_URL);
@@ -241,7 +222,7 @@ void test_json_parse_empty_body(void)
   TEST("open 204 URL", err == FN_ERR_OK);
 
   err = network_json_parse(NET_EMPTY_URL);
-  TEST_ERRORED("JSON parse of an empty body reports an error",
+  TEST("JSON parse of an empty body reports an error",
                err != FN_ERR_OK);
 
   nerr = status_err(NET_EMPTY_URL);
@@ -272,7 +253,7 @@ void test_sgml_parse_empty_body(void)
   TEST("open 204 URL", err == FN_ERR_OK);
 
   err = network_sgml_parse(NET_EMPTY_URL);
-  TEST_ERRORED("SGML parse of an empty body reports an error",
+  TEST("SGML parse of an empty body reports an error",
                err != FN_ERR_OK);
 
   nerr = status_err(NET_EMPTY_URL);
@@ -393,7 +374,7 @@ void test_query_no_channel(void)
   n = network_json_query(NET_JSON_URL, "/slideshow/title", (char *) g.net);
   printf("  n=%d\n", (int) n);
   TEST("query with no channel returns no data", n <= 0);
-  TEST_ERRORED("query with no channel reports an error", n < 0);
+  TEST("query with no channel reports an error", n < 0);
 
   nerr = status_err(NET_JSON_URL);
   TEST("bus still in sync: STATUS reports NOT_CONNECTED",
@@ -420,7 +401,7 @@ void test_set_parser_invalid_mode(void)
   /* PARSER_NONE, _JSON and _SGML are 0..2; anything else falls through to
    * fujidev_set_parser's default: arm. */
   err = network_set_parser(NET_JSON_URL, PARSER_SGML + 1);
-  TEST_ERRORED("set_parser with mode 3 reports an error", err != FN_ERR_OK);
+  TEST("set_parser with mode 3 reports an error", err != FN_ERR_OK);
 
   TEST_ALIVE("FujiNet still responding after an invalid parser mode");
 
@@ -451,19 +432,23 @@ void test_set_parameter_errors(void)
    * so this is a NAK rather than the ERROR the rest of the file produces.
    * #1640 flags the inconsistency but leaves it alone; pin what it does. */
   err = network_set_query_param(NET_JSON_URL, 0);
-  TEST_ERRORED("set_query_param with no parser reports an error",
+  TEST("set_query_param with no parser reports an error",
                err != FN_ERR_OK);
   TEST_ALIVE("FujiNet still responding after set_query_param with no parser");
 
   err = network_open(NET_JSON_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
   TEST("open JSON URL", err == FN_ERR_OK);
 
+  /* If no parser has been set, network_set_query_param() should fail */
+  err = network_set_query_param(NET_JSON_URL, 0);
+  TEST("set_query_param without parser reports an error", err != FN_ERR_OK);
+
   err = network_set_parser(NET_JSON_URL, PARSER_JSON);
   TEST("set PARSER_JSON", err == FN_ERR_OK);
 
   /* Query flags are 0..2; fujidev_set_parameter rejects anything above. */
   err = network_set_query_param(NET_JSON_URL, 3);
-  TEST_ERRORED("set_query_param with value 3 reports an error",
+  TEST("set_query_param with value 3 reports an error",
                err != FN_ERR_OK);
 
   err = network_set_query_param(NET_JSON_URL, 2);
