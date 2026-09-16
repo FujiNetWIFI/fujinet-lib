@@ -1,9 +1,9 @@
 #include <fujinet-network.h>
 
-FN_ERR network_sgml_parse(const char *devicespec)
+FN_ERR network_html_parse(const char *devicespec)
 {
   uint8_t nw_unit = network_unit(devicespec);
-  FN_ERR err = network_set_parser(devicespec, PARSER_SGML);
+  FN_ERR err = network_set_parser(devicespec, PARSER_HTML);
 
 
   if (err != FN_ERR_OK)

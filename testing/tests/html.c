@@ -1,6 +1,6 @@
 /**
- * @file sgml.c
- * @brief SGML/HTML channel mode (2) tests: CSS-selector querying of a
+ * @file html.c
+ * @brief HTML/HTML channel mode (2) tests: CSS-selector querying of a
  *        fetched HTML page.
  *
  * Firmware regression commits exercised here (fujinet-firmware):
@@ -9,7 +9,7 @@
  *              selector containing a colon must not be truncated the way
  *              an N: prefix is stripped.
  *
- * SGML mode exists on sio/rs232/adamnet/drivewire/iwm, not on comlynx or
+ * HTML mode exists on sio/rs232/adamnet/drivewire/iwm, not on comlynx or
  * iec: on lynx this file instead asserts that mode 2 is rejected.
  */
 
@@ -39,59 +39,59 @@ static uint8_t t_contains(const char *hay, const char *needle)
   return 0;
 }
 
-void test_sgml_parse_query(void)
+void test_html_parse_query(void)
 {
   uint8_t err;
   int16_t r;
 
-  SECTION("SGML parse and query");
+  SECTION("HTML parse and query");
 
-#ifdef FN_BROKEN_network_sgml_parse
-  SKIP(network_sgml_parse);
+#ifdef FN_BROKEN_network_html_parse
+  SKIP(network_html_parse);
 #else
-  err = network_open(NET_SGML_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
+  err = network_open(NET_HTML_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
   TEST("open HTML page", err == FN_ERR_OK);
 
-  err = network_sgml_parse(NET_SGML_URL);
-  TEST("SGML parse succeeds", err == FN_ERR_OK);
+  err = network_html_parse(NET_HTML_URL);
+  TEST("HTML parse succeeds", err == FN_ERR_OK);
 
   memset(g.net, 0, sizeof(g.net));
-  r = network_sgml_query(NET_SGML_URL, "h1", (char *) g.net);
+  r = network_html_query(NET_HTML_URL, "h1", (char *) g.net);
   TEST("query h1 returns text", r > 0);
   printf("  h1=\"%s\"\n", (char *) g.net);
   TEST("h1 is the Moby-Dick heading", t_contains((char *) g.net, "Moby-Dick"));
 
-  err = network_close(NET_SGML_URL);
+  err = network_close(NET_HTML_URL);
   TEST("close HTML page", err == FN_ERR_OK);
-#endif /* FN_BROKEN_network_sgml */
+#endif /* FN_BROKEN_network_html */
 
   END_OF_TEST();
 }
 
-void test_sgml_iterate(void)
+void test_html_iterate(void)
 {
   uint8_t err;
   int16_t r;
   uint8_t matches;
   uint8_t rounds;
 
-  SECTION("SGML repeated query iterates matches");
+  SECTION("HTML repeated query iterates matches");
 
-#ifdef FN_BROKEN_network_sgml_query
-  SKIP(network_sgml_query);
+#ifdef FN_BROKEN_network_html_query
+  SKIP(network_html_query);
 #else
   err = network_open(NET_LINKS_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
   TEST("open links page", err == FN_ERR_OK);
 
-  err = network_sgml_parse(NET_LINKS_URL);
-  TEST("SGML parse succeeds", err == FN_ERR_OK);
+  err = network_html_parse(NET_LINKS_URL);
+  TEST("HTML parse succeeds", err == FN_ERR_OK);
 
   /* The page holds four small anchors; the same selector re-issued
    * advances to the next match until they run out */
   matches = 0;
   for (rounds = 0; rounds < 8; rounds++) {
     memset(g.net, 0, sizeof(g.net));
-    r = network_sgml_query(NET_LINKS_URL, "a", (char *) g.net);
+    r = network_html_query(NET_LINKS_URL, "a", (char *) g.net);
     if (r < 1)
       break;
     printf("  match %u: \"%s\"\n", (unsigned) (matches + 1), (char *) g.net);
@@ -103,39 +103,39 @@ void test_sgml_iterate(void)
 
   err = network_close(NET_LINKS_URL);
   TEST("close links page", err == FN_ERR_OK);
-#endif /* FN_BROKEN_network_sgml */
+#endif /* FN_BROKEN_network_html */
 
   END_OF_TEST();
 }
 
-void test_sgml_colon_selector(void)
+void test_html_colon_selector(void)
 {
   uint8_t err;
   int16_t r;
 
-  SECTION("SGML selector containing a colon");
+  SECTION("HTML selector containing a colon");
 
-#ifdef FN_BROKEN_network_sgml_query
-  SKIP(network_sgml_query);
+#ifdef FN_BROKEN_network_html_query
+  SKIP(network_html_query);
 #else
   /* Regression guard for 9bf45ddae: a colon inside a CSS selector must
    * not be treated as a devicespec prefix and truncated. The wire call
-   * has to survive; whether the pseudo-class matches depends on fnsgml
+   * has to survive; whether the pseudo-class matches depends on fnhtml
    * support, so the content is printed, not asserted. */
   err = network_open(NET_LINKS_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
   TEST("open links page", err == FN_ERR_OK);
 
-  err = network_sgml_parse(NET_LINKS_URL);
-  TEST("SGML parse succeeds", err == FN_ERR_OK);
+  err = network_html_parse(NET_LINKS_URL);
+  TEST("HTML parse succeeds", err == FN_ERR_OK);
 
   memset(g.net, 0, sizeof(g.net));
-  r = network_sgml_query(NET_LINKS_URL, "a:nth-of-type(2)", (char *) g.net);
+  r = network_html_query(NET_LINKS_URL, "a:nth-of-type(2)", (char *) g.net);
   TEST("colon selector does not error at wire level", r >= 0);
   printf("  a:nth-of-type(2)=\"%s\" (r=%d)\n", (char *) g.net, (int) r);
 
   err = network_close(NET_LINKS_URL);
   TEST("close links page", err == FN_ERR_OK);
-#endif /* FN_BROKEN_network_sgml */
+#endif /* FN_BROKEN_network_html */
 
   END_OF_TEST();
 }

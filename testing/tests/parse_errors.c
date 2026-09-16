@@ -5,9 +5,9 @@
  *        the following STATUS says.
  *
  * Firmware work exercised here (fujinet-firmware):
- *   PR #1640 / issue #1417  "report JSON/SGML parse failures instead of
+ *   PR #1640 / issue #1417  "report JSON/HTML parse failures instead of
  *   success". Three stacked layers dropped the parse result --
- *   NDevice::fujidev_do_parse, JSONParser::parse and SGMLParser::parse --
+ *   NDevice::fujidev_do_parse, JSONParser::parse and HTMLParser::parse --
  *   so a failed parse looked like a success on the wire. The same PR adds
  *   the null-_parser guards to fujidev_do_parse and fujidev_set_query (a
  *   NET_PARSE with no channel open used to SIGSEGV the firmware) and a
@@ -21,7 +21,7 @@
  *
  * Error codes asserted (fujinet-err.h, firmware status_error_codes.h):
  *   213 COULD_NOT_PARSE_JSON  malformed or empty body in JSON mode
- *   144 GENERAL               empty body in SGML mode
+ *   144 GENERAL               empty body in HTML mode
  *   207 NOT_CONNECTED         STATUS with no protocol bound
  */
 
@@ -183,22 +183,22 @@ void test_json_parse_malformed(void)
 #if defined(FN_BROKEN_parse_errors) || defined(FN_BROKEN_network_json_parse)
   SKIP(network_json_parse);
 #else
-  /* NET_SGML_URL is httpbin's fixed HTML page: a perfectly good body that
+  /* NET_HTML_URL is httpbin's fixed HTML page: a perfectly good body that
    * cJSON cannot parse. */
-  err = network_open(NET_SGML_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
+  err = network_open(NET_HTML_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
   TEST("open HTML page", err == FN_ERR_OK);
 
-  err = network_json_parse(NET_SGML_URL);
+  err = network_json_parse(NET_HTML_URL);
   TEST("JSON parse of HTML reports an error", err != FN_ERR_OK);
 
   /* The assertion that matters, and the one that works on every bus. */
-  nerr = status_err(NET_SGML_URL);
+  nerr = status_err(NET_HTML_URL);
   TEST("STATUS reports COULD_NOT_PARSE_JSON",
        nerr == NETWORK_ERROR_COULD_NOT_PARSE_JSON);
 
   TEST_ALIVE("FujiNet still responding after a failed JSON parse");
 
-  err = network_close(NET_SGML_URL);
+  err = network_close(NET_HTML_URL);
   TEST("close HTML page", err == FN_ERR_OK);
 #endif /* FN_BROKEN_parse_errors */
 
@@ -236,31 +236,31 @@ void test_json_parse_empty_body(void)
   END_OF_TEST();
 }
 
-void test_sgml_parse_empty_body(void)
+void test_html_parse_empty_body(void)
 {
   uint8_t err;
   uint8_t nerr;
 
-  SECTION("SGML parse of an empty body");
+  SECTION("HTML parse of an empty body");
 
-#if defined(FN_BROKEN_parse_errors) || defined(FN_BROKEN_network_sgml_parse)
-  SKIP(network_sgml_parse);
+#if defined(FN_BROKEN_parse_errors) || defined(FN_BROKEN_network_html_parse)
+  SKIP(network_html_parse);
 #else
   /* Gumbo does HTML5 error recovery, so a malformed body still parses; an
-   * empty one is the only way to fail FNSGML::parse(). SGMLParser reports
+   * empty one is the only way to fail FNHTML::parse(). HTMLParser reports
    * GENERAL rather than the JSON-specific 213. */
   err = network_open(NET_EMPTY_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
   TEST("open 204 URL", err == FN_ERR_OK);
 
-  err = network_sgml_parse(NET_EMPTY_URL);
-  TEST("SGML parse of an empty body reports an error",
+  err = network_html_parse(NET_EMPTY_URL);
+  TEST("HTML parse of an empty body reports an error",
                err != FN_ERR_OK);
 
   nerr = status_err(NET_EMPTY_URL);
-  TEST("STATUS reports GENERAL for a failed SGML parse",
+  TEST("STATUS reports GENERAL for a failed HTML parse",
        nerr == NETWORK_ERROR_GENERAL);
 
-  TEST_ALIVE("FujiNet still responding after a failed SGML parse");
+  TEST_ALIVE("FujiNet still responding after a failed HTML parse");
 
   err = network_close(NET_EMPTY_URL);
   TEST("close 204 URL", err == FN_ERR_OK);
@@ -282,13 +282,13 @@ void test_parse_error_not_sticky(void)
   SKIP(network_json_parse);
 #else
   /* Poison unit 1 with a failed parse... */
-  err = network_open(NET_SGML_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
+  err = network_open(NET_HTML_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
   TEST("open HTML page", err == FN_ERR_OK);
-  network_json_parse(NET_SGML_URL);
-  nerr = status_err(NET_SGML_URL);
+  network_json_parse(NET_HTML_URL);
+  nerr = status_err(NET_HTML_URL);
   TEST("STATUS is poisoned with 213",
        nerr == NETWORK_ERROR_COULD_NOT_PARSE_JSON);
-  err = network_close(NET_SGML_URL);
+  err = network_close(NET_HTML_URL);
   TEST("close HTML page", err == FN_ERR_OK);
 
   /* ...then check the next channel on the same unit is clean. This is also
@@ -327,28 +327,28 @@ void test_query_after_failed_parse(void)
   || defined(FN_BROKEN_network_json_query)
   SKIP(network_json_query);
 #else
-  err = network_open(NET_SGML_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
+  err = network_open(NET_HTML_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
   TEST("open HTML page", err == FN_ERR_OK);
 
-  network_json_parse(NET_SGML_URL);
+  network_json_parse(NET_HTML_URL);
 
   /* JSONParser::setQuery() returns success unconditionally and cJSON's
    * pointer lookup is null-safe, so the query does not error -- it just has
    * nothing to give back. Pinning current behaviour: if this ever starts
    * returning data, something is reading a stale document. */
   memset(g.net, 0, sizeof(g.net));
-  n = network_json_query(NET_SGML_URL, "/slideshow/title", (char *) g.net);
+  n = network_json_query(NET_HTML_URL, "/slideshow/title", (char *) g.net);
   printf("  n=%d\n", (int) n);
   TEST("query after a failed parse returns no data", n <= 0);
 
   /* The parse error is still what STATUS reports; a query does not clear it. */
-  nerr = status_err(NET_SGML_URL);
+  nerr = status_err(NET_HTML_URL);
   TEST("STATUS still reports COULD_NOT_PARSE_JSON after the query",
        nerr == NETWORK_ERROR_COULD_NOT_PARSE_JSON);
 
   TEST_ALIVE("FujiNet still responding after querying a failed parse");
 
-  err = network_close(NET_SGML_URL);
+  err = network_close(NET_HTML_URL);
   TEST("close HTML page", err == FN_ERR_OK);
 #endif /* FN_BROKEN_parse_errors */
 
@@ -398,9 +398,9 @@ void test_set_parser_invalid_mode(void)
   err = network_open(NET_JSON_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
   TEST("open JSON URL", err == FN_ERR_OK);
 
-  /* PARSER_NONE, _JSON and _SGML are 0..2; anything else falls through to
+  /* PARSER_NONE, _JSON and _HTML are 0..2; anything else falls through to
    * fujidev_set_parser's default: arm. */
-  err = network_set_parser(NET_JSON_URL, PARSER_SGML + 1);
+  err = network_set_parser(NET_JSON_URL, PARSER_HTML + 1);
   TEST("set_parser with mode 3 reports an error", err != FN_ERR_OK);
 
   TEST_ALIVE("FujiNet still responding after an invalid parser mode");

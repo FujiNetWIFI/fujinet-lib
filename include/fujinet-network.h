@@ -37,7 +37,7 @@
 enum {
   PARSER_NONE = 0,
   PARSER_JSON = 1,
-  PARSER_SGML = 2,
+  PARSER_HTML = 2,
 };
 
 /**
@@ -469,32 +469,32 @@ FN_ERR network_set_parameter(const char *devicespec, uint8_t param, uint8_t valu
 FN_ERR network_get_dstats(const char *devicespec, uint8_t cmd, uint8_t *dstats);
 
 /**
- * @brief  Set the parser: PARSER_NONE, _JSON or _SGML
+ * @brief  Set the parser: PARSER_NONE, _JSON or _HTML
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  parser to set
  * @return fujinet-network error code (See FN_ERR_* values)
  *
- * Assumes an open connection. network_json_parse and network_sgml_parse
+ * Assumes an open connection. network_json_parse and network_html_parse
  * set the mode themselves.
  */
 FN_ERR network_set_parser(const char *devicespec, uint8_t mode);
 
 /**
- * @brief  Parse the currently open channel as SGML/HTML/XML
+ * @brief  Parse the currently open channel as HTML/HTML/XML
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @return fujinet-network error code (See FN_ERR_* values)
  *
- * Sets the parser to SGML. Query with network_sgml_query using a CSS
+ * Sets the parser to HTML. Query with network_html_query using a CSS
  * selector; repeating the same query advances to the next match.
  */
-FN_ERR network_sgml_parse(const char *devicespec);
+FN_ERR network_html_parse(const char *devicespec);
 
 /**
- * @brief  Perform SGML query with a CSS selector, e.g. "div.content a"
+ * @brief  Perform HTML query with a CSS selector, e.g. "div.content a"
  *
- * Same wire command as network_json_query; assumes network_sgml_parse was called.
+ * Same wire command as network_json_query; assumes network_html_parse was called.
  */
-#define network_sgml_query(devicespec, selector, buffer) network_json_query(devicespec, selector, buffer)
+#define network_html_query(devicespec, selector, buffer) network_json_query(devicespec, selector, buffer)
 
 #define network_unit_status(unit, nws) (!NETCALL_RV(FUJICMD_STATUS, unit, nws, sizeof(NetworkStatus)))
 

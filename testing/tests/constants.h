@@ -80,7 +80,7 @@
 
 /* NET_EMPTY_URL (defined per branch above) answers 204 with a zero-length
  * body. FNJSON::parse() conflates an empty body with malformed JSON and
- * FNSGML::parse() rejects an empty body outright, so it makes both parsers
+ * FNHTML::parse() rejects an empty body outright, so it makes both parsers
  * fail -- see the parse_errors.c tests for fujinet-firmware #1640. */
 
 /* Byte offset of the filename within a fuji_read_directory() extended
@@ -116,10 +116,10 @@
 #define NET_RANGE_URL   "N1:https://httpbin.dev/range/1024"
 #define RANGE_BYTE(i)   ((uint8_t) ('a' + ((i) % 26)))
 
-/* Fixed HTML page (one h1: "Herman Melville - Moby-Dick") for SGML tests.
+/* Fixed HTML page (one h1: "Herman Melville - Moby-Dick") for HTML tests.
  * Its single <p> is several KB, so only query small elements. */
-#define NET_SGML_URL    "N1:https://httpbin.dev/html"
-/* Page of four small <a> anchors ("1".."4") for SGML query iteration */
+#define NET_HTML_URL    "N1:https://httpbin.dev/html"
+/* Page of four small <a> anchors ("1".."4") for HTML query iteration */
 #define NET_LINKS_URL   "N1:https://httpbin.dev/links/5/0"
 
 /* UDP channel and destination for the set-destination smoke test

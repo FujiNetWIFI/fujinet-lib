@@ -9,7 +9,7 @@ PRODUCTS += net5plus
 PRODUCTS += network
 PRODUCTS += parserr
 PRODUCTS += qrcode
-PRODUCTS += sgml
+PRODUCTS += html
 PRODUCTS_DISK_NAME = fntests
 
 PLATFORMS += adam
@@ -60,12 +60,12 @@ net5plus_SRC_DIRS = $(MAIN_SRC_DIRS)
 network_SRC_DIRS = $(MAIN_SRC_DIRS)
 parserr_SRC_DIRS = $(MAIN_SRC_DIRS)
 qrcode_SRC_DIRS = $(MAIN_SRC_DIRS)
-sgml_SRC_DIRS = $(MAIN_SRC_DIRS)
+html_SRC_DIRS = $(MAIN_SRC_DIRS)
 
 fujidev_CFLAGS = -DFUJI_TESTS=1
 network_CFLAGS = -DNETWORK_TESTS=1
 net5plus_CFLAGS = -DNETWORK2_TESTS=1
-sgml_CFLAGS = -DSGML_TESTS=1
+html_CFLAGS = -DHTML_TESTS=1
 parserr_CFLAGS = -DPARSE_ERROR_TESTS=1
 clock_CFLAGS = -DCLOCK_TESTS=1
 disk_CFLAGS = -DDISK_TESTS=1

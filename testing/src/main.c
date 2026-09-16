@@ -20,7 +20,7 @@
  *   - Stack locals are kept under 64 bytes; anything larger is a static global
  */
 
-#if !FUJI_TESTS && !NETWORK_TESTS && !NETWORK2_TESTS && !SGML_TESTS \
+#if !FUJI_TESTS && !NETWORK_TESTS && !NETWORK2_TESTS && !HTML_TESTS \
   && !CALMAIL_TESTS && !REGRESSION_TESTS && !CLOCK_TESTS && !DISK_TESTS \
   && !QRCODE_TESTS && !FS_TESTS && !APPKEY_TESTS && !DEVLIST_TESTS \
   && !PARSE_ERROR_TESTS
@@ -33,7 +33,7 @@
 #include "appkey.h"
 #include "network.h"
 #include "network2.h"
-#include "sgml.h"
+#include "html.h"
 #include "parse_errors.h"
 #include "clock.h"
 #include "fdsk.h"
@@ -137,12 +137,12 @@ int main(void)
   test_net2_read_count();
 #endif // NETWORK2_TESTS
 
-#if SGML_TESTS
-  /* sgml.h */
-  test_sgml_parse_query();
-  test_sgml_iterate();
-  test_sgml_colon_selector();
-#endif // SGML_TESTS
+#if HTML_TESTS
+  /* html.h */
+  test_html_parse_query();
+  test_html_iterate();
+  test_html_colon_selector();
+#endif // HTML_TESTS
 
 #if PARSE_ERROR_TESTS
   /* parse_errors.h - NDevice parser error codes (fujinet-firmware #1640) */
@@ -151,7 +151,7 @@ int main(void)
   test_parse_parser_none();
   test_json_parse_malformed();
   test_json_parse_empty_body();
-  test_sgml_parse_empty_body();
+  test_html_parse_empty_body();
   test_parse_error_not_sticky();
   test_query_after_failed_parse();
   test_query_no_channel();
