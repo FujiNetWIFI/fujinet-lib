@@ -11,6 +11,7 @@
 #include <fujinet-bus.h>
 #include <fujinet-bus-ezclk.h>
 #include <fujinet-commands.h>
+#include <fujinet-platform.h>
 
 /*
  * If additional formats are added, do not change the current order of enums.
@@ -31,7 +32,7 @@ typedef enum time_format_t {
 
 #define CLK_CMD_SIMPLE_BINARY      APETIMECMD_SETTZ_ALT2
 #define CLK_CMD_PRODOS_BINARY      APETIMECMD_GET_PRODOS
-#ifdef BUILD_APPLE2
+#ifdef FUJI_PLATFORM_APPLE2
 #define CLK_CMD_APETIME_BINARY     APETIMECMD_GET_ATARI
 #else
 #define CLK_CMD_APETIME_BINARY     APETIMECMD_GETTIME
@@ -41,7 +42,7 @@ typedef enum time_format_t {
 #define CLK_CMD_APPLE3_SOS_BINARY  APETIMECMD_GET_SOS
 #define CLK_CMD_SIMPLE_BINARY_WITH_HUNDREDTHS APETIMECMD_GET_SIMPLE_HUNDREDTHS
 
-#ifdef BUILD_APPLE2
+#ifdef FUJI_PLATFORM_APPLE2
 #include <ctype.h>
 #define PLATFORM_TZCMD_ALT   APETIMECMD_SETTZ_ALT
 #define PLATFORM_TZCMD_MAIN  APETIMECMD_SETTZ_ALT2
@@ -50,14 +51,14 @@ typedef enum time_format_t {
   CLKCALL_RV((alt) ? CLK_ALTIFYERIZE(clk_cmd[format]) : clk_cmd[format], buf, len)
 #define PLATFORM_CLK_SET_TZ_CALL(cmd, tz) CLKCALL_D(cmd, tz, strlen(tz) + 1)
 #define clock_get_time(time_data, format) clock_get_time_common(time_data, format, true)
-#else /* ! BUILD_APPLE_2 */
+#else /* ! FUJI_PLATFORM_APPLE_2 */
 #define PLATFORM_TZCMD_ALT   APETIMECMD_SETTZ
 #define PLATFORM_TZCMD_MAIN  APETIMECMD_SETTZ_ALT
 #define PLATFORM_CLK_TIME_CALL(format, alt, buf, len) \
   CLKCALL_A1_RV(clk_cmd[format], (alt) ? 1 : 0, buf, len)
 #define PLATFORM_CLK_SET_TZ_CALL(cmd, tz) CLKCALL_B12_D(cmd, strlen(tz), tz, strlen(tz))
 #define clock_get_time(time_data, format) clock_get_time_common(time_data, format, false)
-#endif /* BUILD_APPLE2 */
+#endif /* FUJI_PLATFORM_APPLE2 */
 
 /**
  * @brief  Set the FN clock's system timezone

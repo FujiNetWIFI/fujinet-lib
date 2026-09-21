@@ -1,18 +1,24 @@
 #ifndef FUJINET_BUS_H
 #define FUJINET_BUS_H
 
-#if defined(BUILD_ATARI) || defined(BUILD_COCO)
+#include <fujinet-platform.h>
+
+#if defined(FUJI_PLATFORM_ATARI) || defined(FUJI_PLATFORM_COCO)
 #define FUJI_VARIABLE_LEN_PACKETS 0
 #else
+#ifdef _CMOC_VERSION_
+#error "Why isn't FUJI_PLATFORM_COCO defined"
+#endif
 #define FUJI_VARIABLE_LEN_PACKETS 1
 #endif
 
 #include <fujinet-int.h>
 
-#if defined(BUILD_ATARI)
+#if defined(FUJI_PLATFORM_ATARI)
 extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
                           uint8_t aux1, uint8_t aux2, const void *buf, size_t buf_length);
-#elif defined(BUILD_COCO) || defined(BUILD_APPLE2) || defined(BUILD_C64) || defined(BUILD_MSX)
+#elif defined(FUJI_PLATFORM_COCO) || defined(FUJI_PLATFORM_APPLE2) \
+  || defined(FUJI_PLATFORM_C64) || defined(FUJI_PLATFORM_MSX)
 #define FUJI_BUS_CALL_VARARGS 1
 extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...);
 #else /* everything else */
@@ -20,7 +26,7 @@ extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
 extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
                           uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
                           const void *buf, size_t buf_length);
-#endif /* BUILD_ATARI */
+#endif /* FUJI_PLATFORM_ATARI */
 
 // Convenience macros to fill in FujiDCB and make the call
 #include <fujinet-bus-ezcall.h>

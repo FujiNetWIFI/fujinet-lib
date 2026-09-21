@@ -1,3 +1,6 @@
+#ifndef FUJINET_BUS_EZATARI_H
+#define FUJINET_BUS_EZATARI_H
+
 #define DEVCALL(dev, cmd)                                                                   \
   fuji_bus_call(dev, cmd, FUJI_FIELD_NONE, 0, 0, NULL, 0)
 
@@ -34,3 +37,5 @@
 #define DEVCALL_B12_RV(dev, cmd, b12, reply, replylen)                                      \
   fuji_bus_call(dev, cmd, FUJI_FIELD_B12 | FUJI_FIELD_REPLY, NATIVE_SPLIT_U16(b12),         \
                 reply, replylen)
+
+#endif /* FUJINET_BUS_EZATARI_H */

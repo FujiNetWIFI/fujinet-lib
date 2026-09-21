@@ -1,13 +1,13 @@
 #ifndef FUJINET_FUJI_H
 #define FUJINET_FUJI_H
 
-#include "fujinet-version.h"
-#include "fujinet-commands.h"
-#include "fujinet-const.h"
-#include "fujinet-err.h"
+#include <fujinet-version.h>
+#include <fujinet-commands.h>
+#include <fujinet-const.h>
+#include <fujinet-err.h>
 
 // Many fuji_ functions are just macros to the bus call so we need to include this
-#include "fujinet-bus.h"
+#include <fujinet-bus.h>
 
 // TODO: this header file needs more documentation
 
