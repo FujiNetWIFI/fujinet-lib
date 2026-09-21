@@ -14,6 +14,7 @@
 #define FN_BROKEN_network_set_line_ending
 #define FN_BROKEN_network_html_parse
 #define FN_BROKEN_network_html_query
+#define FN_BROKEN_network_accept
 
 // Sending a bare NET_PARSE takes the NETCALL()/NETCMD_ macros, which first
 // ship with fujinet-lib v5. A 4.x release has no way to reach the command

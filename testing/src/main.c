@@ -125,6 +125,7 @@ int main(void)
 
 #if NETWORK2_TESTS
   /* network2.h - the v5 command additions */
+  test_net2_accept();
   test_net2_seek_tell();
   test_net2_seek_errors();
   test_net2_set_translation();

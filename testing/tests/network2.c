@@ -31,6 +31,10 @@
 #include <string.h>
 #endif /* _CMOC_VERSION_ */
 
+#define LISTEN_SOCKET "N1:TCP://:5432"
+#define CLIENT_SOCKET "N2:TCP://localhost:5432"
+#define MAX_SOCKET_RETRIES 10
+
 void test_net2_seek_tell(void)
 {
   uint8_t err;
@@ -324,6 +328,44 @@ void test_net2_read_count(void)
   err = network_close(NET_RANGE_URL);
   TEST("close range URL", err == FN_ERR_OK);
 #endif /* FN_BROKEN_network_read_partial */
+
+  END_OF_TEST();
+}
+
+void test_net2_accept(void)
+{
+  uint8_t err, retries;
+  uint8_t status;
+  uint16_t avail;
+  FN_ERR net_err;
+
+  SECTION("network_accept");
+
+#if defined(FN_BROKEN_network_accept)
+  SKIP(network_accept);
+#else
+  err = network_open(LISTEN_SOCKET, OPEN_MODE_RW, 0);
+  TEST("able to open listening socket", err == FN_ERR_OK);
+  err = network_open(CLIENT_SOCKET, OPEN_MODE_READ, 0);
+  TEST("able to open client socket", err == FN_ERR_OK);
+
+  for (retries = 0; retries < MAX_SOCKET_RETRIES; retries++) {
+    err = network_status(LISTEN_SOCKET, &avail, &status, &net_err);
+    if (err != FN_ERR_OK)
+      break;
+    if (status == 1)
+      break;
+  }
+
+  TEST("listener reports connection",
+       err == FN_ERR_OK && retries < MAX_SOCKET_RETRIES && status == 1);
+
+  err = network_accept(LISTEN_SOCKET);
+  TEST("accept succeeds", err == FN_ERR_OK);
+
+  network_close(CLIENT_SOCKET);
+  network_close(LISTEN_SOCKET);
+#endif
 
   END_OF_TEST();
 }
