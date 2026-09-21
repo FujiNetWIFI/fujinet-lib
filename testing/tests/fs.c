@@ -435,3 +435,39 @@ void test_fs_lock_unlock(void)
   END_OF_TEST();
 #endif
 }
+
+void test_fs_ftp_listing(void)
+{
+  int16_t count;
+  uint8_t err;
+
+  SECTION("FTP directory listing");
+
+#ifdef FN_BROKEN_network_fs
+  SKIP(network_fs);
+  END_OF_TEST();
+#else
+  printf("  contents of %s\n", FTP_HOST);
+  count = fs_list(FTP_ROOT);
+
+  TEST("FTP directory listing is not empty", count > 0);
+
+  /* welcome.msg sorts last, and the last entry was what the old
+   * `dirBuffer.eof() ? UNSPECIFIED : NONE` threw away. */
+  TEST("the last entry is not dropped", fs_listed("welcome.msg"));
+  TEST("a plain file is listed", fs_listed("robots.txt"));
+
+  TEST("a symlink keeps its own name", fs_listed("breakpoint/"));
+
+  TEST("no entry is named ???", !fs_listed("???"));
+
+  /* Without this the checks above would pass even if the open succeeded
+   * unconditionally. */
+  err = fs_open_result(FTP_MISSING_DIR,
+                       network_open(FTP_MISSING_DIR, OPEN_MODE_HTTP_PROPFIND, DIR_FORMAT_RAW));
+  TEST("an FTP directory that does not exist fails to open", err != FN_ERR_OK);
+  network_close(FTP_MISSING_DIR);
+
+  END_OF_TEST();
+#endif
+}

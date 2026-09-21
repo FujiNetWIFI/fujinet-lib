@@ -111,6 +111,17 @@
 #define WEBDAV_HOST     "www.webdavserver.net"
 #define WEBDAV_ROOT     "N1:HTTPS://" WEBDAV_HOST "/"
 
+/* Public anonymous FTP server -- the repro from fujinet-firmware PR #1652
+ * (FozzTexx/fujinet-lib-experimental#117). Its root has been the same four
+ * entries for years: a symlink to a directory (breakpoint -> users/breakpoint/),
+ * robots.txt, the users directory, and welcome.msg. DIR_FORMAT_RAW appends '/'
+ * to directories, so the names come back as breakpoint/ robots.txt users/
+ * welcome.msg. Do not list users/ -- it is 658 entries and overruns
+ * g.fs.listing. */
+#define FTP_HOST        "ftp.untergrund.net"
+#define FTP_ROOT        "N1:FTP://" FTP_HOST "/"
+#define FTP_MISSING_DIR "N1:FTP://" FTP_HOST "/fnftptest-never-created/"
+
 /* Deterministic byte stream (byte i == 'a' + i % 26) served with HTTP
  * Range support, for the seek/tell and read-count tests */
 #define NET_RANGE_URL   "N1:https://httpbin.dev/range/1024"
