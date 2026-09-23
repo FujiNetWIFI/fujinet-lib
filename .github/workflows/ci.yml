@@ -22,6 +22,7 @@ jobs:
           - c64
           - coco
           - lynx
+          - model2
           - msdos
           - msx
 
@@ -79,7 +80,7 @@ jobs:
 
       - name: Compile tests with FUJINET_LIB unset to use latest fujinet-lib release
         run: |
-          PLATFORMS_EXCLUDE=lynx
+          PLATFORMS_EXCLUDE="lynx model2"
           PLATFORMS="$(make -C testing --eval='print-platforms: ; @printf "__PLATFORMS__%s\n" "$(PLATFORMS)"' print-platforms \
             | grep '^__PLATFORMS__' \
             | sed 's/^__PLATFORMS__//')"

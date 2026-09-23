@@ -17,6 +17,8 @@
 #define FUJI_PLATFORM_MSDOS
 #elif defined(__ADAM__) || defined(__COLECOADAM__)
 #define FUJI_PLATFORM_ADAM
+#elif defined(__TRS80M2__)
+#define FUJI_PLATFORM_MODEL2
 #else
 #error "Building on unknown platform"
 #endif

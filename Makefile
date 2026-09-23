@@ -1,7 +1,13 @@
 PRODUCT = fujinet.lib
-PLATFORMS = coco apple2 atari c64 msx lynx
-PLATFORMS += msdos
 PLATFORMS += adam
+PLATFORMS += apple2
+PLATFORMS += atari
+PLATFORMS += c64
+PLATFORMS += coco
+PLATFORMS += lynx
+PLATFORMS += model2
+PLATFORMS += msdos
+PLATFORMS += msx
 
 # You can run 'make <platform>' to build for a specific platform,
 # or 'make <platform>/<target>' for a platform-specific target.

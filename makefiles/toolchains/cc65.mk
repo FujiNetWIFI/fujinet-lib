@@ -33,7 +33,6 @@ define library-flag
 endef
 
 define link-lib
-  $(RM) $1
   $(AR) a $1 $2
 endef
 
