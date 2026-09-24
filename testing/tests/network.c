@@ -26,6 +26,7 @@
 #define ECHO_MSG "... FujiNet integration test"
 //#define ALT_LINE_ENDING "\n#"
 #define ALT_LINE_ENDING "\x0d\x0a"
+#define ECHO_WAIT_RETRIES 50
 
 void mark_echo_message(const char *prefix, uint8_t msg[])
 {
@@ -607,7 +608,7 @@ uint16_t wait_for_data(const char *net)
   uint16_t bw = 0;
   uint8_t conn, nerr, retry, err;
 
-  for (retry = 0; retry < 10; retry++) {
+  for (retry = 0; retry < ECHO_WAIT_RETRIES; retry++) {
     bw = 0; conn = 0; nerr = 0;
     err = network_status(net, &bw, &conn, &nerr);
     if (err != FN_ERR_OK || bw > 0 || nerr != NETWORK_SUCCESS)
@@ -704,7 +705,7 @@ void test_network_open_no_n_prefix(void)
   ok = NETCALL_A1_A2_D(NETCMD_OPEN, unit, OPEN_MODE_RW, OPEN_TRANS_LF, r, url_len);
   TEST("network open without N: succeeds", ok);
   network_close(url);
-#endif // FN_BROKEN_network_open_no_prefix
+#endif // FN_BROKEN_network_open_no_n_prefix
 
   END_OF_TEST();
 }
