@@ -446,9 +446,9 @@ void test_set_parameter_errors(void)
   err = network_set_parser(NET_JSON_URL, PARSER_JSON);
   TEST("set PARSER_JSON", err == FN_ERR_OK);
 
-  /* Query flags are 0..2; fujidev_set_parameter rejects anything above. */
-  err = network_set_query_param(NET_JSON_URL, 3);
-  TEST("set_query_param with value 3 reports an error",
+  /* 0x20 is a reserved output mode, which fujidev_set_parameter rejects. */
+  err = network_set_query_param(NET_JSON_URL, 0x20);
+  TEST("set_query_param with value 0x20 reports an error",
                err != FN_ERR_OK);
 
   err = network_set_query_param(NET_JSON_URL, 2);
