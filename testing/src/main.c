@@ -39,6 +39,7 @@
 #include "fdsk.h"
 #include "qrcode.h"
 #include "fs.h"
+#include "ftp.h"
 #include "devlist.h"
 
 #include "init_video.h"
@@ -170,6 +171,7 @@ int main(void)
   test_fs_dir_lifecycle();
   test_fs_lock_unlock();
   test_fs_ftp_listing();
+  test_ftp_file_status_read();
 #endif // FS_TESTS
 
 #if CLOCK_TESTS
