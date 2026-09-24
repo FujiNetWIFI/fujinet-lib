@@ -39,6 +39,7 @@ enum {
   PARSER_NONE = 0,
   PARSER_JSON = 1,
   PARSER_HTML = 2,
+  PARSER_XML = 3,
 };
 
 /**
@@ -80,8 +81,8 @@ extern NetworkStatus nw_status;
 #define fn_network_error (nw_status.errcode)
 
 /**
- * @brief  Initialise network device
- * Allows initialisation of network to perform any platform dependent checks, and allow applications to
+ * @brief  Initialize network device
+ * Allows initialization of network to perform any platform dependent checks, and allow applications to
  * exit early if there is a network issue.
  * @return fujinet-network status/error code (See FN_ERR_* values) and set device specific error if there is any
  */
@@ -470,7 +471,7 @@ FN_ERR network_set_parameter(const char *devicespec, uint8_t param, uint8_t valu
 FN_ERR network_get_dstats(const char *devicespec, uint8_t cmd, uint8_t *dstats);
 
 /**
- * @brief  Set the parser: PARSER_NONE, _JSON or _HTML
+ * @brief  Set the parser: PARSER_NONE, _JSON, _HTML or _XML
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  parser to set
  * @return fujinet-network error code (See FN_ERR_* values)
@@ -481,7 +482,7 @@ FN_ERR network_get_dstats(const char *devicespec, uint8_t cmd, uint8_t *dstats);
 FN_ERR network_set_parser(const char *devicespec, uint8_t mode);
 
 /**
- * @brief  Parse the currently open channel as HTML/HTML/XML
+ * @brief  Parse the currently open channel as HTML
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @return fujinet-network error code (See FN_ERR_* values)
  *

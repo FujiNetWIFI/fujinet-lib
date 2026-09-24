@@ -217,7 +217,7 @@ void test_json_parse_empty_body(void)
 #else
   /* FNJSON::parse() conflates "empty body" with "malformed JSON", so a 204
    * now fails NET_PARSE where it used to report success. This is #1640's
-   * most visible behaviour change. */
+   * most visible behavior change. */
   err = network_open(NET_EMPTY_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
   TEST("open 204 URL", err == FN_ERR_OK);
 
@@ -334,7 +334,7 @@ void test_query_after_failed_parse(void)
 
   /* JSONParser::setQuery() returns success unconditionally and cJSON's
    * pointer lookup is null-safe, so the query does not error -- it just has
-   * nothing to give back. Pinning current behaviour: if this ever starts
+   * nothing to give back. Pinning current behavior: if this ever starts
    * returning data, something is reading a stale document. */
   memset(g.net, 0, sizeof(g.net));
   n = network_json_query(NET_HTML_URL, "/slideshow/title", (char *) g.net);
@@ -398,10 +398,10 @@ void test_set_parser_invalid_mode(void)
   err = network_open(NET_JSON_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
   TEST("open JSON URL", err == FN_ERR_OK);
 
-  /* PARSER_NONE, _JSON and _HTML are 0..2; anything else falls through to
-   * fujidev_set_parser's default: arm. */
-  err = network_set_parser(NET_JSON_URL, PARSER_HTML + 1);
-  TEST("set_parser with mode 3 reports an error", err != FN_ERR_OK);
+  /* PARSER_NONE through _XML are 0..3; anything else falls through to
+   * fujicore_set_parser's default: arm. */
+  err = network_set_parser(NET_JSON_URL, PARSER_XML + 1);
+  TEST("set_parser with mode 4 reports an error", err != FN_ERR_OK);
 
   TEST_ALIVE("FujiNet still responding after an invalid parser mode");
 
