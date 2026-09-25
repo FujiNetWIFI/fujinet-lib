@@ -164,7 +164,7 @@ size_t network_bus_write(uint8_t device, const void *buffer, size_t length)
 }
 
 /*
-  appkeys are variable length strings. Because SmartPort supports
+  appkeys are variable length strings. Because AdamNet supports
   variable length data packets, aux1/aux2 aren't used to send the
   length of the string. Instead only the string data is sent with no
   length field, no block size, no padding.
@@ -190,6 +190,11 @@ bool fuji_bus_appkey_read(void *string, uint16_t *length)
     return false;
 
   status = dcb_io(dcb, DCB_COMMAND_READ, string, MAX_APPKEY_LEN, MAX_RETRIES);
+  // FujiNet NAKs an empty key; the Adam leaves dcb->len unchanged then.
+  if (status == DCB_STATUS_KBD_NAK) {
+    *length = 0;
+    return true;
+  }
   if (status != DCB_STATUS_FINISH)
     return false;
 
