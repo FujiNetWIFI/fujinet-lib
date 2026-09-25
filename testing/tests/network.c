@@ -26,7 +26,12 @@
 #define ECHO_MSG "... FujiNet integration test"
 //#define ALT_LINE_ENDING "\n#"
 #define ALT_LINE_ENDING "\x0d\x0a"
+
+#if defined(__APPLE2__)
+#define ECHO_WAIT_RETRIES 1000
+#else
 #define ECHO_WAIT_RETRIES 50
+#endif
 
 void mark_echo_message(const char *prefix, uint8_t msg[])
 {
@@ -605,8 +610,8 @@ void test_network_error_path(void)
 
 uint16_t wait_for_data(const char *net)
 {
-  uint16_t bw = 0;
-  uint8_t conn, nerr, retry, err;
+  uint16_t bw = 0, retry;
+  uint8_t conn, nerr, err;
 
   for (retry = 0; retry < ECHO_WAIT_RETRIES; retry++) {
     bw = 0; conn = 0; nerr = 0;
