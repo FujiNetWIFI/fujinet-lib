@@ -107,6 +107,7 @@ int main(void)
   test_network_init();
   test_network_write();
   test_network_status_after_close();
+  test_network_status_after_failed_open();
   test_network_open_no_n_prefix();
   test_network_set_eol();
 #if ERROR_PATH_WORKS

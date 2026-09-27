@@ -608,6 +608,41 @@ void test_network_error_path(void)
   END_OF_TEST();
 }
 
+void test_network_status_after_failed_open(void)
+{
+  uint8_t err;
+  uint16_t bw;
+  uint8_t conn, nerr;
+
+  SECTION("network_status after a failed open");
+
+#if defined(FN_BROKEN_network_open) || defined(FN_BROKEN_network_status) \
+  || defined(FN_BROKEN_network_close)
+  SKIP(network_status_after_failed_open);
+#else
+  /* A failed open used to lose its reason, so STATUS answered 207
+   * (NOT_CONNECTED) whatever went wrong (fujinet-firmware #1704). The open
+   * result itself is not checked: IWM acknowledges every open. */
+  network_open(NET_MISSING_FILE, OPEN_MODE_READ, OPEN_TRANS_NONE);
+  bw = 0; conn = 0; nerr = 0;
+  err = network_status(NET_MISSING_FILE, &bw, &conn, &nerr);
+  printf("  net_error=%u\n", nerr);
+  TEST("status after opening a missing file says file not found",
+       err == FN_ERR_OK && nerr == NETWORK_ERROR_FILE_NOT_FOUND);
+  network_close(NET_MISSING_FILE);
+
+  network_open(NET_BAD_PROTOCOL, OPEN_MODE_READ, OPEN_TRANS_NONE);
+  bw = 0; conn = 0; nerr = 0;
+  err = network_status(NET_BAD_PROTOCOL, &bw, &conn, &nerr);
+  printf("  net_error=%u\n", nerr);
+  TEST("status after opening an unknown protocol says general error",
+       err == FN_ERR_OK && nerr == NETWORK_ERROR_GENERAL);
+  network_close(NET_BAD_PROTOCOL);
+#endif
+
+  END_OF_TEST();
+}
+
 uint16_t wait_for_data(const char *net)
 {
   uint16_t bw = 0, retry;
