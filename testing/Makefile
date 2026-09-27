@@ -77,12 +77,13 @@ devlist_CFLAGS = -DDEVLIST_TESTS=1
 
 include ../makefiles/toplevel-rules.mk
 
-# Seven test binaries do not fit the default single density ATR or a 140kb
+# The test binaries do not fit the default single density ATR or a 140kb
 # ProDOS volume.
 DISK_TOOL_FLAGS_ATARI = -D -m -b MyPicoDos406
 DISK_SIZE = 800kb
 
 CFLAGS += -DBUILD_$(PLATFORM_UC) -DPLATFORM=$(DSTRING_OPEN)$(PLATFORM)$(DSTRING_CLOSE)
+CFLAGS += -DTEST_PROGRAM=$(DSTRING_OPEN)$(PRODUCT)$(DSTRING_CLOSE)
 LDFLAGS_EXTRA_COCO = --org=0E00 --limit=7C00
 
 TESTS_DIR = tests

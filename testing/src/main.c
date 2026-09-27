@@ -1,5 +1,5 @@
 /**
- * @file fujinet_integration_tests.c
+ * @file main.c
  * @brief Integration tests for FujiNet library: fujinet-fuji.h, fujinet-network.h, fujinet-clock.h
  *
  * These are integration tests that communicate over the actual FujiNet bus.
@@ -12,7 +12,7 @@
  *   - Network access to fujinet.online from the FujiNet device
  *
  * Test output: PASS / FAIL lines to stdout, summary at end.
- * Exit code:   0 = all passed, non-zero = number of failures.
+ * Exit code:   0 = all passed, 1 = aborted on the first failure.
  *
  * Compiler constraints observed:
  *   - All variable declarations appear at the top of their enclosing block
@@ -58,6 +58,8 @@
 /* =========================================================================
  * main
  * ========================================================================= */
+
+const char *test_program = TEST_PROGRAM;
 
 int main(void)
 {

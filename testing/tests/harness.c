@@ -20,9 +20,9 @@
 #include "c64_find_load.h"
 #endif /* BUILD_C64 */
 
-#ifdef __CC65__
+#if defined(__CC65__) || defined(__WATCOMC__)
 #include <conio.h>
-#endif /* __CC65__ */
+#endif /* __CC65__ || __WATCOMC__ */
 
 #ifdef BUILD_APPLE2
 extern const char *computer_model();
@@ -49,6 +49,10 @@ void end_testing(int code)
   }
 #elif defined(__CC65__)
   cgetc();
+#elif defined(__WATCOMC__)
+  getch();
+#elif defined(__Z88DK)
+  fgetc_cons();
 #else /* everything else */
   getc(stdin);
 #endif /* _CMOC_VERSION_ */
@@ -75,6 +79,7 @@ void print_versions()
   if (!fuji_get_adapter_config_extended(&g.adapter.ace))
     strcpy(g.adapter.ace.fn_version, "FAIL");
 #endif
+  printf("Test program: %s\n", test_program);
   printf("FujiNet: %-14s\n", g.adapter.ace.fn_version);
 #ifdef BUILD_APPLE2
   printf("Platform: %s\n", computer_model());

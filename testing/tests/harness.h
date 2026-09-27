@@ -41,6 +41,7 @@ fn_skipped:                                     \
  return;
 
 extern int tests_run, tests_passed, tests_skipped, tests_failed;
+extern const char *test_program;
 
 extern void begin_testing();
 extern void end_testing(int code);
