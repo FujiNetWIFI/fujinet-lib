@@ -173,6 +173,7 @@ int main(void)
   test_fs_rename_delete();
   test_fs_dir_lifecycle();
   test_fs_lock_unlock();
+  test_fs_tnfs_lock_unlock();
   test_fs_ftp_listing();
   test_ftp_file_status_read();
 #endif // FS_TESTS

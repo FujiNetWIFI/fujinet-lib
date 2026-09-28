@@ -436,6 +436,56 @@ void test_fs_lock_unlock(void)
 #endif
 }
 
+#if defined(TNFS_RW_ROOT) && !defined(FN_BROKEN_network_fs)
+#define TNFS_LOCK_FILE TNFS_RW_ROOT "fnlocktest.txt"
+
+/* Open the file for writing and close it again, without writing. */
+static uint8_t fs_tnfs_open_write(void)
+{
+  uint8_t err;
+
+  err = fs_open_result(TNFS_LOCK_FILE,
+                       network_open(TNFS_LOCK_FILE, OPEN_MODE_WRITE, OPEN_TRANS_NONE));
+  network_close(TNFS_LOCK_FILE);
+  return err;
+}
+#endif /* TNFS_RW_ROOT && ! FN_BROKEN_network_fs */
+
+void test_fs_tnfs_lock_unlock(void)
+{
+#if defined(TNFS_RW_ROOT) && !defined(FN_BROKEN_network_fs)
+  uint8_t err;
+#endif
+
+  SECTION("network_fs: TNFS lock and unlock");
+
+#ifdef FN_BROKEN_network_fs
+  SKIP(network_fs);
+  END_OF_TEST();
+#elif !defined(TNFS_RW_ROOT)
+  /* Needs a TNFS server the test can write to, running a tnfsd that
+   * answers CHMOD (FujiNetWIFI/tnfsd#34). */
+  printf("SKIP  no writable TNFS server (TNFS_RW_ROOT)\n");
+  tests_skipped++;
+  END_OF_TEST();
+#else
+  TEST("the test file is created", fs_tnfs_open_write() == FN_ERR_OK);
+
+  err = network_fs_lock(TNFS_LOCK_FILE);
+  TEST("network_fs_lock succeeds", err == FN_ERR_OK);
+  TEST("a locked file can't be opened for writing", fs_tnfs_open_write() != FN_ERR_OK);
+
+  err = network_fs_unlock(TNFS_LOCK_FILE);
+  TEST("network_fs_unlock succeeds", err == FN_ERR_OK);
+  TEST("an unlocked file can be opened for writing", fs_tnfs_open_write() == FN_ERR_OK);
+
+  err = network_fs_delete(TNFS_LOCK_FILE);
+  TEST("the test file is deleted", err == FN_ERR_OK);
+
+  END_OF_TEST();
+#endif
+}
+
 void test_fs_ftp_listing(void)
 {
   int16_t count;
