@@ -4,16 +4,12 @@
 #include "fujinet-const.h"
 #include <string.h>
 
-#include <stdio.h> // debug
-
-#define MAX_ADAM_PACKET 512
-
 #define DCB_COUNT_ADDR ((uint8_t *) 0xFEC3)
 #define DCB_TABLE_ADDR ((DCB *) 0xFEC4)
 
 #define DCB_COMPLETE_MASK 0x80
 
-static uint8_t fb_packet[MAX_ADAM_PACKET];
+static uint8_t fb_packet[MAX_ADAM_PACKET_REPLY];
 
 DCB *dcb_find(uint8_t device)
 {
@@ -140,22 +136,16 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   return true;
 }
 
-#if 0
+/* A bare DCB read can't carry a count, so FujiNet would send all it has. */
 size_t network_bus_read(uint8_t device, void *buffer, size_t length)
 {
-  uint8_t status;
-  DCB *dcb;
-
-
-  device = fuji_remap_device(device);
-  dcb = dcb_find(device);
-  status = dcb_io(dcb, DCB_COMMAND_READ, buffer, length, MAX_RETRIES);
-  printf("DCB STATUS %02x len=%d\n", status, dcb->len);
-  if (status != DCB_STATUS_FINISH)
-    dcb->len = 0;
-  return dcb->len;
+  if (length > MAX_ADAM_PACKET_REPLY)
+    length = MAX_ADAM_PACKET_REPLY;
+  if (!NETCALL_B12_RV(NETCMD_READ, device - FUJI_DEVICEID_NETWORK + 1,
+                      length, buffer, length))
+    return 0;
+  return length;
 }
-#endif
 
 size_t network_bus_write(uint8_t device, const void *buffer, size_t length)
 {

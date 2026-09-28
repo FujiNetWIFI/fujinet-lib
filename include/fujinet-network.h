@@ -43,13 +43,6 @@ enum {
 };
 
 /**
- * The number of bytes read in the last call to network_read().
- * This can be less than the amount asked for, if there aren't enough bytes available from target.
- * This allows applications to add nul terminators etc.
- */
-extern uint16_t fn_bytes_read;
-
-/**
  * Convert device specific error in code to FujiNet Network library error, agnostic of device.
  * Library code calls this when it encounters an error to return value applications should use.
  */
@@ -120,29 +113,27 @@ FN_ERR network_open(const char* devicespec, uint8_t mode, uint8_t trans);
 #endif /* FUJI_VARIABLE_LEN_PACKETS */
 
 /**
- * @brief  Non-blocking read from channel
+ * @brief  Read whatever is waiting on the channel, up to len
  *
- * The read will grab whatever is waiting in the FujiNet buffer. If fewer than the requested len, the return count will reflect this.
- * Errors are returned as the negative value of the FUJI standard error. fn_network_error contains the device specific error code. fn_bytes_read will be 0 on errors.
+ * Waits until at least one byte is available, then returns what is there,
+ * which can be fewer than len. Returns 0 at end of data, when the device
+ * reports an error with nothing waiting, or if the read itself fails.
+ * fn_network_error contains the device specific error code.
  *
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  buf Buffer
  * @param  len length
- * @return Bytes read, or negative value of fujinet-network error code (See FN_ERR_* values) with fn_network_error containing real error code
+ * @return Bytes read, or negative fujinet-network error code (See FN_ERR_* values) if the status check fails
  */
-#if defined(__ADAM__) || defined(__COLECOADAM__)
-extern int16_t network_read_nb_adam(const char *devicespec, void *buf, uint16_t len);
-#define network_read_nb(devspec, buf, len) network_read_nb_adam(devspec, buf, len)
-#else /* ! (__ADAM__ || __COLECOADAM__) */
 int16_t network_read_nb(const char* devicespec, void *buf, uint16_t len);
-#endif /* __ADAM__ || __COLECOADAM__ */
 
 /**
  * @brief  Read from channel
  *
  * The read will block until it has read all the bytes requested from the device, or the EOF is hit.
  * This will block waiting for as much data as it can, so that the client does not need to handle counting.
- * Errors are returned as the negative value of the error. fn_network_error contains the device specific error code. fn_bytes_read will contain the count of bytes read before error occurred.
+ * If an error stops it after some bytes arrived, it returns the count read so far; a negative error is
+ * returned only when nothing was read. fn_network_error contains the device specific error code.
  *
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  buf Buffer

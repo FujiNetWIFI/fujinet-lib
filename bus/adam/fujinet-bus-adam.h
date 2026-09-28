@@ -8,6 +8,8 @@
 /* The copy answers nothing until it finishes; one ACK timeout per poll. */
 #define COPY_RETRIES 400
 
+#define MAX_ADAM_PACKET_REPLY 1024
+
 enum {
   DCB_COMMAND_IDLE      = 0x00,
   DCB_COMMAND_STATUS    = 0x01,
