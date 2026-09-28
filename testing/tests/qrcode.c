@@ -5,7 +5,8 @@
 
 #if FNLIB_VERSION_MAJOR >= 5
 #include <fujinet-qrcode.h>
-#elif FNLIB_VERSION_MAJOR < 4 || FNLIB_VERSION_MINOR < 11 || FNLIB_VERSION_PATCH < 3
+#elif !defined(FUJICMD_QRCODE_OUTPUT) \
+  && (FNLIB_VERSION_MAJOR < 4 || FNLIB_VERSION_MINOR < 11 || FNLIB_VERSION_PATCH < 3)
 typedef enum QRCodeEcc
 {
     QR_ECC_LOW,

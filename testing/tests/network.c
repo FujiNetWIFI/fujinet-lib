@@ -794,3 +794,35 @@ void test_network_status_after_close(void)
 
   END_OF_TEST();
 }
+
+void test_network_read_partial(void)
+{
+  uint8_t err;
+  int16_t r, w, w2;
+  uint8_t msg[] = ECHO_MSG BASIC_LINE_ENDING;
+
+  SECTION("network_read_partial");
+
+  mark_echo_message("DN2", msg);
+
+  err = network_open(NET_TCP_SPEC, OPEN_MODE_RW, OPEN_TRANS_LF);
+  if (err != FN_ERR_OK)
+    TEST("network_open (TCP RW) succeeds", err == FN_ERR_OK);
+
+  w = strlen((const char *) msg);
+  err = network_write(NET_TCP_SPEC, msg, w);
+  if (err != FN_ERR_OK)
+    TEST("network_write succeeds", err != FN_ERR_OK);
+
+  memset(g.net, 0, sizeof(g.net));
+  w2 = w / 2;
+  r = network_read(NET_TCP_SPEC, g.net, w2);
+  TEST("read partial correct length", r == w2);
+  r = network_read(NET_TCP_SPEC, &g.net[w2], w - w2);
+  TEST("read remaining correct length", r == w - w2);
+  if (memcmp(g.net, msg, w) != 0)
+    cmp_hex("orig", msg, w, "recv", g.net, r);
+  TEST("all data read", memcmp(g.net, msg, w) == 0);
+
+  END_OF_TEST();
+}
