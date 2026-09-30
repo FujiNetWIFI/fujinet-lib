@@ -14,69 +14,32 @@
 // Adam can't handle large web sites
 //#define NET_DEVICESPEC  "N1:HTTPS://fujinet.online/"
 
-#define HTTPBIN_ORG_ALT 4
+#define HTTPBIN_ORG_ALT 3
 
 #if HTTPBIN_ORG_ALT == 1
-#ifndef NET_DEVICESPEC
-#define NET_DEVICESPEC  "N1:https://httpbin.testotronic.com/get"
-#endif
-#define NET_JSON_URL    "N1:https://httpbin.testotronic.com/json"
-#define NET_EMPTY_URL   "N1:https://httpbin.testotronic.com/status/204"
-#define NET_POST_URL    "N1:https://httpbin.testotronic.com/post"
-#define NET_PUT_URL     "N1:https://httpbin.testotronic.com/put"
-#define NET_DELETE_URL  "N1:https://httpbin.testotronic.com/delete"
-
-#elif HTTPBIN_ORG_ALT == 2
 // If httpbin.org is down, run your own server with docker:
 //  `docker run -p 8080:80 kennethreitz/httpbin`
-
-#ifndef NET_DEVICESPEC
-#define NET_DEVICESPEC  "N1:http://localhost:8080/get"
-#endif
-#define NET_JSON_URL    "N1:http://localhost:8080/json"
-#define NET_EMPTY_URL   "N1:http://localhost:8080/status/204"
-#define NET_POST_URL    "N1:http://localhost:8080/post"
-#define NET_PUT_URL     "N1:http://localhost:8080/put"
-#define NET_DELETE_URL  "N1:http://localhost:8080/delete"
-
-#elif HTTPBIN_ORG_ALT == 3
+#  define HTTPBIN_BASE "http://localhost:8080"
+#elif HTTPBIN_ORG_ALT == 2
 // If httpbin.org is down, run your own server with docker:
 //  `docker run -p 7357:80 kennethreitz/httpbin`
-
-#ifndef NET_DEVICESPEC
-#define NET_DEVICESPEC  "N1:http://10.4.0.1:7357/get"
-#endif
-#define NET_JSON_URL    "N1:http://10.4.0.1:7357/json"
-#define NET_EMPTY_URL   "N1:http://10.4.0.1:7357/status/204"
-#define NET_POST_URL    "N1:http://10.4.0.1:7357/post"
-#define NET_PUT_URL     "N1:http://10.4.0.1:7357/put"
-#define NET_DELETE_URL  "N1:http://10.4.0.1:7357/delete"
-
-#elif HTTPBIN_ORG_ALT == 4
+#  define HTTPBIN_BASE "http://10.4.0.1:7357"
+#elif HTTPBIN_ORG_ALT == 3
 // Handles binary POST bodies correctly, unlike testotronic
-
-#ifndef NET_DEVICESPEC
-#define NET_DEVICESPEC  "N1:https://httpbin.dev/get"
-#endif
-#define NET_JSON_URL    "N1:https://httpbin.dev/json"
-#define NET_EMPTY_URL   "N1:https://httpbin.dev/status/204"
-#define NET_POST_URL    "N1:https://httpbin.dev/post"
-#define NET_PUT_URL     "N1:https://httpbin.dev/put"
-#define NET_DELETE_URL  "N1:https://httpbin.dev/delete"
-
+#  define HTTPBIN_BASE "https://httpbin.dev"
 #else
 // httpbin.org is working
+#  define HTTPBIN_BASE "HTTPS://httpbin.org"
+#endif // HTTPBIN_ORG_ALT
 
 #ifndef NET_DEVICESPEC
-#define NET_DEVICESPEC  "N1:HTTPS://httpbin.org/get"
+#define NET_DEVICESPEC  "N1:" HTTPBIN_BASE "/get"
 #endif
-
-#define NET_JSON_URL    "N1:HTTPS://httpbin.org/json"
-#define NET_EMPTY_URL   "N1:HTTPS://httpbin.org/status/204"
-#define NET_POST_URL    "N1:HTTPS://httpbin.org/post"
-#define NET_PUT_URL     "N1:HTTPS://httpbin.org/put"
-#define NET_DELETE_URL  "N1:HTTPS://httpbin.org/delete"
-#endif
+#define NET_JSON_URL    "N1:" HTTPBIN_BASE "/json"
+#define NET_EMPTY_URL   "N1:" HTTPBIN_BASE "/status/204"
+#define NET_POST_URL    "N1:" HTTPBIN_BASE "/post"
+#define NET_PUT_URL     "N1:" HTTPBIN_BASE "/put"
+#define NET_DELETE_URL  "N1:" HTTPBIN_BASE "/delete"
 
 /* NET_EMPTY_URL (defined per branch above) answers 204 with a zero-length
  * body. FNJSON::parse() conflates an empty body with malformed JSON and
@@ -132,14 +95,14 @@
 
 /* Deterministic byte stream (byte i == 'a' + i % 26) served with HTTP
  * Range support, for the seek/tell and read-count tests */
-#define NET_RANGE_URL   "N1:https://httpbin.dev/range/1024"
+#define NET_RANGE_URL   "N1:" HTTPBIN_BASE "/range/1024"
 #define RANGE_BYTE(i)   ((uint8_t) ('a' + ((i) % 26)))
 
 /* Fixed HTML page (one h1: "Herman Melville - Moby-Dick") for HTML tests.
  * Its single <p> is several KB, so only query small elements. */
-#define NET_HTML_URL    "N1:https://httpbin.dev/html"
+#define NET_HTML_URL    "N1:" HTTPBIN_BASE "/html"
 /* Page of four small <a> anchors ("1".."4") for HTML query iteration */
-#define NET_LINKS_URL   "N1:https://httpbin.dev/links/5/0"
+#define NET_LINKS_URL   "N1:" HTTPBIN_BASE "/links/5/0"
 
 /* UDP channel and destination for the set-destination smoke test
  * (no traffic is actually exchanged) */

@@ -812,7 +812,7 @@ void test_network_read_partial(void)
   w = strlen((const char *) msg);
   err = network_write(NET_TCP_SPEC, msg, w);
   if (err != FN_ERR_OK)
-    TEST("network_write succeeds", err != FN_ERR_OK);
+    TEST("network_write succeeds", err == FN_ERR_OK);
 
   memset(g.net, 0, sizeof(g.net));
   w2 = w / 2;
