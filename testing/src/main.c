@@ -177,6 +177,7 @@ int main(void)
   test_fs_tnfs_lock_unlock();
   test_fs_ftp_listing();
   test_ftp_file_status_read();
+  test_ftp_crunched_name();
 #endif // FS_TESTS
 
 #if CLOCK_TESTS
