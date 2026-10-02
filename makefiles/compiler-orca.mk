@@ -1,9 +1,0 @@
-CC        := iix compile
-AR        := iix makelib -P
-CFLAGS    := -I -P +F cc=-p\"apple2:src:include:orca.h\" cc=-d__APPLE2__
-ASFLAGS   := -P
-OBJEXT    := .root
-ASMEXT    := .asm
-
-INCC_ARG  := cc=-i
-INCS_ARG  := 

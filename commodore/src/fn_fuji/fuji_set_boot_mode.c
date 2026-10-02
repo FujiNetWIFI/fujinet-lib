@@ -1,9 +1,0 @@
-#include <stdbool.h>
-#include <stdint.h>
-#include "fujinet-fuji.h"
-#include "fujinet-fuji-cbm.h"
-
-bool fuji_set_boot_mode(uint8_t mode)
-{
-	return open_close_data_1(FUJICMD_SET_BOOT_MODE, mode);
-}
