@@ -17,7 +17,7 @@ PLATFORMS += msx
 
 # SRC_DIRS may use the literal %PLATFORM% token.
 # It expands to the chosen PLATFORM plus any of its combos.
-SRC_DIRS = common bus/%PLATFORM%
+SRC_DIRS = common bus/%PLATFORM% bus/%PLATFORM%/unapi
 INCLUDE_DIRS = include
 CFLAGS = -DBUILD_$(PLATFORM_UC)
 
