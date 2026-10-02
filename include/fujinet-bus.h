@@ -18,7 +18,7 @@
 extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
                           uint8_t aux1, uint8_t aux2, const void *buf, size_t buf_length);
 #elif defined(FUJI_PLATFORM_COCO) || defined(FUJI_PLATFORM_APPLE2) \
-  || defined(FUJI_PLATFORM_C64) || defined(FUJI_PLATFORM_MSX)
+  || defined(FUJI_PLATFORM_C64)
 #define FUJI_BUS_CALL_VARARGS 1
 extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...);
 #else /* everything else */

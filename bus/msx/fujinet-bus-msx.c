@@ -1,15 +1,8 @@
-#undef UNUSED
-#ifdef UNUSED
-#include <stdio.h>
-#endif /* UNUSED */
-
 #include "fujinet-bus-msx.h"
 #include "fujinet-commands.h"
-#include "portio.h"
-#include <string.h>
-#include <stdarg.h>
 
-#ifdef UNUSED
+#undef HEXDUMP
+#if defined(DEBUG) || defined(HEXDUMP)
 #define COLUMNS 16
 
 static void hexdump(uint8_t *buffer, int count)
@@ -40,272 +33,207 @@ static void hexdump(uint8_t *buffer, int count)
 
   return;
 }
-#endif /* UNUSED */
+#endif /* HEXDUMP */
 
+#define UNAPI_SERVICE "FUJINET"
 
-#define milliseconds_to_jiffy(millis) ((millis) / (VDP_IS_PAL ? 20 : 1000 / 60))
-
-#define TIMEOUT         milliseconds_to_jiffy(100)
-#define TIMEOUT_SLOW	milliseconds_to_jiffy(15 * 1000)
-#define MAX_RETRIES	1
-
-enum {
-  SLIP_END     = 0xC0,
-  SLIP_ESCAPE  = 0xDB,
-  SLIP_ESC_END = 0xDC,
-  SLIP_ESC_ESC = 0xDD,
-};
-
-enum {
-  PACKET_ACK = 6, // ASCII ACK
-  PACKET_NAK = 21, // ASCII NAK
-};
+//***************
+//  FIXME - this stuff belongs in a header file shared with FujiNet MSX UNAPI firmware
 
 typedef struct {
-  uint8_t device;   /* Destination Device */
-  uint8_t command;  /* Command */
-  uint16_t length;  /* Total length of packet including header */
-  uint8_t checksum; /* Checksum of entire packet */
-  uint8_t fields;   /* Describes the fields that follow */
-} fujibus_header;
+  uint8_t device;
+  uint8_t command;
+  uint8_t aux_descr;
+  uint8_t aux1, aux2, aux3, aux4;
+  void *buffer;
+  uint16_t length;
+} FujiNetParams;
 
-typedef struct {
-  fujibus_header header;
-  uint8_t data[];
-} fujibus_packet;
+enum {
+  FUJI_CALL_INFO = 0,
+  FUJI_CALL_WRITE,
+  FUJI_CALL_READ,
+};
 
-#define MAX_PACKET      (512 + sizeof(fujibus_header) + 4) // sector + header + secnum
-static uint8_t fb_buffer[MAX_PACKET * 2 + 2];              // Enough room for SLIP encoding
-static fujibus_packet *fb_packet;
+//***************
 
-/* This function expects that fb_packet is one byte into fb_buffer so
-   that there's already room at the front for the SLIP_END framing
-   byte. This allows skipping moving all the bytes if no escaping is
-   needed. */
-uint16_t fuji_slip_encode()
+//static unapi_code_block code_block;
+static FujiNetParams params;
+
+static uint8_t unapi_count, unapi_slot, unapi_in_ram;
+static uint16_t unapi_result;
+static void *unapi_entry;
+
+static uint8_t UNAPIGetCount(const char *service)
 {
-  uint16_t idx, len, enc_idx, esc_count, esc_remain;
-  uint8_t ch, *ptr;
+  volatile char *p;
+  volatile char *ARG = (volatile char*) 0xF847;
 
 
-  // Count how many bytes need to be escaped
-  len = fb_packet->header.length;
-  ptr = (uint8_t *) fb_packet;
-  for (idx = esc_count = 0; idx < len; idx++) {
-    if (ptr[idx] == SLIP_END || ptr[idx] == SLIP_ESCAPE)
-      esc_count++;
-  }
+  for (p = ARG; *service; p++, service++)
+    *p = *service;
+  *p = 0;
 
-#ifdef UNUSED
-  printf("ESC count: %d %d\n", esc_count, len);
-#endif /* UNUSED */
-  if (esc_count) {
-    // Encode buffer in place working from back to front
-    for (esc_remain = esc_count, enc_idx = esc_count + (idx = len - 1);
-         esc_remain;
-         idx--, enc_idx--) {
-      ch = ptr[idx];
-      if (ch == SLIP_END) {
-        ptr[enc_idx--] = SLIP_ESC_END;
-        ch = SLIP_ESCAPE;
-        esc_remain--;
-      }
-      else if (ch == SLIP_ESCAPE) {
-        ptr[enc_idx--] = SLIP_ESC_ESC;
-        ch = SLIP_ESCAPE;
-        esc_remain--;
-      }
-
-      ptr[enc_idx] = ch;
-    }
-  }
-
-  // FIXME - this byte probably never changes, maybe we should init fb_buffer with it?
-  fb_buffer[0] = SLIP_END;
-  fb_buffer[1 + len + esc_count] = SLIP_END;
-  return 2 + len + esc_count;
+  // Call EXTBIO: DE=$2222, A=0, B=0 -> B=count
+  __asm
+    ld   de, 0x2222
+    xor  a
+    ld   b, a
+    call 0xFFCA
+    ld   a, b
+    ld   (_unapi_count), a
+    __endasm;
+  return unapi_count;
 }
 
-uint16_t fuji_slip_decode(uint16_t len)
+static void UNAPIGetSlot(uint8_t index)
 {
-  uint16_t idx, dec_idx, esc_count;
-  uint8_t *ptr;
+  // A=index, B=1, DE=0x2222 -> EXTBIO (0xFFCA)
+  __asm
+    push ix
 
+    ld   de, 0x2222
+    ld   b, 1           // Function 1: Get Sliver Info
 
-  ptr = (uint8_t *) fb_packet;
-  for (idx = dec_idx = 0; idx < len; idx++, dec_idx++) {
-    if (ptr[idx] == SLIP_END)
-      break;
+    // Fetch 'index' from the stack
+    // Offset 4: 2 bytes for Return Address + 2 bytes for Pushed IX
+    ld   ix, 4
+    add  ix, sp
+    ld   a, (ix+0)
 
-    if (ptr[idx] == SLIP_ESCAPE) {
-      idx++;
-      if (ptr[idx] == SLIP_ESC_END)
-        ptr[dec_idx] = SLIP_END;
-      else if (ptr[idx] == SLIP_ESC_ESC)
-        ptr[dec_idx] = SLIP_ESCAPE;
-    }
-    else if (idx != dec_idx) {
-      // Only need to move byte if there were escapes decoded
-      ptr[dec_idx] = ptr[idx];
-    }
-  }
+    call 0xFFCA          // EXTBIO
 
-  return dec_idx;
+    // If EXTBIO is successful, A = Slot ID, HL = Entry Point
+    ld   (_unapi_slot), a
+    ld   (_unapi_entry), hl
+    ld   a, b
+    ld   (_unapi_in_ram), a
+
+    pop  ix
+    __endasm;
 }
 
-uint8_t fuji_calc_checksum(void *ptr, uint16_t len)
+static uint8_t  call_func;
+static void* call_arg;
+
+static uint16_t UNAPICall(uint8_t func, void *arg)
 {
-  uint16_t idx, chk;
-  uint8_t *buf = (uint8_t *) ptr;
+  call_func = func;
+  call_arg = arg;
 
+  __asm
+    push ix
+    push iy
 
-  for (idx = chk = 0; idx < len; idx++)
-    chk = ((chk + buf[idx]) >> 8) + ((chk + buf[idx]) & 0xFF);
-  return (uint8_t) chk;
-}
+    ld   a, (_call_func)
+    ld   hl, (_call_arg)
 
-bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
-{
-  int code;
-  uint8_t ck1, ck2;
-  uint16_t rlen;
-  uint16_t idx, numbytes;
-  va_list ap;
-
-
-  fb_packet = (fujibus_packet *) (fb_buffer + 1); // +1 for SLIP_END
-#ifdef UNUSED
-  printf("buf: 0x%04x pak: 0x%04x\n", fb_buffer, fb_packet);
-  printf("fields: %d\n", fields);
-#endif /* UNUSED */
-  fb_packet->header.device = device;
-  fb_packet->header.command = fuji_cmd;
-  fb_packet->header.length = sizeof(fujibus_header);
-  fb_packet->header.checksum = 0;
-  fb_packet->header.fields = fields;
-#ifdef UNUSED
-  printf("Header len %d %d\n", fb_packet->header.length, sizeof(fujibus_header));
-  hexdump((uint8_t *) fb_packet, sizeof(fujibus_header));
-#endif /* UNUSED */
-
-  va_start(ap, fields);
-
-  idx = 0;
-  numbytes = fuji_field_numbytes(fields);
-#ifdef UNUSED
-  printf("numbytes: %d %d\n", fields, numbytes);
-  hexdump(fuji_field_numbytes_table, 8);
-#endif /* UNUSED */
-  if (numbytes > 0)
-    fb_packet->data[idx++] = va_arg(ap, uint8_t);
-  if (numbytes > 1)
-    fb_packet->data[idx++] = va_arg(ap, uint8_t);
-  if (numbytes > 2)
-    fb_packet->data[idx++] = va_arg(ap, uint8_t);
-  if (numbytes > 3)
-    fb_packet->data[idx++] = va_arg(ap, uint8_t);
-  if (fields & FUJI_FIELD_DATA) {
-    const uint8_t *data = va_arg(ap, uint8_t *);
-    const uint16_t data_length = va_arg(ap, uint16_t);
-
-
-    memcpy(&fb_packet->data[idx], data, data_length);
-    idx += data_length;
-  }
-#ifdef UNUSED
-  printf("Fields + data %d %d\n", numbytes, idx);
-#endif /* UNUSED */
-
-  fb_packet->header.length += idx;
-#ifdef UNUSED
-  printf("Packet len %d\n", fb_packet->header.length);
-#endif /* UNUSED */
-
-  ck1 = fuji_calc_checksum(fb_packet, fb_packet->header.length);
-#ifdef UNUSED
-  printf("Checksum: 0x%02x\n", ck1);
-  hexdump((uint8_t *) fb_packet, sizeof(fujibus_header));
-#endif /* UNUSED */
-  fb_packet->header.checksum = ck1;
-
-  numbytes = fuji_slip_encode();
-
-#ifdef UNUSED
-  printf("Sending packet %d\n", numbytes);
-  //hexdump(fb_buffer, numbytes);
-#endif /* UNUSED */
-  port_putbuf(fb_buffer, numbytes);
 #if 0
-  code = port_discard_until(SLIP_END, TIMEOUT_SLOW);
-#else
-  while (1) {
-    code = port_getc_timeout(TIMEOUT_SLOW);
-#ifdef UNUSED
-    printf("%02x ", code);
-#endif /* UNUSED */
-    if (code < 0 || code == SLIP_END)
-      break;
-  }
-#endif // 0
-  if (code != SLIP_END) {
-#ifdef UNUSED
-    printf("NO SLIP FRAME %d\n", code);
-#endif /* UNUSED */
+    // --- BORDER DEBUG ---
+    // If A == 3, Border = White (Color 15)
+    // If A == 0, Border = Blue (Color 4)
+    // If A == something else, Border = Red (Color 2)
+    cp   3
+    jr   z, _is_three
+    or   a
+    jr   z, _is_zero
+    ld   a, 8         // Red (Unknown)
+    jr   _apply_color
+    _is_three:
+    ld   a, 3        // Green (Success)
+    jr   _apply_color
+    _is_zero:
+    ld   a, 15         // White (Offset is wrong, likely grabbing high byte)
+    _apply_color:
+    out  (0x99), a
+    ld   a, 0x87
+    out  (0x99), a
+
+    hang_here:
+    jp hang_here
+
+    // --- END DEBUG ---
+#endif
+
+    // 2. Prepare CALSLT ($001C)
+    // Register IX = Dynamic Target Address (unapi_entry)
+    // Register IYh = Dynamic Slot ID (unapi_slot)
+
+    push af           // Save 'func' while we mess with A
+
+    // Load Dynamic Address into IX
+    ld   ix, (_unapi_entry)
+
+    // Load Dynamic Slot into IYh
+    ld   a, (_unapi_slot)
+    push af
+    pop  iy           // Now IYh = Slot ID, IYl = Flags (Flags don't matter for CALSLT)
+
+    pop  af           // Restore 'func' to A
+
+    // 3. Execute BIOS CALSLT
+    // A = Function ID
+    // HL = Argument
+    // IX = Dynamic Entry Point
+    // IYh = Slot ID
+    call 0x001C
+
+    // 4. Capture 16-bit result from HL
+    ld   (_unapi_result), hl
+
+    pop  iy
+    pop  ix
+    __endasm;
+
+  return unapi_result;
+}
+
+bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
+                   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
+                   const void *buf, size_t buf_length)
+{
+  //Z80_registers regs;
+  uint16_t idx, numbytes;
+  int count = UNAPIGetCount(UNAPI_SERVICE);
+
+
+  if (!count)
     return false;
+
+  params.device = device;
+  params.command = fuji_cmd;
+  params.aux_descr = fields;
+
+  params.aux1 = aux1;
+  params.aux2 = aux2;
+  params.aux3 = aux3;
+  params.aux4 = aux4;
+
+  unapi_slot = 0xFF;
+#ifdef DEBUG
+  printf("FINDING SLOT\n");
+#endif
+  UNAPIGetSlot(1);
+#ifdef DEBUG
+  printf("IN SLOT %d RAM: %d ENTRY: 0x%04x\n", unapi_slot, unapi_in_ram, unapi_entry);
+  printf("OUT PARAMS: 0x%04x\n", &params);
+#endif
+
+  params.buffer = buf;
+  params.length = buf_length;
+
+  if (fields & FUJI_FIELD_REPLY) {
+#ifdef DEBUG
+    printf("FUJINET READ %d\n", params.length);
+    hexdump(&params, sizeof(params));
+#endif
+    return UNAPICall(FUJI_CALL_READ, &params);
   }
 
-  rlen = port_get_until(fb_packet, (fb_buffer + sizeof(fb_buffer)) - ((uint8_t *) fb_packet),
-                        SLIP_END, TIMEOUT_SLOW);
-#ifdef UNUSED
-  printf("Packet reply: %d\n", rlen);
-  hexdump((uint8_t *) fb_packet, sizeof(fujibus_header));
-#endif /* UNUSED */
-  rlen = fuji_slip_decode(rlen);
-#ifdef UNUSED
-  printf("Decode len: %d %d\n", rlen, fb_packet->header.length);
-  hexdump((uint8_t *) fb_packet, sizeof(fujibus_header));
-#endif /* UNUSED */
-  if (rlen != fb_packet->header.length) {
-#ifdef UNUSED
-    printf("Reply length incorrect: %d %d\n", rlen, fb_packet->header.length);
-#endif /* UNUSED */
-    return false;
-  }
-#ifdef UNUSED
-  if (rlen - sizeof(fujibus_header) != reply_length) {
-    printf("Expected length incorrect: %d %d\n", rlen - sizeof(fujibus_header), reply_length);
-  }
-#endif /* UNUSED */
-
-  // Need to zero out checksum in order to calculate
-  ck1 = fb_packet->header.checksum;
-  fb_packet->header.checksum = 0;
-  ck2 = fuji_calc_checksum(fb_packet, rlen);
-  if (ck1 != ck2) {
-#ifdef UNUSED
-    printf("Checksum mismatch: %02x %02x\n", ck1, ck2);
-#endif /* UNUSED */
-    return false;
-  }
-
-  if (fb_packet->header.command != PACKET_ACK)
-    return false;
-
-  // FIXME - validate that fb_packet->fields is zero?
-
-  if (rlen && (fields & FUJI_FIELD_REPLY)) {
-    uint8_t *reply = va_arg(ap, uint8_t *);
-    uint16_t reply_length = va_arg(ap, uint16_t);
-
-
-    if (reply_length < rlen)
-      rlen = reply_length;
-    memcpy(reply, fb_packet->data, rlen);
-  }
-
-  va_end(ap);
-
-  return true;
+#ifdef DEBUG
+  printf("FUJINET WRITE %d\n", params.length);
+#endif
+  return UNAPICall(FUJI_CALL_WRITE, &params);
 }
 
 uint16_t network_bus_read(uint8_t device, void *buffer, size_t length)
