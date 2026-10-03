@@ -22,6 +22,10 @@ VERSION_NAME_RE = fr"v?{VERSION_NUM_RE}"
 LIBRARY_FILE = "libhirestxt.a"
 HEADER_FILE = "hirestxt.h"
 
+VT52_SUFFIX = "+vt52"
+# First release that ships a separate no-VT52 archive
+NOVT52_MIN_VERSION = (0, 5, 1, 7)
+
 
 def build_argparser():
   parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -37,20 +41,29 @@ class HirestxtLocator:
       "HIRESTXT_LIB_INCLUDE",
       "HIRESTXT_LIB_LDLIB",
       "HIRESTXT_LIB_VERSION",
+      "HIRESTXT_LIB_NO_VT52",
     ])
 
     self.version = ""
+    self.vt52 = False
+
+    if HIRESTXT_LIB in ("vt52", VT52_SUFFIX):
+      self.vt52 = True
+      HIRESTXT_LIB = ""
 
     if HIRESTXT_LIB:
-      rxm = re.match(VERSION_NAME_RE, HIRESTXT_LIB)
+      rxm = re.fullmatch(fr"{VERSION_NAME_RE}({re.escape(VT52_SUFFIX)})?", HIRESTXT_LIB)
       if rxm:
         self.version = rxm.group(1)
+        self.vt52 = bool(rxm.group(2))
       elif any(sub in HIRESTXT_LIB for sub in ("://", "@")):
         self.gitClone(HIRESTXT_LIB)
       elif os.path.isdir(HIRESTXT_LIB):
         self.findLibrary(HIRESTXT_LIB)
         if not self.MV.HIRESTXT_LIB_DIR:
           error_exit(f"\"{HIRESTXT_LIB}\" does not appear to contain {LIBRARY_FILE}")
+      else:
+        error_exit(f"Unrecognized HIRESTXT_LIB \"{HIRESTXT_LIB}\"")
 
     if not self.version and not self.MV.HIRESTXT_LIB_DIR:
       self.getLatestVersion()
@@ -91,7 +104,13 @@ class HirestxtLocator:
 
   def downloadRelease(self):
     global HIRESTXT_CACHE_DIR
-    versionDir = os.path.join(HIRESTXT_CACHE_DIR, self.version)
+    versionTuple = tuple(int(x) for x in self.version.split("."))
+    variant = ""
+    if not self.vt52 and versionTuple >= NOVT52_MIN_VERSION:
+      variant = "novt52-"
+      self.MV.HIRESTXT_LIB_NO_VT52 = "1"
+
+    versionDir = os.path.join(HIRESTXT_CACHE_DIR, variant + self.version)
 
     if os.path.exists(os.path.join(versionDir, LIBRARY_FILE)):
       self.MV.HIRESTXT_LIB_DIR = versionDir
@@ -99,7 +118,7 @@ class HirestxtLocator:
 
     os.makedirs(HIRESTXT_CACHE_DIR, exist_ok=True)
 
-    tarball_name = f"hirestxt-mod-bin-{self.version}.tar.gz"
+    tarball_name = f"hirestxt-mod-bin-{variant}{self.version}.tar.gz"
     tarball_path = os.path.join(HIRESTXT_CACHE_DIR, tarball_name)
 
     if not os.path.exists(tarball_path):

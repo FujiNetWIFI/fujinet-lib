@@ -38,6 +38,9 @@ ifdef HIRESTXT_LIB_INCLUDE
   CFLAGS += $(call include-dir-flag,$(HIRESTXT_LIB_INCLUDE))
   ASFLAGS += $(call asm-include-dir-flag,$(HIRESTXT_LIB_INCLUDE))
 endif
+ifdef HIRESTXT_LIB_NO_VT52
+  CFLAGS += -DHIRESTEXT_NO_VT52
+endif
 ifdef HIRESTXT_LIB_DIR
   LIBS += $(call library-dir-flag,$(HIRESTXT_LIB_DIR)) $(call library-flag,$(HIRESTXT_LIB_LDLIB))
 endif

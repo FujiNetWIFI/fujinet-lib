@@ -208,7 +208,7 @@ class LibLocator:
         exit(0)
       #error_exit(f"No library found for \"{self.PLATFORM}\"")
       if not self.MV.FUJINET_LIB_FILE:
-        raise ValueError
+        raise ValueError("No library found for", self.PLATFORM)
       return
 
     # No version was specified, so any version is fine
@@ -374,7 +374,7 @@ def error_exit(*args):
   exit(1)
 
 def main():
-  global CACHE_DIR, FUJINET_CACHE_DIR
+  global CACHE_DIR, FUJINET_CACHE_DIR, FUJINET_REPO
 
   args = build_argparser().parse_args()
 
@@ -390,6 +390,10 @@ def main():
   FUJINET_LIB = args.file
   if not FUJINET_LIB:
     FUJINET_LIB = os.getenv("FUJINET_LIB")
+
+  repo = os.getenv("FUJINET_REPO")
+  if repo:
+    FUJINET_REPO = repo
 
   env_cache_dir = os.getenv("CACHE_DIR")
   if env_cache_dir:

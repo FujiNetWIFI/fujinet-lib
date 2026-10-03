@@ -189,7 +189,7 @@ vpath %.pas $(SRC_DIRS_EXPANDED)
 .PHONY: clean debug r2r $(PLATFORM)/r2r disk $(PLATFORM)/disk $(PLATFORM)/release
 
 clean::
-	rm -rf $(OBJ_DIR) $(CACHE_PLATFORM) $(R2R_PD)
+	rm -rf $(OBJ_DIR) $(CACHE_PLATFORM) $(R2R_PD) $(RELEASE_DIR)
 
 debug::
 	echo 'What should debug target do?'
@@ -249,7 +249,9 @@ $(PLATFORM)/library-post::
 RELEASE_INCLUDES ?= $(foreach dir,$(INCLUDE_DIRS),$(wildcard $(dir)/*.h $(dir)/*.inc))
 RELEASE_INCLUDES += $(wildcard Changelog.md)
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0 2>/dev/null || echo dev)
-RELEASE_ZIP = $(RELEASE_DIR)/$(PRODUCT)-$(RELEASE_VERSION)-$(PLATFORM).zip
+PRODUCT_DASH = $(subst .,-,$(PRODUCT))
+VERSION_CLEAN = $(patsubst v%,%,$(RELEASE_VERSION))
+RELEASE_ZIP = $(RELEASE_DIR)/$(PRODUCT_DASH)-$(PLATFORM)-$(VERSION_CLEAN).zip
 
 $(PLATFORM)/release: $(RELEASE_ZIP)
 $(RELEASE_ZIP):: $(LIBRARY)
