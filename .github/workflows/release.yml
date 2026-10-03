@@ -1,25 +1,38 @@
-name: CI
+name: Release
 
 on:
-  pull_request:
-    branches: [ main ]
   push:
     tags:
       - "v*"
   workflow_dispatch: # allows manual run too
 
+permissions:
+  contents: write
+
 jobs:
   build:
-    name: CI
+    name: zipify
     runs-on: ubuntu-latest
     container:
-      image: fozztexx/defoogi:1.4.4
-
-    outputs:
-      files: ${{ steps.list_zips.outputs.files }}
+      image: fozztexx/defoogi:1.4.8
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Verify version matches tag
+        shell: bash
+        run: |
+          # Extract the version string inside the quotes from the FULL macro
+          FILE_VERSION=$(grep 'FNLIB_VERSION_FULL' include/fujinet-version.h | sed -E 's/.*"([^"]+)".*/\1/')
+          TAG_VERSION="${{ github.ref_name }}"
+
+          echo "File Version: $FILE_VERSION"
+          echo "Git Tag:      $TAG_VERSION"
+
+          if [ "$FILE_VERSION" != "$TAG_VERSION" ]; then
+            echo "::error:: Mismatch detected! include/fujinet-version.h is set to '$FILE_VERSION' but the triggered tag is '$TAG_VERSION'."
+            exit 1
+          fi
 
       - name: Set version string
         shell: bash
@@ -34,39 +47,11 @@ jobs:
       - name: Build release files
         run: make release
 
-      - name: List zip files
-        id: list_zips
-        shell: bash
-        run: |
-          echo 'files=["'"$(( cd dist ; echo *.zip ) | sed -e 's/ /","/g')"'"]' >> $GITHUB_OUTPUT
-
-      - name: Upload dist folder for next job
+      - name: Upload release folder for next job
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist/
-
-  upload:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    strategy:
-      matrix:
-        file: ${{ fromJson(needs.build.outputs.files) }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download dist folder
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist
-
-      - name: Upload individual artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.file }}
-          path: dist/${{ matrix.file }}
+          name: release
+          path: release/
 
   tagged-release:
     needs: build
@@ -75,14 +60,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Download the dist folder from the build job
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: dist
-          path: dist
+          name: release
+          path: release
 
-      # Generate random release name
       - name: Generate random release name
         id: random_name
         run: |
@@ -90,24 +73,13 @@ jobs:
           echo "name=$RANDOM_NAME" >> $GITHUB_OUTPUT
           echo "Generated release name: $RANDOM_NAME"
 
-      # Create GitHub Release for the tag
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Create GitHub Release and Upload Assets
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          release_name: ${{ steps.random_name.outputs.name }} (${{ github.ref_name }})
+          name: ${{ steps.random_name.outputs.name }} (${{ github.ref_name }})
           draft: false
           prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Upload each zip as a release asset
-      - name: Upload release assets
-        run: |
-          for zip in dist/*.zip; do
-            echo "Uploading $zip..."
-            gh release upload ${{ github.ref_name }} "$zip"
-          done
+          files: release/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

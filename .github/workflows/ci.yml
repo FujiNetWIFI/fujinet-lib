@@ -27,7 +27,7 @@ jobs:
           - msx
 
     container:
-      image: fozztexx/defoogi:1.4.5
+      image: fozztexx/defoogi:1.4.8
 
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: fozztexx/defoogi:1.4.5
+      image: fozztexx/defoogi:1.4.8
 
     steps:
       - uses: actions/checkout@v4
@@ -67,28 +67,3 @@ jobs:
 
       - name: Compile tests
         run: make -C testing
-
-  compile-tests-current-fujinet-lib:
-    needs: build
-    runs-on: ubuntu-latest
-
-    container:
-      image: fozztexx/defoogi:1.4.7
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Compile tests with FUJINET_LIB unset to use latest fujinet-lib release
-        run: |
-          PLATFORMS_EXCLUDE="lynx model2"
-          PLATFORMS="$(make -C testing --eval='print-platforms: ; @printf "__PLATFORMS__%s\n" "$(PLATFORMS)"' print-platforms \
-            | grep '^__PLATFORMS__' \
-            | sed 's/^__PLATFORMS__//')"
-
-          for exclude in $PLATFORMS_EXCLUDE; do
-            PLATFORMS="$(printf '%s\n' $PLATFORMS | grep -vx "$exclude")"
-          done
-
-          PLATFORMS="$(echo "$PLATFORMS" | tr '\n' ' ' | xargs)"
-
-          make -C testing FUJINET_LIB= PLATFORMS="$PLATFORMS"
