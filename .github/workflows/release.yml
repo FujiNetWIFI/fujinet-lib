@@ -34,6 +34,9 @@ jobs:
             exit 1
           fi
 
+      - name: Verify changelog has a section for this tag
+        run: python3 .github/scripts/changelog-notes.py "${{ github.ref_name }}" > /dev/null
+
       - name: Set version string
         shell: bash
         run: |
@@ -66,6 +69,16 @@ jobs:
           name: release
           path: release
 
+      - name: Write release notes from changelog
+        run: |
+          {
+            echo "Release ${{ github.ref_name }}"
+            echo
+            echo "---"
+            echo
+            python3 .github/scripts/changelog-notes.py "${{ github.ref_name }}"
+          } > release-notes.md
+
       - name: Generate random release name
         id: random_name
         run: |
@@ -80,6 +93,7 @@ jobs:
           name: ${{ steps.random_name.outputs.name }} (${{ github.ref_name }})
           draft: false
           prerelease: false
+          body_path: release-notes.md
           files: release/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
