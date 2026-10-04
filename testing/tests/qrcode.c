@@ -285,12 +285,11 @@ void test_fuji_qrcode(void)
        qr_check_mode(0, QR_ECC_LOW, QR_OUTPUT_MODE_PETSCII, input, in_len,
                      QR_PETSCII_OUT, sizeof(QR_PETSCII_OUT)));
 
-  // Regression check for the qrcode_minVersion() auto+non-LOW-ECC bug; matches the LOW baseline.
-  TEST("Auto version with non-LOW ECC succeeds",
+  // Auto version keeps the requested ECC and grows the symbol (fujinet-firmware #1778).
+  TEST("Auto version with HIGH ECC matches the HIGH reference",
        qr_check_mode(0, QR_ECC_HIGH, QR_OUTPUT_MODE_BINARY, input, in_len,
-                     QR_BINARY_OUT, sizeof(QR_BINARY_OUT)));
+                     QR_BINARY_HIGH_OUT, sizeof(QR_BINARY_HIGH_OUT)));
 
-  // Explicit versions: auto (0) would settle on LOW for this input regardless of requested ECC.
   TEST("ECC MEDIUM output matches expected reference",
        qr_check_mode(2, QR_ECC_MEDIUM, QR_OUTPUT_MODE_BINARY, input, in_len,
                      QR_BINARY_MEDIUM_OUT, sizeof(QR_BINARY_MEDIUM_OUT)));
