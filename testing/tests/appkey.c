@@ -110,16 +110,13 @@ void test_fuji_appkey(void)
   TEST("fuji_read_appkey (empty, after write back) returns no garbage",
        count <= MAX_APPKEY_LEN && appkey_all_zero(g.appkey.read, count));
 
-  /* --- A key that was never created --- */
+  /* --- A key that was never created reads back empty, like a cleared one --- */
   memset(g.appkey.read, APPKEY_SENTINEL, sizeof(g.appkey.read));
   count = APPKEY_SENTINEL;
   ok = fuji_read_appkey(APPKEY_KEY_MISSING, &count, g.appkey.read);
   TEST("fuji_read_appkey (never written) succeeds", ok);
   printf("  Never written appkey read returned %u bytes\n", (unsigned) count);
-  TEST("fuji_read_appkey (never written) length within bounds",
-       count <= MAX_APPKEY_LEN);
-  TEST("fuji_read_appkey (never written) returns no garbage",
-       count <= MAX_APPKEY_LEN && appkey_all_zero(g.appkey.read, count));
+  TEST("fuji_read_appkey (never written) returns no data", count == 0);
 #endif
 #endif
 
