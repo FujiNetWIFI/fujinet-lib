@@ -69,7 +69,7 @@
 
 /* A TNFS server the lock test can write to, running a tnfsd that answers
  * CHMOD (FujiNetWIFI/tnfsd#34). The test is skipped while this is unset. */
-#define TNFS_RW_ROOT "N1:TNFS://10.4.0.1/"
+#define TNFS_RW_ROOT "N1:TNFS://ayce.fozztexx.com/test/"
 
 /* Opens that fail for a known reason, to check what STATUS reports after. */
 #define NET_MISSING_FILE   "N1:TNFS://" TNFS_COPY_SOURCE_HOST "/fnlibtest-never-created.txt"
