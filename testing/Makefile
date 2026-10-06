@@ -77,6 +77,22 @@ devlist_CFLAGS = -DDEVLIST_TESTS=1
 
 include ../makefiles/toplevel-rules.mk
 
+ifeq ($(PLATFORM),msdos)
+MSDOS_MENU_REPO ?= https://github.com/RichStephens/msdos-menu.git
+MSDOS_MENU_DIR = $(CACHE_DIR)/msdos/msdos-menu-repo
+MSDOS_MENU_EXE = $(MSDOS_MENU_DIR)/testmenu.exe
+MSDOS_MENU_TITLE ?= FujiNet Test Programs
+
+$(MSDOS_MENU_DIR):
+	git clone --depth 1 $(MSDOS_MENU_REPO) $@
+
+$(MSDOS_MENU_EXE): | $(MSDOS_MENU_DIR)
+	$(MAKE) -C $(MSDOS_MENU_DIR) MENU_PROGRAM=testmenu \
+		MENU_TITLE="$(MSDOS_MENU_TITLE)" testmenu.exe
+
+DISK_EXTRA_FILES_MSDOS = $(MSDOS_MENU_EXE)
+endif
+
 # The test binaries do not fit the default single density ATR or a 140kb
 # ProDOS volume.
 DISK_TOOL_FLAGS_ATARI = -D -m -b MyPicoDos406

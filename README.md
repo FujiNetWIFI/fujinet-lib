@@ -93,5 +93,5 @@ the built library to pickup.
 
 ## Testing
 
-Testing is WIP.
-See [Testing README](testing/unit/README.md)
+Testing applications are available for each platform. Run `make -C testing` to
+build them all, or `make -C testing <platform>` to build one platform.
