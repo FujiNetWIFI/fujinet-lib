@@ -13,7 +13,7 @@
 
 // In general, bools return the "success" status, so true is good, false is bad.
 
-#ifdef __CBM__
+#ifdef FUJI_PLATFORM_C64
 
 // For DATA transfers, we want to undo some of the charmap settings in CC65.
 // So map the characters in the range 5b-60, 7b-7f back to themselves, as we want to send them as-is to FujiNet.
@@ -86,13 +86,7 @@ typedef struct
     char sBssid[18];
 } AdapterConfigExtended;
 
-#if 0
-typedef struct {
-  uint8_t url[32];
-} HostSlot;
-#else
 typedef uint8_t HostSlot[32];
-#endif
 
 typedef struct
 {
@@ -103,81 +97,111 @@ typedef struct
 
 // Disks have different structures / parameters
 
-#ifdef __ATARI__
 typedef struct
 {
-    uint16_t numSectors;
-    uint16_t sectorSize;
-    uint8_t hostSlot;
-    uint8_t deviceSlot;
-    char filename[256];
-} NewDisk;
-#endif
+    uint8_t year, month, day;
+    uint8_t hour, minute, second;
+} FujiDirEntryTimestamp;
 
-#ifdef __MSDOS__
+#define FUJI_DIR_ENTRY_IS_TRUNC(x) ((x)->is_trunc)
+#define FUJI_DIR_ENTRY_IS_DIR(x) ((x)->is_dir)
+#define FUJI_DIR_FLAG_ADDITIONAL_DATA 0x80
+#define FUJI_DIR_EOF 0x7F
+
+#if defined(FUJI_PLATFORM_ATARI)   \
+  || defined(FUJI_PLATFORM_MSDOS)  \
+  || defined(FUJI_PLATFORM_MSX)    \
+  || defined(FUJI_PLATFORM_MODEL2) \
+  || defined(FUJI_PLATFORM_C64)
 typedef struct
 {
-    uint16_t numSectors;
-    uint16_t sectorSize;
-    uint8_t hostSlot;
-    uint8_t deviceSlot;
-    char filename[256];
+  uint16_t numSectors;
+  uint16_t sectorSize;
+  uint8_t hostSlot;
+  uint8_t deviceSlot;
+  char filename[MAX_FILENAME_LEN];
 } NewDisk;
-#endif
 
-#ifdef __APPLE2__
+#elif defined(FUJI_PLATFORM_APPLE2)
 typedef struct
 {
-    uint8_t hostSlot;
-    uint8_t deviceSlot;
-    uint8_t createType;
-    uint32_t numBlocks;
-    char filename[256];
+  uint8_t hostSlot;
+  uint8_t deviceSlot;
+  uint8_t createType;
+  uint32_t numBlocks;
+  char filename[MAX_FILENAME_LEN];
 } NewDisk;
-#endif
 
-#ifdef _CMOC_VERSION_
+#elif defined(FUJI_PLATFORM_COCO) \
+  || defined(FUJI_PLATFORM_PMD85)
 typedef struct
 {
-    uint8_t numDisks;
-    uint8_t hostSlot;
-    uint8_t deviceSlot;
-    char filename[256];
+  uint8_t numDisks;
+  uint8_t hostSlot;
+  uint8_t deviceSlot;
+  char filename[MAX_FILENAME_LEN];
 } NewDisk;
-#endif /* _CMOC_VERSION_ */
 
-#ifdef __CBM__
-// TODO: what is this for commodore? IEC firmware does not support new disk yet
+#elif defined(FUJI_PLATFORM_LYNX)
 typedef struct
 {
-    uint16_t numSectors;
-    uint16_t sectorSize;
-    uint8_t hostSlot;
-    uint8_t deviceSlot;
-    char filename[256];
-
+  uint16_t numBlocks;
+  uint8_t hostSlot;
+  uint8_t deviceSlot;
+  char filename[MAX_FILENAME_LEN];
 } NewDisk;
-#endif
 
-#ifdef __PMD85__
+#endif // End of NewDisk defs
+
+#if defined(FUJI_PLATFORM_ATARI)   \
+  || defined(FUJI_PLATFORM_APPLE2) \
+  || defined(FUJI_PLATFORM_ADAM)
 typedef struct
 {
-    uint8_t numDisks;
-    uint8_t hostSlot;
-    uint8_t deviceSlot;
-    char filename[256];
-} NewDisk;
-#endif
+  FujiDirEntryTimestamp modified;
+  uint32_t size;
+  uint8_t is_dir;
+  uint8_t is_trunc;
+  uint8_t mediatype;
+  char filename[MAX_FILENAME_LEN];
+} FujiDirEntry;
 
-#ifdef __LYNX__
+#elif defined(FUJI_PLATFORM_MSDOS) \
+  || defined(FUJI_PLATFORM_MSX)    \
+  || defined(FUJI_PLATFORM_MODEL2)
 typedef struct
 {
-    uint16_t numBlocks;
-    uint8_t hostSlot;
-    uint8_t deviceSlot;
-    char filename[256];
-} NewDisk;
-#endif
+  FujiDirEntryTimestamp modified;
+  uint32_t size;
+  uint8_t flags;
+  uint8_t mediatype;
+  char filename[MAX_FILENAME_LEN];
+} FujiDirEntry;
+
+#elif defined(FUJI_PLATFORM_COCO) \
+  || defined(FUJI_PLATFORM_PMD85) \
+  || defined(FUJI_PLATFORM_LYNX)
+typedef struct
+{
+  FujiDirEntryTimestamp modified;
+  uint32_t size;
+  uint8_t is_dir;
+  uint8_t is_trunc;
+  uint8_t mediatype;
+  char filename[MAX_FILENAME_LEN];
+} FujiDirEntry;
+
+#elif defined(FUJI_PLATFORM_C64)
+typedef struct
+{
+  FujiDirEntryTimestamp modified;
+  uint16_t size;
+  uint8_t flags;
+  uint8_t mediatype;
+  char filename[MAX_FILENAME_LEN];
+} FujiDirEntry;
+
+#endif // End of FujiDirEntry defs
 
 // WIP, only 64 fully supported at the moment.
 enum AppKeySize
@@ -186,7 +210,7 @@ enum AppKeySize
     // SIZE_256
 };
 
-#ifndef __CBM__
+#ifndef FUJI_PLATFORM_C64
 typedef struct
 {
     unsigned char value[4];
@@ -222,12 +246,16 @@ extern bool fuji_close_directory(void);
  * @brief Copies a file from given src to dst, with supplied path in copy_spec
  * @return Success status, true if all OK.
  */
-#if defined(__ADAM__) || defined(__COLECOADAM__)
+#if defined(FUJI_PLATFORM_ADAM)
 extern bool fuji_copy_file_adam(uint8_t src_slot, uint8_t dest_slot, const char *copy_spec);
 #define fuji_copy_file(src_slot, dest_slot, copy_spec) fuji_copy_file_adam(src_slot, dest_slot, copy_spec)
-#else /* ! (__ADAM__ || __COLECOADAM__) */
+#elif defined(FUJI_PLATFORM_COCO)
+// Works perfectly on CoCo, never times out.
 #define fuji_copy_file(src_slot, dest_slot, copy_spec) FUJICALL_A1_A2_D(FUJICMD_COPY_FILE, src_slot, dest_slot, copy_spec, MAX_FILENAME_LEN)
-#endif /* __ADAM__ || __COLECOADAM__ */
+#else /* ! (ADAM || COCO) */
+extern bool fuji_copy_file_common(uint8_t src_slot, uint8_t dest_slot, const char *copy_spec);
+#define fuji_copy_file(src_slot, dest_slot, copy_spec) fuji_copy_file_common(src_slot, dest_slot, copy_spec)
+#endif /* FUJI_PLATFORM_ADAM */
 
 /**
  * @brief Creates a new disk from the given structure.
@@ -392,11 +420,11 @@ extern bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, void *buffer);
  * @brief Scans network for SSIDs and sets count accordingly.
  * @return success status of request.
  */
-#ifdef __ATARI__
+#ifdef FUJI_PLATFORM_ATARI
 #define fuji_scan_for_networks(count) FUJICALL_RV(FUJICMD_SCAN_NETWORKS, count, 4)
-#else /* ! __ATARI __ */
+#else /* ! FUJI_PLATFORM_ATARI */
 #define fuji_scan_for_networks(count) FUJICALL_RV(FUJICMD_SCAN_NETWORKS, count, 1)
-#endif /* __ATARI__ */
+#endif /* FUJI_PLATFORM_ATARI */
 
 /**
  * @brief Scans network for SSIDs and sets count accordingly.
@@ -414,14 +442,14 @@ extern bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, void *buffer);
  * @brief Sends the device/host/mode information for devices to FN
  * @return success status of request.
  */
-#ifdef __ATARI__
+#ifdef FUJI_PLATFORM_ATARI
 #define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_A2_D(FUJICMD_SET_DEVICE_FULLPATH, ds, (hs << 4) | (mode), buffer, MAX_FILENAME_LEN)
-#elif defined(__ADAM__) || defined(__COLECOADAM__)
+#elif defined(FUJI_PLATFORM_ADAM)
 // mode and hs are ignored on Adam
 #define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_D(FUJICMD_SET_DEVICE_FULLPATH, ds, buffer, strlen(buffer))
-#else /* !__ATARI__ */
+#else /* !FUJI_PLATFORM_ATARI */
 #define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_A2_A3_D(FUJICMD_SET_DEVICE_FULLPATH, ds, hs, mode, buffer, MAX_FILENAME_LEN)
-#endif /* __ATARI__ */
+#endif /* FUJI_PLATFORM_ATARI */
 
 /**
  * @brief Sets current directory position
@@ -429,7 +457,7 @@ extern bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, void *buffer);
  */
 extern bool fuji_set_directory_position(uint16_t pos);
 
-#ifdef __ATARI__
+#ifdef FUJI_PLATFORM_ATARI
 /**
  * @brief Fetch the current HSIO index value.
  * @return success status of request
@@ -467,13 +495,13 @@ bool fuji_set_sio_external_clock(uint16_t rate);
  * @return success status of the status request
  * NOTE: The actual status VALUE is in 'status', the return is just whether the command to fetch the status succeeded, it could succeed, but the status value holds an error.
  */
-#ifdef __CBM__
+#ifdef FUJI_PLATFORM_C64
 #define fuji_status(status) FUJICALL_RV(FUJICMD_STATUS, status, sizeof(FNStatus))
 #else
 #define fuji_status(status) FUJICALL_A1_RV(FUJICMD_STATUS, 0, status, sizeof(FNStatus))
-#endif /* __CBM__ */
+#endif /* FUJI_PLATFORM_C64 */
 
-#ifdef __CBM__
+#ifdef FUJI_PLATFORM_C64
 // DEBUGGING
 bool fuji_set_status(void);
 #endif
@@ -497,13 +525,13 @@ bool fuji_set_status(void);
  * @param  data a pointer to the memory to write the data back to. WARNING: The data buffer needs to be at least 2 more bytes larger than the keysize.
  * @return success status of the call. If either the initial OPEN or subsequent READ fail, will return false.
  */
-#ifdef __CBM__
+#ifdef FUJI_PLATFORM_C64
 extern bool fuji_read_appkey_c64(uint8_t key_id, uint16_t *count, uint8_t *data);
 #define fuji_read_appkey(k, c, d) fuji_read_appkey_c64(k, c, d)
 #else
 extern bool fuji_read_appkey_common(uint8_t key_id, uint16_t *count, uint8_t *data);
 #define fuji_read_appkey(k, c, d) fuji_read_appkey_common(k, c, d)
-#endif /* __CBM__ */
+#endif /* FUJI_PLATFORM_C64 */
 
 /**
  * @brief  Writes to an appkey using the provided details previously setup with fuji_set_appkey_details.
@@ -617,5 +645,7 @@ bool fuji_hash_data(hash_alg_t hash_type, uint8_t *input, uint16_t length, bool 
 bool fuji_hash_calculate(hash_alg_t hash_type, bool as_hex, bool discard_data, uint8_t *output);
 
 #define fuji_get_time(buffer) FUJICALL_RV(FUJICMD_GET_TIME, buffer, 7)
+
+extern FujiDirEntry *fuji_file_stat(uint8_t host, const char *path);
 
 #endif /* FUJINET_FUJI_H */
