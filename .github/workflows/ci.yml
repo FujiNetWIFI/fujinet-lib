@@ -25,6 +25,7 @@ jobs:
           - model2
           - msdos
           - msx
+          - pmd85
 
     container:
       image: fozztexx/defoogi:1.4.8

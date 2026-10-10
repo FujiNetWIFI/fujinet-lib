@@ -46,7 +46,7 @@ fujinet-lib-experimental is merged into fujinet-lib.
 
 ### Not yet ported
 
-- [vic20] [plus4] [pmd85] have no 5.0 build yet; use 4.11.2 for these
+- [vic20] [plus4] have no 5.0 build yet; use 4.11.2 for these
 - [apple2gs] Not ported yet; its build tools need a paid license
 - [dragon] Dragon support was added to the 4.x code after 4.11.2 but has not been ported yet (wdathing)
 
