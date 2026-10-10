@@ -2,6 +2,55 @@
 
 ## [Unreleased] (Place WIP changes in this section until a release is done)
 
+## [5.0.0] 2026-10-09
+
+fujinet-lib-experimental is merged into fujinet-lib. This is a new architecture and is not
+source compatible with 4.x.
+
+### Architecture
+
+- [all] Core functions are written once in shared code on top of a small per-platform bus layer
+  (`fuji_bus_call()`), instead of being reimplemented for each platform (Chris Osborn)
+- [all] Build system switched to MekkoGX makefiles; `make release` builds per-platform release zips (Chris Osborn)
+- [all] Added `fujinet-version.h` with `FNLIB_VERSION_*` macros (Chris Osborn)
+- [all] Added an integration test suite under `testing/`, built as one test disk per platform with a
+  menu on Adam, CoCo and MS-DOS (Chris Osborn, Rich Stephens, delysio, Thom Cherryhomes)
+- [all] `fn_device_error` removed; `fuji_bus_read/write` renamed to `network_bus_read/write` (Chris Osborn)
+
+### New platforms
+
+- [msx] MSX, using UNAPI (Chris Osborn)
+- [model2] TRS-80 Model II over FujiNet RS232 (Chris Osborn)
+- [lynx] Atari Lynx (Shawn, Chris Osborn)
+- [msdos] Reworked to use the FujiNet RS232 INT F5h interface (FEP-004) (Chris Osborn)
+
+### New features
+
+- [all] QR code functions (Noah Burney, Rich Stephens)
+- [all] `network_set_eol()` and the NETWORK_SET_EOL command (Chris Osborn)
+- [all] `network_proceed()` to check for data or errors without a status command (Chris Osborn)
+- [all] Network filesystem functions and more `network_` functions (Rich Stephens, Chris Osborn)
+- [all] `PARSER_XML` parser mode (Rich Stephens)
+- [all] Clock time format with hundredths of a second (Rich Stephens)
+- [all] File copy waits for the copy to finish (Chris Osborn, Rich Stephens)
+- [adam] App key and clock support (Chris Osborn, Rich Stephens)
+
+### Fixes
+
+- [apple2] `sp_status` sometimes failing (robjustice)
+- [apple2] Clock hundredths (Rich Stephens)
+- [atari] `fuji_scan_for_networks()` reply length (Chris Osborn)
+- [coco] App key write and `fuji_set_directory_position()` (Rich Stephens)
+- [adam] A NAKed app key read is treated as an empty key, and network reads use an explicit length (Rich Stephens)
+- [msdos] Network read/write return 0 on failure (Chris Osborn)
+- [all] Endian handling, `fuji_set_ssid()` and `fuji_create_new()` (Chris Osborn, Rich Stephens)
+
+### Not yet ported
+
+- [vic20] [plus4] [pmd85] have no 5.0 build yet; use 4.11.2 for these
+- [apple2gs] Not ported yet; its build tools need a paid license
+- [dragon] Dragon support was added to the 4.x code after 4.11.2 but has not been ported yet (wdathing)
+
 ## [4.11.2] 2026-06-11
 
 - [c64] Fix compilation of broken host_prefix code by using malloc
