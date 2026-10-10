@@ -14,7 +14,7 @@ fujinet-lib-experimental is merged into fujinet-lib.
 - [all] Added `fujinet-version.h` with `FNLIB_VERSION_*` macros (Chris Osborn)
 - [all] Added an integration test suite under `testing/`, built as one test disk per platform with a
   menu on Adam, CoCo and MS-DOS (Chris Osborn, Rich Stephens, delysio, Thom Cherryhomes)
-- [all] `fn_device_error` removed; `fuji_bus_read/write` renamed to `network_bus_read/write` (Chris Osborn)
+- [all] `fn_device_error` removed (Chris Osborn)
 
 ### New platforms
 
