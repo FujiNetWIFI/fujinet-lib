@@ -20,7 +20,7 @@ fujinet-lib-experimental is merged into fujinet-lib.
 
 - [msx] MSX, using UNAPI (Chris Osborn)
 - [model2] TRS-80 Model II over FujiNet RS232 (Chris Osborn)
-- [lynx] Atari Lynx (Shawn, Chris Osborn)
+- [lynx] Atari Lynx (Shawn Jefferson, Chris Osborn)
 - [msdos] Reworked to use the FujiNet RS232 INT F5h interface (FEP-004) (Chris Osborn)
 
 ### New features
