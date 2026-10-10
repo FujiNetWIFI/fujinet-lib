@@ -12,6 +12,10 @@
 #include "c64_find_load.h"
 #endif /* BUILD_C64 */
 
+#ifdef BUILD_PMD85
+#include <conio.h>
+#endif /* BUILD_PMD85 */
+
 void init_video()
 {
 #if defined(BUILD_COCO)
@@ -30,6 +34,8 @@ void init_video()
   videomode(VIDEOMODE_80COL);
 #elif defined(BUILD_C64)
   c64_save_load_command();
+#elif defined(BUILD_PMD85)
+  clrscr();
 #endif // _CMOC_VERSION_
 
   return;

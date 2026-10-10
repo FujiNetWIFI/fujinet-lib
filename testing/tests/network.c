@@ -15,7 +15,8 @@
 // OPEN_TRANS_ translate mode translates from the platform's BASIC line ending
 // to the requested line ending, not from the C/printf style.
 #if defined(__APPLE2__) || defined(_CMOC_VERSION_) \
-  || defined(__ADAM__) || defined(__COLECOADAM__)
+  || defined(__ADAM__) || defined(__COLECOADAM__) \
+  || defined(__PMD85__)
 #define BASIC_LINE_ENDING "\r"
 #elif defined(__WATCOMC__)
 #define BASIC_LINE_ENDING "\r\n"

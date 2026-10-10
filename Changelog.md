@@ -2,6 +2,8 @@
 
 ## [Unreleased] (Place WIP changes in this section until a release is done)
 
+- [pmd85] Port pmd85 to the new version of library (Jan Krupa)
+
 ## [4.11.2] 2026-06-11
 
 - [c64] Fix compilation of broken host_prefix code by using malloc

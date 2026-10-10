@@ -3,7 +3,8 @@
 
 #include <fujinet-platform.h>
 
-#if defined(FUJI_PLATFORM_ATARI) || defined(FUJI_PLATFORM_COCO)
+#if defined(FUJI_PLATFORM_ATARI) || defined(FUJI_PLATFORM_COCO) \
+  || defined(FUJI_PLATFORM_PMD85)
 #define FUJI_VARIABLE_LEN_PACKETS 0
 #else
 #ifdef _CMOC_VERSION_

@@ -22,6 +22,7 @@ PLATFORMS += lynx
 PLATFORMS += model2
 PLATFORMS += msdos
 #PLATFORMS += msxrom
+PLATFORMS += pmd85
 
 # You can run 'make <platform>' to build for a specific platform,
 # or 'make <platform>/<target>' for a platform-specific target.
@@ -121,6 +122,7 @@ LIBS_EXTRA_COCO = $(call library-flag,$(TESTS_LIB).$(PLATFORM))
 LIBS_EXTRA_LYNX = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_MSDOS = $(call library-flag,$(TESTS_LIB_DIR)/lib$(TESTS_LIB).$(PLATFORM).a)
 LIBS_EXTRA_MODEL2 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
+LIBS_EXTRA_PMD85 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 
 # If you need to add extra platform-specific steps, do it below:
 #   coco/r2r:: coco/custom-step1

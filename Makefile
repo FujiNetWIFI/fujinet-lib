@@ -8,6 +8,7 @@ PLATFORMS += lynx
 PLATFORMS += model2
 PLATFORMS += msdos
 PLATFORMS += msx
+PLATFORMS += pmd85
 
 # You can run 'make <platform>' to build for a specific platform,
 # or 'make <platform>/<target>' for a platform-specific target.
