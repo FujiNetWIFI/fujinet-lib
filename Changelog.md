@@ -4,8 +4,7 @@
 
 ## [5.0.0] 2026-10-09
 
-fujinet-lib-experimental is merged into fujinet-lib. This is a new architecture and is not
-source compatible with 4.x.
+fujinet-lib-experimental is merged into fujinet-lib.
 
 ### Architecture
 
