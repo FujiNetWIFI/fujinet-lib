@@ -178,3 +178,28 @@ adam/r2r-post::
 	  $(MAKE) -f $(PLATFORM_MK) $(ADAM_MENU_DDP) && cp $(ADAM_MENU_DDP) $(R2R_PD)/, \
 	  @echo "Skipping adam-menu: $(FUJINET_LIB_INCLUDE) has no fujinet-const.h")
 endif
+
+# On PMD 85 the menu can be prepared using MRM Manager utility, which is its own repo.
+ifeq ($(PLATFORM),pmd85)
+PMD85_MENU_REPO ?= https://github.com/a8jan/mrmmngr
+PMD85_MENU_DIR = $(CACHE_DIR)/pmd85/mrmmngr
+PMD85_MRMMNGR  = $(PMD85_MENU_DIR)/mrmmngr
+PMD85_MENU_MRM = $(PRODUCTS_DISK_NAME).mrm
+
+$(PMD85_MENU_DIR):
+	git clone --depth 1 $(PMD85_MENU_REPO) $@
+
+$(PMD85_MRMMNGR): | $(PMD85_MENU_DIR)
+	$(MAKE) -C $(PMD85_MENU_DIR)
+
+# Expands to one recipe line (note the trailing blank line) adding file $1 to the MRM image
+define pmd85-mrm-add
+$(PMD85_MRMMNGR) $(R2R_PD)/$(PMD85_MENU_MRM) -fa $(R2R_PD)/$(1).bin -fn '$(1).?' -al
+
+endef
+
+pmd85/r2r-post:: $(PMD85_MRMMNGR)
+	$(PMD85_MRMMNGR) $(R2R_PD)/$(PMD85_MENU_MRM) -ic -is 256
+	$(foreach f,$(filter-out %.lib,$(PRODUCTS)),$(call pmd85-mrm-add,$(f)))
+	$(PMD85_MRMMNGR) $(R2R_PD)/$(PMD85_MENU_MRM) -c
+endif
