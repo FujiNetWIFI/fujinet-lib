@@ -4,6 +4,8 @@ PLATFORMS += apple2
 PLATFORMS += atari
 PLATFORMS += c64
 PLATFORMS += coco
+PLATFORMS += h89-cpm
+PLATFORMS += h89-hdos
 PLATFORMS += lynx
 PLATFORMS += model2
 PLATFORMS += msdos
@@ -21,6 +23,12 @@ PLATFORMS += pmd85
 SRC_DIRS = common bus/%PLATFORM% bus/%PLATFORM%/unapi
 INCLUDE_DIRS = include
 CFLAGS = -DBUILD_$(PLATFORM_UC)
+
+# Define extra dirs ("combos") that expand with a platform.
+# Format: platform+=combo1,combo2
+PLATFORM_COMBOS = \
+  h89-cpm+=h89 \
+  h89-hdos+=h89
 
 include makefiles/toplevel-rules.mk
 
