@@ -21,6 +21,8 @@ jobs:
           - atari
           - c64
           - coco
+          - h89-cpm
+          - h89-hdos
           - lynx
           - model2
           - msdos

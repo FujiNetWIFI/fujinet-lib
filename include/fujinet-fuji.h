@@ -112,6 +112,7 @@ typedef struct
   || defined(FUJI_PLATFORM_MSDOS)  \
   || defined(FUJI_PLATFORM_MSX)    \
   || defined(FUJI_PLATFORM_MODEL2) \
+  || defined(FUJI_PLATFORM_H89)    \
   || defined(FUJI_PLATFORM_C64)
 typedef struct
 {
@@ -168,7 +169,8 @@ typedef struct
 
 #elif defined(FUJI_PLATFORM_MSDOS) \
   || defined(FUJI_PLATFORM_MSX)    \
-  || defined(FUJI_PLATFORM_MODEL2)
+  || defined(FUJI_PLATFORM_MODEL2) \
+  || defined(FUJI_PLATFORM_H89)
 typedef struct
 {
   FujiDirEntryTimestamp modified;

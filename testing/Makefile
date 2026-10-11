@@ -18,6 +18,8 @@ PLATFORMS += apple2
 PLATFORMS += atari
 PLATFORMS += c64
 PLATFORMS += coco
+PLATFORMS += h89-cpm
+PLATFORMS += h89-hdos
 PLATFORMS += lynx
 PLATFORMS += model2
 PLATFORMS += msdos
@@ -47,7 +49,9 @@ PLATFORM_COMBOS = \
   atarixl+=atari \
   msxrom+=msx \
   msxdos+=msx \
-  adam_cpm+=adam
+  adam_cpm+=adam \
+  h89-cpm+=h89 \
+  h89-hdos+=h89
 
 fnlib-test.lib_SRC_DIRS = tests tests/%PLATFORM%
 
@@ -123,6 +127,8 @@ LIBS_EXTRA_LYNX = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_MSDOS = $(call library-flag,$(TESTS_LIB_DIR)/lib$(TESTS_LIB).$(PLATFORM).a)
 LIBS_EXTRA_MODEL2 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_PMD85 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
+LIBS_EXTRA_H89-CPM = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
+LIBS_EXTRA_H89-HDOS = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 
 # If you need to add extra platform-specific steps, do it below:
 #   coco/r2r:: coco/custom-step1
