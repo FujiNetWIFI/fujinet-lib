@@ -90,15 +90,16 @@ static void port_set_direction(unsigned char dir)
 
 void port_init(void)
 {
-  z80_outp(PCTRL,I8255_MODE_ACTIVE | I8255_G1_MODE_2);
-  z80_outp(PORTC,DATA_EN | ESP32_EN);
-  z80_outp(PORTC,DATA_EN);
-  z80_outp(PORTC,DATA_EN | ESP32_EN);
-  msleep(200);
+  // EN already high means an earlier program set up the 8255 and the ESP32 is
+  // running; a mode set clears port C and would reboot it.
+  if (!(z80_inp(PORTC) & ESP32_EN)) {
+    z80_outp(PCTRL,I8255_MODE_ACTIVE | I8255_G1_MODE_2);
+    z80_outp(PORTC,DATA_EN | ESP32_EN);
+    z80_outp(PORTC,DATA_EN);
+    z80_outp(PORTC,DATA_EN | ESP32_EN);
+    msleep(200);
+  }
   z80_inp(PORTA); // Flush input
-
-  z80_outp(PCTRL,0x00); // SET DIR
-  z80_outp(PCTRL,OE_DISABLE); // SET OE
 
   port_set_direction(ESP32_TO_H89);
 
