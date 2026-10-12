@@ -25,6 +25,7 @@
 - [testing] An HTTP POST of 1200 bytes must reach the server whole
 - [adam][lynx][c64] network_write() splits a write that does not fit one bus packet instead of overrunning the packet
 - [testing] Pin the CoCo, Adam and MS-DOS test menus to 1.0.0, since the latest-release lookup hits the GitHub API rate limit in CI
+- [s100] Add the S-100 target (s100-cpm), 8080 code over the FujiNet S-100 card's FujiBus pipe
 
 ## [5.0.0] 2026-10-09
 
