@@ -12,6 +12,8 @@
 - [apple2][adam][lynx][c64][pmd85] Setting the WiFi network with fuji_set_ssid() works; it used to send a garbled network name and password, leaving the FujiNet unable to connect
 - [coco][msx] fuji_enable_user_rom() boots the FujiNet cartridge's user ROM
 - [h89] Port B is an input (mode word C2H), and every program sets up the 8255
+- [testing] Pin the CoCo, Adam and MS-DOS test menus to 1.0.0, since the latest-release lookup hits the GitHub API rate limit in CI
+- [atari5200] Add the Atari 5200 target for the FujiNet 5200 cartridge: the cart mailbox bus, its crt0, the 32K cart linker config and romstamp, and the RS232 NewDisk / FujiDirEntry layouts
 
 ## [5.0.0] 2026-10-09
 
