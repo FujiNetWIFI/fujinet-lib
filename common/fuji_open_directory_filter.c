@@ -9,15 +9,14 @@ static char buffer[256];
 
 bool fuji_open_directory_filter(uint8_t hostSlot, const char *path, const char *filter)
 {
-  const char *ptr = path;
   size_t len;
 
 
-  if (filter[0]) {
-    strcpy(buffer, ptr);
-    len = strlen(buffer);
+  strcpy(buffer, path);
+  len = strlen(buffer);
+  /* A second NUL is an empty filter; anything else after the path is sent as one. */
+  buffer[len + 1] = '\0';
+  if (filter && filter[0])
     strcpy(&buffer[len + 1], filter);
-    ptr = buffer;
-  }
-  return fuji_open_directory(hostSlot, ptr);
+  return fuji_open_directory(hostSlot, buffer);
 }

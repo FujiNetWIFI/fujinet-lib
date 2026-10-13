@@ -381,7 +381,9 @@ bool fuji_get_wifi_enabled(void);
 
 /**
  * @brief Open the given directory on the given host slot.
- * The path_filter is a buffer (not a string) of 256 bytes, with a separator of the \0 char between the path and filter parts.
+ * path_filter is a 256-byte buffer, not a string: the path, a NUL, then the filter.
+ * Whatever follows the path's NUL is sent as the filter, so put a second NUL there
+ * when none is intended.
  * @return true if successful, false otherwise
  */
 #define fuji_open_directory(hs, path_filter) FUJICALL_A1_D(FUJICMD_OPEN_DIRECTORY, hs, path_filter, MAX_FILENAME_LEN)
