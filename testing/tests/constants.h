@@ -121,17 +121,10 @@
 #define CAL_ICAL_URL     CAL_ICAL_BASE "/MONTH/2026-09"
 #define CAL_EVENT_SUMMARY "FujiNet Test Event"
 
-/* PROPFIND, a WebDAV directory listing over N: with nothing mounted.
- * fujinet-network.h names the other HTTP open modes but not this one. */
-/* Exact filenames, no size column and no 8.3 crunching. Passed as the
- * translation byte, which selects the listing format. */
-#ifndef DIR_FORMAT_RAW
-#define DIR_FORMAT_RAW (0x83)
-#endif
-
-#ifndef OPEN_MODE_HTTP_PROPFIND
-#define OPEN_MODE_HTTP_PROPFIND (0x06)
-#endif
+/* Directory listing formats, passed as the translation byte of a directory
+ * open. RAW is exact filenames, no size column and no 8.3 crunching. */
+#define DIR_FORMAT_LONG (0x80)
+#define DIR_FORMAT_RAW  (0x83)
 
 /* Constants that should be defined by fujinet-lib */
 #define MAX_HOSTS 8

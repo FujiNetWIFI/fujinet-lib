@@ -83,15 +83,14 @@ static int16_t fs_listing_len;
 
 /* Read a directory into g.fs.listing, printing each entry. Returns the
  * number of entries seen, or -1 if the directory would not open. */
-static int16_t fs_list(const char *devicespec)
+static int16_t fs_list(const char *devicespec, uint8_t mode, uint8_t format)
 {
   int16_t r;
   int16_t count = 0;
   uint16_t i;
   uint8_t err;
 
-  err = fs_open_result(devicespec,
-                       network_open(devicespec, OPEN_MODE_HTTP_PROPFIND, DIR_FORMAT_RAW));
+  err = fs_open_result(devicespec, network_open(devicespec, mode, format));
   if (err != FN_ERR_OK)
     return -1;
 
@@ -205,7 +204,7 @@ void test_fs_make_test_dir(void)
   /* A WebDAV directory open only succeeds on a collection that is really
    * there, so this is what proves the mkdir took effect. */
   err = fs_open_result(g.fs.base,
-                       network_open(g.fs.base, OPEN_MODE_HTTP_PROPFIND, DIR_FORMAT_RAW));
+                       network_open(g.fs.base, OPEN_MODE_DIRECTORY, DIR_FORMAT_RAW));
   TEST("created directory opens for listing", err == FN_ERR_OK);
   network_close(g.fs.base);
 
@@ -215,7 +214,7 @@ void test_fs_make_test_dir(void)
   strcpy(g.fs.path, WEBDAV_ROOT);
   strcat(g.fs.path, "fnfstest-never-created/");
   err = fs_open_result(g.fs.path,
-                       network_open(g.fs.path, OPEN_MODE_HTTP_PROPFIND, DIR_FORMAT_RAW));
+                       network_open(g.fs.path, OPEN_MODE_DIRECTORY, DIR_FORMAT_RAW));
   TEST("directory that was never created does not open", err != FN_ERR_OK);
   network_close(g.fs.path);
 
@@ -296,7 +295,7 @@ void test_fs_create_files(void)
 #endif
 
   err = fs_open_result(g.fs.path,
-                       network_open(g.fs.path, OPEN_MODE_HTTP_PROPFIND, DIR_FORMAT_RAW));
+                       network_open(g.fs.path, OPEN_MODE_DIRECTORY, DIR_FORMAT_RAW));
   TEST("subdirectory opens for listing", err == FN_ERR_OK);
   network_close(g.fs.path);
 
@@ -314,12 +313,53 @@ void test_fs_create_files(void)
 
   fs_path("sub/");
   printf("  contents of sub/\n");
-  count = fs_list(g.fs.path);
+  count = fs_list(g.fs.path, OPEN_MODE_DIRECTORY, DIR_FORMAT_RAW);
   TEST("directory listing is not empty", count > 0);
   TEST("alpha.txt is listed", fs_listed("alpha.txt"));
   TEST("beta.txt is listed", fs_listed("beta.txt"));
   TEST("gamma.txt is listed", fs_listed("gamma.txt"));
   TEST("delta.txt is listed", fs_listed("delta.txt"));
+
+  END_OF_TEST();
+#endif
+}
+
+void test_fs_directory_modes(void)
+{
+  int16_t count;
+  uint8_t err;
+
+  SECTION("network_fs: directory modes and formats");
+
+#ifdef FN_BROKEN_network_fs
+  SKIP(network_fs);
+  END_OF_TEST();
+#else
+  fs_path("sub/");
+
+  /* The translation is sticky and ORed into later opens' aux2, which must
+   * not happen to a directory open, where aux2 is the format
+   * (fujinet-firmware#1584). CRLF (3) turns LONG (0x80) into RAW (0x83),
+   * so a leak shows up as the bare filename being listed. */
+  err = network_set_translation(g.fs.path, OPEN_TRANS_CRLF);
+  TEST("network_set_translation returns FN_ERR_OK", err == FN_ERR_OK);
+
+  printf("  contents of sub/, DIRECTORY, LONG\n");
+  count = fs_list(g.fs.path, OPEN_MODE_DIRECTORY, DIR_FORMAT_LONG);
+  TEST("DIRECTORY lists in LONG format", count > 0);
+  TEST("DIRECTORY keeps LONG after a translation is set", !fs_listed("alpha.txt"));
+
+  printf("  contents of sub/, DIRECTORY_ALT, LONG\n");
+  count = fs_list(g.fs.path, OPEN_MODE_DIRECTORY_ALT, DIR_FORMAT_LONG);
+  TEST("DIRECTORY_ALT lists in LONG format", count > 0);
+  TEST("DIRECTORY_ALT keeps LONG after a translation is set", !fs_listed("alpha.txt"));
+
+  printf("  contents of sub/, DIRECTORY_ALT, RAW\n");
+  count = fs_list(g.fs.path, OPEN_MODE_DIRECTORY_ALT, DIR_FORMAT_RAW);
+  TEST("DIRECTORY_ALT lists in RAW format", count > 0);
+  TEST("DIRECTORY_ALT RAW listing has the exact name", fs_listed("alpha.txt"));
+
+  network_set_translation(g.fs.path, OPEN_TRANS_NONE);
 
   END_OF_TEST();
 #endif
@@ -371,7 +411,7 @@ void test_fs_rename_delete(void)
 
   fs_path("sub/");
   printf("  contents of sub/\n");
-  TEST("listing is not empty", fs_list(g.fs.path) > 0);
+  TEST("listing is not empty", fs_list(g.fs.path, OPEN_MODE_DIRECTORY, DIR_FORMAT_RAW) > 0);
   TEST("alpha.txt is still listed", fs_listed("alpha.txt"));
   TEST("renamed.txt is listed", fs_listed("renamed.txt"));
   TEST("gamma.txt is gone", !fs_listed("gamma.txt"));
@@ -396,7 +436,7 @@ void test_fs_dir_lifecycle(void)
   TEST("mkdir of a throwaway directory returns FN_ERR_OK", err == FN_ERR_OK);
 
   err = fs_open_result(g.fs.path,
-                       network_open(g.fs.path, OPEN_MODE_HTTP_PROPFIND, DIR_FORMAT_RAW));
+                       network_open(g.fs.path, OPEN_MODE_DIRECTORY, DIR_FORMAT_RAW));
   TEST("throwaway directory opens for listing", err == FN_ERR_OK);
   network_close(g.fs.path);
 
@@ -404,7 +444,7 @@ void test_fs_dir_lifecycle(void)
   TEST("network_fs_rmdir returns FN_ERR_OK", err == FN_ERR_OK);
 
   err = fs_open_result(g.fs.path,
-                       network_open(g.fs.path, OPEN_MODE_HTTP_PROPFIND, DIR_FORMAT_RAW));
+                       network_open(g.fs.path, OPEN_MODE_DIRECTORY, DIR_FORMAT_RAW));
   TEST("removed directory no longer opens", err != FN_ERR_OK);
   network_close(g.fs.path);
 
@@ -498,7 +538,7 @@ void test_fs_ftp_listing(void)
   END_OF_TEST();
 #else
   printf("  contents of %s\n", FTP_HOST);
-  count = fs_list(FTP_ROOT);
+  count = fs_list(FTP_ROOT, OPEN_MODE_DIRECTORY, DIR_FORMAT_RAW);
 
   TEST("FTP directory listing is not empty", count > 0);
 
@@ -514,7 +554,7 @@ void test_fs_ftp_listing(void)
   /* Without this the checks above would pass even if the open succeeded
    * unconditionally. */
   err = fs_open_result(FTP_MISSING_DIR,
-                       network_open(FTP_MISSING_DIR, OPEN_MODE_HTTP_PROPFIND, DIR_FORMAT_RAW));
+                       network_open(FTP_MISSING_DIR, OPEN_MODE_DIRECTORY, DIR_FORMAT_RAW));
   TEST("an FTP directory that does not exist fails to open", err != FN_ERR_OK);
   network_close(FTP_MISSING_DIR);
 
