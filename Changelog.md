@@ -33,6 +33,7 @@
 - [h89] Port A runs straight to the ESP32 (the card's 74LVC245 is gone): the H89 no longer drives DIR and /OE (needs fujinet-firmware #2232)
 - [adam] fuji_copy_file() waits for a slow copy instead of reporting it failed after about 4 s
 - wait_jiffies() is part of the library
+- [atari5200] Add the Atari 5200 target for the FujiNet 5200 cartridge: the cart mailbox bus, its crt0, the 32K cart linker config and romstamp, and the RS232 NewDisk / FujiDirEntry layouts
 
 ## [5.0.0] 2026-10-09
 
