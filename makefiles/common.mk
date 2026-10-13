@@ -252,11 +252,14 @@ RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0 2>/dev/null || echo de
 PRODUCT_DASH = $(subst .,-,$(PRODUCT))
 VERSION_CLEAN = $(patsubst v%,%,$(RELEASE_VERSION))
 RELEASE_ZIP = $(RELEASE_DIR)/$(PRODUCT_DASH)-$(PLATFORM)-$(VERSION_CLEAN).zip
+RELEASE_LIB = $(RELEASE_DIR)/$(PRODUCT_BASE)-$(PLATFORM)-$(VERSION_CLEAN).lib
 
 $(PLATFORM)/release: $(RELEASE_ZIP)
 $(RELEASE_ZIP):: $(LIBRARY)
 	$(MKDIR_P) $(RELEASE_DIR)
-	zip -j $@ $(RELEASE_INCLUDES) $(BUILD_LIB)
+	cp $(BUILD_LIB) $(RELEASE_LIB)
+	zip -j $@ $(RELEASE_INCLUDES) $(RELEASE_LIB)
+	rm $(RELEASE_LIB)
 
 # include autodeps
 DEPS := $(OBJS:.o=.d)
