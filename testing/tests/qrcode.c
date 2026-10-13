@@ -289,6 +289,13 @@ void test_fuji_qrcode(void)
   TEST("Auto version with HIGH ECC matches the HIGH reference",
        qr_check_mode(0, QR_ECC_HIGH, QR_OUTPUT_MODE_BINARY, input, in_len,
                      QR_BINARY_HIGH_OUT, sizeof(QR_BINARY_HIGH_OUT)));
+  // MEDIUM and QUARTILE both fit version 2, where QUARTILE has room, so both match it.
+  TEST("Auto version with MEDIUM ECC matches the QUARTILE reference",
+       qr_check_mode(0, QR_ECC_MEDIUM, QR_OUTPUT_MODE_BINARY, input, in_len,
+                     QR_BINARY_QUART_OUT, sizeof(QR_BINARY_QUART_OUT)));
+  TEST("Auto version with QUARTILE ECC matches the QUARTILE reference",
+       qr_check_mode(0, QR_ECC_QUARTILE, QR_OUTPUT_MODE_BINARY, input, in_len,
+                     QR_BINARY_QUART_OUT, sizeof(QR_BINARY_QUART_OUT)));
 
   TEST("ECC MEDIUM output matches expected reference",
        qr_check_mode(2, QR_ECC_MEDIUM, QR_OUTPUT_MODE_BINARY, input, in_len,
