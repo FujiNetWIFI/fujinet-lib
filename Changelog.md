@@ -6,6 +6,7 @@
 - [adam] Wait for the WiFi scan in fuji_scan_for_networks_adam() instead of special-casing commands in fuji_bus_call()
 - Add OPEN_MODE_DIRECTORY and OPEN_MODE_DIRECTORY_ALT; [testing] list in both modes after setting a translation
 - [testing] fuji_open_directory_filter() on the SD host with a NULL filter, an empty filter over a dirty buffer, and a real filter
+- fuji_open_directory_filter() no longer sends stale bytes after the path as the filter, and accepts a NULL filter
 
 ## [5.0.0] 2026-10-09
 
