@@ -19,7 +19,8 @@ uint16_t network_bus_read(uint8_t device, void *buffer, size_t length)
   bus_ready();
   dwwrite((uint8_t *) &fb_header, sizeof(fb_header));
   dwwrite((uint8_t *) &length, sizeof(length));
-  network_get_response(fb_header.fn.net.unit, (uint8_t *) buffer, length);
+  if (network_get_response(fb_header.fn.net.unit, (uint8_t *) buffer, length))
+    return 0;
 
   return length;
 }
