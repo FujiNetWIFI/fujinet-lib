@@ -40,6 +40,16 @@ include makefiles/toplevel-rules.mk
 
 RELEASE_VERSION ?= $(shell awk '/FNLIB_VERSION_FULL/{ gsub(/"/, "", $$3); print $$3 }' include/fujinet-version.h)
 
+# Apps expect the library in a release zip to be named fujinet-<platform>-<version>.lib
+ifneq ($(PLATFORM),)
+RELEASE_LIB = $(RELEASE_DIR)/fujinet-$(PLATFORM)-$(patsubst v%,%,$(RELEASE_VERSION)).lib
+release:: $(PLATFORM)/release
+	cp $(LIBRARY) $(RELEASE_LIB)
+	-zip -q -d $(RELEASE_ZIP) $(notdir $(LIBRARY))
+	zip -j $(RELEASE_ZIP) $(RELEASE_LIB)
+	rm $(RELEASE_LIB)
+endif
+
 .PHONY: testing
 
 testing:
