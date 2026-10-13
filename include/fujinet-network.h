@@ -101,8 +101,9 @@ FN_ERR network_close(const char* devicespec);
 /**
  * @brief  Open Connection
  * @param  devicespec pointer to device specification of form: N:PROTO://[HOSTNAME]:PORT/PATH/.../
- * @param  mode (4=read, 8=write, 12=read/write, 13=POST, etc.)
- * @param  trans translation mode (CR/LF to other line endings; 0=none, 1=CR, 2=LF, 3=CRLF, 4=Pet)
+ * @param  mode (4=read, 6/7=directory, 8=write, 12=read/write, 13=POST, etc.)
+ * @param  trans translation mode (CR/LF to other line endings; 0=none, 1=CR, 2=LF, 3=CRLF, 4=Pet);
+ *         for a directory open this is the listing format instead
  * @return fujinet-network error code (See FN_ERR_* values)
  */
 FN_ERR network_open(const char* devicespec, uint8_t mode, uint8_t trans);
@@ -380,8 +381,8 @@ FN_ERR network_tell_common(const char *devicespec, uint32_t *pos);
  * @param  trans translation mode (0=none, 1=CR, 2=LF, 3=CRLF; 0xFF makes opens ignore their aux2)
  * @return fujinet-network error code (See FN_ERR_* values)
  *
- * On SIO the value is sticky and ORed into the aux2 of subsequent opens,
- * except for directory opens where aux2 is a format code.
+ * The value is sticky and ORed into the aux2 of subsequent opens, except
+ * for directory opens where aux2 is a format code.
  */
 FN_ERR network_set_translation(const char *devicespec, uint8_t trans);
 
@@ -494,6 +495,8 @@ FN_ERR network_html_parse(const char *devicespec);
 #define OPEN_MODE_READ          (0x04)
 #define OPEN_MODE_WRITE         (0x08)
 #define OPEN_MODE_RW            (0x0C)
+#define OPEN_MODE_DIRECTORY     (0x06)
+#define OPEN_MODE_DIRECTORY_ALT (0x07)
 
 #define OPEN_MODE_HTTP_GET      (0x04)
 #define OPEN_MODE_HTTP_PUT      (0x08)
