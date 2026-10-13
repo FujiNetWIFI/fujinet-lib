@@ -118,9 +118,11 @@ class LibLocator:
     if not self.MV.FUJINET_LIB_DIR:
       self.getDirectory()
 
-    if not self.MV.FUJINET_LIB_FILE \
-       and (not self.MV.FUJINET_LIB_ZIP or not os.path.exists(self.MV.FUJINET_LIB_ZIP)):
-      self.downloadZip()
+    if not self.MV.FUJINET_LIB_FILE:
+      if not self.MV.FUJINET_LIB_ZIP or not os.path.exists(self.MV.FUJINET_LIB_ZIP):
+        self.downloadZip()
+      with zipfile.ZipFile(self.MV.FUJINET_LIB_ZIP, "r") as zf:
+        zf.extractall(self.MV.FUJINET_LIB_DIR)
 
     if not self.MV.FUJINET_LIB_INCLUDE:
       self.getInclude()
@@ -267,9 +269,6 @@ class LibLocator:
           except:
             continue
 
-        with zipfile.ZipFile(self.MV.FUJINET_LIB_ZIP, "r") as zf:
-          zf.extractall(self.MV.FUJINET_LIB_DIR)
-
         return
 
       #error_exit("Unable to download FujiNet library from", release_url)
@@ -401,6 +400,8 @@ def main():
     FUJINET_CACHE_DIR = os.path.join(CACHE_DIR, os.path.basename(FUJINET_CACHE_DIR))
 
   fujinetLib = LibLocator(FUJINET_LIB, PLATFORM, PLATFORM_COMBOS, args.skip_if_missing)
+  if fujinetLib.MV.FUJINET_LIB_VERSION:
+    fujinetLib.MV.FUJINET_LIB_VERSION = "v" + fujinetLib.MV.FUJINET_LIB_VERSION
   fujinetLib.printMakeVariables()
 
   return
