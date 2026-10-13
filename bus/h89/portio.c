@@ -88,16 +88,36 @@ static void port_set_direction(unsigned char dir)
     current_dir = dir;
 }
 
+// Port B is wired to nothing on the card. Whatever sets up the 8255 leaves
+// this in it. After a reset port B is an input and reads FF, and any other
+// mode word clears it or makes it an input. EN alone can't tell: after a
+// reset the 82C55's bus hold can pull PC2 high while port A isn't in mode 2.
+#define SETUP_MARK 0xA5
+
+// The mode word clears port C, dropping EN and /OE (the ESP32's IO0 strap).
+// Raise both on the next instruction, so a running ESP32 sees EN low for
+// only a few microseconds.
+static void port_mode2(void) __naked
+{
+  __asm
+    ld   a,0xC0             ; I8255_MODE_ACTIVE | I8255_G1_MODE_2
+    out  (0xD3),a           ; PCTRL
+    ld   a,0x06             ; DATA_EN | ESP32_EN
+    out  (0xD2),a           ; PORTC
+    ret
+  __endasm;
+}
+
 void port_init(void)
 {
-  // EN already high means an earlier program set up the 8255 and the ESP32 is
-  // running; a mode set clears port C and would reboot it.
-  if (!(z80_inp(PORTC) & ESP32_EN)) {
-    z80_outp(PCTRL,I8255_MODE_ACTIVE | I8255_G1_MODE_2);
-    z80_outp(PORTC,DATA_EN | ESP32_EN);
-    z80_outp(PORTC,DATA_EN);
-    z80_outp(PORTC,DATA_EN | ESP32_EN);
+  // The mark and EN high mean an earlier program set up the 8255 and the
+  // ESP32 is running; leave both alone. Otherwise set it up. An ESP32 that
+  // was held in reset starts now, and IO0 stays high while it reads its
+  // straps.
+  if (z80_inp(PORTB) != SETUP_MARK || !(z80_inp(PORTC) & ESP32_EN)) {
+    port_mode2();
     msleep(200);
+    z80_outp(PORTB,SETUP_MARK);
   }
   z80_inp(PORTA); // Flush input
 
