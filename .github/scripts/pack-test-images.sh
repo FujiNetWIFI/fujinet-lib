@@ -6,11 +6,13 @@ set -e
 out=$(realpath -m "$1")
 cd testing/r2r
 
-find . -type f \( \
-  -name '*.atr' -o -name '*.po' -o -name '*.dsk' -o -name '*.img' \
-  -o -name '*.imd' -o -name '*.ddp' -o -name '*_BOOTSTRAP.bin' \
-  -o -name '*.prg' -o -name '*.lnx' -o -name '*.cas' -o -name '*.ptp' \
-  -o -name '*.mrm' -o -name '*.abs' -o -name '*.COM' \) \
-  | sed 's|^\./||' | sort | zip -q "$out" -@
+# Image extensions per platform, plus the Adam .ddp boot loaders.
+EXTS="atr po dsk img imd ddp prg lnx cas ptp mrm abs COM"
+set -- -name '*_BOOTSTRAP.bin'
+for ext in $EXTS; do
+  set -- "$@" -o -name "*.$ext"
+done
+
+find . -type f \( "$@" \) | sed 's|^\./||' | sort | zip -q "$out" -@
 
 unzip -l "$out"

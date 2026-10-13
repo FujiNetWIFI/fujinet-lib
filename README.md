@@ -99,7 +99,7 @@ the built library to pickup.
 Testing applications are available for each platform. Run `make -C testing` to
 build them all, or `make -C testing <platform>` to build one platform.
 
-Every push to `main` rebuilds them and replaces the `tests-latest` prerelease,
-so the current images are always at
+Every push to `main` rebuilds them and recreates the `tests-latest` prerelease,
+so it stays at the top of the releases list and the current images are always at
 https://github.com/FujiNetWIFI/fujinet-lib/releases/download/tests-latest/fnlib-tests-latest.zip
 as `<platform>/<image>`.

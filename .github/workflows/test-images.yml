@@ -1,7 +1,7 @@
 # -*- indent-tabs-mode: nil; -*-
 
 # Rolling build of the test disk images: one prerelease on the tests-latest
-# tag, replaced on every push to main. Never marked latest, so tagged library
+# tag, recreated on every push to main. Never marked latest, so tagged library
 # releases keep that badge.
 
 name: Test images
@@ -52,20 +52,13 @@ jobs:
         with:
           name: test-images
 
-      - name: Move the tag to this commit
-        run: |
-          git tag -f tests-latest "$GITHUB_SHA"
-          git push -f origin tests-latest
-
+      # Recreated rather than updated so it stays at the top of the releases list.
       - name: Publish as the tests-latest prerelease
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          notes="Test disk images built from ${GITHUB_SHA:0:7}, as \`<platform>/<image>\`. Replaced on every push to main."
-          if gh release view tests-latest >/dev/null 2>&1; then
-            gh release edit tests-latest --prerelease --latest=false --notes "$notes"
-          else
-            gh release create tests-latest --prerelease --latest=false \
-              --title "Test disk images (latest)" --notes "$notes"
-          fi
-          gh release upload tests-latest fnlib-tests-latest.zip --clobber
+          gh release delete tests-latest --cleanup-tag --yes || true
+          gh release create tests-latest fnlib-tests-latest.zip \
+            --target "$GITHUB_SHA" --prerelease --latest=false \
+            --title "Test disk images (latest)" \
+            --notes "Test disk images built from ${GITHUB_SHA:0:7}, as \`<platform>/<image>\`. Recreated on every push to main."
