@@ -452,6 +452,116 @@ void test_fs_dir_lifecycle(void)
 #endif
 }
 
+#ifndef FN_BROKEN_network_fs
+#define SD_FILTER_DIR "/fnfilter/"
+#define SD_FILTER_URL "N1:SD://" SD_FILTER_DIR
+#define SD_FILTER_ONE SD_FILTER_URL "one.txt"
+#define SD_FILTER_TWO SD_FILTER_URL "two.txt"
+
+/* Which of the two names the open directory lists, as bits 1 and 2. Closes it. */
+static uint8_t fs_sd_listed(const char *one, const char *two)
+{
+  uint8_t seen = 0;
+  uint8_t scan;
+
+  for (scan = 0; scan < 32; scan++) {
+    memset(g.fs.listing, 0, 49);
+    if (!fuji_read_directory(49, 0x80, g.fs.listing)
+        || (uint8_t)g.fs.listing[0] == 0x7F)
+      break;
+    if (strcmp(g.fs.listing + DIRENTRY_FILENAME_OFFSET, one) == 0)
+      seen |= 1;
+    if (strcmp(g.fs.listing + DIRENTRY_FILENAME_OFFSET, two) == 0)
+      seen |= 2;
+  }
+  fuji_close_directory();
+  return seen;
+}
+
+static uint8_t fs_sd_write(const char *devicespec, const char *data)
+{
+  uint8_t err;
+
+  err = network_open(devicespec, OPEN_MODE_WRITE, OPEN_TRANS_NONE);
+  if (err != FN_ERR_OK)
+    return err;
+  err = network_write(devicespec, data, strlen(data));
+  network_close(devicespec);
+  return err;
+}
+
+static void fs_sd_filter_cleanup(void)
+{
+  network_fs_delete(SD_FILTER_ONE);
+  network_fs_delete(SD_FILTER_TWO);
+  network_fs_rmdir(SD_FILTER_URL);
+}
+#endif /* ! FN_BROKEN_network_fs */
+
+void test_fs_directory_filter(void)
+{
+#ifndef FN_BROKEN_network_fs
+  uint8_t i;
+  uint8_t sd_idx;
+  uint8_t seen;
+  uint8_t *slot;
+  bool ok;
+#endif
+
+  SECTION("fuji_open_directory_filter on the SD host");
+
+#if defined(FN_BROKEN_network_fs) || defined(FN_BROKEN_fuji_open_directory_filter)
+  SKIP(fuji_open_directory_filter);
+  END_OF_TEST();
+#else
+  /* The SD card is normally host slot 1; find it if it has moved. */
+  sd_idx = 0;
+  if (fuji_get_host_slots(&g.hslots.hosts[0], MAX_HOSTS)) {
+    for (i = 0; i < MAX_HOSTS; i++) {
+      slot = (uint8_t *)g.hslots.hosts[i];
+      if (strcmp((char *)slot, "SD") == 0) {
+        sd_idx = i;
+        break;
+      }
+    }
+  }
+  ok = fuji_mount_host_slot(sd_idx);
+  TEST("SD host slot mounts", ok);
+
+  fs_sd_filter_cleanup();
+  TEST("fnfilter directory is created", network_fs_mkdir(SD_FILTER_URL) == FN_ERR_OK);
+  TEST("one.txt is created", fs_sd_write(SD_FILTER_ONE, "one") == FN_ERR_OK);
+  TEST("two.txt is created", fs_sd_write(SD_FILTER_TWO, "two") == FN_ERR_OK);
+
+  ok = fuji_open_directory_filter(sd_idx, SD_FILTER_DIR, NULL);
+  TEST("open with a NULL filter succeeds", ok);
+  seen = ok ? fs_sd_listed("one.txt", "two.txt") : 0;
+  TEST("a NULL filter lists both files", seen == 3);
+
+  /* Stale bytes after the path must not be sent as the filter (#97). */
+  memset(g.fs.path, 'X', sizeof(g.fs.path));
+  strcpy(g.fs.path, SD_FILTER_DIR);
+  ok = fuji_open_directory_filter(sd_idx, g.fs.path, "");
+  TEST("open with an empty filter over a dirty buffer succeeds", ok);
+  seen = ok ? fs_sd_listed("one.txt", "two.txt") : 0;
+  TEST("an empty filter over a dirty buffer lists both files", seen == 3);
+
+  ok = fuji_open_directory_filter(sd_idx, SD_FILTER_DIR, "one.*");
+  TEST("open with the filter one.* succeeds", ok);
+  seen = ok ? fs_sd_listed("one.txt", "two.txt") : 0;
+  TEST("the filter one.* lists one.txt only", seen == 1);
+
+  fs_sd_filter_cleanup();
+  memset(g.fs.path, 0, sizeof(g.fs.path));
+  strcpy(g.fs.path, SD_FILTER_DIR);
+  ok = fuji_open_directory(sd_idx, g.fs.path);
+  TEST("fnfilter directory is removed", !ok);
+  fuji_close_directory();
+
+  END_OF_TEST();
+#endif
+}
+
 void test_fs_lock_unlock(void)
 {
   uint8_t err;
