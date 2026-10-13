@@ -23,6 +23,7 @@ PLATFORMS += h89-hdos
 PLATFORMS += lynx
 PLATFORMS += model2
 PLATFORMS += msdos
+PLATFORMS += msx
 #PLATFORMS += msxrom
 PLATFORMS += pmd85
 
@@ -126,6 +127,7 @@ LIBS_EXTRA_COCO = $(call library-flag,$(TESTS_LIB).$(PLATFORM))
 LIBS_EXTRA_LYNX = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_MSDOS = $(call library-flag,$(TESTS_LIB_DIR)/lib$(TESTS_LIB).$(PLATFORM).a)
 LIBS_EXTRA_MODEL2 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
+LIBS_EXTRA_MSX = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_PMD85 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_H89-CPM = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_H89-HDOS = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)

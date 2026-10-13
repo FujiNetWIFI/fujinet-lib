@@ -14,4 +14,11 @@
 #define FN_BROKEN_transaction_error
 #endif /* BUILD_C64 */
 
+/* The MSX bus has no fuji_bus_appkey_read/write */
+#ifdef BUILD_MSX
+#define FN_BROKEN_fuji_set_appkey_details
+#define FN_BROKEN_fuji_read_appkey
+#define FN_BROKEN_fuji_write_appkey
+#endif /* BUILD_MSX */
+
 #endif // FNLIB_VERSION_MAJOR >= 5
