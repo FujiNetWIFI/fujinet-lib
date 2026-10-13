@@ -9,6 +9,7 @@
 - fuji_open_directory_filter() no longer sends stale bytes after the path as the filter, and accepts a NULL filter
 - [testing] Auto-version QR codes at MEDIUM and QUARTILE ECC
 - [testing] Move the HTTP and JSON tests from the NETWORK program to HTML (tests/http.c)
+- [ci] Publish the test disk images as the rolling tests-latest prerelease on every push to main
 
 ## [5.0.0] 2026-10-09
 

@@ -1,0 +1,71 @@
+# -*- indent-tabs-mode: nil; -*-
+
+# Rolling build of the test disk images: one prerelease on the tests-latest
+# tag, replaced on every push to main. Never marked latest, so tagged library
+# releases keep that badge.
+
+name: Test images
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: test-images
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: fozztexx/defoogi:1.4.8
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build lib and tests
+        run: |
+          make
+          make -C testing
+
+      - name: Pack images
+        run: sh .github/scripts/pack-test-images.sh fnlib-tests-latest.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: test-images
+          path: fnlib-tests-latest.zip
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: test-images
+
+      - name: Move the tag to this commit
+        run: |
+          git tag -f tests-latest "$GITHUB_SHA"
+          git push -f origin tests-latest
+
+      - name: Publish as the tests-latest prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          notes="Test disk images built from ${GITHUB_SHA:0:7}, as \`<platform>/<image>\`. Replaced on every push to main."
+          if gh release view tests-latest >/dev/null 2>&1; then
+            gh release edit tests-latest --prerelease --latest=false --notes "$notes"
+          else
+            gh release create tests-latest --prerelease --latest=false \
+              --title "Test disk images (latest)" --notes "$notes"
+          fi
+          gh release upload tests-latest fnlib-tests-latest.zip --clobber
