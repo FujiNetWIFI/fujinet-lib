@@ -424,12 +424,15 @@ extern bool fuji_read_directory(uint8_t maxlen, uint8_t aux2, void *buffer);
  */
 #ifdef FUJI_PLATFORM_ATARI
 #define fuji_scan_for_networks(count) FUJICALL_RV(FUJICMD_SCAN_NETWORKS, count, 4)
-#else /* ! FUJI_PLATFORM_ATARI */
+#elif defined(FUJI_PLATFORM_ADAM)
+extern bool fuji_scan_for_networks_adam(uint8_t *count);
+#define fuji_scan_for_networks(count) fuji_scan_for_networks_adam(count)
+#else /* ! (ATARI || ADAM) */
 #define fuji_scan_for_networks(count) FUJICALL_RV(FUJICMD_SCAN_NETWORKS, count, 1)
 #endif /* FUJI_PLATFORM_ATARI */
 
 /**
- * @brief Scans network for SSIDs and sets count accordingly.
+ * @brief Sets whether the FN device boots into CONFIG.
  * @return success status of request.
  */
 #define fuji_set_boot_config(toggle) FUJICALL_A1(FUJICMD_CONFIG_BOOT, toggle)

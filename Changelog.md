@@ -3,6 +3,7 @@
 ## [Unreleased] (Place WIP changes in this section until a release is done)
 
 - [h89] Add Heathkit H89 targets (h89-cpm, h89-hdos) using FujiBus over the 8255 PPI, port routines from Jeff Tranter's bring-up
+- [adam] Wait for the WiFi scan in fuji_scan_for_networks_adam() instead of special-casing commands in fuji_bus_call()
 
 ## [5.0.0] 2026-10-09
 
