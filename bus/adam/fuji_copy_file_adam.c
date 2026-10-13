@@ -16,5 +16,5 @@ bool fuji_copy_file_adam(uint8_t src_slot, uint8_t dest_slot,
   if (!dcb)
     return false;
 
-  return bus_ready(dcb, COPY_RETRIES);
+  return bus_ready(dcb, LONG_RETRIES);
 }
