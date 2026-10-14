@@ -1,0 +1,64 @@
+# -*- indent-tabs-mode: nil; -*-
+
+# Rolling build of the test disk images: one prerelease on the tests-latest
+# tag, recreated on every push to main. Never marked latest, so tagged library
+# releases keep that badge.
+
+name: Test images
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: test-images
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: fozztexx/defoogi:1.4.8
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build lib and tests
+        run: |
+          make
+          make -C testing
+
+      - name: Pack images
+        run: sh .github/scripts/pack-test-images.sh fnlib-tests-latest.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: test-images
+          path: fnlib-tests-latest.zip
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: test-images
+
+      # Recreated rather than updated so it stays at the top of the releases list.
+      - name: Publish as the tests-latest prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete tests-latest --cleanup-tag --yes || true
+          gh release create tests-latest fnlib-tests-latest.zip \
+            --target "$GITHUB_SHA" --prerelease --latest=false \
+            --title "Test disk images (latest)" \
+            --notes "Test disk images built from ${GITHUB_SHA:0:7}, as \`<platform>/<image>\`. Recreated on every push to main."
