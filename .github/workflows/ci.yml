@@ -19,6 +19,7 @@ jobs:
           - adam
           - apple2
           - atari
+          - atari5200
           - c64
           - coco
           - h89-cpm

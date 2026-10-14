@@ -108,12 +108,13 @@ typedef struct
 #define FUJI_DIR_FLAG_ADDITIONAL_DATA 0x80
 #define FUJI_DIR_EOF 0x7F
 
-#if defined(FUJI_PLATFORM_ATARI)   \
-  || defined(FUJI_PLATFORM_MSDOS)  \
-  || defined(FUJI_PLATFORM_MSX)    \
-  || defined(FUJI_PLATFORM_MODEL2) \
-  || defined(FUJI_PLATFORM_H89)    \
-  || defined(FUJI_PLATFORM_C64)
+#if defined(FUJI_PLATFORM_ATARI)     \
+  || defined(FUJI_PLATFORM_MSDOS)    \
+  || defined(FUJI_PLATFORM_MSX)      \
+  || defined(FUJI_PLATFORM_MODEL2)   \
+  || defined(FUJI_PLATFORM_H89)      \
+  || defined(FUJI_PLATFORM_C64)      \
+  || defined(FUJI_PLATFORM_ATARI5200)
 typedef struct
 {
   uint16_t numSectors;
@@ -167,10 +168,11 @@ typedef struct
   char filename[MAX_FILENAME_LEN];
 } FujiDirEntry;
 
-#elif defined(FUJI_PLATFORM_MSDOS) \
-  || defined(FUJI_PLATFORM_MSX)    \
-  || defined(FUJI_PLATFORM_MODEL2) \
-  || defined(FUJI_PLATFORM_H89)
+#elif defined(FUJI_PLATFORM_MSDOS)  \
+  || defined(FUJI_PLATFORM_MSX)     \
+  || defined(FUJI_PLATFORM_MODEL2)  \
+  || defined(FUJI_PLATFORM_H89)     \
+  || defined(FUJI_PLATFORM_ATARI5200)
 typedef struct
 {
   FujiDirEntryTimestamp modified;

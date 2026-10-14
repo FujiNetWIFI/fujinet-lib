@@ -7,6 +7,8 @@
 #define FUJI_PLATFORM_APPLE2
 #elif defined(__ATARI__)
 #define FUJI_PLATFORM_ATARI
+#elif defined(__ATARI5200__)
+#define FUJI_PLATFORM_ATARI5200
 #elif defined(__C64__)
 #define FUJI_PLATFORM_C64
 #elif defined(__MSX__)
