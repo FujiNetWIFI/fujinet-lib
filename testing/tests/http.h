@@ -4,6 +4,7 @@
 extern void test_network_http_get(void);
 extern void test_network_http_get_nonblocking(void);
 extern void test_network_http_post(void);
+extern void test_network_http_post_large(void);
 extern void test_network_http_headers(void);
 extern void test_network_http_channel_mode(void);
 extern void test_network_json(void);
