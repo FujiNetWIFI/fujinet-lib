@@ -139,6 +139,8 @@ int main(void)
 #if HTML_TESTS
   /* http.h */
   test_network_http_get();
+  test_network_http_fixed_completion();
+  test_network_http_chunked_completion();
   test_network_http_get_nonblocking();
   test_network_http_post();
   test_network_http_post_large();

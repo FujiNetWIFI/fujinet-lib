@@ -67,6 +67,63 @@ void test_network_http_get(void)
   END_OF_TEST();
 }
 
+/* Request one byte beyond ABC so network_read must actively poll completion,
+ * not just return the body. Do not print between that read and STATUS.
+ * g.net holds a padded device spec for fixed 256-byte OPEN packets. */
+void test_network_http_fixed_completion(void)
+{
+  uint8_t err, conn, nerr, close_err;
+  uint16_t bw;
+  int16_t r;
+  uint8_t body[4];
+  const char *url = (const char *) g.net;
+
+  SECTION("HTTP fixed held-peer completion");
+  memset(g.net, 0, MAX_FILENAME_LEN);
+  strcpy((char *) g.net, NET_HTTP_FIXED_HELD_URL);
+  err = network_open(url, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
+  TEST("held-peer GET opens", err == FN_ERR_OK);
+  r = network_read(url, body, sizeof(body));
+  bw = 0; conn = 0; nerr = 0;
+  err = network_status(url, &bw, &conn, &nerr);
+  close_err = network_close(url);
+  TEST("decoded body has exactly 3 bytes", r == 3);
+  TEST("decoded body equals ABC", memcmp(body, "ABC", 3) == 0);
+  TEST("completion STATUS succeeds", err == FN_ERR_OK);
+  TEST("no bytes remain", bw == 0);
+  TEST("HTTP transaction completed", conn == 0);
+  TEST("completion is EOF, not timeout", nerr == NETWORK_ERROR_END_OF_FILE);
+  TEST("held-peer GET closes", close_err == FN_ERR_OK);
+  END_OF_TEST();
+}
+
+void test_network_http_chunked_completion(void)
+{
+  uint8_t err, conn, nerr, close_err;
+  uint16_t bw;
+  int16_t r;
+  uint8_t body[4];
+  const char *url = (const char *) g.net;
+
+  SECTION("HTTP chunked held-peer completion");
+  memset(g.net, 0, MAX_FILENAME_LEN);
+  strcpy((char *) g.net, NET_HTTP_CHUNKED_HELD_URL);
+  err = network_open(url, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
+  TEST("held-peer GET opens", err == FN_ERR_OK);
+  r = network_read(url, body, sizeof(body));
+  bw = 0; conn = 0; nerr = 0;
+  err = network_status(url, &bw, &conn, &nerr);
+  close_err = network_close(url);
+  TEST("decoded body has exactly 3 bytes", r == 3);
+  TEST("decoded body equals ABC", memcmp(body, "ABC", 3) == 0);
+  TEST("completion STATUS succeeds", err == FN_ERR_OK);
+  TEST("no bytes remain", bw == 0);
+  TEST("HTTP transaction completed", conn == 0);
+  TEST("completion is EOF, not timeout", nerr == NETWORK_ERROR_END_OF_FILE);
+  TEST("held-peer GET closes", close_err == FN_ERR_OK);
+  END_OF_TEST();
+}
+
 void test_network_http_get_nonblocking(void)
 {
   uint8_t err;
