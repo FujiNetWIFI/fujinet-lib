@@ -559,6 +559,8 @@ static void fs_sd_filter_cleanup(void)
 void test_fs_directory_filter(void)
 {
 #ifndef FN_BROKEN_network_fs
+  /* Not g.hslots: it overlays g.fs.base, which later sections still need. */
+  static HostSlot hosts[MAX_HOSTS];
   uint8_t i;
   uint8_t sd_idx;
   uint8_t seen;
@@ -574,9 +576,9 @@ void test_fs_directory_filter(void)
 #else
   /* The SD card is normally host slot 1; find it if it has moved. */
   sd_idx = 0;
-  if (fuji_get_host_slots(&g.hslots.hosts[0], MAX_HOSTS)) {
+  if (fuji_get_host_slots(&hosts[0], MAX_HOSTS)) {
     for (i = 0; i < MAX_HOSTS; i++) {
-      slot = (uint8_t *)g.hslots.hosts[i];
+      slot = (uint8_t *)hosts[i];
       if (strcmp((char *)slot, "SD") == 0) {
         sd_idx = i;
         break;
