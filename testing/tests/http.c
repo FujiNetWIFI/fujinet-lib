@@ -178,6 +178,49 @@ void test_network_http_post(void)
   END_OF_TEST();
 }
 
+#define LARGE_POST_LEN 1200
+static char large_post[LARGE_POST_LEN + 1];
+
+void test_network_http_post_large(void)
+{
+  uint8_t err;
+  int16_t n;
+  uint16_t bw;
+  uint8_t conn, nerr;
+
+  SECTION("network HTTP POST larger than a bus packet");
+
+#if defined(FN_BROKEN_network_http_post) || defined(FN_BROKEN_network_json_query)
+  SKIP(network_http_post_large);
+#else
+  memset(large_post, 'Q', LARGE_POST_LEN);
+  large_post[LARGE_POST_LEN] = '\0';
+
+  err = network_open(NET_POST_URL, OPEN_MODE_HTTP_POST, OPEN_TRANS_NONE);
+  TEST("network_open (POST) returns FN_ERR_OK", err == FN_ERR_OK);
+  /* A bus that copies the whole write into one fixed packet overruns it (#145). */
+  err = network_http_post(NET_POST_URL, large_post);
+  TEST("POST of 1200 bytes succeeds", err == FN_ERR_OK);
+
+  /* httpbin.dev echoes headers as arrays and an octet-stream body base64
+   * encoded, so check what it received. */
+  err = network_json_parse(NET_POST_URL);
+  TEST("network_json_parse of the echo succeeds", err == FN_ERR_OK);
+  memset(g.net, 0, sizeof(g.net));
+  n = network_json_query(NET_POST_URL, "/headers/Content-Length/0", (char *)g.net);
+  printf("  server received %s bytes\n", (char *)g.net);
+  TEST("server received all 1200 bytes", n > 0 && strcmp((char *)g.net, "1200") == 0);
+
+  bw = 0; conn = 0; nerr = 0;
+  err = network_status(NET_POST_URL, &bw, &conn, &nerr);
+  TEST("device still answers STATUS", err == FN_ERR_OK);
+
+  network_close(NET_POST_URL);
+#endif
+
+  END_OF_TEST();
+}
+
 void test_network_http_headers(void)
 {
   uint8_t err;
