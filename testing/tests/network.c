@@ -15,15 +15,17 @@
 // OPEN_TRANS_ translates from the FujiNet bus's native line ending, so this
 // must match nativeEOL() for the platform's bus: CR LF on RS232, CR by default.
 // cc65's '\n' is already native on the Atari and C64.
-#if defined(__WATCOMC__) || defined(__TRS80M2__) || defined(__MSX__)
+#if defined(FUJI_PLATFORM_MSDOS) || defined(FUJI_PLATFORM_MODEL2) \
+  || defined(FUJI_PLATFORM_MSX)
 #define BASIC_LINE_ENDING "\r\n"
-#elif defined(__APPLE2__) || defined(_CMOC_VERSION_) \
-  || defined(__ADAM__) || defined(__COLECOADAM__) \
-  || defined(__PMD85__) || defined(__H89__) || defined(__HDOS__) \
-  || defined(__LYNX__)
+#elif defined(FUJI_PLATFORM_APPLE2) || defined(FUJI_PLATFORM_COCO) \
+  || defined(FUJI_PLATFORM_ADAM) || defined(FUJI_PLATFORM_PMD85) \
+  || defined(FUJI_PLATFORM_H89) || defined(FUJI_PLATFORM_LYNX)
 #define BASIC_LINE_ENDING "\r"
-#else
+#elif defined(FUJI_PLATFORM_ATARI) || defined(FUJI_PLATFORM_C64)
 #define BASIC_LINE_ENDING "\n"
+#else
+#error "BASIC_LINE_ENDING is not defined for this platform"
 #endif
 
 #define ECHO_MSG "... FujiNet integration test"
