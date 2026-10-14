@@ -29,6 +29,7 @@
 - [testing] A JSON query of a 1637 byte value returns it all, or exactly 1024 bytes on the Adam
 - [testing] A LONG directory listing over 512 bytes is reported and read whole
 - [testing] The SD directory filter test no longer overwrites the base path the lock and unlock test uses
+- [testing] A full URL opens while a CHDIR prefix is set
 
 ## [5.0.0] 2026-10-09
 
