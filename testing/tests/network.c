@@ -12,14 +12,16 @@
 #include <string.h>
 #endif /* _CMOC_VERSION_ */
 
-// OPEN_TRANS_ translate mode translates from the platform's BASIC line ending
-// to the requested line ending, not from the C/printf style.
-#if defined(__APPLE2__) || defined(_CMOC_VERSION_) \
-  || defined(__ADAM__) || defined(__COLECOADAM__) \
-  || defined(__PMD85__)
-#define BASIC_LINE_ENDING "\r"
-#elif defined(__WATCOMC__)
+// OPEN_TRANS_ translates from the FujiNet bus's native line ending, so this
+// must match nativeEOL() for the platform's bus: CR LF on RS232, CR by default.
+// cc65's '\n' is already native on the Atari and C64.
+#if defined(__WATCOMC__) || defined(__TRS80M2__) || defined(__MSX__)
 #define BASIC_LINE_ENDING "\r\n"
+#elif defined(__APPLE2__) || defined(_CMOC_VERSION_) \
+  || defined(__ADAM__) || defined(__COLECOADAM__) \
+  || defined(__PMD85__) || defined(__H89__) || defined(__HDOS__) \
+  || defined(__LYNX__)
+#define BASIC_LINE_ENDING "\r"
 #else
 #define BASIC_LINE_ENDING "\n"
 #endif
