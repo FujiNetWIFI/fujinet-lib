@@ -26,6 +26,7 @@ PLATFORMS += msdos
 PLATFORMS += msx
 #PLATFORMS += msxrom
 PLATFORMS += pmd85
+PLATFORMS += s100-cpm
 
 # You can run 'make <platform>' to build for a specific platform,
 # or 'make <platform>/<target>' for a platform-specific target.
@@ -52,7 +53,8 @@ PLATFORM_COMBOS = \
   msxdos+=msx \
   adam_cpm+=adam \
   h89-cpm+=h89 \
-  h89-hdos+=h89
+  h89-hdos+=h89 \
+  s100-cpm+=s100
 
 fnlib-test.lib_SRC_DIRS = tests tests/%PLATFORM%
 
@@ -131,6 +133,7 @@ LIBS_EXTRA_MSX = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_PMD85 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_H89-CPM = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_H89-HDOS = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
+LIBS_EXTRA_S100-CPM = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 
 # If you need to add extra platform-specific steps, do it below:
 #   coco/r2r:: coco/custom-step1

@@ -51,13 +51,13 @@
  * size on every bus backend -- each one packs its own
  * set_additional_direntry_details() struct (see fujinet-firmware
  * lib/device/<bus>/___Fuji.cpp):
- *   - rs232 (msdos):   timestamp(6) + size u32(4) + flags(1) + mediatype(1) = 12
+ *   - rs232 (msdos, s100): timestamp(6) + size u32(4) + flags(1) + mediatype(1) = 12
  *   - iec (c64):       timestamp(6) + size u16(2) + flags(1) + mediatype(1) = 10
  *   - everyone else:   timestamp(6) + size u32(4) + is_dir(1) + is_trunc(1) + mediatype(1) = 13
  */
 
 // Why isn't there a struct defined for directory entries in fujinet-fuji.h?
-#if defined(BUILD_MSDOS)
+#if defined(BUILD_MSDOS) || defined(__S100__)
 #define DIRENTRY_FILENAME_OFFSET 12
 #elif defined(BUILD_C64)
 #define DIRENTRY_FILENAME_OFFSET 10

@@ -28,6 +28,7 @@ jobs:
           - msdos
           - msx
           - pmd85
+          - s100-cpm
 
     container:
       image: fozztexx/defoogi:1.4.8
