@@ -516,6 +516,47 @@ void test_network_http_put_plain(void)
   END_OF_TEST();
 }
 
+/* A CLOSE that fails keeps failing until the next OPEN, so a repeated CLOSE,
+ * like the Atari's automatic SIO retry, can't report the upload as done
+ * (fujinet-firmware#1769). */
+void test_network_close_failure_sticks(void)
+{
+  uint8_t err;
+  uint16_t bw;
+  uint8_t conn, nerr;
+
+  SECTION("network_close of a rejected PUT keeps failing");
+
+#if defined(FN_BROKEN_network_http_put) || defined(FN_BROKEN_network_close) \
+ || defined(FN_BROKEN_transaction_error)
+  SKIP(network_close_failure_sticks);
+#else
+  err = network_open(NET_FORBIDDEN_URL, OPEN_MODE_HTTP_PUT, OPEN_TRANS_NONE);
+  TEST("network_open of the forbidden PUT succeeds", err == FN_ERR_OK);
+  err = network_http_put(NET_FORBIDDEN_URL, "fujinet=forbidden");
+  TEST("network_http_put succeeds", err == FN_ERR_OK);
+
+  err = network_close(NET_FORBIDDEN_URL);
+  TEST("the first close reports the 403", err != FN_ERR_OK);
+  err = network_close(NET_FORBIDDEN_URL);
+  TEST("a repeated close still reports it", err != FN_ERR_OK);
+
+  bw = 0; conn = 0; nerr = 0;
+  network_status(NET_FORBIDDEN_URL, &bw, &conn, &nerr);
+  printf("  STATUS error %u\n", nerr);
+  /* FujiNet reports an HTTP 403 as 212. */
+  TEST("STATUS reports why",
+       nerr == NETWORK_ERROR_INVALID_USERNAME_OR_PASSWORD);
+
+  err = network_open(NET_DEVICESPEC, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
+  TEST("the next open on the unit succeeds", err == FN_ERR_OK);
+  err = network_close(NET_DEVICESPEC);
+  TEST("and its close succeeds", err == FN_ERR_OK);
+#endif
+
+  END_OF_TEST();
+}
+
 void test_network_http_put_delete(void)
 {
   uint8_t err;

@@ -30,6 +30,7 @@
 - [testing] A LONG directory listing over 512 bytes is reported and read whole
 - [testing] The SD directory filter test no longer overwrites the base path the lock and unlock test uses
 - [testing] A full URL opens while a CHDIR prefix is set
+- [testing] A CLOSE of a rejected HTTP PUT keeps failing when repeated, and STATUS says why
 
 ## [5.0.0] 2026-10-09
 
