@@ -31,6 +31,7 @@
 - [testing] The SD directory filter test no longer overwrites the base path the lock and unlock test uses
 - [testing] A full URL opens while a CHDIR prefix is set
 - [testing] A CLOSE of a rejected HTTP PUT keeps failing when repeated, and STATUS says why
+- [testing] The DISK test finds files with fuji_file_stat(), fixing H89, and no longer borrows a host slot a mounted disk reads from
 
 ## [5.0.0] 2026-10-09
 
