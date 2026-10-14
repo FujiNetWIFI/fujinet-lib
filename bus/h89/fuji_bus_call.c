@@ -11,7 +11,19 @@
 
 static void hexdump(void *ptr, int count);
 
-#define TIMEOUT_SLOW	(15 * PORT_TICKS_PER_SECOND)
+/* The same two globals the SIO targets have, so portable clients compile
+   unchanged. fn_default_timeout is how many seconds a call waits for its
+   reply to start (and for each byte after that); a client widens it around a
+   call it knows to be slow, such as an open the FujiNet answers only after a
+   whole HTTPS round trip. The tick counter is 16 bits at 500 a second, so
+   131 s is the most it can mean. fn_device_error is the last call's reason,
+   in the SIO numbering clients already test: 0 on success, 138 when no reply
+   came, 143 when one came but was not a good frame, 144 when the FujiNet
+   answered with a NAK -- after which a STATUS reports the device's own code. */
+uint8_t fn_default_timeout = 15;
+uint8_t fn_device_error;
+
+#define TIMEOUT_MAX_SECS 131
 
 // Yes, using SIO convention internally! Legacy FTW! ;-)
 typedef enum {
@@ -73,6 +85,7 @@ static uint8_t fuji_packet_call(AtariSIODirection direction, fujibus_packet *pac
   bool success = false;
   uint8_t pdev = packet_ptr->header.device;
   uint8_t aux_len = fuji_field_numbytes(packet_ptr->header.fields);
+  uint16_t timeout;
 
 
   if (!port_did_init) {
@@ -93,6 +106,17 @@ static uint8_t fuji_packet_call(AtariSIODirection direction, fujibus_packet *pac
   hexdump(packet_ptr, sizeof(fujibus_header));
 #endif /* DEBUG */
 
+  timeout = fn_default_timeout;
+  if (!timeout)
+    timeout = 1;
+  else if (timeout > TIMEOUT_MAX_SECS)
+    timeout = TIMEOUT_MAX_SECS;
+  timeout *= PORT_TICKS_PER_SECOND;
+
+  // Whatever is waiting now is the tail of a reply that arrived after its
+  // call gave up. Left there, it would be read as this call's reply.
+  port_drain();
+
   port_putc(SLIP_END);
   port_putbuf_slip(packet_ptr, aux_len + sizeof(packet_ptr->header));
   if (direction == SIO_DIRECTION_WRITE)
@@ -104,7 +128,10 @@ static uint8_t fuji_packet_call(AtariSIODirection direction, fujibus_packet *pac
     plen = 0;
   }
   rlen = port_getbuf_slip_dual(packet_ptr, sizeof(packet_ptr->header),
-                               pbuf, plen, TIMEOUT_SLOW);
+                               pbuf, plen, timeout);
+  fn_device_error = 143;
+  if (!rlen)
+    fn_device_error = 138;
   if (rlen < sizeof(fujibus_header) || rlen != packet_ptr->header.length) {
 #ifdef DEBUG
     printf("Reply length incorrect: %d %d\n", rlen, packet_ptr->header.length);
@@ -159,12 +186,14 @@ static uint8_t fuji_packet_call(AtariSIODirection direction, fujibus_packet *pac
 #ifdef DEBUG
     printf("Not ACK: 0x%02x\n", packet_ptr->header.command);
 #endif /* DEBUG */
+    fn_device_error = 144;
     success = false;
     goto done;
   }
 
   // FIXME - validate that packet_ptr->fields is zero?
 
+  fn_device_error = 0;
   success = true;
 
  done:

@@ -139,6 +139,18 @@ static int port_getc(void)
   return b;
 }
 
+// With no card in the slot port C floats high, IBF never clears and port A
+// reads FF, so this has to stop on a count rather than on an empty port.
+#define DRAIN_MAX 1024
+
+void port_drain(void)
+{
+    uint16_t n;
+
+    for (n = 0; n < DRAIN_MAX && port_getc() > -1; n++)
+        ;
+}
+
 int port_getc_timeout(uint16_t timeout)
 {
     int b=-1;
