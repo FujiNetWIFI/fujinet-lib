@@ -2,9 +2,18 @@
 
 ## [Unreleased] (Place WIP changes in this section until a release is done)
 
+- [msx] UNAPI works from a subslot and under MSX-DOS
 - [h89] Add Heathkit H89 targets (h89-cpm, h89-hdos) using FujiBus over the 8255 PPI, port routines from Jeff Tranter's bring-up
+- [testing] PMD 85 tests also come as a MegaROM (MRM) image with a menu
+- [h89] Don't reboot the ESP32 when the card is already set up
+- Release zips name the library fujinet-<platform>-<version>.lib
+- [msx] network_bus_read/write use NETCMD_READ/NETCMD_WRITE
+- makefiles/fnlib.py reports FUJINET_LIB_VERSION with the "v" prefix fujinet-version.h uses, and unpacks an already downloaded zip
+- [testing] Build the MSX tests
 - [adam] Wait for the WiFi scan in fuji_scan_for_networks_adam() instead of special-casing commands in fuji_bus_call()
 - Add OPEN_MODE_DIRECTORY and OPEN_MODE_DIRECTORY_ALT; [testing] list in both modes after setting a translation
+- [h89] Set up the 8255 after a reset even when EN reads high
+- [atari][msx][coco][pmd85] network_bus_read() returns 0 when the bus read fails instead of the requested length
 - [testing] fuji_open_directory_filter() on the SD host with a NULL filter, an empty filter over a dirty buffer, and a real filter
 - fuji_open_directory_filter() no longer sends stale bytes after the path as the filter, and accepts a NULL filter
 - [testing] Auto-version QR codes at MEDIUM and QUARTILE ECC
