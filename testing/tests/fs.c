@@ -268,7 +268,18 @@ void test_fs_prefix(void)
             "recv", (uint8_t *) g.fs.path, strlen(g.fs.path));
   TEST("working directory matches", strcmp(g.fs.path, guid) == 0);
 
-  // Reset prefix to empty otherwise it is prepended to every URL sent
+#ifndef FN_BROKEN_network_fs
+  /* A full URL replaces the prefix rather than being appended to it
+   * (fujinet-firmware#1735). */
+  err = fs_open_result(NET_DEVICESPEC,
+                       network_open(NET_DEVICESPEC, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE));
+  TEST("a full URL opens while a prefix is set", err == FN_ERR_OK);
+  TEST("the full URL returns data",
+       network_read(NET_DEVICESPEC, (uint8_t *)g.fs.listing, sizeof(g.fs.listing)) > 0);
+  network_close(NET_DEVICESPEC);
+#endif
+
+  // Reset prefix to empty otherwise it is prepended to relative specs
   network_fs_cd("N1:");
 #endif
 
