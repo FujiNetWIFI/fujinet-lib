@@ -150,13 +150,39 @@ $(COCOMENU_DIR):
 $(COCOMENU_BIN) $(COCOMENU_BAS): | $(COCOMENU_DIR)
 	$(MAKE) -C $(COCOMENU_DIR) $(@F)
 
+# The tests fill a 157K disk, so the CoCo image is an HDB-DOS multi-disk
+# file: COCO_DISKS disks back to back, selected with DRIVE n. coco.mk only
+# formats it; disk-post puts the menu on each disk and the programs on them
+# in order. Titles longer than decb's 9 characters go straight into track 17
+# sector 17 (LSN 322 + 630n).
 # AUTOEXEC.BAS has to stay type 0 ASCII or HDB-DOS DOAUTO will not run it.
-# NO_COCO_MENU=1 builds a plain disk with just the test binaries.
-ifndef NO_COCO_MENU
-coco/disk-post:: $(COCOMENU_BIN) $(COCOMENU_BAS)
-	$(call copy-to-disk,-b -2,$(COCOMENU_BIN),COCOMENU.BIN,$(DISK))
-	$(call copy-to-disk,-a -0 -l,$(COCOMENU_BAS),AUTOEXEC.BAS,$(DISK))
+# NO_COCO_MENU=1 leaves the menu off.
+COCO_DISKS = 2
+COCO_PROGRAMS = $(foreach p,$(filter-out %.lib,$(PRODUCTS)),$(R2R_PD)/$(p)$(EXEC_SUFFIX))
+ifeq ($(PLATFORM),coco)
+DISK_EXECUTABLES =
 endif
+
+coco/disk-post:: $(if $(NO_COCO_MENU),,$(COCOMENU_BIN) $(COCOMENU_BAS))
+	$(RM) $(DISK)
+	$(DISK_TOOL) dskini -h$(COCO_DISKS) $(DISK)
+	n=0; while [ $$n -lt $(COCO_DISKS) ]; do \
+	  printf 'FujiNet Lib Tests #%d\000' $$((n + 1)) \
+	    | dd of=$(DISK) bs=256 seek=$$((322 + 630 * n)) conv=notrunc 2>/dev/null; \
+	  $(if $(NO_COCO_MENU),,\
+	  $(call copy-to-disk,-b -2,$(COCOMENU_BIN),COCOMENU.BIN:$$n,$(DISK)) || exit 1; \
+	  $(call copy-to-disk,-a -0 -l,$(COCOMENU_BAS),AUTOEXEC.BAS:$$n,$(DISK)) || exit 1;) \
+	  n=$$((n + 1)); \
+	done
+	n=0; for f in $(COCO_PROGRAMS); do \
+	  name=$$(basename $$f | tr '[:lower:]' '[:upper:]'); \
+	  need=$$(( ($$(wc -c < $$f) + 2303) / 2304 )); \
+	  while [ "$$($(DISK_TOOL) free $(DISK),:$$n | sed -n 's/^Free granules: \([0-9]*\).*/\1/p')" -lt $$need ]; do \
+	    n=$$((n + 1)); \
+	    [ $$n -lt $(COCO_DISKS) ] || { echo "$$name does not fit on $(COCO_DISKS) disks" >&2; exit 1; }; \
+	  done; \
+	  $(call copy-to-disk,-b -2,$$f,$$name:$$n,$(DISK)) || exit 1; \
+	done
 
 # adam-menu is its own repo too. It is built with the tests' FUJINET_LIB,
 # made absolute when it is a path since the menu builds from its own directory.

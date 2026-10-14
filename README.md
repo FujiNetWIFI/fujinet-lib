@@ -103,3 +103,6 @@ Every push to `main` rebuilds them and recreates the `tests-latest` prerelease,
 so it stays at the top of the releases list and the current images are always at
 https://github.com/FujiNetWIFI/fujinet-lib/releases/download/tests-latest/fnlib-tests-latest.zip
 as `<platform>/<image>`.
+
+The CoCo test image holds two 157K disks, "FujiNet Lib Tests #1" and "#2". `DRIVE 1` then
+`RUNM"COCOMENU"` brings up the menu for the second.
