@@ -26,6 +26,8 @@
 - [adam][lynx][c64] network_write() splits a write that does not fit one bus packet instead of overrunning the packet
 - [testing] Pin the CoCo, Adam and MS-DOS test menus to 1.0.0, since the latest-release lookup hits the GitHub API rate limit in CI
 - [testing] Verify fixed-length and chunked HTTP completion before the peer closes the connection
+- [testing] A JSON query of a 1637 byte value returns it all, or exactly 1024 bytes on the Adam
+- [testing] A LONG directory listing over 512 bytes is reported and read whole
 
 ## [5.0.0] 2026-10-09
 

@@ -365,6 +365,64 @@ void test_fs_directory_modes(void)
 #endif
 }
 
+/* Firmware once took the LONG format byte for a translation mode and read
+ * ahead only 512 bytes per STATUS; a client trusting the first STATUS, as
+ * Atari NOS does, lost the rest (fujinet-firmware#1836). */
+void test_fs_long_listing(void)
+{
+#ifndef FN_BROKEN_network_fs
+  char chunk[64];
+  int16_t r, i;
+  uint16_t total = 0, entries = 0, col = 0;
+  char first = 0;
+  bool saw_z = false;
+  uint8_t err, conn, nerr;
+  uint16_t bw;
+#endif
+
+  SECTION("network_fs: LONG listing over 512 bytes");
+
+#ifdef FN_BROKEN_network_fs
+  SKIP(network_fs);
+#else
+  err = fs_open_result(TNFS_BIG_DIR,
+                       network_open(TNFS_BIG_DIR, OPEN_MODE_DIRECTORY, DIR_FORMAT_LONG));
+  TEST("the directory opens for a LONG listing", err == FN_ERR_OK);
+
+  bw = 0; conn = 0; nerr = 0;
+  network_status(TNFS_BIG_DIR, &bw, &conn, &nerr);
+  printf("  first STATUS: %u bytes waiting\n", bw);
+  TEST("the first STATUS reports more than 512 bytes waiting", bw > 512);
+
+  for (;;) {
+    r = network_read(TNFS_BIG_DIR, (uint8_t *)chunk, sizeof(chunk));
+    if (r <= 0)
+      break;
+    total += r;
+    for (i = 0; i < r; i++) {
+      if (DIR_IS_TERMINATOR((uint8_t)chunk[i])) {
+        if (col)
+          entries++;
+        col = 0;
+        continue;
+      }
+      if (!col)
+        first = chunk[i];
+      else if (col == 1 && first == 'Z' && chunk[i] == '/')
+        saw_z = true;
+      col++;
+    }
+  }
+  network_close(TNFS_BIG_DIR);
+
+  printf("  %u bytes, %u entries\n", total, entries);
+  TEST("the listing is longer than 512 bytes", total > 512);
+  TEST("the listing reaches Z/", saw_z);
+#endif
+
+  END_OF_TEST();
+}
+
 void test_fs_read_files(void)
 {
   SECTION("network_fs: read back and overwrite");

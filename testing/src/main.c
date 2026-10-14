@@ -144,6 +144,7 @@ int main(void)
   test_network_http_get_nonblocking();
   test_network_http_post();
   test_network_http_post_large();
+  test_network_json_query_large();
   test_network_http_headers();
   test_network_http_channel_mode();
   test_network_json();
@@ -177,6 +178,7 @@ int main(void)
   test_fs_make_test_dir();
   test_fs_create_files();
   test_fs_directory_modes();
+  test_fs_long_listing();
   test_fs_read_files();
   test_fs_rename_delete();
   test_fs_dir_lifecycle();
