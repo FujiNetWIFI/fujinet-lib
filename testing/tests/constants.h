@@ -71,6 +71,10 @@
  * CHMOD (FujiNetWIFI/tnfsd#34). The test is skipped while this is unset. */
 #define TNFS_RW_ROOT "N1:TNFS://ayce.fozztexx.com/test/"
 
+/* fujinet-firmware#1836's repro: subdirectories 0-9 and A-Z, a LONG listing
+ * well over 512 bytes. */
+#define TNFS_BIG_DIR "N1:TNFS://apps.irata.online/Atari_8-bit/Games/Homesoft/"
+
 /* Opens that fail for a known reason, to check what STATUS reports after. */
 #define NET_MISSING_FILE   "N1:TNFS://" TNFS_COPY_SOURCE_HOST "/fnlibtest-never-created.txt"
 #define NET_BAD_PROTOCOL   "N1:NOTAPROTOCOL://bad_host/"
