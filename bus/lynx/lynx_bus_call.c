@@ -7,7 +7,7 @@
 #include <stddef.h>
 #include <string.h>
 
-char _lynx_packet[1024];
+char _lynx_packet[FNIO_TX_LEN_MAX];
 uint16_t _lynx_len;
 uint16_t _comlynx_init = 0;
 
@@ -46,6 +46,8 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 
   // Add data if it exists
   if (fields & FUJI_FIELD_DATA) {
+    if (_lynx_len + buf_length > sizeof(_lynx_packet))
+      return(false);
     memcpy(&_lynx_packet[_lynx_len], buf, buf_length);
     _lynx_len += buf_length;
   }

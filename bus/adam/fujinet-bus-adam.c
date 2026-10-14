@@ -111,6 +111,8 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   if (numbytes > 3)
     fb_packet[idx++] = aux4;
   if (fields & FUJI_FIELD_DATA) {
+    if (idx + buf_length > sizeof(fb_packet))
+      return false;
     memcpy(&fb_packet[idx], buf, buf_length);
     idx += buf_length;
   }
@@ -143,8 +145,11 @@ size_t network_bus_read(uint8_t device, void *buffer, size_t length)
   return length;
 }
 
+/* One packet byte is the command; network_write() sends the rest. */
 size_t network_bus_write(uint8_t device, const void *buffer, size_t length)
 {
+  if (length > MAX_ADAM_PACKET_REPLY - 1)
+    length = MAX_ADAM_PACKET_REPLY - 1;
   NETCALL_D(NETCMD_WRITE, device - FUJI_DEVICEID_NETWORK + 1, buffer, length);
   return length;
 }

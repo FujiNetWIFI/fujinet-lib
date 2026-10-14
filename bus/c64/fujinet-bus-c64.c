@@ -44,6 +44,10 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
     const uint16_t data_length = va_arg(ap, uint16_t);
 
 
+    if (idx + data_length > sizeof(fb_packet.data)) {
+      va_end(ap);
+      return false;
+    }
     memcpy(&fb_packet.data[idx], data, data_length);
     idx += data_length;
   }
@@ -104,8 +108,11 @@ uint16_t network_bus_read(uint8_t device, void *buffer, size_t length)
 #endif // 0
 }
 
+/* network_write() sends what does not fit in one packet. */
 uint16_t network_bus_write(uint8_t device, const void *buffer, size_t length)
 {
+  if (length > sizeof(fb_packet.data))
+    length = sizeof(fb_packet.data);
 #if 0
   return cbm_write(device - FUJI_DEVICEID_NETWORK + 1 + CBM_DATA_CHANNEL_0, buffer, length);
 #else
