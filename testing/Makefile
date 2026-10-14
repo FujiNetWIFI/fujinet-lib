@@ -83,21 +83,20 @@ devlist_CFLAGS = -DDEVLIST_TESTS=1
 
 include ../makefiles/toplevel-rules.mk
 
-ifeq ($(PLATFORM),msdos)
-MSDOS_MENU_REPO ?= https://github.com/RichStephens/msdos-menu.git
-MSDOS_MENU_DIR = $(CACHE_DIR)/msdos/msdos-menu-repo
-MSDOS_MENU_EXE = $(MSDOS_MENU_DIR)/testmenu.exe
-MSDOS_MENU_TITLE ?= FujiNet Test Programs
+# Each test menu is chosen like FUJINET_LIB: empty for the latest release, a
+# version such as 1.0.0, a git URL (#branch optional) or a directory.
+# Undefined leaves that menu off.
+COCOMENU =
+ADAMMENU =
+MSDOSMENU =
 
-$(MSDOS_MENU_DIR):
-	git clone --depth 1 $(MSDOS_MENU_REPO) $@
+menu-on = $(filter-out undefined,$(origin $1))
+# A shell command printing the directory that holds menu $1's files
+menu-dir = python3 testmenu.py $1 "$($2)" $(CACHE_DIR)/menus
 
-$(MSDOS_MENU_EXE): | $(MSDOS_MENU_DIR)
-	$(MAKE) -C $(MSDOS_MENU_DIR) MENU_PROGRAM=testmenu \
-		MENU_TITLE="$(MSDOS_MENU_TITLE)" testmenu.exe
-
-DISK_EXTRA_FILES_MSDOS = $(MSDOS_MENU_EXE)
-endif
+msdos/disk-post::
+	$(if $(call menu-on,MSDOSMENU),menu=$$($(call menu-dir,msdos-menu,MSDOSMENU)) && \
+	  $(call copy-to-disk,,$$menu/dosmenu.exe,TESTMENU.EXE,$(DISK)))
 
 # The test binaries do not fit the default single density ATR or a 140kb
 # ProDOS volume.
@@ -138,11 +137,6 @@ LIBS_EXTRA_H89-HDOS = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 # or
 #   apple2/disk: apple2/custom-step1 apple2/custom-step2
 
-# The CoCo menu, chosen like FUJINET_LIB: empty for the latest release, a
-# version such as 1.0.0, a git URL (#branch optional) or a directory.
-# Undefined leaves the menu off.
-COCOMENU =
-
 # The tests fill a 157K disk, so the CoCo image is an HDB-DOS multi-disk
 # file: COCO_DISKS disks back to back, selected with DRIVE n. coco.mk only
 # formats it; disk-post puts the menu on each disk and the programs on them
@@ -158,11 +152,11 @@ endif
 coco/disk-post::
 	$(RM) $(DISK)
 	$(DISK_TOOL) dskini -h$(COCO_DISKS) $(DISK)
-	$(if $(filter undefined,$(origin COCOMENU)),,menu=$$(python3 cocomenu.py "$(COCOMENU)" $(CACHE_DIR)/coco) || exit 1;) \
+	$(if $(call menu-on,COCOMENU),menu=$$($(call menu-dir,cocomenu,COCOMENU)) || exit 1;) \
 	n=0; while [ $$n -lt $(COCO_DISKS) ]; do \
 	  printf 'FujiNet Lib Tests #%d\000' $$((n + 1)) \
 	    | dd of=$(DISK) bs=256 seek=$$((322 + 630 * n)) conv=notrunc 2>/dev/null; \
-	  $(if $(filter undefined,$(origin COCOMENU)),,\
+	  $(if $(call menu-on,COCOMENU),\
 	  $(call copy-to-disk,-b -2,$$menu/cocomenu.bin,COCOMENU.BIN:$$n,$(DISK)) || exit 1; \
 	  $(call copy-to-disk,-a -0 -l,$$menu/AUTOEXEC.BAS,AUTOEXEC.BAS:$$n,$(DISK)) || exit 1;) \
 	  n=$$((n + 1)); \
@@ -177,28 +171,9 @@ coco/disk-post::
 	  $(call copy-to-disk,-b -2,$$f,$$name:$$n,$(DISK)) || exit 1; \
 	done
 
-# adam-menu is its own repo too. It is built with the tests' FUJINET_LIB,
-# made absolute when it is a path since the menu builds from its own directory.
-ADAM_MENU_REPO ?= https://github.com/RichStephens/adam-menu.git
-ADAM_MENU_DIR = $(CACHE_DIR)/adam/adam-menu
-ADAM_MENU_DDP = $(ADAM_MENU_DIR)/r2r/adam/adam-menu.ddp
-ADAM_MENU_FUJINET_LIB = $(if $(wildcard $(FUJINET_LIB)),$(abspath $(FUJINET_LIB)),$(FUJINET_LIB))
-
-$(ADAM_MENU_DIR):
-	git clone --depth 1 $(ADAM_MENU_REPO) $@
-
-$(ADAM_MENU_DDP): | $(ADAM_MENU_DIR)
-	$(MAKE) -C $(ADAM_MENU_DIR) FUJINET_LIB=$(ADAM_MENU_FUJINET_LIB) adam
-
-# The menu needs fujinet-const.h, which fujinet-lib 4.11.2 lacks. The check is
-# in the recipe because FUJINET_LIB_INCLUDE is set only after this file is read.
-# NO_ADAM_MENU=1 leaves adam-menu.ddp out of r2r/adam.
-ifndef NO_ADAM_MENU
 adam/r2r-post::
-	$(if $(wildcard $(FUJINET_LIB_INCLUDE)/fujinet-const.h), \
-	  $(MAKE) -f $(PLATFORM_MK) $(ADAM_MENU_DDP) && cp $(ADAM_MENU_DDP) $(R2R_PD)/, \
-	  @echo "Skipping adam-menu: $(FUJINET_LIB_INCLUDE) has no fujinet-const.h")
-endif
+	$(if $(call menu-on,ADAMMENU),menu=$$($(call menu-dir,adam-menu,ADAMMENU)) && \
+	  cp $$menu/adam-menu.ddp $(R2R_PD)/)
 
 # On PMD 85 the menu can be prepared using MRM Manager utility, which is its own repo.
 ifeq ($(PLATFORM),pmd85)
