@@ -21,6 +21,7 @@
 - [ci] Publish the test disk images as the rolling tests-latest prerelease on every push to main
 - [testing] The CoCo test image is two 157K disks in one HDB-DOS multi-disk file, "FujiNet Lib Tests #1" and "#2"
 - [testing] The CoCo test image takes the latest cocomenu release, with disk switching and BREAK to exit; COCOMENU picks a version, git URL or directory, or leaves the menu off when undefined, as FUJINET_LIB does
+- [testing] The Adam and MS-DOS test images take the latest adam-menu and msdos-menu releases; ADAMMENU and MSDOSMENU work like COCOMENU, and testmenu.py fetches all three
 
 ## [5.0.0] 2026-10-09
 
