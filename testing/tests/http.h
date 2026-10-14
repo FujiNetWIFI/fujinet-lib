@@ -13,5 +13,6 @@ extern void test_network_http_channel_mode(void);
 extern void test_network_json(void);
 extern void test_network_http_put_plain(void);
 extern void test_network_http_put_delete(void);
+extern void test_network_close_failure_sticks(void);
 
 #endif /* HTTP_H */

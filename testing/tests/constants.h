@@ -40,6 +40,7 @@
 #define NET_POST_URL    "N1:" HTTPBIN_BASE "/post"
 #define NET_PUT_URL     "N1:" HTTPBIN_BASE "/put"
 #define NET_DELETE_URL  "N1:" HTTPBIN_BASE "/delete"
+#define NET_FORBIDDEN_URL "N1:" HTTPBIN_BASE "/status/403"
 
 /* Complete HTTP framing arrives before a 23-second peer-close delay.
  * Keep the default reuse behavior: enabling keep-alive masks the regression. */
