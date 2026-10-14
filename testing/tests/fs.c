@@ -534,13 +534,14 @@ static uint8_t fs_sd_listed(const char *one, const char *two)
   uint8_t scan;
 
   for (scan = 0; scan < 32; scan++) {
+    /* Without the details flag an entry is just the name. */
     memset(g.fs.listing, 0, 49);
-    if (!fuji_read_directory(49, 0x80, g.fs.listing)
+    if (!fuji_read_directory(49, 0, g.fs.listing)
         || (uint8_t)g.fs.listing[0] == 0x7F)
       break;
-    if (strcmp(g.fs.listing + DIRENTRY_FILENAME_OFFSET, one) == 0)
+    if (strcmp(g.fs.listing, one) == 0)
       seen |= 1;
-    if (strcmp(g.fs.listing + DIRENTRY_FILENAME_OFFSET, two) == 0)
+    if (strcmp(g.fs.listing, two) == 0)
       seen |= 2;
   }
   fuji_close_directory();

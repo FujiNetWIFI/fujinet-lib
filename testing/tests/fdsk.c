@@ -28,11 +28,16 @@ void test_fuji_copy_file(void)
   bool file_existed;
   uint8_t pre_day;
   uint8_t pre_min;
-  uint8_t scan;
+  uint8_t post_day;
+  uint8_t post_min;
+  FujiDirEntry *e;
+  /* Not g.dslots, which overlays g.hslots. */
+  static DeviceSlot dslots[MAX_DISKS];
+  uint8_t in_use;
 
   SECTION("fuji_copy_file (tnfs.fujinet.online COCO/lobby.dsk -> SD)");
 
-  src_idx = MAX_HOSTS - 2;
+  src_idx = 0;
   sd_idx = 0;
   found_src = false;
   found_sd = false;
@@ -43,6 +48,8 @@ void test_fuji_copy_file(void)
   file_existed = false;
   pre_day = 0;
   pre_min = 0;
+  post_day = 0;
+  post_min = 0;
   memset(saved_src, 0, sizeof(saved_src));
 
 #ifdef FN_BROKEN_fuji_copy_file
@@ -55,9 +62,29 @@ void test_fuji_copy_file(void)
   ok = fuji_get_host_slots(&g.hslots.hosts[0], MAX_HOSTS);
   TEST("fuji_get_host_slots succeeds", ok);
 
-  /* CMOC: g.slots.hosts[i][j] strides by 1 byte; use pointer decay instead.
-   * Prefer an existing tnfs.fujinet.online slot; only borrow an empty one
-   * if none exists, so there's nothing to restore afterward. */
+  for (i = 0; i < MAX_HOSTS; i++) {
+    slot = (uint8_t *)g.hslots.hosts[i];
+    if (slot[0] == 'S' && slot[1] == 'D' && slot[2] == '\0') {
+      sd_idx = i;
+      found_sd = true;
+      break;
+    }
+  }
+  TEST("SD host slot found", found_sd);
+
+  /* Host slots that mounted disks read from. Renaming one pulls the host
+   * out from under the disk (fujinet-firmware#1983). */
+  in_use = 0;
+  if (fuji_get_device_slots(dslots, MAX_DISKS)) {
+    for (i = 0; i < MAX_DISKS; i++)
+      if (dslots[i].file[0] && dslots[i].hostSlot < MAX_HOSTS)
+        in_use |= (uint8_t)(1 << dslots[i].hostSlot);
+  }
+
+  /* CMOC: g.hslots.hosts[i][j] strides by 1 byte; use pointer decay instead.
+   * Prefer a host slot already set to tnfs.fujinet.online, then an empty host
+   * slot, then any other host slot no mounted disk reads from. A borrowed host
+   * slot's name is put back afterward. */
   for (i = 0; i < MAX_HOSTS; i++) {
     slot = (uint8_t *)g.hslots.hosts[i];
     if (strncmp((char *)slot, TNFS_COPY_SOURCE_HOST, 32) == 0) {
@@ -79,15 +106,21 @@ void test_fuji_copy_file(void)
     }
   }
 
-  for (i = 0; i < MAX_HOSTS; i++) {
-    slot = (uint8_t *)g.hslots.hosts[i];
-    if (slot[0] == 'S' && slot[1] == 'D' && slot[2] == '\0') {
-      sd_idx = i;
-      found_sd = true;
-      break;
+  if (!found_src) {
+    for (i = 0; i < MAX_HOSTS; i++) {
+      if (i != sd_idx && !(in_use & (1 << i))) {
+        src_idx = i;
+        found_src = true;
+        break;
+      }
     }
   }
-  TEST("SD host slot found", found_sd);
+
+  if (!found_src) {
+    printf("  every host slot is in use by a mounted disk\n");
+    SKIP(fuji_copy_file);
+  }
+
   printf("  src slot %u  sd slot %u  (%s)\n",
          (unsigned)(src_idx + 1), (unsigned)(sd_idx + 1),
          src_preexisting ? "already present" : "temporary");
@@ -108,67 +141,35 @@ void test_fuji_copy_file(void)
   ok = fuji_mount_host_slot(sd_idx);
   TEST("fuji_mount_host_slot (SD) succeeds", ok);
 
-  /* Check if lobby.dsk already exists on SD and record its timestamp.
-   * Use a local buffer so fuji_read_directory does not corrupt g.hslots.hosts
-   * (which aliases g.dir in the global union). */
-  {
-    uint8_t entry[49];
-    memset(g.dir, 0, MAX_FILENAME_LEN);
-    strcpy(g.dir, "/");
-    if (fuji_open_directory(sd_idx, g.dir)) {
-      for (scan = 0; scan < 64; scan++) {
-        memset(entry, 0, 49);
-        ok = fuji_read_directory(49, 0x80, (char *) entry);
-        if (!ok) {
-          printf("  fuji_read_directory failed during pre-copy SD scan (entry %u)\n",
-                 (unsigned)scan);
-          break;
-        }
-        if ((unsigned char)entry[0] == 0x7F)
-          break;
-        if (strcmp((char *)entry + DIRENTRY_FILENAME_OFFSET, "lobby.dsk") == 0) {
-          file_existed = true;
-          pre_day = entry[2];
-          pre_min = entry[4];
-          printf("  Pre-copy lobby.dsk: day=%u min=%u\n", (unsigned)pre_day, (unsigned)pre_min);
-          break;
-        }
-      }
-      fuji_close_directory();
-    }
-    if (!file_existed)
-      printf("  lobby.dsk not found on SD (will be created by copy)\n");
+  /* fuji_file_stat() decodes the directory entry for each platform. */
+  e = fuji_file_stat(sd_idx, "/lobby.dsk");
+  if (e) {
+    file_existed = true;
+    pre_day = e->modified.day;
+    pre_min = e->modified.minute;
+    printf("  Pre-copy lobby.dsk: day=%u min=%u\n", (unsigned)pre_day, (unsigned)pre_min);
   }
+  else
+    printf("  lobby.dsk not found on SD (will be created by copy)\n");
 
-  strcpy(g.dir, "/COCO/");
-  strcpy(g.dir + 7, "lobby.dsk");
-  ok = fuji_open_directory(src_idx, g.dir);
-  TEST("fuji_open_directory TNFS /COCO/lobby.dsk succeeds", ok);
-  if (ok) {
-    fuji_read_directory(49, 0x80, g.dir);
-    if ((unsigned char)g.dir[0] != 0x7F) {
-      memcpy(&src_size, (uint8_t *)g.dir + 6, sizeof(unsigned long));
-      printf("  Source size: %lu bytes\n", src_size);
-    }
-    fuji_close_directory();
+  e = fuji_file_stat(src_idx, "/COCO/lobby.dsk");
+  TEST("lobby.dsk found on the TNFS source", e != NULL);
+  if (e) {
+    src_size = e->size;
+    printf("  Source size: %lu bytes\n", src_size);
   }
-  TEST("lobby.dsk found on TNFS source (size non-zero)", src_size > 0);
+  TEST("lobby.dsk on the TNFS source is not empty", src_size > 0);
 
-  /* copy_spec is a local buffer — g.hslots.hosts aliases g.dir in the union */
   strcpy(copy_spec, "COCO/lobby.dsk|lobby.dsk");
   printf("  fuji_copy_file(src=%u, dst=%u, \"%s\")\n",
          (unsigned)(src_idx + 1), (unsigned)(sd_idx + 1), copy_spec);
   copy_ok = fuji_copy_file(src_idx + 1, sd_idx + 1, copy_spec);
 
   if (!src_preexisting) {
-    /* Re-read first — g.hslots.hosts/g.dir alias in the union. */
+    /* Put the borrowed host slot back as it was. */
     ok = fuji_get_host_slots(&g.hslots.hosts[0], MAX_HOSTS);
     TEST("fuji_get_host_slots (restore re-read) succeeds", ok);
     if (ok) {
-      /* Only patch and write back if the re-read actually refreshed the
-       * buffer — otherwise g.hslots.hosts still holds stale union data from
-       * the TNFS source stat above, and writing it back would corrupt the
-       * other 7 host slots on the device. */
       slot = (uint8_t *)g.hslots.hosts[src_idx];
       memcpy(slot, saved_src, 32);
       fuji_put_host_slots(&g.hslots.hosts[0], MAX_HOSTS);
@@ -178,36 +179,19 @@ void test_fuji_copy_file(void)
 
   TEST("fuji_copy_file (COCO/lobby.dsk -> SD lobby.dsk) succeeds", copy_ok);
 
-  memset(g.dir, 0, MAX_FILENAME_LEN);
-  strcpy(g.dir, "/");
-  ok = fuji_open_directory(sd_idx, g.dir);
-  TEST("fuji_open_directory SD / succeeds", ok);
-  if (ok) {
-    /* SDFS doesn't filter at open time; scan until we find lobby.dsk or EOF. */
-    for (scan = 0; scan < 64; scan++) {
-      memset(g.dir, 0, 49);
-      ok = fuji_read_directory(49, 0x80, g.dir);
-      if (!ok) {
-        printf("  fuji_read_directory failed during post-copy SD scan (entry %u)\n",
-               (unsigned)scan);
-        break;
-      }
-      if ((unsigned char)g.dir[0] == 0x7F)
-        break;
-      if (strcmp(g.dir + DIRENTRY_FILENAME_OFFSET, "lobby.dsk") == 0) {
-        memcpy(&dest_size, (uint8_t *)g.dir + 6, sizeof(unsigned long));
-        printf("  Dest size:   %lu bytes  day=%u min=%u\n",
-               dest_size, (unsigned)(uint8_t)g.dir[2], (unsigned)(uint8_t)g.dir[4]);
-        break;
-      }
-    }
-    fuji_close_directory();
+  e = fuji_file_stat(sd_idx, "/lobby.dsk");
+  TEST("lobby.dsk found on SD after copy", e != NULL);
+  if (e) {
+    dest_size = e->size;
+    post_day = e->modified.day;
+    post_min = e->modified.minute;
+    printf("  Dest size:   %lu bytes  day=%u min=%u\n",
+           dest_size, (unsigned)post_day, (unsigned)post_min);
   }
-  TEST("lobby.dsk found on SD after copy (size non-zero)", dest_size > 0);
   TEST("dest lobby.dsk size matches source", dest_size == src_size);
   if (file_existed) {
     TEST("lobby.dsk timestamp changed after copy",
-         (uint8_t)g.dir[2] != pre_day || (uint8_t)g.dir[4] != pre_min);
+         post_day != pre_day || post_min != pre_min);
   }
 
 #endif /* FN_BROKEN_fuji_get_host_slots */
