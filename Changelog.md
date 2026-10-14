@@ -19,6 +19,7 @@
 - [testing] Auto-version QR codes at MEDIUM and QUARTILE ECC
 - [testing] Move the HTTP and JSON tests from the NETWORK program to HTML (tests/http.c)
 - [ci] Publish the test disk images as the rolling tests-latest prerelease on every push to main
+- [testing] The CoCo test image is two 157K disks in one HDB-DOS multi-disk file, "FujiNet Lib Tests #1" and "#2"
 
 ## [5.0.0] 2026-10-09
 
