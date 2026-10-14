@@ -142,6 +142,7 @@ int main(void)
   test_network_http_get_nonblocking();
   test_network_http_post();
   test_network_http_post_large();
+  test_network_json_query_large();
   test_network_http_headers();
   test_network_http_channel_mode();
   test_network_json();
