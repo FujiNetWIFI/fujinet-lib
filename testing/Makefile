@@ -138,17 +138,10 @@ LIBS_EXTRA_H89-HDOS = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 # or
 #   apple2/disk: apple2/custom-step1 apple2/custom-step2
 
-# cocomenu is its own repo and keeps no built files in it, so clone and build
-COCOMENU_REPO ?= https://github.com/RichStephens/cocomenu.git
-COCOMENU_DIR = $(CACHE_DIR)/coco/cocomenu
-COCOMENU_BIN = $(COCOMENU_DIR)/cocomenu.bin
-COCOMENU_BAS = $(COCOMENU_DIR)/AUTOEXEC.BAS
-
-$(COCOMENU_DIR):
-	git clone --depth 1 $(COCOMENU_REPO) $@
-
-$(COCOMENU_BIN) $(COCOMENU_BAS): | $(COCOMENU_DIR)
-	$(MAKE) -C $(COCOMENU_DIR) $(@F)
+# The CoCo menu, chosen like FUJINET_LIB: empty for the latest release, a
+# version such as 1.0.0, a git URL (#branch optional) or a directory.
+# Undefined leaves the menu off.
+COCOMENU =
 
 # The tests fill a 157K disk, so the CoCo image is an HDB-DOS multi-disk
 # file: COCO_DISKS disks back to back, selected with DRIVE n. coco.mk only
@@ -156,22 +149,22 @@ $(COCOMENU_BIN) $(COCOMENU_BAS): | $(COCOMENU_DIR)
 # in order. Titles longer than decb's 9 characters go straight into track 17
 # sector 17 (LSN 322 + 630n).
 # AUTOEXEC.BAS has to stay type 0 ASCII or HDB-DOS DOAUTO will not run it.
-# NO_COCO_MENU=1 leaves the menu off.
 COCO_DISKS = 2
 COCO_PROGRAMS = $(foreach p,$(filter-out %.lib,$(PRODUCTS)),$(R2R_PD)/$(p)$(EXEC_SUFFIX))
 ifeq ($(PLATFORM),coco)
 DISK_EXECUTABLES =
 endif
 
-coco/disk-post:: $(if $(NO_COCO_MENU),,$(COCOMENU_BIN) $(COCOMENU_BAS))
+coco/disk-post::
 	$(RM) $(DISK)
 	$(DISK_TOOL) dskini -h$(COCO_DISKS) $(DISK)
+	$(if $(filter undefined,$(origin COCOMENU)),,menu=$$(python3 cocomenu.py "$(COCOMENU)" $(CACHE_DIR)/coco) || exit 1;) \
 	n=0; while [ $$n -lt $(COCO_DISKS) ]; do \
 	  printf 'FujiNet Lib Tests #%d\000' $$((n + 1)) \
 	    | dd of=$(DISK) bs=256 seek=$$((322 + 630 * n)) conv=notrunc 2>/dev/null; \
-	  $(if $(NO_COCO_MENU),,\
-	  $(call copy-to-disk,-b -2,$(COCOMENU_BIN),COCOMENU.BIN:$$n,$(DISK)) || exit 1; \
-	  $(call copy-to-disk,-a -0 -l,$(COCOMENU_BAS),AUTOEXEC.BAS:$$n,$(DISK)) || exit 1;) \
+	  $(if $(filter undefined,$(origin COCOMENU)),,\
+	  $(call copy-to-disk,-b -2,$$menu/cocomenu.bin,COCOMENU.BIN:$$n,$(DISK)) || exit 1; \
+	  $(call copy-to-disk,-a -0 -l,$$menu/AUTOEXEC.BAS,AUTOEXEC.BAS:$$n,$(DISK)) || exit 1;) \
 	  n=$$((n + 1)); \
 	done
 	n=0; for f in $(COCO_PROGRAMS); do \

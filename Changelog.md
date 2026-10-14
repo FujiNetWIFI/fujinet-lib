@@ -20,6 +20,7 @@
 - [testing] Move the HTTP and JSON tests from the NETWORK program to HTML (tests/http.c)
 - [ci] Publish the test disk images as the rolling tests-latest prerelease on every push to main
 - [testing] The CoCo test image is two 157K disks in one HDB-DOS multi-disk file, "FujiNet Lib Tests #1" and "#2"
+- [testing] The CoCo test image takes the latest cocomenu release, with disk switching and BREAK to exit; COCOMENU picks a version, git URL or directory, or leaves the menu off when undefined, as FUJINET_LIB does
 
 ## [5.0.0] 2026-10-09
 
@@ -334,7 +335,7 @@ The only one that shouldn't change to C is sp_dispatch, as it uses self modifyin
 Bugfix release:
 
 - [apple2] fix network_status on apple2enh by setting y specifically
-- replaced BUILD_APPLE2 and BUILD_ATARI in favour of cc65 macros __APPLE2__ and __ATARI__
+- replaced BUILD_APPLE2 and BUILD_ATARI in favor of cc65 macros __APPLE2__ and __ATARI__
 
 ## [3.0.2] - 2024-03-24
 
