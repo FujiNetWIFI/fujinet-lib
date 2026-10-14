@@ -33,6 +33,7 @@
 #include "appkey.h"
 #include "network.h"
 #include "network2.h"
+#include "http.h"
 #include "html.h"
 #include "parse_errors.h"
 #include "clock.h"
@@ -115,14 +116,6 @@ int main(void)
 #if ERROR_PATH_WORKS
   test_network_error_path();
 #endif
-  test_network_http_get();
-  test_network_http_get_nonblocking();
-  test_network_http_post();
-  test_network_http_headers();
-  test_network_http_channel_mode();
-  test_network_json();
-  test_network_http_put_plain();
-  test_network_http_put_delete();
   test_multiple_network_devices();
   test_network_read_partial();
   test_network_unit();
@@ -144,6 +137,16 @@ int main(void)
 #endif // NETWORK2_TESTS
 
 #if HTML_TESTS
+  /* http.h */
+  test_network_http_get();
+  test_network_http_get_nonblocking();
+  test_network_http_post();
+  test_network_http_headers();
+  test_network_http_channel_mode();
+  test_network_json();
+  test_network_http_put_plain();
+  test_network_http_put_delete();
+
   /* html.h */
   test_html_parse_query();
   test_html_iterate();
