@@ -37,6 +37,7 @@
 - [testing] Build the tests for the platforms in the top-level Makefile instead of a copy of the list, and remove the unused testing/config.mk
 - [testing] `make testing` (or `make tests`) builds the library first, and `make testing/<platform>` builds one platform's tests
 - [testing] A JSON query with no match returns 0 and an empty string
+- [adam] network_json_query() returns an empty string, not the old buffer contents, when the query returns no data
 
 ## [5.0.0] 2026-10-09
 
