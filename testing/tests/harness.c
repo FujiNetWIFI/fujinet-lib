@@ -38,24 +38,40 @@ void begin_testing()
   tests_run = tests_passed = tests_skipped = tests_failed = 0;
 }
 
+/* Only SPACE or ENTER ends the run, so a screenshot shortcut or a stray
+ * modifier cannot (#156). The Lynx has no keyboard and keeps any key. */
+static bool exit_key(int k)
+{
+  return k == ' ' || k == '\r' || k == '\n'
+#ifdef CH_ENTER
+    || k == CH_ENTER
+#endif
+    ;
+}
+
 void end_testing(int code)
 {
+#ifdef BUILD_LYNX
   printf("Press any key to exit\n");
-#if defined(_CMOC_VERSION_)
-  while (true)
-  {
-    if (inkey())
-      break;
-  }
-#elif defined(__CC65__)
   cgetc();
+#else
+  int k;
+
+  printf("Press SPACE or ENTER to exit\n");
+  do {
+#if defined(_CMOC_VERSION_)
+    k = inkey();
+#elif defined(__CC65__)
+    k = cgetc();
 #elif defined(__WATCOMC__)
-  getch();
+    k = getch();
 #elif defined(__Z88DK)
-  fgetc_cons();
+    k = fgetc_cons();
 #else /* everything else */
-  getc(stdin);
+    k = getc(stdin);
 #endif /* _CMOC_VERSION_ */
+  } while (!exit_key(k));
+#endif /* BUILD_LYNX */
 
 #ifdef BUILD_C64
   // The LOAD command is ridiculously long, reprint it if we can so
