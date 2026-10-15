@@ -34,6 +34,7 @@
 - [testing] The DISK test finds files with fuji_file_stat(), fixing H89, and no longer borrows a host slot a mounted disk reads from
 - [testing] The TCP echo test ends its message with the bus's native line ending, fixing Model II, MSX, H89 and Lynx
 - Add enum FujiBootMode (FUJI_BOOT_MODE_CONFIG, _MOUNT_AND_BOOT, _LOBBY, _HISIO) for fuji_set_boot_mode()
+- [testing] Build the tests for the platforms in the top-level Makefile instead of a copy of the list, and remove the unused testing/config.mk
 
 ## [5.0.0] 2026-10-09
 
