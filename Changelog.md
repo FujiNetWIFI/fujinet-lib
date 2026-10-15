@@ -40,6 +40,7 @@
 - [adam] network_json_query() returns an empty string, not the old buffer contents, when the query returns no data
 - [coco] network_bus_read() returns 0 when the READ itself fails instead of the requested length of zeros
 - [testing] Only SPACE or ENTER ends a test run, so a screenshot shortcut no longer does; the Lynx keeps any key
+- [testing] The dual echo test polls the same number of times on every platform, and only briefly for data that must not arrive, so a real Apple II no longer idles past tcpbin's timeout
 
 ## [5.0.0] 2026-10-09
 

@@ -32,11 +32,10 @@
 //#define ALT_LINE_ENDING "\n#"
 #define ALT_LINE_ENDING "\x0d\x0a"
 
-#if defined(__APPLE2__)
-#define ECHO_WAIT_RETRIES 1000
-#else
-#define ECHO_WAIT_RETRIES 50
-#endif
+/* Back-to-back STATUS polls; the full count only runs when no echo comes. */
+#define ECHO_WAIT_RETRIES 500
+/* By the time the echo is back, a leak onto the other unit would be too. */
+#define ECHO_LEAK_POLLS 5
 
 void mark_echo_message(const char *prefix, uint8_t msg[])
 {
@@ -251,12 +250,12 @@ void test_network_status_after_failed_open(void)
   END_OF_TEST();
 }
 
-uint16_t wait_for_data(const char *net)
+uint16_t wait_for_data(const char *net, uint16_t polls)
 {
   uint16_t bw = 0, retry;
   uint8_t conn, nerr, err;
 
-  for (retry = 0; retry < ECHO_WAIT_RETRIES; retry++) {
+  for (retry = 0; retry < polls; retry++) {
     bw = 0; conn = 0; nerr = 0;
     err = network_status(net, &bw, &conn, &nerr);
     if (err != FN_ERR_OK || bw > 0 || nerr != NETWORK_SUCCESS)
@@ -275,13 +274,13 @@ void dual_echo_check(const char *net1, const char *net2, const uint8_t *msg)
   w = strlen((const char *) msg);
   err = network_write(net1, msg, w);
 
-  r = wait_for_data(net1);
+  r = wait_for_data(net1, ECHO_WAIT_RETRIES);
   printf("  bytes_waiting=%u\n", r);
   strcpy(test_name, "Nx has bytes waiting");
   test_name[1] = net1[1];
   TEST(test_name, r > 0);
 
-  r = wait_for_data(net2);
+  r = wait_for_data(net2, ECHO_LEAK_POLLS);
   printf("  bytes_waiting=%u\n", r);
   strcpy(test_name, "Nx DOES NOT have bytes waiting");
   test_name[1] = net2[1];
