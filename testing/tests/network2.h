@@ -17,5 +17,6 @@ extern void test_net2_read_count(void);
 extern void test_net2_globals(void);
 extern void test_net2_proceed(void);
 extern void test_net2_accept(void);
+extern void test_net2_short_read(void);
 
 #endif /* NETWORK2_H */

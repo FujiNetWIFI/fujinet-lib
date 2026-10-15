@@ -17,6 +17,7 @@
  *   e2699b33a / 94517bf9a / 90279b566 UDP  -> test_net2_udp_set_destination,
  *                                             test_net2_udp_get_remote (FujiNet-PC only)
  *   0b59791ee  [coco] read count           -> test_net2_read_count
+ *   a04e87296  short TCP read keeps data   -> test_net2_short_read
  */
 
 #include "broken.h"
@@ -25,6 +26,7 @@
 #include "constants.h"
 #include "globals.h"
 #include <fujinet-network.h>
+#include <fujinet-clock.h>
 
 #ifndef _CMOC_VERSION_
 #include <stdio.h>
@@ -362,6 +364,61 @@ void test_net2_accept(void)
 
   err = network_accept(LISTEN_SOCKET);
   TEST("accept succeeds", err == FN_ERR_OK);
+
+  network_close(CLIENT_SOCKET);
+  network_close(LISTEN_SOCKET);
+#endif
+
+  END_OF_TEST();
+}
+
+/* A READ for more than has arrived must return what did arrive
+ * (fujinet-firmware #1917). STATUS would read it ahead and hide the path,
+ * so the wait is on the clock. */
+void test_net2_short_read(void)
+{
+  uint8_t err, retries, status, sec, ticks;
+  uint16_t avail;
+  FN_ERR net_err;
+  size_t r;
+  static const char pattern[] = "0123456789ABCDEF";
+
+  SECTION("TCP READ larger than what has arrived");
+
+#if defined(FN_BROKEN_network_accept)
+  SKIP(network_accept);
+#else
+  err = network_open(LISTEN_SOCKET, OPEN_MODE_RW, OPEN_TRANS_NONE);
+  TEST("open listening socket", err == FN_ERR_OK);
+  err = network_open(CLIENT_SOCKET, OPEN_MODE_RW, OPEN_TRANS_NONE);
+  TEST("open client socket", err == FN_ERR_OK);
+  for (retries = 0; retries < MAX_SOCKET_RETRIES; retries++) {
+    err = network_status(LISTEN_SOCKET, &avail, &status, &net_err);
+    if (err != FN_ERR_OK || status == 1)
+      break;
+  }
+  err = network_accept(LISTEN_SOCKET);
+  TEST("accept succeeds", err == FN_ERR_OK);
+
+  err = network_write(CLIENT_SOCKET, pattern, 16);
+  TEST("client writes 16 bytes", err == FN_ERR_OK);
+
+  clock_get_time(g.clock_fmt, SIMPLE_BINARY);
+  sec = g.clock_fmt[6];
+  for (ticks = 0; ticks < 2; ) {
+    clock_get_time(g.clock_fmt, SIMPLE_BINARY);
+    if (g.clock_fmt[6] != sec) {
+      sec = g.clock_fmt[6];
+      ticks++;
+    }
+  }
+
+  memset(g.net, 0xA5, 64);
+  r = network_bus_read(FUJI_DEVICEID_NETWORK + network_unit(LISTEN_SOCKET) - 1,
+                       g.net, 64);
+  printf("  READ 64 returned %u\n", (unsigned) r);
+  TEST("READ past what arrived still returns data", r >= 16);
+  TEST("the 16 bytes arrive intact", memcmp(g.net, pattern, 16) == 0);
 
   network_close(CLIENT_SOCKET);
   network_close(LISTEN_SOCKET);
