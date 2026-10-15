@@ -38,6 +38,7 @@
 - [testing] `make testing` (or `make tests`) builds the library first, and `make testing/<platform>` builds one platform's tests
 - [testing] A JSON query with no match returns 0 and an empty string
 - [adam] network_json_query() returns an empty string, not the old buffer contents, when the query returns no data
+- [coco] network_bus_read() returns 0 when the READ itself fails instead of the requested length of zeros
 
 ## [5.0.0] 2026-10-09
 
