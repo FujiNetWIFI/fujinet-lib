@@ -40,7 +40,11 @@ include makefiles/toplevel-rules.mk
 
 RELEASE_VERSION ?= $(shell awk '/FNLIB_VERSION_FULL/{ gsub(/"/, "", $$3); print $$3 }' include/fujinet-version.h)
 
-.PHONY: testing
+.PHONY: testing tests
 
-testing:
+# The tests link the library from r2r/, so build it first.
+testing tests: all
 	$(MAKE) -C testing clean all
+
+testing/%: %
+	$(MAKE) -C testing $*/clean $*
