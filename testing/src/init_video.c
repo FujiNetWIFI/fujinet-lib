@@ -12,9 +12,9 @@
 #include "c64_find_load.h"
 #endif /* BUILD_C64 */
 
-#ifdef BUILD_PMD85
+#if defined(BUILD_PMD85) || defined(BUILD_ADAM)
 #include <conio.h>
-#endif /* BUILD_PMD85 */
+#endif /* BUILD_PMD85 || BUILD_ADAM */
 
 void init_video()
 {
@@ -26,6 +26,10 @@ void init_video()
      * from 8-15, so both ends have to be set to override the default. */
     palette(0, 0);
     palette(8, 63);
+    /* Yellow and red that read as such on RGB and composite alike; slot 9
+     * keeps the ROM's green for the monitor it booted with. */
+    palette(10, 0x34);
+    palette(12, 0x26);
     setBorderColor(0);
     attr(0, 0, 0, 0);
     cls(0);
@@ -36,7 +40,10 @@ void init_video()
   c64_save_load_command();
 #elif defined(BUILD_PMD85)
   clrscr();
-#endif // _CMOC_VERSION_
+#elif defined(BUILD_ADAM)
+  /* The bitmap mode gives each character its own colors. */
+  conio_set_screen_mode(2);
+#endif
 
   return;
 }
