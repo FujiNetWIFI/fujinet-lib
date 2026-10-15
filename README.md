@@ -56,8 +56,9 @@ make RELEASE_VERSION=v4.11.3 c64/release
 
 ## Testing
 
-Testing applications are available for each platform. Run `make -C testing` to
-build them all, or `make -C testing <platform>` to build one platform.
+Testing applications are available for each platform. Run `make testing` to
+build the library and every platform's tests, or `make testing/<platform>` for
+one platform.
 
 Every push to `main` rebuilds them and recreates the `tests-latest` prerelease,
 so it stays at the top of the releases list and the current images are always at
