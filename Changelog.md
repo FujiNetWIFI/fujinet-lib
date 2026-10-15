@@ -39,6 +39,7 @@
 - [testing] A JSON query with no match returns 0 and an empty string
 - [adam] network_json_query() returns an empty string, not the old buffer contents, when the query returns no data
 - [coco] network_bus_read() returns 0 when the READ itself fails instead of the requested length of zeros
+- [testing] Only SPACE or ENTER ends a test run, so a screenshot shortcut no longer does; the Lynx keeps any key
 
 ## [5.0.0] 2026-10-09
 
