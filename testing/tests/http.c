@@ -1,6 +1,6 @@
 /**
  * @file http.c
- * @brief HTTP(S) and JSON channel tests against httpbin.
+ * @brief HTTP(S) and JSON channel tests.
  */
 
 #include "broken.h"
@@ -463,6 +463,13 @@ void test_network_json(void)
   TEST("network_json_query returns data", n > 0);
   TEST("JSON query result non-empty", result[0] != '\0');
   printf("  JSON /slideshow/title = %s\n", result);
+
+  /* After a match, so a stale count shows */
+  memset(result, 'X', sizeof(result));
+  n = network_json_query(NET_JSON_URL, "/slideshow/no_such_key", result);
+  printf("  JSON no match n=%d\n", (int) n);
+  TEST("JSON query with no match returns 0", n == 0);
+  TEST("JSON query with no match empties the buffer", result[0] == '\0');
 #endif
 
 #ifdef FN_BROKEN_network_close
