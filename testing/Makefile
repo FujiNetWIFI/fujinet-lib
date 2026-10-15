@@ -12,20 +12,7 @@ PRODUCTS += qrcode
 PRODUCTS += html
 PRODUCTS_DISK_NAME = fntests
 
-PLATFORMS += adam
-#PLATFORMS += adam_cpm
-PLATFORMS += apple2
-PLATFORMS += atari
-PLATFORMS += c64
-PLATFORMS += coco
-PLATFORMS += h89-cpm
-PLATFORMS += h89-hdos
-PLATFORMS += lynx
-PLATFORMS += model2
-PLATFORMS += msdos
-PLATFORMS += msx
-#PLATFORMS += msxrom
-PLATFORMS += pmd85
+PLATFORMS := $(shell awk '/^PLATFORMS[ \t]*\+=/{print $$3}' ../Makefile)
 
 # You can run 'make <platform>' to build for a specific platform,
 # or 'make <platform>/<target>' for a platform-specific target.
