@@ -439,8 +439,18 @@ extern bool fuji_scan_for_networks_adam(uint8_t *count);
  */
 #define fuji_set_boot_config(toggle) FUJICALL_A1(FUJICMD_CONFIG_BOOT, toggle)
 
+/* Values for fuji_set_boot_mode(), as the firmware's insert_boot_device() reads them. */
+enum FujiBootMode
+{
+  FUJI_BOOT_MODE_CONFIG         = 0,
+  FUJI_BOOT_MODE_MOUNT_AND_BOOT = 1,
+  FUJI_BOOT_MODE_LOBBY          = 2,
+  FUJI_BOOT_MODE_HISIO          = 3   /* Atari only */
+};
+
 /**
- * @brief Sets the booting mode of the FN device (e.g. lobby).
+ * @brief Sets the booting mode of the FN device.
+ * @param mode a FujiBootMode, e.g. FUJI_BOOT_MODE_LOBBY.
  * @return success status of request.
  */
 #define fuji_set_boot_mode(mode) FUJICALL_A1(FUJICMD_SET_BOOT_MODE, mode)
