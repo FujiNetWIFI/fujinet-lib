@@ -3,6 +3,7 @@
 
 extern void test_net2_seek_tell(void);
 extern void test_net2_seek_errors(void);
+extern void test_net2_bus_read_unopened(void);
 extern void test_net2_get_dstats(void);
 extern void test_net2_set_translation(void);
 extern void test_net2_set_eol_ext(void);

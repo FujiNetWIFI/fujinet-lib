@@ -130,6 +130,7 @@ int main(void)
   test_net2_short_read();
   test_net2_seek_tell();
   test_net2_seek_errors();
+  test_net2_bus_read_unopened();
   test_net2_set_translation();
   test_net2_login_smoke();
   test_net2_interrupt_rate();
