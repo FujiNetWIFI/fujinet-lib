@@ -86,9 +86,9 @@ msdos/disk-post::
 	$(if $(call menu-on,MSDOSMENU),menu=$$($(call menu-dir,msdos-menu,MSDOSMENU)) && \
 	  $(call copy-to-disk,,$$menu/dosmenu.exe,TESTMENU.EXE,$(DISK)))
 
-# The test binaries do not fit the default single density ATR or a 140kb
-# ProDOS volume. -Q makes a 360K quad density ATR.
+# The tests do not fit a double density ATR; -Q makes a 360K quad density one.
 DISK_TOOL_FLAGS_ATARI = -Q -m -b MyPicoDos406
+# Apple II: nor a 140kb ProDOS volume.
 DISK_SIZE = 800kb
 
 CFLAGS += -DBUILD_$(PLATFORM_UC) -DPLATFORM=$(DSTRING_OPEN)$(PLATFORM)$(DSTRING_CLOSE)
