@@ -444,8 +444,6 @@ void test_net2_accept(void)
   TEST("accept succeeds", err == FN_ERR_OK);
   TEST("client's byte reaches the listener", relay_byte('A'));
 
-  /* A second ACCEPT used to drop the live client for the waiting one
-   * (fujinet-firmware #1921) */
   err = network_open(CLIENT2_SOCKET, OPEN_MODE_RW, 0);
   TEST("second client connects", err == FN_ERR_OK);
   err = network_accept(LISTEN_SOCKET);
