@@ -116,6 +116,26 @@ void test_net2_seek_errors(void)
   END_OF_TEST();
 }
 
+/* A READ on a unit with no channel open fails on the bus, so it must not
+ * come back as data. */
+void test_net2_bus_read_unopened(void)
+{
+  uint8_t i;
+  size_t r;
+
+  SECTION("network_bus_read on an unopened unit");
+
+  memset(g.net, 0xA5, 16);
+  r = network_bus_read(FUJI_DEVICEID_NETWORK + network_unit("N4:") - 1, g.net, 16);
+  printf("  READ 16 returned %u\n", (unsigned) r);
+  TEST("failed READ returns 0", r == 0);
+  for (i = 0; i < 16 && g.net[i] == 0xA5; i++)
+    ;
+  TEST("failed READ leaves the buffer alone", i == 16);
+
+  END_OF_TEST();
+}
+
 void test_net2_set_translation(void)
 {
   uint8_t err;
