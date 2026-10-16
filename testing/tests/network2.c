@@ -1,14 +1,11 @@
 /**
  * @file network2.c
  * @brief Coverage for the network device commands added in fujinet-lib v5:
- *        seek/tell, translation, EOL, login, timer rate, TCP close-client,
- *        UDP destination/remote, JSON parameters, DSTATS inquiry, channel
- *        mode, and the fn_* status globals.
+ *        seek/tell, translation, login, timer rate, TCP accept and
+ *        close-client, UDP destination/remote, channel mode and read count.
  *
  * Firmware regression commits exercised here (fujinet-firmware):
- *   b8d67c34c  [sio] note/point            -> test_net2_seek_tell, test_net2_seek_errors,
- *                                             test_net2_get_dstats
- *   f3586b99b  set-EOL command             -> test_net2_set_eol_ext
+ *   b8d67c34c  [sio] note/point            -> test_net2_seek_tell, test_net2_seek_errors
  *   a1c8d9dfe  [sio] sticky NTRANS         -> test_net2_set_translation (wire accept only;
  *                                             full translation observation is manual)
  *   e04b1759a  [coco] $54 arm removed      -> FN_BROKEN_network_set_translation on coco
@@ -19,6 +16,7 @@
  *   0b59791ee  [coco] read count           -> test_net2_read_count
  *   a04e87296  short TCP read keeps data   -> test_net2_short_read
  *   313a24845  TCP close-client result     -> test_net2_close_client
+ *   0885a7e48  second TCP accept refused   -> test_net2_accept
  */
 
 #include "broken.h"
@@ -36,8 +34,10 @@
 
 #define LISTEN_SOCKET "N1:TCP://:5432"
 #define CLIENT_SOCKET "N2:TCP://localhost:5432"
+#define CLIENT2_SOCKET "N3:TCP://localhost:5432"
 #define MAX_SOCKET_RETRIES 10
 #define DISCONNECT_POLLS 500
+#define RELAY_POLLS 500
 
 void test_net2_seek_tell(void)
 {
@@ -391,6 +391,27 @@ void test_net2_read_count(void)
   END_OF_TEST();
 }
 
+/* Bounded: a listener whose session was swapped stays connected with
+ * nothing to read. */
+static uint8_t relay_byte(char c)
+{
+  uint16_t avail = 0, polls;
+  uint8_t status, net_err;
+
+  if (network_write(CLIENT_SOCKET, &c, 1) != FN_ERR_OK)
+    return 0;
+  for (polls = 0; polls < RELAY_POLLS; polls++) {
+    if (network_status(LISTEN_SOCKET, &avail, &status, &net_err) != FN_ERR_OK)
+      return 0;
+    if (avail)
+      break;
+  }
+  if (!avail)
+    return 0;
+  g.net[0] = 0;
+  return network_read(LISTEN_SOCKET, g.net, 1) == 1 && g.net[0] == c;
+}
+
 void test_net2_accept(void)
 {
   uint8_t err, retries;
@@ -405,7 +426,7 @@ void test_net2_accept(void)
 #else
   err = network_open(LISTEN_SOCKET, OPEN_MODE_RW, 0);
   TEST("able to open listening socket", err == FN_ERR_OK);
-  err = network_open(CLIENT_SOCKET, OPEN_MODE_READ, 0);
+  err = network_open(CLIENT_SOCKET, OPEN_MODE_RW, 0);
   TEST("able to open client socket", err == FN_ERR_OK);
 
   for (retries = 0; retries < MAX_SOCKET_RETRIES; retries++) {
@@ -421,7 +442,21 @@ void test_net2_accept(void)
 
   err = network_accept(LISTEN_SOCKET);
   TEST("accept succeeds", err == FN_ERR_OK);
+  TEST("client's byte reaches the listener", relay_byte('A'));
 
+  /* A second ACCEPT used to drop the live client for the waiting one
+   * (fujinet-firmware #1921) */
+  err = network_open(CLIENT2_SOCKET, OPEN_MODE_RW, 0);
+  TEST("second client connects", err == FN_ERR_OK);
+  err = network_accept(LISTEN_SOCKET);
+  TEST("second accept with a client connected is refused", err != FN_ERR_OK);
+  err = network_status(LISTEN_SOCKET, &avail, &status, &net_err);
+  printf("  net_error=%u\n", net_err);
+  TEST("status says a connection is in progress",
+       err == FN_ERR_OK && net_err == NETWORK_ERROR_CONNECTION_ALREADY_IN_PROGRESS);
+  TEST("first client's session survives", relay_byte('B'));
+
+  network_close(CLIENT2_SOCKET);
   network_close(CLIENT_SOCKET);
   network_close(LISTEN_SOCKET);
 #endif
