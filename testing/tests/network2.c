@@ -18,6 +18,7 @@
  *                                             test_net2_udp_get_remote (FujiNet-PC only)
  *   0b59791ee  [coco] read count           -> test_net2_read_count
  *   a04e87296  short TCP read keeps data   -> test_net2_short_read
+ *   313a24845  TCP close-client result     -> test_net2_close_client
  */
 
 #include "broken.h"
@@ -36,6 +37,7 @@
 #define LISTEN_SOCKET "N1:TCP://:5432"
 #define CLIENT_SOCKET "N2:TCP://localhost:5432"
 #define MAX_SOCKET_RETRIES 10
+#define DISCONNECT_POLLS 500
 
 void test_net2_seek_tell(void)
 {
@@ -185,9 +187,21 @@ void test_net2_interrupt_rate(void)
   END_OF_TEST();
 }
 
+static uint8_t wait_disconnected(const char *net)
+{
+  uint16_t avail, polls;
+  uint8_t conn = 1, net_err;
+
+  for (polls = 0; polls < DISCONNECT_POLLS && conn; polls++)
+    if (network_status(net, &avail, &conn, &net_err) != FN_ERR_OK)
+      return 0;
+  return !conn;
+}
+
 void test_net2_close_client(void)
 {
-  uint8_t err;
+  uint8_t err, retries, status, net_err;
+  uint16_t avail;
 
   SECTION("network TCP close-client");
 
@@ -204,6 +218,29 @@ void test_net2_close_client(void)
 
   err = network_close(NET_TCP_LISTEN);
   TEST("close listening channel", err == FN_ERR_OK);
+
+  err = network_open(LISTEN_SOCKET, OPEN_MODE_RW, OPEN_TRANS_NONE);
+  TEST("open listener for a live client", err == FN_ERR_OK);
+  err = network_open(CLIENT_SOCKET, OPEN_MODE_RW, OPEN_TRANS_NONE);
+  TEST("client connects", err == FN_ERR_OK);
+  for (retries = 0; retries < MAX_SOCKET_RETRIES; retries++) {
+    err = network_status(LISTEN_SOCKET, &avail, &status, &net_err);
+    if (err != FN_ERR_OK || status == 1)
+      break;
+  }
+  err = network_accept(LISTEN_SOCKET);
+  TEST("accept the client", err == FN_ERR_OK);
+
+  err = network_close_client(LISTEN_SOCKET);
+  TEST("close-client on a live client succeeds", err == FN_ERR_OK);
+  TEST("listener no longer reports a connection", wait_disconnected(LISTEN_SOCKET));
+  TEST("client sees the connection close", wait_disconnected(CLIENT_SOCKET));
+
+  err = network_close_client(CLIENT_SOCKET);
+  TEST("close-client on a channel that is not listening fails", err != FN_ERR_OK);
+
+  network_close(CLIENT_SOCKET);
+  network_close(LISTEN_SOCKET);
 #endif /* FN_BROKEN_network_close_client */
 
   END_OF_TEST();
