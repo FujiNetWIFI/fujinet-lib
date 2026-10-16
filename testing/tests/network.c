@@ -304,28 +304,38 @@ void dual_echo_check(const char *net1, const char *net2, const uint8_t *msg)
   return;
 }
 
-void test_multiple_network_devices(void)
+static void dual_echo_pair(const char *n1, const char *n2)
 {
-  uint8_t err, err2 = FN_ERR_OK;
+  uint8_t err, err2;
   uint8_t msg[] = ECHO_MSG BASIC_LINE_ENDING;
 
-  SECTION("multiple N: devices");
-
-  err = network_open(NET_TCP_SPEC, OPEN_MODE_RW, OPEN_TRANS_LF);
-  err2 = network_open(NET2_ECHO, OPEN_MODE_RW, OPEN_TRANS_LF);
-  TEST("dual network_open (TCP RW) succeeds", err == FN_ERR_OK && err2 == FN_ERR_OK);
+  err = network_open(n1, OPEN_MODE_RW, OPEN_TRANS_LF);
+  err2 = network_open(n2, OPEN_MODE_RW, OPEN_TRANS_LF);
+  TEST("dual network_open (RW) succeeds", err == FN_ERR_OK && err2 == FN_ERR_OK);
 
   // Write a message to N2 and make sure it doesn't come back on N1
   mark_echo_message("DN2", msg);
-  dual_echo_check(NET2_ECHO, NET_TCP_SPEC, msg);
+  dual_echo_check(n2, n1, msg);
 
   // Do the reverse, write to N1 and validate it is different than N2
   mark_echo_message("DN1", msg);
-  dual_echo_check(NET_TCP_SPEC, NET2_ECHO, msg);
+  dual_echo_check(n1, n2, msg);
 
-  err = network_close(NET_TCP_SPEC);
-  err2 = network_close(NET2_ECHO);
+  network_close(n1);
+  network_close(n2);
+}
 
+void test_multiple_network_devices(void)
+{
+  SECTION("multiple N: devices");
+  dual_echo_pair(NET_TCP_SPEC, NET2_ECHO);
+  END_OF_TEST();
+}
+
+void test_multiple_telnet_devices(void)
+{
+  SECTION("multiple TELNET N: devices");
+  dual_echo_pair(NET_TELNET_SPEC, NET2_TELNET);
   END_OF_TEST();
 }
 

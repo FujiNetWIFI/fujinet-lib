@@ -45,6 +45,7 @@
 - [testing] A TCP READ for more than has arrived returns what did arrive instead of losing it
 - [ci] The test-images workflow builds with make testing
 - [testing] CLOSE CLIENT succeeds on a live TCP client and disconnects it, and fails on a channel that is not listening
+- [testing] The dual echo test also runs over TELNET, so two TELNET channels must each get only their own data
 
 ## [5.0.0] 2026-10-09
 
