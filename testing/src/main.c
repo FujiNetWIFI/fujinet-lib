@@ -119,6 +119,7 @@ int main(void)
   test_network_error_path();
 #endif
   test_multiple_network_devices();
+  test_multiple_telnet_devices();
   test_network_read_partial();
   test_network_unit();
 #endif // NETWORK_TESTS
