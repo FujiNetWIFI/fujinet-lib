@@ -48,6 +48,7 @@
 - [testing] The dual echo test also runs over TELNET, so two TELNET channels must each get only their own data
 - [testing] network_bus_read() on a unit with no channel open returns 0 and leaves the buffer alone
 - [testing] Writing a device slot back with the mode READ DEVICE SLOTS reported keeps its host slot
+- [atari] fuji_set_device_filename() masks the mode to its low nibble, so a mode read back from READ DEVICE SLOTS (mounted flag set) no longer changes the host slot
 
 ## [5.0.0] 2026-10-09
 
