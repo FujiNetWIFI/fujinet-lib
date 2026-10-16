@@ -219,7 +219,6 @@ void test_net2_close_client(void)
   err = network_close(NET_TCP_LISTEN);
   TEST("close listening channel", err == FN_ERR_OK);
 
-  /* The codes for these two used to be swapped (fujinet-firmware #1922) */
   err = network_open(LISTEN_SOCKET, OPEN_MODE_RW, OPEN_TRANS_NONE);
   TEST("open listener for a live client", err == FN_ERR_OK);
   err = network_open(CLIENT_SOCKET, OPEN_MODE_RW, OPEN_TRANS_NONE);
