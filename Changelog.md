@@ -44,6 +44,7 @@
 - [testing] PASS, the all-passed line and a clean commit ID are green, FAIL and the abort line red, a dirty commit ID yellow, on Adam, C64, CoCo 3 and MS-DOS; Atari, Apple II, H89 and monochrome MS-DOS show red and yellow as inverse video
 - [testing] A TCP READ for more than has arrived returns what did arrive instead of losing it
 - [ci] The test-images workflow builds with make testing
+- [testing] CLOSE CLIENT succeeds on a live TCP client and disconnects it, and fails on a channel that is not listening
 
 ## [5.0.0] 2026-10-09
 
