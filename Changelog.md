@@ -41,6 +41,7 @@
 - [coco] network_bus_read() returns 0 when the READ itself fails instead of the requested length of zeros
 - [testing] Only SPACE or ENTER ends a test run, so a screenshot shortcut no longer does; the Lynx keeps any key
 - [testing] The dual echo test polls the same number of times on every platform, and only briefly for data that must not arrive, so a real Apple II no longer idles past tcpbin's timeout
+- [testing] PASS, the all-passed line and a clean commit ID are green, FAIL and the abort line red, a dirty commit ID yellow, on Adam, C64, CoCo 3 and MS-DOS; Atari, Apple II, H89 and monochrome MS-DOS show red and yellow as inverse video
 
 ## [5.0.0] 2026-10-09
 

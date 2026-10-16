@@ -64,6 +64,8 @@ const char *test_program = TEST_PROGRAM;
 
 int main(void)
 {
+  static char line[64];
+
   init_video();
 
   printf("=== FujiNet Integration Tests ===\n");
@@ -211,7 +213,10 @@ int main(void)
   test_network_exists();
 #endif // DEVLIST_TESTS
 
-  printf("\n=== All %d tests passed, %d skipped ===\n", tests_run, tests_skipped);
+  sprintf(line, "=== All %d tests passed, %d skipped ===", tests_run, tests_skipped);
+  printf("\n");
+  tprint(TP_ALL_PASSED, line);
+  printf("\n");
   print_versions();
 
   end_testing(0);
