@@ -196,6 +196,8 @@ void print_versions()
   printf("fujinet-lib version %s\n", FNLIB_VERSION_FULL);
 #ifdef GIT_VERSION
   print_id("tests git commit ID ", GIT_VERSION);
+#else
+#  error "Need GIT_VERSION"
 #endif
 
   strcpy(g.adapter.ace.fn_version, "BROKEN");
