@@ -23,7 +23,7 @@
 #if !FUJI_TESTS && !NETWORK_TESTS && !NETWORK2_TESTS && !HTML_TESTS \
   && !CALMAIL_TESTS && !REGRESSION_TESTS && !CLOCK_TESTS && !DISK_TESTS \
   && !QRCODE_TESTS && !FS_TESTS && !APPKEY_TESTS && !DEVLIST_TESTS \
-  && !PARSE_ERROR_TESTS
+  && !PARSE_ERROR_TESTS && !CLIPBOARD_TESTS
 #error "You need to choose some tests"
 #endif
 
@@ -42,6 +42,7 @@
 #include "fs.h"
 #include "ftp.h"
 #include "devlist.h"
+#include "clipboard.h"
 
 #include "init_video.h"
 #include "harness.h"
@@ -87,6 +88,13 @@ int main(void)
   test_fuji_base64();
   test_fuji_hashing();
 #endif // FUJI_TESTS
+
+#if CLIPBOARD_TESTS
+  /* clipboard.h */
+  test_clipboard();
+  test_clipboard_refusals();
+  test_clipboard_limit();
+#endif // CLIPBOARD_TESTS
 
 #if APPKEY_TESTS
   /* appkey.h */

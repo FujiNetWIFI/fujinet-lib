@@ -495,6 +495,7 @@ FN_ERR network_html_parse(const char *devicespec);
 #define OPEN_MODE_READ          (0x04)
 #define OPEN_MODE_WRITE         (0x08)
 #define OPEN_MODE_RW            (0x0C)
+#define OPEN_MODE_APPEND        (0x09)
 #define OPEN_MODE_DIRECTORY     (0x06)
 #define OPEN_MODE_DIRECTORY_ALT (0x07)
 
