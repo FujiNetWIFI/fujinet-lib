@@ -460,7 +460,7 @@ enum FujiBootMode
  * @return success status of request.
  */
 #ifdef FUJI_PLATFORM_ATARI
-#define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_A2_D(FUJICMD_SET_DEVICE_FULLPATH, ds, (hs << 4) | (mode), buffer, MAX_FILENAME_LEN)
+#define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_A2_D(FUJICMD_SET_DEVICE_FULLPATH, ds, ((hs) << 4) | ((mode) & 0x0F), buffer, MAX_FILENAME_LEN)
 #elif defined(FUJI_PLATFORM_ADAM)
 // mode and hs are ignored on Adam
 #define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_D(FUJICMD_SET_DEVICE_FULLPATH, ds, buffer, strlen(buffer))
