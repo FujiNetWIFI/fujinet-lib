@@ -209,7 +209,7 @@ void test_fuji_host_device_slots(void)
 void test_fuji_device_filename(void)
 {
   bool ok;
-  uint8_t mode, host_slot;
+  uint8_t mode, host_slot, test_mode, test_host;
 
   SECTION("fuji device filename");
 
@@ -245,6 +245,17 @@ void test_fuji_device_filename(void)
   TEST("Set filename matches read-back value", strcmp(g.device_filename.read_back, TEST_FILENAME) == 0);
 
   // FIXME - make sure mode and host match too
+
+  /* A mounted slot reads back with DISK_ACCESS_MODE_MOUNTED set in its mode;
+   * writing that mode back must leave the host slot alone. */
+  ok = fuji_get_device_slots(g.device_filename.devices, MAX_DISKS);
+  test_host = g.device_filename.devices[TEST_DEVICE_SLOT].hostSlot;
+  test_mode = g.device_filename.devices[TEST_DEVICE_SLOT].mode;
+  printf("  slot %d: host %u mode 0x%02x\n", TEST_DEVICE_SLOT, test_host, test_mode);
+  fuji_set_device_filename(test_mode, test_host, TEST_DEVICE_SLOT, (char *) TEST_FILENAME);
+  ok = fuji_get_device_slots(g.device_filename.devices, MAX_DISKS) && ok;
+  TEST("writing back the mode as read keeps the host slot",
+       ok && g.device_filename.devices[TEST_DEVICE_SLOT].hostSlot == test_host);
 
   /* Restore original */
   fuji_set_device_filename(mode, host_slot, TEST_DEVICE_SLOT, g.device_filename.filename);
