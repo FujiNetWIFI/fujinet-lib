@@ -106,6 +106,7 @@ typedef union {
   struct {
     char filename[MAX_FILENAME_LEN];
     char read_back[MAX_FILENAME_LEN];
+    DeviceSlot devices[MAX_DISKS];
   } device_filename;
 
   char dir[258];
