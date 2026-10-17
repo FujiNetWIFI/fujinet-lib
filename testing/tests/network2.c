@@ -13,7 +13,7 @@
  *                                             needs private credentials: manual)
  *   e2699b33a / 94517bf9a / 90279b566 UDP  -> test_net2_udp_set_destination,
  *                                             test_net2_udp_get_remote (FujiNet-PC only)
- *   0b59791ee  [coco] read count           -> test_net2_read_count
+ *   0b59791ee  [coco] read count           -> netproto.c
  *   a04e87296  short TCP read keeps data   -> test_net2_short_read
  *   313a24845  TCP close-client result     -> test_net2_close_client
  *   0885a7e48  second TCP accept refused   -> test_net2_accept
@@ -344,52 +344,6 @@ void test_net2_channel_mode(void)
   END_OF_TEST();
 }
 
-void test_net2_read_count(void)
-{
-  uint8_t err;
-  int16_t r;
-  uint16_t i;
-  uint16_t total;
-
-  SECTION("network read honors requested count");
-
-#ifdef FN_BROKEN_network_read_partial
-  SKIP(network_read_partial);
-#else
-  err = network_open(NET_RANGE_URL, OPEN_MODE_READ, OPEN_TRANS_NONE);
-  TEST("open range URL", err == FN_ERR_OK);
-
-  /* 1024 bytes are (eventually) waiting; ask for exactly 64 */
-  memset(g.net, 0, sizeof(g.net));
-  r = network_read(NET_RANGE_URL, g.net, 64);
-  TEST("read returns exactly 64 bytes", r == 64);
-  for (i = 0; i < 64; i++) {
-    if (g.net[i] != RANGE_BYTE(i))
-      break;
-  }
-  TEST("64 bytes match pattern", i == 64);
-
-  /* Drain the rest */
-  total = 64;
-  for (;;) {
-    r = network_read_nb(NET_RANGE_URL, g.net, sizeof(g.net));
-    if (r < 1)
-      break;
-    total += r;
-  }
-  printf("  drained total=%u\n", total);
-  TEST("all 1024 bytes arrived", total == 1024);
-
-  /* Reading past the end reports no more data */
-  r = network_read_nb(NET_RANGE_URL, g.net, 16);
-  TEST("read past EOF returns no data", r <= 0);
-
-  err = network_close(NET_RANGE_URL);
-  TEST("close range URL", err == FN_ERR_OK);
-#endif /* FN_BROKEN_network_read_partial */
-
-  END_OF_TEST();
-}
 
 /* Bounded: a listener whose session was swapped stays connected with
  * nothing to read. */

@@ -14,7 +14,6 @@ extern void test_net2_udp_set_destination(void);
 extern void test_net2_udp_get_remote(void);
 extern void test_net2_channel_mode(void);
 extern void test_net2_json_parameters(void);
-extern void test_net2_read_count(void);
 extern void test_net2_globals(void);
 extern void test_net2_proceed(void);
 extern void test_net2_accept(void);
