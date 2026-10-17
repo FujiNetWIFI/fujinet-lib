@@ -12,23 +12,6 @@
 #include <string.h>
 #endif /* _CMOC_VERSION_ */
 
-// OPEN_TRANS_ translates from the FujiNet bus's native line ending, so this
-// must match nativeEOL() for the platform's bus: CR LF on RS232, CR by default.
-// cc65's '\n' is already native on the Atari and C64.
-#if defined(FUJI_PLATFORM_MSDOS) || defined(FUJI_PLATFORM_MODEL2) \
-  || defined(FUJI_PLATFORM_MSX)
-#define BASIC_LINE_ENDING "\r\n"
-#elif defined(FUJI_PLATFORM_APPLE2) || defined(FUJI_PLATFORM_COCO) \
-  || defined(FUJI_PLATFORM_ADAM) || defined(FUJI_PLATFORM_PMD85) \
-  || defined(FUJI_PLATFORM_H89) || defined(FUJI_PLATFORM_LYNX)
-#define BASIC_LINE_ENDING "\r"
-#elif defined(FUJI_PLATFORM_ATARI) || defined(FUJI_PLATFORM_C64)
-#define BASIC_LINE_ENDING "\n"
-#else
-#error "BASIC_LINE_ENDING is not defined for this platform"
-#endif
-
-#define ECHO_MSG "... FujiNet integration test"
 //#define ALT_LINE_ENDING "\n#"
 #define ALT_LINE_ENDING "\x0d\x0a"
 
@@ -412,34 +395,3 @@ void test_network_status_after_close(void)
   END_OF_TEST();
 }
 
-void test_network_read_partial(void)
-{
-  uint8_t err;
-  int16_t r, w, w2;
-  uint8_t msg[] = ECHO_MSG BASIC_LINE_ENDING;
-
-  SECTION("network_read_partial");
-
-  mark_echo_message("DN2", msg);
-
-  err = network_open(NET_TCP_SPEC, OPEN_MODE_RW, OPEN_TRANS_LF);
-  if (err != FN_ERR_OK)
-    TEST("network_open (TCP RW) succeeds", err == FN_ERR_OK);
-
-  w = strlen((const char *) msg);
-  err = network_write(NET_TCP_SPEC, msg, w);
-  if (err != FN_ERR_OK)
-    TEST("network_write succeeds", err == FN_ERR_OK);
-
-  memset(g.net, 0, sizeof(g.net));
-  w2 = w / 2;
-  r = network_read(NET_TCP_SPEC, g.net, w2);
-  TEST("read partial correct length", r == w2);
-  r = network_read(NET_TCP_SPEC, &g.net[w2], w - w2);
-  TEST("read remaining correct length", r == w - w2);
-  if (memcmp(g.net, msg, w) != 0)
-    cmp_hex("orig", msg, w, "recv", g.net, r);
-  TEST("all data read", memcmp(g.net, msg, w) == 0);
-
-  END_OF_TEST();
-}

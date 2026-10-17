@@ -11,6 +11,7 @@ PRODUCTS += parserr
 PRODUCTS += qrcode
 PRODUCTS += html
 PRODUCTS += clipbord
+PRODUCTS += netproto
 PRODUCTS_DISK_NAME = fntests
 
 PLATFORMS := $(shell awk '/^PLATFORMS[ \t]*\+=/{print $$3}' ../Makefile)
@@ -57,6 +58,7 @@ parserr_SRC_DIRS = $(MAIN_SRC_DIRS)
 qrcode_SRC_DIRS = $(MAIN_SRC_DIRS)
 html_SRC_DIRS = $(MAIN_SRC_DIRS)
 clipbord_SRC_DIRS = $(MAIN_SRC_DIRS)
+netproto_SRC_DIRS = $(MAIN_SRC_DIRS)
 
 fujidev_CFLAGS = -DFUJI_TESTS=1
 network_CFLAGS = -DNETWORK_TESTS=1
@@ -70,6 +72,7 @@ netfile_CFLAGS = -DFS_TESTS=1
 appkey_CFLAGS = -DAPPKEY_TESTS=1
 devlist_CFLAGS = -DDEVLIST_TESTS=1
 clipbord_CFLAGS = -DCLIPBOARD_TESTS=1
+netproto_CFLAGS = -DNETPROTO_TESTS=1
 
 include ../makefiles/toplevel-rules.mk
 
