@@ -123,6 +123,11 @@ typedef struct
   char filename[MAX_FILENAME_LEN];
 } NewDisk;
 
+/* NewDisk.sectorSize */
+#define NEW_DISK_SECTOR_SINGLE        128
+#define NEW_DISK_SECTOR_DOUBLE        256
+#define NEW_DISK_SECTOR_DOUBLE_DOUBLE 512
+
 #elif defined(FUJI_PLATFORM_APPLE2)
 typedef struct
 {
@@ -132,6 +137,11 @@ typedef struct
   uint32_t numBlocks;
   char filename[MAX_FILENAME_LEN];
 } NewDisk;
+
+/* NewDisk.createType */
+#define NEW_DISK_TYPE_PO  0 /* ProDOS order */
+#define NEW_DISK_TYPE_2MG 1
+#define NEW_DISK_TYPE_DO  2 /* DOS 3.3 order */
 
 #elif defined(FUJI_PLATFORM_COCO) \
   || defined(FUJI_PLATFORM_PMD85)

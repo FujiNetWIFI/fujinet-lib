@@ -117,6 +117,7 @@ int main(void)
 #if DISK_TESTS
   /* fdsk.h */
   test_fuji_copy_file();
+  test_fuji_create_new();
 #endif // DISK_TESTS
 
 #if QRCODE_TESTS

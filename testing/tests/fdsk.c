@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "globals.h"
 #include <fujinet-fuji.h>
+#include <fujinet-network.h>
 
 #ifndef _CMOC_VERSION_
 #include <stdio.h>
@@ -196,6 +197,99 @@ void test_fuji_copy_file(void)
 
 #endif /* FN_BROKEN_fuji_get_host_slots */
 #endif /* FN_BROKEN_fuji_copy_file */
+
+  END_OF_TEST();
+}
+
+#define NEW_DISK_NAME "/fnnewdisk.img"
+#define NEW_DISK_URL  "N1:SD://" NEW_DISK_NAME
+
+void test_fuji_create_new(void)
+{
+#ifdef FN_BROKEN_fuji_create_new
+  SECTION("fuji_create_new");
+  SKIP(fuji_create_new);
+#else
+  static NewDisk nd;
+  /* Not g.dslots, which overlays g.hslots. */
+  static DeviceSlot saved[MAX_DISKS];
+  uint8_t i, sd_idx, ds;
+  uint8_t *slot;
+  bool ok, found_sd;
+  unsigned long want;
+  FujiDirEntry *e;
+
+  SECTION("fuji_create_new");
+
+  ok = fuji_get_host_slots(&g.hslots.hosts[0], MAX_HOSTS);
+  TEST("fuji_get_host_slots succeeds", ok);
+  found_sd = false;
+  sd_idx = 0;
+  for (i = 0; i < MAX_HOSTS; i++) {
+    slot = (uint8_t *)g.hslots.hosts[i];
+    if (slot[0] == 'S' && slot[1] == 'D' && slot[2] == '\0') {
+      sd_idx = i;
+      found_sd = true;
+      break;
+    }
+  }
+  TEST("SD host slot found", found_sd);
+
+  ok = fuji_get_device_slots(saved, MAX_DISKS);
+  TEST("fuji_get_device_slots succeeds", ok);
+  for (ds = 0; ds < MAX_DISKS && saved[ds].file[0]; ds++)
+    ;
+  if (ds == MAX_DISKS) {
+    printf("  every drive slot is in use\n");
+    SKIP(fuji_create_new);
+  }
+  printf("  drive slot %u, SD host slot %u\n", (unsigned)(ds + 1), (unsigned)(sd_idx + 1));
+
+  ok = fuji_mount_host_slot(sd_idx);
+  TEST("fuji_mount_host_slot (SD) succeeds", ok);
+  /* A stopped run leaves the image behind, and NEW DISK refuses to replace it */
+  network_fs_delete(NEW_DISK_URL);
+
+  memset(&nd, 0, sizeof(nd));
+  nd.hostSlot = sd_idx;
+  nd.deviceSlot = ds;
+  strcpy(nd.filename, NEW_DISK_NAME);
+#if defined(FUJI_PLATFORM_APPLE2)
+  nd.createType = NEW_DISK_TYPE_PO;
+  nd.numBlocks = 280;
+  want = 280UL * 512;
+#elif defined(FUJI_PLATFORM_COCO) || defined(FUJI_PLATFORM_PMD85)
+  nd.numDisks = 1;
+  want = 315UL * 512;
+#elif defined(FUJI_PLATFORM_LYNX)
+  nd.numBlocks = 256;
+  want = 256UL * 1024;
+#else
+  nd.numSectors = 720;
+  nd.sectorSize = NEW_DISK_SECTOR_SINGLE;
+  want = 720UL * NEW_DISK_SECTOR_SINGLE;
+#ifdef FUJI_PLATFORM_ATARI
+  want += 16; /* ATR header */
+#endif
+#endif
+
+  ok = fuji_create_new(&nd);
+  TEST("fuji_create_new succeeds", ok);
+
+  e = fuji_file_stat(sd_idx, NEW_DISK_NAME);
+  TEST("the new image is on the SD host", e != NULL);
+  if (e) {
+    printf("  size %lu, %lu expected\n", (unsigned long) e->size, want);
+    TEST("the new image is the size asked for", e->size == want);
+  }
+
+  ok = fuji_create_new(&nd);
+  TEST("creating it again over the existing file fails", !ok);
+
+  /* NEW DISK points the drive slot at the image; put it back */
+  fuji_set_device_filename(saved[ds].mode, saved[ds].hostSlot, ds, (char *) saved[ds].file);
+  TEST("the image is deleted", network_fs_delete(NEW_DISK_URL) == FN_ERR_OK);
+#endif /* FN_BROKEN_fuji_create_new */
 
   END_OF_TEST();
 }
