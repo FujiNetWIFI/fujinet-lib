@@ -23,7 +23,8 @@
 #if !FUJI_TESTS && !NETWORK_TESTS && !NETWORK2_TESTS && !HTML_TESTS \
   && !CALMAIL_TESTS && !REGRESSION_TESTS && !CLOCK_TESTS && !DISK_TESTS \
   && !QRCODE_TESTS && !FS_TESTS && !APPKEY_TESTS && !DEVLIST_TESTS \
-  && !PARSE_ERROR_TESTS && !CLIPBOARD_TESTS
+  && !PARSE_ERROR_TESTS && !CLIPBOARD_TESTS \
+  && !NETPROTO_TESTS
 #error "You need to choose some tests"
 #endif
 
@@ -43,6 +44,7 @@
 #include "ftp.h"
 #include "devlist.h"
 #include "clipboard.h"
+#include "netproto.h"
 
 #include "init_video.h"
 #include "harness.h"
@@ -89,6 +91,13 @@ int main(void)
   test_fuji_hashing();
 #endif // FUJI_TESTS
 
+#if NETPROTO_TESTS
+  /* netproto.h */
+  test_netproto_read_count();
+  test_netproto_read_to_eof();
+  test_netproto_read_partial();
+#endif // NETPROTO_TESTS
+
 #if CLIPBOARD_TESTS
   /* clipboard.h */
   test_clipboard();
@@ -128,7 +137,6 @@ int main(void)
 #endif
   test_multiple_network_devices();
   test_multiple_telnet_devices();
-  test_network_read_partial();
   test_network_unit();
 #endif // NETWORK_TESTS
 
@@ -146,7 +154,6 @@ int main(void)
   test_net2_udp_set_destination();
   test_net2_udp_get_remote();
   test_net2_channel_mode();
-  test_net2_read_count();
 #endif // NETWORK2_TESTS
 
 #if HTML_TESTS
@@ -200,7 +207,6 @@ int main(void)
   test_fs_lock_unlock();
   test_fs_tnfs_lock_unlock();
   test_fs_ftp_listing();
-  test_ftp_file_status_read();
   test_ftp_crunched_name();
 #endif // FS_TESTS
 
