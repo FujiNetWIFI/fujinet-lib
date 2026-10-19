@@ -9,8 +9,7 @@
 - [h89] Set up the 8255 after a reset even when EN reads high
 - fuji_open_directory_filter() no longer sends stale bytes after the path as the filter, and accepts a NULL filter
 - [adam][lynx][c64] network_write() splits a write that does not fit one bus packet instead of overrunning the packet
-- [testing] Pin the CoCo, Adam and MS-DOS test menus to 1.0.0, since the latest-release lookup hits the GitHub API rate limit in CI
-- [h89] fn_default_timeout and fn_device_error, as the SIO targets have; each call drains stale reply bytes first, and the SLIP sync gives up after 4096 bytes with no END
+- [h89] Add fn_default_timeout; each call drains stale reply bytes first, and the SLIP sync gives up after 4096 bytes with no END
 
 ## [5.0.0] 2026-10-09
 

@@ -75,10 +75,8 @@ extern NetworkStatus nw_status;
 #define fn_network_error (nw_status.errcode)
 
 #ifdef FUJI_PLATFORM_H89
-/* The H89 bus keeps the SIO targets' timeout and device-error globals
-   (bus/h89/fuji_bus_call.c), so portable clients compile as-is. */
+/* Seconds each bus call waits for its reply (1 to 131, default 15) */
 extern uint8_t fn_default_timeout;
-extern uint8_t fn_device_error;
 #endif
 
 /**
