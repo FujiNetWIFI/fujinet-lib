@@ -482,6 +482,54 @@ void test_network_json(void)
   END_OF_TEST();
 }
 
+/* httpbin's /get echoes its arguments back as JSON */
+#define NET_SGML_URL "N1:" HTTPBIN_BASE "/get" \
+  "?a=I%20%3C3%20FujiNet" \
+  "&b=a%20%3E%20b%20%3Ci%3Ec%3C%2Fi%3E%20d" \
+  "&c=%3Cp%3EHello%20%3Cb%3Eworld%3C%2Fb%3E%3C%2Fp%3E" \
+  "&d=I%20%3C3%20%3Cb%3EFujiNet%3C%2Fb%3E"
+
+static bool json_stripped(const char *query, const char *want)
+{
+  static char result[64];
+  int16_t n;
+
+  memset(result, 0, sizeof(result));
+  n = network_json_query(NET_SGML_URL, query, result);
+  printf("  %s = %s\n", query, result);
+  return n == (int16_t) strlen(want) && strcmp(result, want) == 0;
+}
+
+void test_network_json_strip_tags(void)
+{
+  uint8_t err;
+
+  SECTION("JSON query with SGML tags stripped");
+
+#if defined(FN_BROKEN_network_json_parse) || defined(FN_BROKEN_network_json_query) \
+ || defined(FN_BROKEN_network_set_query_param)
+  SKIP(network_set_query_param);
+#else
+  err = network_open(NET_SGML_URL, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
+  TEST("open succeeds", err == FN_ERR_OK);
+  err = network_json_parse(NET_SGML_URL);
+  TEST("network_json_parse succeeds", err == FN_ERR_OK);
+  err = network_set_query_param(NET_SGML_URL, QUERY_DELETE_SGML_TAGS);
+  TEST("the strip-tags flag is accepted", err == FN_ERR_OK);
+
+  /* First, so firmware that hangs on an unclosed '<' fails here instead */
+  TEST("a stray '>' is kept", json_stripped("/args/b", "a > b c d"));
+  TEST("nested tags are removed", json_stripped("/args/c", "Hello world"));
+  TEST("an unclosed '<' is kept", json_stripped("/args/a", "I <3 FujiNet"));
+  TEST("an unclosed '<' before a tag is kept", json_stripped("/args/d", "I <3 FujiNet"));
+
+  err = network_close(NET_SGML_URL);
+  TEST("close succeeds", err == FN_ERR_OK);
+#endif
+
+  END_OF_TEST();
+}
+
 void test_network_http_put_plain(void)
 {
   uint8_t err;
