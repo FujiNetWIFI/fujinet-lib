@@ -206,6 +206,38 @@ void test_fuji_host_device_slots(void)
   END_OF_TEST();
 }
 
+#define HOST_TABLE_LEN (sizeof(HostSlot) * MAX_HOSTS)
+
+void test_fuji_host_slots_oversized(void)
+{
+  static uint8_t buf[HOST_TABLE_LEN + 64];
+  bool ok;
+
+  SECTION("WRITE HOST SLOTS with an oversized payload");
+
+#if defined(FN_BROKEN_fuji_get_host_slots) || defined(FN_BROKEN_fuji_put_host_slots)
+  SKIP(fuji_put_host_slots);
+#else
+  ok = fuji_get_host_slots((HostSlot *) buf, MAX_HOSTS);
+  TEST("fuji_get_host_slots succeeds", ok);
+
+  /* The table already there, then zeros. DriveWire runs the bytes past the
+   * table as opcodes, and 0 is its NOP; SIO discards them. */
+  memset(buf + HOST_TABLE_LEN, 0, sizeof(buf) - HOST_TABLE_LEN);
+  ok = FUJICALL_D(FUJICMD_WRITE_HOST_SLOTS, buf, sizeof(buf));
+  printf("  %u-byte write %s\n", (unsigned) sizeof(buf), ok ? "accepted" : "refused");
+  TEST("FujiNet still answers after the oversized write",
+       fuji_get_adapter_config(&g.adapter.ac));
+
+  memset(g.hslots.hosts2, 0, sizeof(g.hslots.hosts2));
+  ok = fuji_get_host_slots(&g.hslots.hosts2[0], MAX_HOSTS);
+  TEST("the host slots are unchanged",
+       ok && memcmp(buf, g.hslots.hosts2, HOST_TABLE_LEN) == 0);
+#endif
+
+  END_OF_TEST();
+}
+
 void test_fuji_device_filename(void)
 {
   bool ok;
