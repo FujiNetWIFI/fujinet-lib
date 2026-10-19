@@ -205,6 +205,7 @@ int main(void)
   test_fs_rename_delete();
   test_fs_dir_lifecycle();
   test_fs_directory_filter();
+  test_fs_sd_hash_name();
   test_fs_lock_unlock();
   test_fs_tnfs_lock_unlock();
   test_fs_ftp_listing();
