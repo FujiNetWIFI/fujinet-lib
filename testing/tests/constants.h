@@ -72,7 +72,7 @@
 /* NET_EMPTY_URL (defined per branch above) answers 204 with a zero-length
  * body. FNJSON::parse() conflates an empty body with malformed JSON and
  * FNHTML::parse() rejects an empty body outright, so it makes both parsers
- * fail -- see the parse_errors.c tests for fujinet-firmware #1640. */
+ * fail -- see the parserr.c tests for fujinet-firmware #1640. */
 
 #define TNFS_COPY_SOURCE_HOST "tnfs.fujinet.online"
 

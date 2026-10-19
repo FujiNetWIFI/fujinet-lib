@@ -1,5 +1,5 @@
-#ifndef FS_H
-#define FS_H
+#ifndef NETFILE_H
+#define NETFILE_H
 
 extern void test_fs_make_test_dir(void);
 extern void test_fs_prefix(void);
@@ -15,4 +15,4 @@ extern void test_fs_lock_unlock(void);
 extern void test_fs_tnfs_lock_unlock(void);
 extern void test_fs_ftp_listing(void);
 
-#endif /* FS_H */
+#endif /* NETFILE_H */

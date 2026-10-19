@@ -1,5 +1,5 @@
 /**
- * @file parse_errors.c
+ * @file parserr.c
  * @brief NDevice parser error codes: what NET_SET_PARSER, NET_PARSE,
  *        NET_QUERY and NET_SET_PARAMETER report when they fail, and what
  *        the following STATUS says.
@@ -27,7 +27,7 @@
 
 #include "broken.h"
 
-#include "parse_errors.h"
+#include "parserr.h"
 #include "harness.h"
 #include "constants.h"
 #include "globals.h"
