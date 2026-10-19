@@ -268,7 +268,18 @@ void test_fs_prefix(void)
             "recv", (uint8_t *) g.fs.path, strlen(g.fs.path));
   TEST("working directory matches", strcmp(g.fs.path, guid) == 0);
 
-  // Reset prefix to empty otherwise it is prepended to every URL sent
+#ifndef FN_BROKEN_network_fs
+  /* A full URL replaces the prefix rather than being appended to it
+   * (fujinet-firmware#1735). */
+  err = fs_open_result(NET_DEVICESPEC,
+                       network_open(NET_DEVICESPEC, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE));
+  TEST("a full URL opens while a prefix is set", err == FN_ERR_OK);
+  TEST("the full URL returns data",
+       network_read(NET_DEVICESPEC, (uint8_t *)g.fs.listing, sizeof(g.fs.listing)) > 0);
+  network_close(NET_DEVICESPEC);
+#endif
+
+  // Reset prefix to empty otherwise it is prepended to relative specs
   network_fs_cd("N1:");
 #endif
 
@@ -363,6 +374,64 @@ void test_fs_directory_modes(void)
 
   END_OF_TEST();
 #endif
+}
+
+/* Firmware once took the LONG format byte for a translation mode and read
+ * ahead only 512 bytes per STATUS; a client trusting the first STATUS, as
+ * Atari NOS does, lost the rest (fujinet-firmware#1836). */
+void test_fs_long_listing(void)
+{
+#ifndef FN_BROKEN_network_fs
+  char chunk[64];
+  int16_t r, i;
+  uint16_t total = 0, entries = 0, col = 0;
+  char first = 0;
+  bool saw_z = false;
+  uint8_t err, conn, nerr;
+  uint16_t bw;
+#endif
+
+  SECTION("network_fs: LONG listing over 512 bytes");
+
+#ifdef FN_BROKEN_network_fs
+  SKIP(network_fs);
+#else
+  err = fs_open_result(TNFS_BIG_DIR,
+                       network_open(TNFS_BIG_DIR, OPEN_MODE_DIRECTORY, DIR_FORMAT_LONG));
+  TEST("the directory opens for a LONG listing", err == FN_ERR_OK);
+
+  bw = 0; conn = 0; nerr = 0;
+  network_status(TNFS_BIG_DIR, &bw, &conn, &nerr);
+  printf("  first STATUS: %u bytes waiting\n", bw);
+  TEST("the first STATUS reports more than 512 bytes waiting", bw > 512);
+
+  for (;;) {
+    r = network_read(TNFS_BIG_DIR, (uint8_t *)chunk, sizeof(chunk));
+    if (r <= 0)
+      break;
+    total += r;
+    for (i = 0; i < r; i++) {
+      if (DIR_IS_TERMINATOR((uint8_t)chunk[i])) {
+        if (col)
+          entries++;
+        col = 0;
+        continue;
+      }
+      if (!col)
+        first = chunk[i];
+      else if (col == 1 && first == 'Z' && chunk[i] == '/')
+        saw_z = true;
+      col++;
+    }
+  }
+  network_close(TNFS_BIG_DIR);
+
+  printf("  %u bytes, %u entries\n", total, entries);
+  TEST("the listing is longer than 512 bytes", total > 512);
+  TEST("the listing reaches Z/", saw_z);
+#endif
+
+  END_OF_TEST();
 }
 
 void test_fs_read_files(void)
@@ -465,13 +534,14 @@ static uint8_t fs_sd_listed(const char *one, const char *two)
   uint8_t scan;
 
   for (scan = 0; scan < 32; scan++) {
+    /* Without the details flag an entry is just the name. */
     memset(g.fs.listing, 0, 49);
-    if (!fuji_read_directory(49, 0x80, g.fs.listing)
+    if (!fuji_read_directory(49, 0, g.fs.listing)
         || (uint8_t)g.fs.listing[0] == 0x7F)
       break;
-    if (strcmp(g.fs.listing + DIRENTRY_FILENAME_OFFSET, one) == 0)
+    if (strcmp(g.fs.listing, one) == 0)
       seen |= 1;
-    if (strcmp(g.fs.listing + DIRENTRY_FILENAME_OFFSET, two) == 0)
+    if (strcmp(g.fs.listing, two) == 0)
       seen |= 2;
   }
   fuji_close_directory();
@@ -496,15 +566,29 @@ static void fs_sd_filter_cleanup(void)
   network_fs_delete(SD_FILTER_TWO);
   network_fs_rmdir(SD_FILTER_URL);
 }
+
+/* The SD card is normally host slot 1; find it if it has moved. */
+static uint8_t fs_sd_host(void)
+{
+  /* Not g.hslots: it overlays g.fs.base, which later sections still need. */
+  static HostSlot hosts[MAX_HOSTS];
+  uint8_t i;
+
+  if (fuji_get_host_slots(&hosts[0], MAX_HOSTS)) {
+    for (i = 0; i < MAX_HOSTS; i++) {
+      if (strcmp((char *)hosts[i], "SD") == 0)
+        return i;
+    }
+  }
+  return 0;
+}
 #endif /* ! FN_BROKEN_network_fs */
 
 void test_fs_directory_filter(void)
 {
 #ifndef FN_BROKEN_network_fs
-  uint8_t i;
   uint8_t sd_idx;
   uint8_t seen;
-  uint8_t *slot;
   bool ok;
 #endif
 
@@ -514,17 +598,7 @@ void test_fs_directory_filter(void)
   SKIP(fuji_open_directory_filter);
   END_OF_TEST();
 #else
-  /* The SD card is normally host slot 1; find it if it has moved. */
-  sd_idx = 0;
-  if (fuji_get_host_slots(&g.hslots.hosts[0], MAX_HOSTS)) {
-    for (i = 0; i < MAX_HOSTS; i++) {
-      slot = (uint8_t *)g.hslots.hosts[i];
-      if (strcmp((char *)slot, "SD") == 0) {
-        sd_idx = i;
-        break;
-      }
-    }
-  }
+  sd_idx = fs_sd_host();
   ok = fuji_mount_host_slot(sd_idx);
   TEST("SD host slot mounts", ok);
 
@@ -557,6 +631,66 @@ void test_fs_directory_filter(void)
   ok = fuji_open_directory(sd_idx, g.fs.path);
   TEST("fnfilter directory is removed", !ok);
   fuji_close_directory();
+
+  END_OF_TEST();
+#endif
+}
+
+#ifndef FN_BROKEN_network_fs
+#define SD_HASH_DIR  "/fnhash/"
+#define SD_HASH_URL  "N1:SD://" SD_HASH_DIR
+#define SD_HASH_FILE SD_HASH_URL "file#1.txt"
+#define SD_HASH_ESC  SD_HASH_URL "file%231.txt"
+#define SD_HASH_DATA "hash"
+
+static void fs_sd_hash_cleanup(void)
+{
+  network_fs_delete(SD_HASH_FILE);
+  /* Firmware that cuts the path at '#' writes this instead */
+  network_fs_delete(SD_HASH_URL "file");
+  network_fs_rmdir(SD_HASH_URL);
+}
+#endif /* ! FN_BROKEN_network_fs */
+
+void test_fs_sd_hash_name(void)
+{
+#ifndef FN_BROKEN_network_fs
+  uint8_t sd_idx;
+  uint8_t seen;
+  bool ok;
+#endif
+
+  SECTION("'#' in an SD filename");
+
+#if defined(FN_BROKEN_network_fs) || defined(FN_BROKEN_fuji_open_directory_filter)
+  SKIP(fuji_open_directory_filter);
+  END_OF_TEST();
+#else
+  sd_idx = fs_sd_host();
+  ok = fuji_mount_host_slot(sd_idx);
+  TEST("SD host slot mounts", ok);
+
+  fs_sd_hash_cleanup();
+  TEST("fnhash directory is created", network_fs_mkdir(SD_HASH_URL) == FN_ERR_OK);
+  TEST("file#1.txt is written", fs_sd_write(SD_HASH_FILE, SD_HASH_DATA) == FN_ERR_OK);
+  TEST("file#1.txt reads back",
+       fs_get(SD_HASH_FILE) == (int16_t) (sizeof(SD_HASH_DATA) - 1)
+       && strcmp(g.fs.data, SD_HASH_DATA) == 0);
+
+  ok = fuji_open_directory_filter(sd_idx, SD_HASH_DIR, NULL);
+  seen = ok ? fs_sd_listed("file#1.txt", "file") : 0;
+  TEST("the directory lists file#1.txt, not file", seen == 1);
+
+  TEST("file%231.txt opens the same file",
+       fs_get(SD_HASH_ESC) == (int16_t) (sizeof(SD_HASH_DATA) - 1)
+       && strcmp(g.fs.data, SD_HASH_DATA) == 0);
+
+  TEST("file#1.txt is deleted", network_fs_delete(SD_HASH_FILE) == FN_ERR_OK);
+  ok = fuji_open_directory_filter(sd_idx, SD_HASH_DIR, NULL);
+  seen = ok ? fs_sd_listed("file#1.txt", "file") : 3;
+  TEST("file#1.txt is gone", seen == 0);
+
+  fs_sd_hash_cleanup();
 
   END_OF_TEST();
 #endif

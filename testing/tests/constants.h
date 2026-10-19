@@ -1,14 +1,36 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+// OPEN_TRANS_ translates from the FujiNet bus's native line ending, so this
+// must match nativeEOL() for the platform's bus: CR LF on RS232, CR by default.
+// cc65's '\n' is already native on the Atari and C64.
+#if defined(FUJI_PLATFORM_MSDOS) || defined(FUJI_PLATFORM_MODEL2) \
+  || defined(FUJI_PLATFORM_MSX)
+#define BASIC_LINE_ENDING "\r\n"
+#elif defined(FUJI_PLATFORM_APPLE2) || defined(FUJI_PLATFORM_COCO) \
+  || defined(FUJI_PLATFORM_ADAM) || defined(FUJI_PLATFORM_PMD85) \
+  || defined(FUJI_PLATFORM_H89) || defined(FUJI_PLATFORM_LYNX)
+#define BASIC_LINE_ENDING "\r"
+#elif defined(FUJI_PLATFORM_ATARI) || defined(FUJI_PLATFORM_C64)
+#define BASIC_LINE_ENDING "\n"
+#else
+#error "BASIC_LINE_ENDING is not defined for this platform"
+#endif
+
+#define ECHO_MSG "... FujiNet integration test"
+
 /* Network device specs used across tests */
 #if 1
 #define NET_TCP_SPEC    "N1:TCP://tcpbin.com:4242/"
 #define NET2_ECHO       "N2:TCP://tcpbin.com:4242/"
+#define NET_TELNET_SPEC "N1:TELNET://tcpbin.com:4242/"
+#define NET2_TELNET     "N2:TELNET://tcpbin.com:4242/"
 #else
 // socat -v TCP-LISTEN:4242,fork EXEC:'cat'
 #define NET_TCP_SPEC    "N1:TCP://10.4.0.1:4242/"
 #define NET2_ECHO       "N2:TCP://10.4.0.1:4242/"
+#define NET_TELNET_SPEC "N1:TELNET://10.4.0.1:4242/"
+#define NET2_TELNET     "N2:TELNET://10.4.0.1:4242/"
 #endif
 
 // Adam can't handle large web sites
@@ -40,36 +62,27 @@
 #define NET_POST_URL    "N1:" HTTPBIN_BASE "/post"
 #define NET_PUT_URL     "N1:" HTTPBIN_BASE "/put"
 #define NET_DELETE_URL  "N1:" HTTPBIN_BASE "/delete"
+#define NET_FORBIDDEN_URL "N1:" HTTPBIN_BASE "/status/403"
+
+/* Complete HTTP framing arrives before a 23-second peer-close delay.
+ * Keep the default reuse behavior: enabling keep-alive masks the regression. */
+#define NET_HTTP_FIXED_HELD_URL "N1:http://wpt.live/common/echo.py?content=ABC&pipe=header%28Content-Length%2C3%29%7Ctrickle%283%3Ad23%29"
+#define NET_HTTP_CHUNKED_HELD_URL "N1:http://wpt.live/common/echo.py?content=3%0D%0AABC%0D%0A0%0D%0A%0D%0A&pipe=header%28Transfer-Encoding%2Cchunked%29%7Ctrickle%2813%3Ad23%29"
 
 /* NET_EMPTY_URL (defined per branch above) answers 204 with a zero-length
  * body. FNJSON::parse() conflates an empty body with malformed JSON and
  * FNHTML::parse() rejects an empty body outright, so it makes both parsers
- * fail -- see the parse_errors.c tests for fujinet-firmware #1640. */
-
-/* Byte offset of the filename within a fuji_read_directory() extended
- * (addtl=0x80) entry. The header preceding the filename is NOT the same
- * size on every bus backend -- each one packs its own
- * set_additional_direntry_details() struct (see fujinet-firmware
- * lib/device/<bus>/___Fuji.cpp):
- *   - rs232 (msdos):   timestamp(6) + size u32(4) + flags(1) + mediatype(1) = 12
- *   - iec (c64):       timestamp(6) + size u16(2) + flags(1) + mediatype(1) = 10
- *   - everyone else:   timestamp(6) + size u32(4) + is_dir(1) + is_trunc(1) + mediatype(1) = 13
- */
-
-// Why isn't there a struct defined for directory entries in fujinet-fuji.h?
-#if defined(BUILD_MSDOS)
-#define DIRENTRY_FILENAME_OFFSET 12
-#elif defined(BUILD_C64)
-#define DIRENTRY_FILENAME_OFFSET 10
-#else
-#define DIRENTRY_FILENAME_OFFSET 13
-#endif
+ * fail -- see the parserr.c tests for fujinet-firmware #1640. */
 
 #define TNFS_COPY_SOURCE_HOST "tnfs.fujinet.online"
 
 /* A TNFS server the lock test can write to, running a tnfsd that answers
  * CHMOD (FujiNetWIFI/tnfsd#34). The test is skipped while this is unset. */
 #define TNFS_RW_ROOT "N1:TNFS://ayce.fozztexx.com/test/"
+
+/* fujinet-firmware#1836's repro: subdirectories 0-9 and A-Z, a LONG listing
+ * well over 512 bytes. */
+#define TNFS_BIG_DIR "N1:TNFS://apps.irata.online/Atari_8-bit/Games/Homesoft/"
 
 /* Opens that fail for a known reason, to check what STATUS reports after. */
 #define NET_MISSING_FILE   "N1:TNFS://" TNFS_COPY_SOURCE_HOST "/fnlibtest-never-created.txt"
@@ -135,10 +148,6 @@
 #else
 #define MAX_DISKS 8
 #endif
-
-#define DISK_ACCESS_MODE_READ    0x01
-#define DISK_ACCESS_MODE_WRITE   0x02
-#define DISK_ACCESS_MODE_MOUNTED 0x40
 
 /* Not defined by old fujinet-lib */
 #if FNLIB_VERSION_MAJOR < 5

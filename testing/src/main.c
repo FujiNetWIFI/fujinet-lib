@@ -23,25 +23,28 @@
 #if !FUJI_TESTS && !NETWORK_TESTS && !NETWORK2_TESTS && !HTML_TESTS \
   && !CALMAIL_TESTS && !REGRESSION_TESTS && !CLOCK_TESTS && !DISK_TESTS \
   && !QRCODE_TESTS && !FS_TESTS && !APPKEY_TESTS && !DEVLIST_TESTS \
-  && !PARSE_ERROR_TESTS
+  && !PARSE_ERROR_TESTS && !CLIPBOARD_TESTS \
+  && !NETPROTO_TESTS
 #error "You need to choose some tests"
 #endif
 
 #include "broken.h"
 
-#include "fuji.h"
+#include "fujidev.h"
 #include "appkey.h"
 #include "network.h"
-#include "network2.h"
+#include "net5plus.h"
 #include "http.h"
 #include "html.h"
-#include "parse_errors.h"
+#include "parserr.h"
 #include "clock.h"
-#include "fdsk.h"
+#include "disk.h"
 #include "qrcode.h"
-#include "fs.h"
+#include "netfile.h"
 #include "ftp.h"
 #include "devlist.h"
+#include "clipbord.h"
+#include "netproto.h"
 
 #include "init_video.h"
 #include "harness.h"
@@ -64,6 +67,8 @@ const char *test_program = TEST_PROGRAM;
 
 int main(void)
 {
+  static char line[64];
+
   init_video();
 
   printf("=== FujiNet Integration Tests ===\n");
@@ -72,10 +77,11 @@ int main(void)
   begin_testing();
 
 #if FUJI_TESTS
-  /* fuji.h */
+  /* fujidev.h */
   test_fuji_status();
   test_fuji_adapter_config();
   test_fuji_host_device_slots();
+  test_fuji_host_slots_oversized();
   test_fuji_device_filename();
   test_fuji_host_prefix();
   test_fuji_directory_ops();
@@ -85,6 +91,20 @@ int main(void)
   test_fuji_base64();
   test_fuji_hashing();
 #endif // FUJI_TESTS
+
+#if NETPROTO_TESTS
+  /* netproto.h */
+  test_netproto_read_count();
+  test_netproto_read_to_eof();
+  test_netproto_read_partial();
+#endif // NETPROTO_TESTS
+
+#if CLIPBOARD_TESTS
+  /* clipbord.h */
+  test_clipboard();
+  test_clipboard_refusals();
+  test_clipboard_limit();
+#endif // CLIPBOARD_TESTS
 
 #if APPKEY_TESTS
   /* appkey.h */
@@ -96,8 +116,9 @@ int main(void)
 #endif // QR_TESTS
 
 #if DISK_TESTS
-  /* fdsk.h */
+  /* disk.h */
   test_fuji_copy_file();
+  test_fuji_create_new();
 #endif // DISK_TESTS
 
 #if QRCODE_TESTS
@@ -117,15 +138,17 @@ int main(void)
   test_network_error_path();
 #endif
   test_multiple_network_devices();
-  test_network_read_partial();
+  test_multiple_telnet_devices();
   test_network_unit();
 #endif // NETWORK_TESTS
 
 #if NETWORK2_TESTS
-  /* network2.h - the v5 command additions */
+  /* net5plus.h - the v5 command additions */
   test_net2_accept();
+  test_net2_short_read();
   test_net2_seek_tell();
   test_net2_seek_errors();
+  test_net2_bus_read_unopened();
   test_net2_set_translation();
   test_net2_login_smoke();
   test_net2_interrupt_rate();
@@ -133,20 +156,24 @@ int main(void)
   test_net2_udp_set_destination();
   test_net2_udp_get_remote();
   test_net2_channel_mode();
-  test_net2_read_count();
 #endif // NETWORK2_TESTS
 
 #if HTML_TESTS
   /* http.h */
   test_network_http_get();
+  test_network_http_fixed_completion();
+  test_network_http_chunked_completion();
   test_network_http_get_nonblocking();
   test_network_http_post();
   test_network_http_post_large();
+  test_network_json_query_large();
   test_network_http_headers();
   test_network_http_channel_mode();
   test_network_json();
+  test_network_json_strip_tags();
   test_network_http_put_plain();
   test_network_http_put_delete();
+  test_network_close_failure_sticks();
 
   /* html.h */
   test_html_parse_query();
@@ -155,7 +182,7 @@ int main(void)
 #endif // HTML_TESTS
 
 #if PARSE_ERROR_TESTS
-  /* parse_errors.h - NDevice parser error codes (fujinet-firmware #1640) */
+  /* parserr.h - NDevice parser error codes (fujinet-firmware #1640) */
   test_parse_no_parser();
   test_parse_after_close();
   test_parse_parser_none();
@@ -170,19 +197,20 @@ int main(void)
 #endif // PARSE_ERROR_TESTS
 
 #if FS_TESTS
-  /* fs.h */
+  /* netfile.h */
   test_fs_prefix();
   test_fs_make_test_dir();
   test_fs_create_files();
   test_fs_directory_modes();
+  test_fs_long_listing();
   test_fs_read_files();
   test_fs_rename_delete();
   test_fs_dir_lifecycle();
   test_fs_directory_filter();
+  test_fs_sd_hash_name();
   test_fs_lock_unlock();
   test_fs_tnfs_lock_unlock();
   test_fs_ftp_listing();
-  test_ftp_file_status_read();
   test_ftp_crunched_name();
 #endif // FS_TESTS
 
@@ -206,7 +234,10 @@ int main(void)
   test_network_exists();
 #endif // DEVLIST_TESTS
 
-  printf("\n=== All %d tests passed, %d skipped ===\n", tests_run, tests_skipped);
+  sprintf(line, "=== All %d tests passed, %d skipped ===", tests_run, tests_skipped);
+  printf("\n");
+  tprint(TP_ALL_PASSED, line);
+  printf("\n");
   print_versions();
 
   end_testing(0);

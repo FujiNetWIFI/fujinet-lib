@@ -1,5 +1,5 @@
 /**
- * @file parse_errors.c
+ * @file parserr.c
  * @brief NDevice parser error codes: what NET_SET_PARSER, NET_PARSE,
  *        NET_QUERY and NET_SET_PARAMETER report when they fail, and what
  *        the following STATUS says.
@@ -27,7 +27,7 @@
 
 #include "broken.h"
 
-#include "parse_errors.h"
+#include "parserr.h"
 #include "harness.h"
 #include "constants.h"
 #include "globals.h"
@@ -446,13 +446,12 @@ void test_set_parameter_errors(void)
   err = network_set_parser(NET_JSON_URL, PARSER_JSON);
   TEST("set PARSER_JSON", err == FN_ERR_OK);
 
-  /* 0x20 is a reserved output mode, which fujidev_set_parameter rejects. */
-  err = network_set_query_param(NET_JSON_URL, 0x20);
-  TEST("set_query_param with value 0x20 reports an error",
+  err = network_set_query_param(NET_JSON_URL, QUERY_OUTPUT_RESERVED_0X20);
+  TEST("set_query_param with a reserved output mode reports an error",
                err != FN_ERR_OK);
 
-  err = network_set_query_param(NET_JSON_URL, 2);
-  TEST("set_query_param with value 2 succeeds", err == FN_ERR_OK);
+  err = network_set_query_param(NET_JSON_URL, QUERY_REMAP_ATASCII_INTERNATIONAL);
+  TEST("set_query_param with a valid flag succeeds", err == FN_ERR_OK);
 
   err = network_close(NET_JSON_URL);
   TEST("close JSON URL", err == FN_ERR_OK);

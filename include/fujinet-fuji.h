@@ -123,6 +123,11 @@ typedef struct
   char filename[MAX_FILENAME_LEN];
 } NewDisk;
 
+/* NewDisk.sectorSize */
+#define NEW_DISK_SECTOR_SINGLE        128
+#define NEW_DISK_SECTOR_DOUBLE        256
+#define NEW_DISK_SECTOR_DOUBLE_DOUBLE 512
+
 #elif defined(FUJI_PLATFORM_APPLE2)
 typedef struct
 {
@@ -132,6 +137,11 @@ typedef struct
   uint32_t numBlocks;
   char filename[MAX_FILENAME_LEN];
 } NewDisk;
+
+/* NewDisk.createType */
+#define NEW_DISK_TYPE_PO  0 /* ProDOS order */
+#define NEW_DISK_TYPE_2MG 1
+#define NEW_DISK_TYPE_DO  2 /* DOS 3.3 order */
 
 #elif defined(FUJI_PLATFORM_COCO) \
   || defined(FUJI_PLATFORM_PMD85)
@@ -149,6 +159,15 @@ typedef struct
   uint16_t numBlocks;
   uint8_t hostSlot;
   uint8_t deviceSlot;
+  char filename[MAX_FILENAME_LEN];
+} NewDisk;
+
+#elif defined(FUJI_PLATFORM_ADAM)
+typedef struct
+{
+  uint8_t hostSlot;
+  uint8_t deviceSlot;
+  uint32_t numBlocks; /* 1K blocks */
   char filename[MAX_FILENAME_LEN];
 } NewDisk;
 
@@ -439,8 +458,26 @@ extern bool fuji_scan_for_networks_adam(uint8_t *count);
  */
 #define fuji_set_boot_config(toggle) FUJICALL_A1(FUJICMD_CONFIG_BOOT, toggle)
 
+/* Values for fuji_set_boot_mode(), as the firmware's insert_boot_device() reads them. */
+enum FujiBootMode
+{
+  FUJI_BOOT_MODE_CONFIG         = 0,
+  FUJI_BOOT_MODE_MOUNT_AND_BOOT = 1,
+  FUJI_BOOT_MODE_LOBBY          = 2,
+  FUJI_BOOT_MODE_HISIO          = 3   /* Atari only */
+};
+
+/* DeviceSlot.mode, and the mode for fuji_mount_disk_image() and fuji_set_device_filename() */
+enum FujiDiskMode
+{
+  FUJI_DISK_MODE_READ    = 0x01,
+  FUJI_DISK_MODE_WRITE   = 0x02,
+  FUJI_DISK_MODE_MOUNTED = 0x40  /* set in DeviceSlot.mode once mounted */
+};
+
 /**
- * @brief Sets the booting mode of the FN device (e.g. lobby).
+ * @brief Sets the booting mode of the FN device.
+ * @param mode a FujiBootMode, e.g. FUJI_BOOT_MODE_LOBBY.
  * @return success status of request.
  */
 #define fuji_set_boot_mode(mode) FUJICALL_A1(FUJICMD_SET_BOOT_MODE, mode)
@@ -450,7 +487,7 @@ extern bool fuji_scan_for_networks_adam(uint8_t *count);
  * @return success status of request.
  */
 #ifdef FUJI_PLATFORM_ATARI
-#define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_A2_D(FUJICMD_SET_DEVICE_FULLPATH, ds, (hs << 4) | (mode), buffer, MAX_FILENAME_LEN)
+#define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_A2_D(FUJICMD_SET_DEVICE_FULLPATH, ds, ((hs) << 4) | ((mode) & 0x0F), buffer, MAX_FILENAME_LEN)
 #elif defined(FUJI_PLATFORM_ADAM)
 // mode and hs are ignored on Adam
 #define fuji_set_device_filename(mode, hs, ds, buffer) FUJICALL_A1_D(FUJICMD_SET_DEVICE_FULLPATH, ds, buffer, strlen(buffer))

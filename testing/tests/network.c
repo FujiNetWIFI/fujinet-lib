@@ -12,27 +12,13 @@
 #include <string.h>
 #endif /* _CMOC_VERSION_ */
 
-// OPEN_TRANS_ translate mode translates from the platform's BASIC line ending
-// to the requested line ending, not from the C/printf style.
-#if defined(__APPLE2__) || defined(_CMOC_VERSION_) \
-  || defined(__ADAM__) || defined(__COLECOADAM__) \
-  || defined(__PMD85__)
-#define BASIC_LINE_ENDING "\r"
-#elif defined(__WATCOMC__)
-#define BASIC_LINE_ENDING "\r\n"
-#else
-#define BASIC_LINE_ENDING "\n"
-#endif
-
-#define ECHO_MSG "... FujiNet integration test"
 //#define ALT_LINE_ENDING "\n#"
 #define ALT_LINE_ENDING "\x0d\x0a"
 
-#if defined(__APPLE2__)
-#define ECHO_WAIT_RETRIES 1000
-#else
-#define ECHO_WAIT_RETRIES 50
-#endif
+/* Back-to-back STATUS polls; the full count only runs when no echo comes. */
+#define ECHO_WAIT_RETRIES 500
+/* By the time the echo is back, a leak onto the other unit would be too. */
+#define ECHO_LEAK_POLLS 5
 
 void mark_echo_message(const char *prefix, uint8_t msg[])
 {
@@ -247,12 +233,12 @@ void test_network_status_after_failed_open(void)
   END_OF_TEST();
 }
 
-uint16_t wait_for_data(const char *net)
+uint16_t wait_for_data(const char *net, uint16_t polls)
 {
   uint16_t bw = 0, retry;
   uint8_t conn, nerr, err;
 
-  for (retry = 0; retry < ECHO_WAIT_RETRIES; retry++) {
+  for (retry = 0; retry < polls; retry++) {
     bw = 0; conn = 0; nerr = 0;
     err = network_status(net, &bw, &conn, &nerr);
     if (err != FN_ERR_OK || bw > 0 || nerr != NETWORK_SUCCESS)
@@ -271,13 +257,13 @@ void dual_echo_check(const char *net1, const char *net2, const uint8_t *msg)
   w = strlen((const char *) msg);
   err = network_write(net1, msg, w);
 
-  r = wait_for_data(net1);
+  r = wait_for_data(net1, ECHO_WAIT_RETRIES);
   printf("  bytes_waiting=%u\n", r);
   strcpy(test_name, "Nx has bytes waiting");
   test_name[1] = net1[1];
   TEST(test_name, r > 0);
 
-  r = wait_for_data(net2);
+  r = wait_for_data(net2, ECHO_LEAK_POLLS);
   printf("  bytes_waiting=%u\n", r);
   strcpy(test_name, "Nx DOES NOT have bytes waiting");
   test_name[1] = net2[1];
@@ -301,28 +287,38 @@ void dual_echo_check(const char *net1, const char *net2, const uint8_t *msg)
   return;
 }
 
-void test_multiple_network_devices(void)
+static void dual_echo_pair(const char *n1, const char *n2)
 {
-  uint8_t err, err2 = FN_ERR_OK;
+  uint8_t err, err2;
   uint8_t msg[] = ECHO_MSG BASIC_LINE_ENDING;
 
-  SECTION("multiple N: devices");
-
-  err = network_open(NET_TCP_SPEC, OPEN_MODE_RW, OPEN_TRANS_LF);
-  err2 = network_open(NET2_ECHO, OPEN_MODE_RW, OPEN_TRANS_LF);
-  TEST("dual network_open (TCP RW) succeeds", err == FN_ERR_OK && err2 == FN_ERR_OK);
+  err = network_open(n1, OPEN_MODE_RW, OPEN_TRANS_LF);
+  err2 = network_open(n2, OPEN_MODE_RW, OPEN_TRANS_LF);
+  TEST("dual network_open (RW) succeeds", err == FN_ERR_OK && err2 == FN_ERR_OK);
 
   // Write a message to N2 and make sure it doesn't come back on N1
   mark_echo_message("DN2", msg);
-  dual_echo_check(NET2_ECHO, NET_TCP_SPEC, msg);
+  dual_echo_check(n2, n1, msg);
 
   // Do the reverse, write to N1 and validate it is different than N2
   mark_echo_message("DN1", msg);
-  dual_echo_check(NET_TCP_SPEC, NET2_ECHO, msg);
+  dual_echo_check(n1, n2, msg);
 
-  err = network_close(NET_TCP_SPEC);
-  err2 = network_close(NET2_ECHO);
+  network_close(n1);
+  network_close(n2);
+}
 
+void test_multiple_network_devices(void)
+{
+  SECTION("multiple N: devices");
+  dual_echo_pair(NET_TCP_SPEC, NET2_ECHO);
+  END_OF_TEST();
+}
+
+void test_multiple_telnet_devices(void)
+{
+  SECTION("multiple TELNET N: devices");
+  dual_echo_pair(NET_TELNET_SPEC, NET2_TELNET);
   END_OF_TEST();
 }
 
@@ -399,34 +395,3 @@ void test_network_status_after_close(void)
   END_OF_TEST();
 }
 
-void test_network_read_partial(void)
-{
-  uint8_t err;
-  int16_t r, w, w2;
-  uint8_t msg[] = ECHO_MSG BASIC_LINE_ENDING;
-
-  SECTION("network_read_partial");
-
-  mark_echo_message("DN2", msg);
-
-  err = network_open(NET_TCP_SPEC, OPEN_MODE_RW, OPEN_TRANS_LF);
-  if (err != FN_ERR_OK)
-    TEST("network_open (TCP RW) succeeds", err == FN_ERR_OK);
-
-  w = strlen((const char *) msg);
-  err = network_write(NET_TCP_SPEC, msg, w);
-  if (err != FN_ERR_OK)
-    TEST("network_write succeeds", err == FN_ERR_OK);
-
-  memset(g.net, 0, sizeof(g.net));
-  w2 = w / 2;
-  r = network_read(NET_TCP_SPEC, g.net, w2);
-  TEST("read partial correct length", r == w2);
-  r = network_read(NET_TCP_SPEC, &g.net[w2], w - w2);
-  TEST("read remaining correct length", r == w - w2);
-  if (memcmp(g.net, msg, w) != 0)
-    cmp_hex("orig", msg, w, "recv", g.net, r);
-  TEST("all data read", memcmp(g.net, msg, w) == 0);
-
-  END_OF_TEST();
-}

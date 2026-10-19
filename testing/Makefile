@@ -10,22 +10,11 @@ PRODUCTS += network
 PRODUCTS += parserr
 PRODUCTS += qrcode
 PRODUCTS += html
+PRODUCTS += clipbord
+PRODUCTS += netproto
 PRODUCTS_DISK_NAME = fntests
 
-PLATFORMS += adam
-#PLATFORMS += adam_cpm
-PLATFORMS += apple2
-PLATFORMS += atari
-PLATFORMS += c64
-PLATFORMS += coco
-PLATFORMS += h89-cpm
-PLATFORMS += h89-hdos
-PLATFORMS += lynx
-PLATFORMS += model2
-PLATFORMS += msdos
-PLATFORMS += msx
-#PLATFORMS += msxrom
-PLATFORMS += pmd85
+PLATFORMS := $(shell awk '/^PLATFORMS[ \t]*\+=/{print $$3}' ../Makefile)
 
 # You can run 'make <platform>' to build for a specific platform,
 # or 'make <platform>/<target>' for a platform-specific target.
@@ -68,6 +57,8 @@ network_SRC_DIRS = $(MAIN_SRC_DIRS)
 parserr_SRC_DIRS = $(MAIN_SRC_DIRS)
 qrcode_SRC_DIRS = $(MAIN_SRC_DIRS)
 html_SRC_DIRS = $(MAIN_SRC_DIRS)
+clipbord_SRC_DIRS = $(MAIN_SRC_DIRS)
+netproto_SRC_DIRS = $(MAIN_SRC_DIRS)
 
 fujidev_CFLAGS = -DFUJI_TESTS=1
 network_CFLAGS = -DNETWORK_TESTS=1
@@ -80,6 +71,8 @@ qrcode_CFLAGS = -DQRCODE_TESTS=1
 netfile_CFLAGS = -DFS_TESTS=1
 appkey_CFLAGS = -DAPPKEY_TESTS=1
 devlist_CFLAGS = -DDEVLIST_TESTS=1
+clipbord_CFLAGS = -DCLIPBOARD_TESTS=1
+netproto_CFLAGS = -DNETPROTO_TESTS=1
 
 include ../makefiles/toplevel-rules.mk
 
@@ -99,9 +92,9 @@ msdos/disk-post::
 	$(if $(call menu-on,MSDOSMENU),menu=$$($(call menu-dir,msdos-menu,MSDOSMENU)) && \
 	  $(call copy-to-disk,,$$menu/dosmenu.exe,TESTMENU.EXE,$(DISK)))
 
-# The test binaries do not fit the default single density ATR or a 140kb
-# ProDOS volume.
-DISK_TOOL_FLAGS_ATARI = -D -m -b MyPicoDos406
+# The tests do not fit a double density ATR; -Q makes a 360K quad density one.
+DISK_TOOL_FLAGS_ATARI = -Q -m -b MyPicoDos406
+# Apple II: nor a 140kb ProDOS volume.
 DISK_SIZE = 800kb
 
 CFLAGS += -DBUILD_$(PLATFORM_UC) -DPLATFORM=$(DSTRING_OPEN)$(PLATFORM)$(DSTRING_CLOSE)
@@ -145,7 +138,7 @@ LIBS_EXTRA_H89-HDOS = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 # sector 17 (LSN 322 + 630n).
 # AUTOEXEC.BAS has to stay type 0 ASCII or HDB-DOS DOAUTO will not run it.
 COCO_DISKS = 2
-COCO_PROGRAMS = $(foreach p,$(filter-out %.lib,$(PRODUCTS)),$(R2R_PD)/$(p)$(EXEC_SUFFIX))
+TEST_PROGRAMS = $(foreach p,$(filter-out %.lib,$(PRODUCTS)),$(R2R_PD)/$(p)$(EXEC_SUFFIX))
 ifeq ($(PLATFORM),coco)
 DISK_EXECUTABLES =
 endif
@@ -162,7 +155,7 @@ coco/disk-post::
 	  $(call copy-to-disk,-a -0 -l,$$menu/AUTOEXEC.BAS,AUTOEXEC.BAS:$$n,$(DISK)) || exit 1;) \
 	  n=$$((n + 1)); \
 	done
-	n=0; for f in $(COCO_PROGRAMS); do \
+	n=0; for f in $(TEST_PROGRAMS); do \
 	  name=$$(basename $$f | tr '[:lower:]' '[:upper:]'); \
 	  need=$$(( ($$(wc -c < $$f) + 2303) / 2304 )); \
 	  while [ "$$($(DISK_TOOL) free $(DISK),:$$n | sed -n 's/^Free granules: \([0-9]*\).*/\1/p')" -lt $$need ]; do \
@@ -171,6 +164,28 @@ coco/disk-post::
 	  done; \
 	  $(call copy-to-disk,-b -2,$$f,$$name:$$n,$(DISK)) || exit 1; \
 	done
+
+# One 8" disk is nearly full, so Model II also gets fntests2.imd for the
+# programs that no longer fit on fntests.imd.
+MODEL2_DISK2 = $(R2R_PD)/$(PRODUCTS_DISK_NAME)2.imd
+ifeq ($(PLATFORM),model2)
+DISK_EXECUTABLES =
+endif
+
+model2/disk-post::
+	cp $(CPM_DISK) $(DISK).1.raw
+	cp $(CPM_DISK) $(DISK).2.raw
+	n=1; for f in $(TEST_PROGRAMS); do \
+	  name=$$(basename $$f); \
+	  until $(call copy-to-disk,,$$f,0:,$(DISK).$$n.raw) 2>/dev/null; do \
+	    cpmrm -f $(DISKDEF) $(DISK).$$n.raw 0:$$name 2>/dev/null; \
+	    n=$$((n + 1)); \
+	    [ $$n -le 2 ] || { echo "$$name does not fit on 2 disks" >&2; exit 1; }; \
+	  done; \
+	done
+	$(CONVERT_TOOL) -8 -c 77 -h 1 -s 26 -l 128 $(DISK).1.raw $(DISK)
+	$(CONVERT_TOOL) -8 -c 77 -h 1 -s 26 -l 128 $(DISK).2.raw $(MODEL2_DISK2)
+	rm -f $(DISK).1.raw $(DISK).2.raw
 
 adam/r2r-post::
 	$(if $(call menu-on,ADAMMENU),menu=$$($(call menu-dir,adam-menu,ADAMMENU)) && \

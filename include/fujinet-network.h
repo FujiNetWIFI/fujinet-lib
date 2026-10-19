@@ -12,6 +12,7 @@
 #include <fujinet-commands.h>
 #include <fujinet-const.h>
 #include <fujinet-platform.h>
+#include <fujinet-query.h>
 
 #ifdef __CBM__
 
@@ -450,7 +451,7 @@ FN_ERR network_udp_get_remote(const char *devicespec, char *buf, uint16_t len);
 /**
  * @brief  Set a parser processing parameter
  * @param  devicespec pointer to device specification, e.g. "N1:"
- * @param  param 0 = query flags (bits 0-2 remap, bits 4-5 output mode), 1 = query line-ending character
+ * @param  param 0 = query flags (query_flags_t), 1 = query line-ending character
  * @param  value the value to set
  * @return fujinet-network error code (See FN_ERR_* values)
  */
@@ -502,6 +503,7 @@ FN_ERR network_html_parse(const char *devicespec);
 #define OPEN_MODE_READ          (0x04)
 #define OPEN_MODE_WRITE         (0x08)
 #define OPEN_MODE_RW            (0x0C)
+#define OPEN_MODE_APPEND        (0x09)
 #define OPEN_MODE_DIRECTORY     (0x06)
 #define OPEN_MODE_DIRECTORY_ALT (0x07)
 

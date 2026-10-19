@@ -7,18 +7,18 @@
 #define FNLIB_VERSION_FULL "vClassic"
 #endif
 
-#define TEST(name, expr)                                        \
-    do {                                                        \
-      tests_run++;                                              \
-      if (expr) {                                               \
-        printf("PASS  %s\n", name);                             \
-        tests_passed++;                                         \
-      } else {                                                  \
-        printf("FAIL  %s  (line %d)\n", name, __LINE__);        \
-        tests_failed++;                                         \
-        test_abort();                                           \
-      }                                                         \
-    } while (0)
+/* What a line of output represents; tprint() shows each the way the
+ * platform can, in color or inverse video (#96). */
+enum {
+  TP_PLAIN,
+  TP_PASS,
+  TP_FAIL,
+  TP_ALL_PASSED,
+  TP_ABORTED,
+  TP_ID_CLEAN,
+  TP_ID_DIRTY
+};
+#define TEST(name, expr) test_check((expr) != 0, name, __LINE__)
 
 /*
  * SKIP(fn_name) -- use instead of calling a broken function directly.
@@ -47,5 +47,7 @@ extern void begin_testing();
 extern void end_testing(int code);
 extern void print_versions();
 extern void test_abort(void);
+extern void test_check(uint8_t ok, const char *name, int line);
+extern void tprint(uint8_t what, const char *s);
 
 #endif /* HARNESS_H */

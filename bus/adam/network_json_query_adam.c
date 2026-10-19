@@ -9,6 +9,9 @@ int16_t network_json_query_adam(const char *devicespec, const char *query, char 
   DCB *dcb;
 
 
+  // The early returns leave an empty string
+  buffer[0] = '\0';
+
   if (!NETCALL_D(NETCMD_QUERY, nw_unit, query, strlen(query)))
     return -FN_ERR_IO_ERROR;
 
