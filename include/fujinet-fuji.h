@@ -467,6 +467,14 @@ enum FujiBootMode
   FUJI_BOOT_MODE_HISIO          = 3   /* Atari only */
 };
 
+/* DeviceSlot.mode, and the mode for fuji_mount_disk_image() and fuji_set_device_filename() */
+enum FujiDiskMode
+{
+  FUJI_DISK_MODE_READ    = 0x01,
+  FUJI_DISK_MODE_WRITE   = 0x02,
+  FUJI_DISK_MODE_MOUNTED = 0x40  /* set in DeviceSlot.mode once mounted */
+};
+
 /**
  * @brief Sets the booting mode of the FN device.
  * @param mode a FujiBootMode, e.g. FUJI_BOOT_MODE_LOBBY.

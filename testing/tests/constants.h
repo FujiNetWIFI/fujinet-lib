@@ -149,10 +149,6 @@
 #define MAX_DISKS 8
 #endif
 
-#define DISK_ACCESS_MODE_READ    0x01
-#define DISK_ACCESS_MODE_WRITE   0x02
-#define DISK_ACCESS_MODE_MOUNTED 0x40
-
 /* Not defined by old fujinet-lib */
 #if FNLIB_VERSION_MAJOR < 5
 #define NETWORK_SUCCESS 0
