@@ -443,13 +443,22 @@ FN_ERR network_udp_get_remote(const char *devicespec, char *buf, uint16_t len);
 /**
  * @brief  Set a parser processing parameter
  * @param  devicespec pointer to device specification, e.g. "N1:"
- * @param  param 0 = query flags (bits 0-2 remap, bits 4-5 output mode), 1 = query line-ending character
+ * @param  param 0 = query flags (QUERY_*), 1 = query line-ending character
  * @param  value the value to set
  * @return fujinet-network error code (See FN_ERR_* values)
  */
 FN_ERR network_set_parameter(const char *devicespec, uint8_t param, uint8_t value);
 #define network_set_query_param(devicespec, flags) network_set_parameter(devicespec, 0, flags)
 #define network_set_line_ending(devicespec, ch) network_set_parameter(devicespec, 1, ch)
+
+/* network_set_query_param() flags: any remap bits, ORed with one output mode */
+#define QUERY_REMAP_CHARS                 0x01
+#define QUERY_REMAP_ATASCII_INTERNATIONAL 0x02
+#define QUERY_DELETE_SGML_TAGS            0x04 /* JSON only */
+#define QUERY_OUTPUT_VERBATIM             0x00
+#define QUERY_OUTPUT_ASCII                0x10 /* decode entities, strip non-ASCII */
+#define QUERY_OUTPUT_RESERVED_0X20        0x20 /* rejected by the firmware */
+#define QUERY_OUTPUT_RESERVED_0X30        0x30 /* rejected by the firmware */
 
 /**
  * @brief  Ask which direction a network command transfers data (Atari SIO only)
