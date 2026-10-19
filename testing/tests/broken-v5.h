@@ -3,8 +3,8 @@
 #ifdef BUILD_ADAM
 #define FN_BROKEN_fuji_mount_host_slot_error
 #define FN_BROKEN_network_open_invalid
-/* fujinet-fuji.h has no Adam NewDisk */
-#define FN_BROKEN_fuji_create_new
+/* AdamNet ACKs the data before the firmware refuses an existing file */
+#define FN_BROKEN_fuji_create_new_error
 #endif /* BUILD_ADAM */
 
 /* IEC's systemBus::transaction_error() is still a no-op

@@ -261,7 +261,7 @@ void test_fuji_create_new(void)
 #elif defined(FUJI_PLATFORM_COCO) || defined(FUJI_PLATFORM_PMD85)
   nd.numDisks = 1;
   want = 315UL * 512;
-#elif defined(FUJI_PLATFORM_LYNX)
+#elif defined(FUJI_PLATFORM_LYNX) || defined(FUJI_PLATFORM_ADAM)
   nd.numBlocks = 256;
   want = 256UL * 1024;
 #else
@@ -283,8 +283,13 @@ void test_fuji_create_new(void)
     TEST("the new image is the size asked for", e->size == want);
   }
 
+#ifdef FN_BROKEN_fuji_create_new_error
+  printf("SKIP  fuji_create_new_error (known broken)\n");
+  tests_skipped++;
+#else
   ok = fuji_create_new(&nd);
   TEST("creating it again over the existing file fails", !ok);
+#endif
 
   /* NEW DISK points the drive slot at the image; put it back */
   fuji_set_device_filename(saved[ds].mode, saved[ds].hostSlot, ds, (char *) saved[ds].file);
