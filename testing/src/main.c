@@ -30,20 +30,20 @@
 
 #include "broken.h"
 
-#include "fuji.h"
+#include "fujidev.h"
 #include "appkey.h"
 #include "network.h"
-#include "network2.h"
+#include "net5plus.h"
 #include "http.h"
 #include "html.h"
-#include "parse_errors.h"
+#include "parserr.h"
 #include "clock.h"
-#include "fdsk.h"
+#include "disk.h"
 #include "qrcode.h"
-#include "fs.h"
+#include "netfile.h"
 #include "ftp.h"
 #include "devlist.h"
-#include "clipboard.h"
+#include "clipbord.h"
 #include "netproto.h"
 
 #include "init_video.h"
@@ -77,7 +77,7 @@ int main(void)
   begin_testing();
 
 #if FUJI_TESTS
-  /* fuji.h */
+  /* fujidev.h */
   test_fuji_status();
   test_fuji_adapter_config();
   test_fuji_host_device_slots();
@@ -99,7 +99,7 @@ int main(void)
 #endif // NETPROTO_TESTS
 
 #if CLIPBOARD_TESTS
-  /* clipboard.h */
+  /* clipbord.h */
   test_clipboard();
   test_clipboard_refusals();
   test_clipboard_limit();
@@ -115,7 +115,7 @@ int main(void)
 #endif // QR_TESTS
 
 #if DISK_TESTS
-  /* fdsk.h */
+  /* disk.h */
   test_fuji_copy_file();
   test_fuji_create_new();
 #endif // DISK_TESTS
@@ -142,7 +142,7 @@ int main(void)
 #endif // NETWORK_TESTS
 
 #if NETWORK2_TESTS
-  /* network2.h - the v5 command additions */
+  /* net5plus.h - the v5 command additions */
   test_net2_accept();
   test_net2_short_read();
   test_net2_seek_tell();
@@ -181,7 +181,7 @@ int main(void)
 #endif // HTML_TESTS
 
 #if PARSE_ERROR_TESTS
-  /* parse_errors.h - NDevice parser error codes (fujinet-firmware #1640) */
+  /* parserr.h - NDevice parser error codes (fujinet-firmware #1640) */
   test_parse_no_parser();
   test_parse_after_close();
   test_parse_parser_none();
@@ -196,7 +196,7 @@ int main(void)
 #endif // PARSE_ERROR_TESTS
 
 #if FS_TESTS
-  /* fs.h */
+  /* netfile.h */
   test_fs_prefix();
   test_fs_make_test_dir();
   test_fs_create_files();

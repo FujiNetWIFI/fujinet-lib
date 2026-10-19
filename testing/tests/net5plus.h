@@ -1,5 +1,5 @@
-#ifndef NETWORK2_H
-#define NETWORK2_H
+#ifndef NET5PLUS_H
+#define NET5PLUS_H
 
 extern void test_net2_seek_tell(void);
 extern void test_net2_seek_errors(void);
@@ -19,4 +19,4 @@ extern void test_net2_proceed(void);
 extern void test_net2_accept(void);
 extern void test_net2_short_read(void);
 
-#endif /* NETWORK2_H */
+#endif /* NET5PLUS_H */

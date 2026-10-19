@@ -1,5 +1,5 @@
 /**
- * @file clipboard.c
+ * @file clipbord.c
  * @brief CLIPBOARD: protocol: snippets, history, append, and STATUS saying
  *        why a write or read was refused (fujinet-firmware #1819).
  *

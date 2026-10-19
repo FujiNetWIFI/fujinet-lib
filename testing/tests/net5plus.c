@@ -1,5 +1,5 @@
 /**
- * @file network2.c
+ * @file net5plus.c
  * @brief Coverage for the network device commands added in fujinet-lib v5:
  *        seek/tell, translation, login, timer rate, TCP accept and
  *        close-client, UDP destination/remote, channel mode and read count.

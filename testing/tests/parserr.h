@@ -1,5 +1,5 @@
-#ifndef PARSE_ERRORS_H
-#define PARSE_ERRORS_H
+#ifndef PARSERR_H
+#define PARSERR_H
 
 extern void test_parse_no_parser(void);
 extern void test_parse_after_close(void);
@@ -13,4 +13,4 @@ extern void test_query_no_channel(void);
 extern void test_set_parser_invalid_mode(void);
 extern void test_set_parameter_errors(void);
 
-#endif /* PARSE_ERRORS_H */
+#endif /* PARSERR_H */
