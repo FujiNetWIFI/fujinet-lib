@@ -204,6 +204,28 @@ void test_fuji_copy_file(void)
 #define NEW_DISK_NAME "/fnnewdisk.img"
 #define NEW_DISK_URL  "N1:SD://" NEW_DISK_NAME
 
+#if !defined(FN_BROKEN_fuji_create_new) \
+ && (defined(FUJI_PLATFORM_APPLE2) || defined(FUJI_PLATFORM_ADAM))
+/* Past the bus's limit: ProDOS's on IWM, what mount() can size on AdamNet */
+#ifdef FUJI_PLATFORM_APPLE2
+#define NEW_DISK_TOO_BIG 70000UL
+#else
+#define NEW_DISK_TOO_BIG 4194304UL
+#endif
+
+static bool nd_ok, nd_left;
+
+static void try_create(NewDisk *nd, uint8_t sd_idx, DeviceSlot *saved)
+{
+  nd_ok = fuji_create_new(nd);
+  nd_left = fuji_file_stat(sd_idx, NEW_DISK_NAME) != NULL;
+  /* Clean up before the checks, which stop the run when one fails */
+  fuji_set_device_filename(saved->mode, saved->hostSlot, nd->deviceSlot, (char *) saved->file);
+  if (nd_left)
+    network_fs_delete(NEW_DISK_URL);
+}
+#endif
+
 void test_fuji_create_new(void)
 {
 #ifdef FN_BROKEN_fuji_create_new
@@ -294,6 +316,28 @@ void test_fuji_create_new(void)
   /* NEW DISK points the drive slot at the image; put it back */
   fuji_set_device_filename(saved[ds].mode, saved[ds].hostSlot, ds, (char *) saved[ds].file);
   TEST("the image is deleted", network_fs_delete(NEW_DISK_URL) == FN_ERR_OK);
+
+#if defined(FUJI_PLATFORM_APPLE2) || defined(FUJI_PLATFORM_ADAM)
+  nd.numBlocks = NEW_DISK_TOO_BIG;
+  try_create(&nd, sd_idx, &saved[ds]);
+#ifdef FN_BROKEN_fuji_create_new_error
+  printf("SKIP  fuji_create_new_error (known broken)\n");
+  tests_skipped++;
+#else
+  TEST("too many blocks is refused", !nd_ok);
+#endif
+  TEST("too many blocks leaves no file", !nd_left);
+
+  nd.numBlocks = 0;
+  try_create(&nd, sd_idx, &saved[ds]);
+#ifdef FN_BROKEN_fuji_create_new_error
+  printf("SKIP  fuji_create_new_error (known broken)\n");
+  tests_skipped++;
+#else
+  TEST("0 blocks is refused", !nd_ok);
+#endif
+  TEST("0 blocks leaves no file", !nd_left);
+#endif
 #endif /* FN_BROKEN_fuji_create_new */
 
   END_OF_TEST();
