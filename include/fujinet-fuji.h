@@ -162,6 +162,15 @@ typedef struct
   char filename[MAX_FILENAME_LEN];
 } NewDisk;
 
+#elif defined(FUJI_PLATFORM_ADAM)
+typedef struct
+{
+  uint8_t hostSlot;
+  uint8_t deviceSlot;
+  uint32_t numBlocks; /* 1K blocks */
+  char filename[MAX_FILENAME_LEN];
+} NewDisk;
+
 #endif // End of NewDisk defs
 
 #if defined(FUJI_PLATFORM_ATARI)   \
