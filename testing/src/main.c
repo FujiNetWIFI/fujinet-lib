@@ -234,6 +234,11 @@ int main(void)
   test_network_exists();
 #endif // DEVLIST_TESTS
 
+#if FUJI_TESTS
+  /* Keep last; a framing regression may briefly drop WiFi. */
+  test_fuji_set_ssid();
+#endif
+
   sprintf(line, "=== All %d tests passed, %d skipped ===", tests_run, tests_skipped);
   printf("\n");
   tprint(TP_ALL_PASSED, line);
