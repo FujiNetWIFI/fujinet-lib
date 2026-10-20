@@ -11,10 +11,7 @@
 
 static void hexdump(void *ptr, int count);
 
-uint8_t fn_default_timeout = 15;
-
-// The tick counter is 16 bits at PORT_TICKS_PER_SECOND (500)
-#define TIMEOUT_MAX_SECS 131
+#define TIMEOUT_SLOW	(15 * PORT_TICKS_PER_SECOND)
 
 // Yes, using SIO convention internally! Legacy FTW! ;-)
 typedef enum {
@@ -76,7 +73,6 @@ static uint8_t fuji_packet_call(AtariSIODirection direction, fujibus_packet *pac
   bool success = false;
   uint8_t pdev = packet_ptr->header.device;
   uint8_t aux_len = fuji_field_numbytes(packet_ptr->header.fields);
-  uint16_t timeout;
 
 
   if (!port_did_init) {
@@ -97,13 +93,6 @@ static uint8_t fuji_packet_call(AtariSIODirection direction, fujibus_packet *pac
   hexdump(packet_ptr, sizeof(fujibus_header));
 #endif /* DEBUG */
 
-  timeout = fn_default_timeout;
-  if (!timeout)
-    timeout = 1;
-  else if (timeout > TIMEOUT_MAX_SECS)
-    timeout = TIMEOUT_MAX_SECS;
-  timeout *= PORT_TICKS_PER_SECOND;
-
   // Whatever is waiting now is the tail of a reply that arrived after its
   // call gave up. Left there, it would be read as this call's reply.
   port_drain();
@@ -119,7 +108,7 @@ static uint8_t fuji_packet_call(AtariSIODirection direction, fujibus_packet *pac
     plen = 0;
   }
   rlen = port_getbuf_slip_dual(packet_ptr, sizeof(packet_ptr->header),
-                               pbuf, plen, timeout);
+                               pbuf, plen, TIMEOUT_SLOW);
   if (rlen < sizeof(fujibus_header) || rlen != packet_ptr->header.length) {
 #ifdef DEBUG
     printf("Reply length incorrect: %d %d\n", rlen, packet_ptr->header.length);

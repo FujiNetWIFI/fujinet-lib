@@ -74,11 +74,6 @@ extern NetworkStatus nw_status;
 #define fn_network_conn  (nw_status.status)
 #define fn_network_error (nw_status.errcode)
 
-#ifdef FUJI_PLATFORM_H89
-/* Seconds each bus call waits for its reply (1 to 131, default 15) */
-extern uint8_t fn_default_timeout;
-#endif
-
 /**
  * @brief  Initialize network device
  * Allows initialization of network to perform any platform dependent checks, and allow applications to
