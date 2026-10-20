@@ -3,6 +3,7 @@
 
 extern void test_fuji_status(void);
 extern void test_fuji_wifi(void);
+extern void test_fuji_set_ssid(void);
 extern void test_fuji_adapter_config(void);
 extern void test_fuji_network_scan(void);
 extern void test_fuji_guid(void);
