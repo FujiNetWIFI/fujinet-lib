@@ -93,6 +93,10 @@ static uint8_t fuji_packet_call(AtariSIODirection direction, fujibus_packet *pac
   hexdump(packet_ptr, sizeof(fujibus_header));
 #endif /* DEBUG */
 
+  // Whatever is waiting now is the tail of a reply that arrived after its
+  // call gave up. Left there, it would be read as this call's reply.
+  port_drain();
+
   port_putc(SLIP_END);
   port_putbuf_slip(packet_ptr, aux_len + sizeof(packet_ptr->header));
   if (direction == SIO_DIRECTION_WRITE)

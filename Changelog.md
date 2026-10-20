@@ -9,6 +9,7 @@
 - [h89] Set up the 8255 after a reset even when EN reads high
 - fuji_open_directory_filter() no longer sends stale bytes after the path as the filter, and accepts a NULL filter
 - [adam][lynx][c64] network_write() splits a write that does not fit one bus packet instead of overrunning the packet
+- [h89] Each bus call drains stale reply bytes first, and the SLIP sync gives up after 4096 bytes with no END
 
 ## [5.0.0] 2026-10-09
 

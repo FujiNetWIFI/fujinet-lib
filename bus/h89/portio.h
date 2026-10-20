@@ -15,6 +15,9 @@ extern uint16_t port_getbuf_slip_dual(void *hdr_buf, uint16_t hdr_len,
                                       void *data_buf, uint16_t data_len,
                                       uint16_t timeout);
 
+// discards whatever input is waiting (bounded)
+extern void port_drain(void);
+
 // writes character to port
 extern void port_putc(uint8_t c);
 
