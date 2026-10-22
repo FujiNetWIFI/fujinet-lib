@@ -475,6 +475,23 @@ enum FujiDiskMode
   FUJI_DISK_MODE_MOUNTED = 0x40  /* set in DeviceSlot.mode once mounted */
 };
 
+#if defined(FUJI_PLATFORM_COCO) || defined(FUJI_PLATFORM_MSX)
+/* Flags for the FujiNet cartridge's IO control register */
+enum FujiCartControl
+{
+  FUJI_CART_USER_ROM_ENABLE = 0x01,
+  FUJI_CART_AUTOSTART       = 0x02,  /* CoCo only: pulse RESET into the user ROM */
+  FUJI_CART_ROM_MODE_CMD    = 0x04
+};
+
+/**
+ * @brief Switches the FujiNet cartridge to its user ROM, as CONFIG does to boot it.
+ * CoCo: the cartridge then pulses RESET; without one (e.g. a Becker port) this
+ * returns. MSX: jumps to 0 afterward, the way CONFIG does, so it never returns.
+ */
+extern void fuji_enable_user_rom(void);
+#endif
+
 /**
  * @brief Sets the booting mode of the FN device.
  * @param mode a FujiBootMode, e.g. FUJI_BOOT_MODE_LOBBY.

@@ -10,6 +10,7 @@
 - fuji_open_directory_filter() no longer sends stale bytes after the path as the filter, and accepts a NULL filter
 - [adam][lynx][c64] network_write() splits a write that does not fit one bus packet instead of overrunning the packet
 - [apple2][adam][lynx][c64][pmd85] Setting the WiFi network with fuji_set_ssid() works; it used to send a garbled network name and password, leaving the FujiNet unable to connect
+- [coco][msx] fuji_enable_user_rom() boots the FujiNet cartridge's user ROM
 
 ## [5.0.0] 2026-10-09
 
