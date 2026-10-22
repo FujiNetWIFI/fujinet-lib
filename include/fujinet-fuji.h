@@ -532,11 +532,14 @@ bool fuji_set_sio_external_clock(uint16_t rate);
  * @brief Set the SSID information from NetConfig structure
  * @return success status of request
  */
-#ifdef FUJI_PLATFORM_COCO
-#define fuji_set_ssid(nc) FUJICALL_D(FUJICMD_SET_SSID, nc, sizeof(NetConfig))
-#else
+/* The RS232 handler requires the parameter; buses that take parameters from
+ * the front of the payload would shift NetConfig by it. */
+#if defined(FUJI_PLATFORM_MSDOS) || defined(FUJI_PLATFORM_MODEL2) \
+ || defined(FUJI_PLATFORM_H89) || defined(FUJI_PLATFORM_MSX)
 #define fuji_set_ssid(nc) FUJICALL_A1_D(FUJICMD_SET_SSID, 0, nc, sizeof(NetConfig))
-#endif /* FUJI_PLATFORM_COCO */
+#else
+#define fuji_set_ssid(nc) FUJICALL_D(FUJICMD_SET_SSID, nc, sizeof(NetConfig))
+#endif
 
 /**
  * @brief Gets the FNStatus information from FUJI device.
