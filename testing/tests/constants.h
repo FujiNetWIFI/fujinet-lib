@@ -76,6 +76,8 @@
  * Keep the default reuse behavior: enabling keep-alive masks the regression. */
 #define NET_HTTP_FIXED_HELD_URL "N1:http://wpt.live/common/echo.py?content=ABC&pipe=header%28Content-Length%2C3%29%7Ctrickle%283%3Ad23%29"
 #define NET_HTTP_CHUNKED_HELD_URL "N1:http://wpt.live/common/echo.py?content=3%0D%0AABC%0D%0A0%0D%0A%0D%0A&pipe=header%28Transfer-Encoding%2Cchunked%29%7Ctrickle%2813%3Ad23%29"
+/* The body both of them decode to, as ASCII bytes: cc65's "ABC" is PETSCII on the C64 */
+#define NET_HTTP_HELD_BODY "\x41\x42\x43"
 
 /* Complete 304 headers, no body, peer held open by a 23-second delay. */
 #define NET_HTTP_304_HELD_URL "N1:http://wpt.live/common/echo.py?content=&pipe=status%28304%29%7Cheader%28Content-Length%2C123%29%7Ctrickle%28d23%29"
@@ -121,9 +123,10 @@
 #define FTP_MISSING_DIR "N1:FTP://" FTP_HOST "/fnftptest-never-created/"
 
 /* Deterministic byte stream (byte i == 'a' + i % 26) served with HTTP
- * Range support, for the seek/tell and read-count tests */
+ * Range support, for the seek/tell and read-count tests. 0x61 is ASCII 'a';
+ * cc65's 'a' is PETSCII on the C64, but the server sends ASCII. */
 #define NET_RANGE_URL   "N1:" HTTPBIN_BASE "/range/1024"
-#define RANGE_BYTE(i)   ((uint8_t) ('a' + ((i) % 26)))
+#define RANGE_BYTE(i)   ((uint8_t) (0x61 + ((i) % 26)))
 
 /* Fixed HTML page (one h1: "Herman Melville - Moby-Dick") for HTML tests.
  * Its single <p> is several KB, so only query small elements. */
