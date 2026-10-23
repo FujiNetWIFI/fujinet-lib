@@ -24,7 +24,7 @@
   && !CALMAIL_TESTS && !REGRESSION_TESTS && !CLOCK_TESTS && !DISK_TESTS \
   && !QRCODE_TESTS && !FS_TESTS && !APPKEY_TESTS && !DEVLIST_TESTS \
   && !PARSE_ERROR_TESTS && !CLIPBOARD_TESTS \
-  && !NETPROTO_TESTS
+  && !NETPROTO_TESTS && !WIFI_TESTS
 #error "You need to choose some tests"
 #endif
 
@@ -45,6 +45,7 @@
 #include "devlist.h"
 #include "clipbord.h"
 #include "netproto.h"
+#include "wifi.h"
 
 #include "init_video.h"
 #include "harness.h"
@@ -85,8 +86,6 @@ int main(void)
   test_fuji_device_filename();
   test_fuji_host_prefix();
   test_fuji_directory_ops();
-  test_fuji_wifi();
-  test_fuji_network_scan();
   test_fuji_guid();
   test_fuji_base64();
   test_fuji_hashing();
@@ -234,7 +233,10 @@ int main(void)
   test_network_exists();
 #endif // DEVLIST_TESTS
 
-#if FUJI_TESTS
+#if WIFI_TESTS
+  /* wifi.h */
+  test_fuji_wifi();
+  test_fuji_network_scan();
   /* Keep last; a framing regression may briefly drop WiFi. */
   test_fuji_set_ssid();
 #endif
