@@ -103,9 +103,9 @@ void end_testing(int code)
 #define HL_YELLOW 2
 #define HL_RED    3
 
-/* Pass, clean ID and the all-passed line green; dirty ID yellow; fail and
- * the abort line red (#96). Atari, Apple II, the H89 terminal and MS-DOS in
- * the monochrome text mode show yellow and red as inverse video. */
+/* Pass, clean ID and the all-passed line green; dirty or missing ID yellow;
+ * fail and the abort line red (#96). Atari, Apple II, the H89 terminal and
+ * MS-DOS in the monochrome text mode show yellow and red as inverse video. */
 void tprint(uint8_t what, const char *s)
 {
   uint8_t hl;
@@ -183,23 +183,16 @@ void tprint(uint8_t what, const char *s)
 #endif
 }
 
-/* The commit IDs: green when clean, yellow when dirty or unknown. */
-static void print_id(const char *label, const char *id, uint8_t clean)
+/* A hex commit, alone or after the last '-' (v1.6-43f031e7, n2026.297-ac25). */
+static uint8_t has_commit_id(const char *id)
 {
-  printf("%s", label);
-  tprint(clean && !strchr(id, '*') ? TP_ID_CLEAN : TP_ID_DIRTY, id);
-  printf("\n");
-}
-
-/* Firmware versions end in a hex commit: v1.6-43f031e7, n2026.297-ac25. */
-static uint8_t has_commit_id(const char *version)
-{
-  const char *p = strrchr(version, '-');
+  const char *p = strrchr(id, '-');
   char c;
 
-  if (!p || !p[1] || p[1] == '*')
+  p = p ? p + 1 : id;
+  if (!*p || *p == '*')
     return 0;
-  for (p++; *p && *p != '*'; p++) {
+  for (; *p && *p != '*'; p++) {
     /* Bytes, not 'a'-'f': the firmware sends ASCII, and cc65's C64 'a' is 0x41 */
     c = *p | 0x20;
     if (!((c >= 0x30 && c <= 0x39) || (c >= 0x61 && c <= 0x66)))
@@ -208,11 +201,19 @@ static uint8_t has_commit_id(const char *version)
   return 1;
 }
 
+/* The commit IDs: green when clean, yellow when dirty or missing. */
+static void print_id(const char *label, const char *id)
+{
+  printf("%s", label);
+  tprint(has_commit_id(id) && !strchr(id, '*') ? TP_ID_CLEAN : TP_ID_DIRTY, id);
+  printf("\n");
+}
+
 void print_versions()
 {
   printf("fujinet-lib version %s\n", FNLIB_VERSION_FULL);
 #ifdef GIT_VERSION
-  print_id("tests git commit ID ", GIT_VERSION, 1);
+  print_id("tests git commit ID ", GIT_VERSION);
 #else
 #  error "Need GIT_VERSION"
 #endif
@@ -223,8 +224,7 @@ void print_versions()
     strcpy(g.adapter.ace.fn_version, "FAIL");
 #endif
   printf("Test program: %s\n", test_program);
-  print_id("FujiNet: ", g.adapter.ace.fn_version,
-           has_commit_id(g.adapter.ace.fn_version));
+  print_id("FujiNet: ", g.adapter.ace.fn_version);
 #ifdef BUILD_APPLE2
   printf("Platform: %s\n", computer_model());
 #else
