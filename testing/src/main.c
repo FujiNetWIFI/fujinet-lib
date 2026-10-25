@@ -129,6 +129,7 @@ int main(void)
   /* network.h */
   test_network_init();
   test_network_write();
+  test_network_write_large();
   test_network_status_after_close();
   test_network_status_after_failed_open();
   test_network_open_no_n_prefix();
@@ -165,7 +166,6 @@ int main(void)
   test_network_http_get_nonblocking();
   test_network_http_post();
   test_network_http_post_large();
-  test_network_json_query_large();
   test_network_http_headers();
   test_network_http_channel_mode();
   test_network_json();

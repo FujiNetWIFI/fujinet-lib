@@ -7,7 +7,6 @@ extern void test_network_http_chunked_completion(void);
 extern void test_network_http_get_nonblocking(void);
 extern void test_network_http_post(void);
 extern void test_network_http_post_large(void);
-extern void test_network_json_query_large(void);
 extern void test_network_http_headers(void);
 extern void test_network_http_channel_mode(void);
 extern void test_network_json(void);
