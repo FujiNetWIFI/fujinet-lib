@@ -9,6 +9,24 @@
 #include <string.h>
 #endif /* _CMOC_VERSION_ */
 
+#define WIFI_CONNECTED 3
+
+/* As CONFIG's connect_wifi() waits: a scan or SET SSID drops WiFi on real
+ * hardware, and an IP can take many seconds to come back. */
+static bool wait_for_wifi(void)
+{
+  uint8_t status;
+  uint8_t tries;
+
+  for (tries = 0; tries < 20; tries++) {
+    status = 0;
+    if (fuji_get_wifi_status(&status) && status == WIFI_CONNECTED)
+      return true;
+    wait_jiffies(150);
+  }
+  return false;
+}
+
 void test_fuji_wifi(void)
 {
   bool enabled;
@@ -48,8 +66,6 @@ void test_fuji_set_ssid(void)
 {
   static NetConfig nc;
   static NetConfig read_back;
-  uint8_t wifi_status = 0;
-  bool ok;
   bool saved_read_ok;
   bool credentials_available;
   bool set_ok;
@@ -59,7 +75,6 @@ void test_fuji_set_ssid(void)
   bool password_matches;
   bool restored;
   bool restore_connected;
-  uint8_t retry;
 
   SECTION("fuji_set_ssid");
 
@@ -77,8 +92,7 @@ void test_fuji_set_ssid(void)
   if (credentials_available)
   {
     set_ok = fuji_set_ssid(&nc);
-    ok = fuji_get_wifi_status(&wifi_status);
-    stayed_connected = ok && wifi_status == 3;
+    stayed_connected = wait_for_wifi();
 
     memset(&read_back, 0, sizeof(read_back));
     read_back_ok = fuji_get_ssid(&read_back);
@@ -90,22 +104,13 @@ void test_fuji_set_ssid(void)
 
     /* Reapply the saved credentials before any TEST can abort the program. */
     restored = fuji_set_ssid(&nc);
-    for (retry = 0; retry < 100; retry++)
-    {
-      wifi_status = 0;
-      if (fuji_get_wifi_status(&wifi_status) && wifi_status == 3)
-      {
-        restore_connected = true;
-        break;
-      }
-    }
+    restore_connected = wait_for_wifi();
   }
 
   TEST("read saved WiFi credentials", saved_read_ok);
   TEST("saved WiFi SSID is available", credentials_available);
   TEST("fuji_set_ssid accepts saved credentials", set_ok);
-  TEST("fuji_set_ssid with saved credentials keeps WiFi connected",
-       stayed_connected);
+  TEST("WiFi reconnects after fuji_set_ssid", stayed_connected);
   TEST("read WiFi credentials after fuji_set_ssid", read_back_ok);
   TEST("SSID matches the supplied value", ssid_matches);
   TEST("password matches the supplied value", password_matches);
@@ -142,6 +147,8 @@ void test_fuji_network_scan(void)
     TEST("First scan result SSID non-empty", info.ssid[0] != '\0');
     printf("  First SSID: %s  RSSI: %d\n", info.ssid, (int)info.rssi);
   }
+
+  TEST("WiFi reconnects after the scan", wait_for_wifi());
 
   END_OF_TEST();
 }
