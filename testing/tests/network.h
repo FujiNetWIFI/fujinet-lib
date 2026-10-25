@@ -11,6 +11,8 @@ extern void test_network_unit(void);
 extern void test_network_error_path(void);
 extern void test_multiple_network_devices(void);
 extern void test_multiple_telnet_devices(void);
+extern void test_tcp_peer_close(void);
+extern void test_telnet_peer_close(void);
 extern void test_network_open_no_n_prefix(void);
 
 #endif /* NETWORK_H */

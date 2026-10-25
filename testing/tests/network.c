@@ -374,6 +374,89 @@ void test_multiple_telnet_devices(void)
   END_OF_TEST();
 }
 
+/* Portable substring search (strstr is not everywhere), as in html.c */
+static uint8_t t_contains(const char *hay, const char *needle)
+{
+  uint16_t i, j;
+
+  for (i = 0; hay[i]; i++) {
+    for (j = 0; needle[j] && hay[i + j] == needle[j]; j++)
+      ;
+    if (!needle[j])
+      return 1;
+  }
+  return 0;
+}
+
+/* The close came with the line, so STATUS should show it at once. */
+#define PEER_CLOSE_POLLS 50
+
+/* Open a daytime server, which sends one line and hangs up. The READ asks
+ * for more than the line, so it must stop at what arrived. Then STATUS must
+ * show the connection closed with nothing waiting, rather than a line still
+ * counted as waiting that no READ can get (fujinet-firmware #2182). */
+static void peer_close_check(const char *spec, const char *proto)
+{
+  uint8_t err, conn, nerr;
+  uint16_t bw, retry;
+  int16_t r = 0;
+  char test_name[48];
+
+  err = network_open(spec, OPEN_MODE_RW, OPEN_TRANS_NONE);
+  strcpy(test_name, proto);
+  strcat(test_name, " network_open succeeds");
+  TEST(test_name, err == FN_ERR_OK);
+
+  bw = wait_for_data(spec, ECHO_WAIT_RETRIES);
+  printf("  bytes_waiting=%u\n", bw);
+  memset(g.net, 0, sizeof(g.net));
+  // network_read() waits until something arrives
+  if (bw > 0)
+    r = network_read(spec, g.net, sizeof(g.net) - 1);
+  printf("  read=%d\n", r);
+  strcpy(test_name, proto);
+  strcat(test_name, " read gets the line before the close");
+  TEST(test_name, r > 0 && (uint16_t) r < sizeof(g.net) - 1
+       && t_contains((char *) g.net, DAYTIME_MARK));
+
+  for (retry = 0; retry < PEER_CLOSE_POLLS; retry++) {
+    bw = 0; conn = 0; nerr = 0;
+    err = network_status(spec, &bw, &conn, &nerr);
+    if (err != FN_ERR_OK || (!conn && !bw))
+      break;
+  }
+  printf("  bytes_waiting=%u conn=%u net_error=%u\n", bw, conn, nerr);
+  strcpy(test_name, proto);
+  strcat(test_name, " status then shows the close");
+  TEST(test_name, err == FN_ERR_OK && !conn && !bw);
+
+  network_close(spec);
+}
+
+void test_tcp_peer_close(void)
+{
+  SECTION("TCP peer that hangs up after sending");
+#if defined(FN_BROKEN_network_open) || defined(FN_BROKEN_network_read) \
+  || defined(FN_BROKEN_network_status)
+  SKIP(tcp_peer_close);
+#else
+  peer_close_check(NET_DAYTIME_TCP, "TCP");
+#endif
+  END_OF_TEST();
+}
+
+void test_telnet_peer_close(void)
+{
+  SECTION("TELNET peer that hangs up after sending");
+#if defined(FN_BROKEN_network_open) || defined(FN_BROKEN_network_read) \
+  || defined(FN_BROKEN_network_status)
+  SKIP(telnet_peer_close);
+#else
+  peer_close_check(NET_DAYTIME_TELNET, "TELNET");
+#endif
+  END_OF_TEST();
+}
+
 void test_network_open_no_n_prefix(void)
 {
 #ifdef FN_BROKEN_network_open_no_n_prefix

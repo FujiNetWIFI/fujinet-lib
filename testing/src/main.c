@@ -134,6 +134,8 @@ int main(void)
   test_network_status_after_failed_open();
   test_network_open_no_n_prefix();
   test_network_set_eol();
+  test_tcp_peer_close();
+  test_telnet_peer_close();
 #if ERROR_PATH_WORKS
   test_network_error_path();
 #endif
