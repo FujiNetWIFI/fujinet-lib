@@ -118,6 +118,58 @@ void test_network_write(void)
   END_OF_TEST();
 }
 
+#define LARGE_ECHO_LEN 1200
+/* The echo server answers on LF; cc65's '\n' is not 0x0A */
+#define ASCII_LF       0x0A
+
+uint16_t wait_for_data(const char *net, uint16_t polls);
+
+/* More than one 1024-byte bus packet each way */
+void test_network_write_large(void)
+{
+  static uint8_t out[LARGE_ECHO_LEN];
+  static uint8_t in[LARGE_ECHO_LEN + 1];
+  uint8_t err;
+  int16_t r, total;
+  uint16_t i;
+
+  SECTION("network_write and network_read over 1024 bytes (raw TCP)");
+
+#if defined(FN_BROKEN_network_open) || defined(FN_BROKEN_network_write) \
+ || defined(FN_BROKEN_network_read)
+  SKIP(network_write);
+#else
+  for (i = 0; i < LARGE_ECHO_LEN - 1; i++)
+    out[i] = (uint8_t) ('A' + i % 26);
+  out[LARGE_ECHO_LEN - 1] = ASCII_LF;
+
+  err = network_open(NET_TCP_SPEC, OPEN_MODE_RW, OPEN_TRANS_NONE);
+  TEST("network_open (TCP RW) succeeds", err == FN_ERR_OK);
+  err = network_write(NET_TCP_SPEC, out, LARGE_ECHO_LEN);
+  TEST("network_write of 1200 bytes succeeds", err == FN_ERR_OK);
+
+  memset(in, 0, sizeof(in));
+  in[LARGE_ECHO_LEN] = 0xA5;
+  /* The echo can arrive in pieces */
+  for (total = 0; total < LARGE_ECHO_LEN; total += r) {
+    if (!wait_for_data(NET_TCP_SPEC, ECHO_WAIT_RETRIES))
+      break;
+    r = network_read(NET_TCP_SPEC, &in[total], LARGE_ECHO_LEN - total);
+    if (r < 1)
+      break;
+  }
+  printf("  read %d bytes\n", total);
+  TEST("all 1200 bytes come back", total == LARGE_ECHO_LEN);
+  TEST("the echo matches what was sent", memcmp(in, out, LARGE_ECHO_LEN) == 0);
+  TEST("the byte after the buffer is untouched", in[LARGE_ECHO_LEN] == 0xA5);
+
+  err = network_close(NET_TCP_SPEC);
+  TEST("network_close TCP succeeds", err == FN_ERR_OK);
+#endif
+
+  END_OF_TEST();
+}
+
 void test_network_set_eol(void)
 {
   uint8_t err;

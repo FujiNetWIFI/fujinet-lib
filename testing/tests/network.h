@@ -3,6 +3,7 @@
 
 extern void test_network_init(void);
 extern void test_network_write(void);
+extern void test_network_write_large(void);
 extern void test_network_status_after_close(void);
 extern void test_network_status_after_failed_open(void);
 extern void test_network_set_eol(void);
