@@ -33,6 +33,14 @@
 #define NET2_TELNET     "N2:TELNET://10.4.0.1:4242/"
 #endif
 
+/* NIST's daytime service sends one line and hangs up at once, so the line
+ * and the close arrive together. A separate server for each, as NIST asks
+ * for no more than one query every 4 seconds. */
+#define NET_DAYTIME_TCP    "N1:TCP://time-a-g.nist.gov:13/"
+#define NET_DAYTIME_TELNET "N1:TELNET://time-b-g.nist.gov:13/"
+/* Every daytime line holds "UTC(NIST)", as ASCII bytes: cc65's is PETSCII on the C64 */
+#define DAYTIME_MARK       "\x55\x54\x43\x28\x4e\x49\x53\x54\x29"
+
 // Adam can't handle large web sites
 //#define NET_DEVICESPEC  "N1:HTTPS://fujinet.online/"
 
