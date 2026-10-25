@@ -103,9 +103,9 @@ void end_testing(int code)
 #define HL_YELLOW 2
 #define HL_RED    3
 
-/* Pass, clean ID and the all-passed line green; dirty ID yellow; fail and
- * the abort line red (#96). Atari, Apple II, the H89 terminal and MS-DOS in
- * the monochrome text mode show yellow and red as inverse video. */
+/* Pass, clean ID and the all-passed line green; dirty or missing ID yellow;
+ * fail and the abort line red (#96). Atari, Apple II, the H89 terminal and
+ * MS-DOS in the monochrome text mode show yellow and red as inverse video. */
 void tprint(uint8_t what, const char *s)
 {
   uint8_t hl;
@@ -183,11 +183,29 @@ void tprint(uint8_t what, const char *s)
 #endif
 }
 
-/* The commit IDs: green when clean, yellow when the build was dirty. */
+/* A hex commit, alone or after the last '-' (v1.6-43f031e7, n2026.297-ac25). */
+static uint8_t has_commit_id(const char *id)
+{
+  const char *p = strrchr(id, '-');
+  char c;
+
+  p = p ? p + 1 : id;
+  if (!*p || *p == '*')
+    return 0;
+  for (; *p && *p != '*'; p++) {
+    /* Bytes, not 'a'-'f': the firmware sends ASCII, and cc65's C64 'a' is 0x41 */
+    c = *p | 0x20;
+    if (!((c >= 0x30 && c <= 0x39) || (c >= 0x61 && c <= 0x66)))
+      return 0;
+  }
+  return 1;
+}
+
+/* The commit IDs: green when clean, yellow when dirty or missing. */
 static void print_id(const char *label, const char *id)
 {
   printf("%s", label);
-  tprint(strchr(id, '*') ? TP_ID_DIRTY : TP_ID_CLEAN, id);
+  tprint(has_commit_id(id) && !strchr(id, '*') ? TP_ID_CLEAN : TP_ID_DIRTY, id);
   printf("\n");
 }
 
