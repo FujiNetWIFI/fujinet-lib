@@ -183,19 +183,36 @@ void tprint(uint8_t what, const char *s)
 #endif
 }
 
-/* The commit IDs: green when clean, yellow when the build was dirty. */
-static void print_id(const char *label, const char *id)
+/* The commit IDs: green when clean, yellow when dirty or unknown. */
+static void print_id(const char *label, const char *id, uint8_t clean)
 {
   printf("%s", label);
-  tprint(strchr(id, '*') ? TP_ID_DIRTY : TP_ID_CLEAN, id);
+  tprint(clean && !strchr(id, '*') ? TP_ID_CLEAN : TP_ID_DIRTY, id);
   printf("\n");
+}
+
+/* Firmware versions end in a hex commit: v1.6-43f031e7, n2026.297-ac25. */
+static uint8_t has_commit_id(const char *version)
+{
+  const char *p = strrchr(version, '-');
+  char c;
+
+  if (!p || !p[1] || p[1] == '*')
+    return 0;
+  for (p++; *p && *p != '*'; p++) {
+    /* Bytes, not 'a'-'f': the firmware sends ASCII, and cc65's C64 'a' is 0x41 */
+    c = *p | 0x20;
+    if (!((c >= 0x30 && c <= 0x39) || (c >= 0x61 && c <= 0x66)))
+      return 0;
+  }
+  return 1;
 }
 
 void print_versions()
 {
   printf("fujinet-lib version %s\n", FNLIB_VERSION_FULL);
 #ifdef GIT_VERSION
-  print_id("tests git commit ID ", GIT_VERSION);
+  print_id("tests git commit ID ", GIT_VERSION, 1);
 #else
 #  error "Need GIT_VERSION"
 #endif
@@ -206,7 +223,8 @@ void print_versions()
     strcpy(g.adapter.ace.fn_version, "FAIL");
 #endif
   printf("Test program: %s\n", test_program);
-  print_id("FujiNet: ", g.adapter.ace.fn_version);
+  print_id("FujiNet: ", g.adapter.ace.fn_version,
+           has_commit_id(g.adapter.ace.fn_version));
 #ifdef BUILD_APPLE2
   printf("Platform: %s\n", computer_model());
 #else
