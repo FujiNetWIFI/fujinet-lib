@@ -124,6 +124,43 @@ void test_network_http_chunked_completion(void)
   END_OF_TEST();
 }
 
+/* STATUS alone must not mistake a 304 representation length for readable
+ * body bytes. Poison both reply storage and outputs to reject stale zeros.
+ * The poll cap bounds observations, not the duration of a bus call.
+ * Terminal error codes and CLOSE results are outside this check. */
+void test_network_http_304(void)
+{
+  uint8_t open_err, err, conn, nerr, poll;
+  uint16_t bw;
+  const char *url = (const char *) g.net;
+
+  SECTION("HTTP 304 no readable body");
+  memset(g.net, 0, MAX_FILENAME_LEN);
+  strcpy((char *) g.net, NET_HTTP_304_URL);
+  bw = 0xFFFF; conn = 0xFF; nerr = 0xFF; err = 0xFF;
+  open_err = network_open(url, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
+  if (open_err == FN_ERR_OK) {
+    for (poll = 0; poll < 100; ++poll) {
+      nw_status.avail = 0xFFFF;
+      nw_status.status = 0xFF;
+      nw_status.errcode = 0xFF;
+      bw = 0xFFFF; conn = 0xFF; nerr = 0xFF;
+      err = network_status(url, &bw, &conn, &nerr);
+      if (err != FN_ERR_OK || bw != 0 || conn != 1) {
+        break;
+      }
+    }
+  }
+  network_close(url);
+  printf("STATUS rc=%u avail=%u\n", err, bw);
+  printf("STATUS state=%u error=%u\n", conn, nerr);
+  TEST("HTTP 304 opens", open_err == FN_ERR_OK);
+  TEST("HTTP 304 STATUS succeeds", err == FN_ERR_OK);
+  TEST("HTTP 304 avail is zero", bw == 0);
+  TEST("HTTP 304 completed", conn == 0);
+  END_OF_TEST();
+}
+
 void test_network_http_get_nonblocking(void)
 {
   uint8_t err;
