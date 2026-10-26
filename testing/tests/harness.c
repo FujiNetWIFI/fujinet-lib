@@ -144,7 +144,7 @@ void tprint(uint8_t what, const char *s)
 #elif defined(__WATCOMC__)
   {
     union REGS r;
-    uint8_t row, col, attr;
+    uint8_t row, col, attr, cols, bottom;
 
     fflush(stdout);
     r.h.ah = 0x0F;
@@ -153,9 +153,21 @@ void tprint(uint8_t what, const char *s)
       attr = hl == HL_GREEN ? 0x07 : 0x70;
     else
       attr = hl == HL_GREEN ? 0x0A : hl == HL_YELLOW ? 0x0E : 0x0C;
+    cols = r.h.ah;
     r.h.ah = 3; r.h.bh = 0;
     int86(0x10, &r, &r);
     row = r.h.dh; col = r.h.dl;
+    /* The BIOS fills a scrolled-in line with the attribute under the
+     * cursor, which "\n"'s CR leaves on this text at column 0. */
+    bottom = *(uint8_t __far *) MK_FP(0x40, 0x84);
+    if (!bottom)
+      bottom = 24;
+    if (row >= bottom) {
+      r.x.ax = 0x0601; r.h.bh = 0x07; r.x.cx = 0;
+      r.h.dh = bottom; r.h.dl = cols - 1;
+      int86(0x10, &r, &r);
+      row = bottom - 1;
+    }
     for (; *s; s++, col++) {
       r.h.ah = 2; r.h.bh = 0; r.h.dh = row; r.h.dl = col;
       int86(0x10, &r, &r);
