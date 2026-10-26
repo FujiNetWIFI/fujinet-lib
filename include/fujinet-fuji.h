@@ -267,11 +267,7 @@ extern bool fuji_close_directory(void);
  * @brief Copies a file from given src to dst, with supplied path in copy_spec
  * @return Success status, true if all OK.
  */
-#if defined(FUJI_PLATFORM_ADAM)
-extern bool fuji_copy_file_adam(uint8_t src_slot, uint8_t dest_slot, const char *copy_spec);
-#define fuji_copy_file(src_slot, dest_slot, copy_spec) fuji_copy_file_adam(src_slot, dest_slot, copy_spec)
-#elif defined(FUJI_PLATFORM_COCO)
-// Works perfectly on CoCo, never times out.
+#if defined(FUJI_PLATFORM_ADAM) || defined(FUJI_PLATFORM_COCO)
 #define fuji_copy_file(src_slot, dest_slot, copy_spec) FUJICALL_A1_A2_D(FUJICMD_COPY_FILE, src_slot, dest_slot, copy_spec, MAX_FILENAME_LEN)
 #else /* ! (ADAM || COCO) */
 extern bool fuji_copy_file_common(uint8_t src_slot, uint8_t dest_slot, const char *copy_spec);

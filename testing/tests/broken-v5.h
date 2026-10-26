@@ -1,10 +1,8 @@
 #if FNLIB_VERSION_MAJOR >= 5
 
+/* The second client needs N3; the Adam has only N1 and N2 */
 #ifdef BUILD_ADAM
-#define FN_BROKEN_fuji_mount_host_slot_error
-#define FN_BROKEN_network_open_invalid
-/* AdamNet ACKs the data before the firmware refuses an existing file */
-#define FN_BROKEN_fuji_create_new_error
+#define FN_BROKEN_network_accept_second_client
 #endif /* BUILD_ADAM */
 
 /* IEC's systemBus::transaction_error() is still a no-op
