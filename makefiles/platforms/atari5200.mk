@@ -6,7 +6,7 @@ include $(MWD)/common.mk
 include $(MWD)/toolchains/cc65.mk
 
 # A 5200 FujiNet client is a 32K image at $4000-$BFFF around the cart's
-# mailbox at $B000, started by the lib's own crt0 (cc65's relies on the
+# mailbox at $B000, started by MekkoGX's own crt0 (cc65's relies on the
 # BIOS, which the client's header skips). The romstamp checks the claim and
 # the mailbox's rules; MAME's -cart takes the .bin as it is.
 ATARI5200_CFG ?= $(MWD)/atari5200-fujinet.cfg
