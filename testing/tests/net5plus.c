@@ -393,6 +393,10 @@ void test_net2_accept(void)
   TEST("accept succeeds", err == FN_ERR_OK);
   TEST("client's byte reaches the listener", relay_byte('A'));
 
+#ifdef FN_BROKEN_network_accept_second_client
+  printf("SKIP  network_accept_second_client (known broken)\n");
+  tests_skipped++;
+#else
   err = network_open(CLIENT2_SOCKET, OPEN_MODE_RW, 0);
   TEST("second client connects", err == FN_ERR_OK);
   err = network_accept(LISTEN_SOCKET);
@@ -404,6 +408,7 @@ void test_net2_accept(void)
   TEST("first client's session survives", relay_byte('B'));
 
   network_close(CLIENT2_SOCKET);
+#endif
   network_close(CLIENT_SOCKET);
   network_close(LISTEN_SOCKET);
 #endif

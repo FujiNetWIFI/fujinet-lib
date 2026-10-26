@@ -10,6 +10,9 @@
 
 #define MAX_ADAM_PACKET_REPLY 1024
 
+/* STATUS bit FujiNet sets when a command it ACKed then failed. */
+#define ADAM_STATUS_CMD_FAILED 0x20
+
 enum {
   DCB_COMMAND_IDLE      = 0x00,
   DCB_COMMAND_STATUS    = 0x01,

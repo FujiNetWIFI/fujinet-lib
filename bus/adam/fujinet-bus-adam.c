@@ -130,6 +130,11 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
     if (status != DCB_STATUS_FINISH)
       return false;
   }
+  // RESET reboots FujiNet, so nothing answers the STATUS.
+  else if (!(device == ADAM_ID_FUJINET && fuji_cmd == FUJICMD_RESET)) {
+    if (!bus_ready(dcb, LONG_RETRIES) || dcb->dev_status & ADAM_STATUS_CMD_FAILED)
+      return false;
+  }
 
   return true;
 }
@@ -150,7 +155,8 @@ size_t network_bus_write(uint8_t device, const void *buffer, size_t length)
 {
   if (length > MAX_ADAM_PACKET_REPLY - 1)
     length = MAX_ADAM_PACKET_REPLY - 1;
-  NETCALL_D(NETCMD_WRITE, device - FUJI_DEVICEID_NETWORK + 1, buffer, length);
+  if (!NETCALL_D(NETCMD_WRITE, device - FUJI_DEVICEID_NETWORK + 1, buffer, length))
+    return 0;
   return length;
 }
 
