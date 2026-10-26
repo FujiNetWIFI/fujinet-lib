@@ -11,6 +11,7 @@ PLATFORMS += model2
 PLATFORMS += msdos
 PLATFORMS += msx
 PLATFORMS += pmd85
+PLATFORMS += s100-cpm
 
 # You can run 'make <platform>' to build for a specific platform,
 # or 'make <platform>/<target>' for a platform-specific target.
@@ -28,7 +29,8 @@ CFLAGS = -DBUILD_$(PLATFORM_UC)
 # Format: platform+=combo1,combo2
 PLATFORM_COMBOS = \
   h89-cpm+=h89 \
-  h89-hdos+=h89
+  h89-hdos+=h89 \
+  s100-cpm+=s100
 
 include makefiles/toplevel-rules.mk
 

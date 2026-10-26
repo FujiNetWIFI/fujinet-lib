@@ -82,6 +82,25 @@
  * FNHTML::parse() rejects an empty body outright, so it makes both parsers
  * fail -- see the parserr.c tests for fujinet-firmware #1640. */
 
+/* Byte offset of the filename within a fuji_read_directory() extended
+ * (addtl=0x80) entry. The header preceding the filename is NOT the same
+ * size on every bus backend -- each one packs its own
+ * set_additional_direntry_details() struct (see fujinet-firmware
+ * lib/device/<bus>/___Fuji.cpp):
+ *   - rs232 (msdos, s100): timestamp(6) + size u32(4) + flags(1) + mediatype(1) = 12
+ *   - iec (c64):       timestamp(6) + size u16(2) + flags(1) + mediatype(1) = 10
+ *   - everyone else:   timestamp(6) + size u32(4) + is_dir(1) + is_trunc(1) + mediatype(1) = 13
+ */
+
+// Why isn't there a struct defined for directory entries in fujinet-fuji.h?
+#if defined(BUILD_MSDOS) || defined(__S100__)
+#define DIRENTRY_FILENAME_OFFSET 12
+#elif defined(BUILD_C64)
+#define DIRENTRY_FILENAME_OFFSET 10
+#else
+#define DIRENTRY_FILENAME_OFFSET 13
+#endif
+
 #define TNFS_COPY_SOURCE_HOST "tnfs.fujinet.online"
 
 /* A TNFS server the lock test can write to, running a tnfsd that answers

@@ -12,6 +12,8 @@
 - [apple2][adam][lynx][c64][pmd85] Setting the WiFi network with fuji_set_ssid() works; it used to send a garbled network name and password, leaving the FujiNet unable to connect
 - [coco][msx] fuji_enable_user_rom() boots the FujiNet cartridge's user ROM
 - [h89] Port B is an input (mode word C2H), and every program sets up the 8255
+- [testing] Pin the CoCo, Adam and MS-DOS test menus to 1.0.0, since the latest-release lookup hits the GitHub API rate limit in CI
+- [s100] Add the S-100 target (s100-cpm), 8080 code over the FujiNet S-100 card's FujiBus pipe
 
 ## [5.0.0] 2026-10-09
 
