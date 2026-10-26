@@ -13,7 +13,7 @@
 
   Touch the hotspot pages ($B500-$B7FF) only through fn_tx() and fn_regwr():
   a C expression may compile to (zp),Y or a read-modify-write, and the
-  cart counts every read there. atari5200-romstamp.py rejects stores into
+  cart counts every read there. MekkoGX's atari5200-romstamp.py rejects stores into
   the cart window and off-page indexed reads of the hotspot pages.
 */
 
