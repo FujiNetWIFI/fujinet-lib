@@ -14,24 +14,18 @@
  * 20 is about 14 s on a 1.79 MHz bit-banger; every resend queues a reply. */
 #define READY_RESEND_TIMEOUTS 20
 
+static const uint8_t ready_cmd[] = { OP_FUJI, FUJICMD_DEVICE_READY };
+
 void bus_ready(void)
 {
-    struct _readycmd
+    uint8_t r, timeouts = 0;
+
+    do
     {
-        uint8_t opcode;
-        uint8_t command;
-    } rc;
-
-    uint8_t r, timeouts;
-
-    rc.opcode = OP_FUJI;
-    rc.command = FUJICMD_DEVICE_READY;
-
-    for (;;)
-    {
-        dwwrite((uint8_t *)&rc,sizeof(rc));
-        for (timeouts = 0; timeouts < READY_RESEND_TIMEOUTS; timeouts++)
-            if (dwread((uint8_t *)&r,sizeof(r)))
-                return;
-    }
+        if (!timeouts--)
+        {
+            dwwrite((uint8_t *)ready_cmd,sizeof(ready_cmd));
+            timeouts = READY_RESEND_TIMEOUTS - 1;
+        }
+    } while (!dwread(&r,sizeof(r)));
 }
