@@ -2,6 +2,10 @@
  * Minimal test harness
  * ========================================================================= */
 
+#ifndef GIT_VERSION
+#  error "Need GIT_VERSION"
+#endif
+
 #include "broken.h"
 
 #include "harness.h"
@@ -223,30 +227,36 @@ static void print_id(const char *label, const char *id)
 
 void print_versions()
 {
-  printf("fujinet-lib version %s\n", FNLIB_VERSION_FULL);
-#ifdef GIT_VERSION
-  print_id("tests git commit ID ", GIT_VERSION);
-#else
-#  error "Need GIT_VERSION"
-#endif
+  char label[20];
+  int width, width2;
+
 
   strcpy(g.adapter.ace.fn_version, "BROKEN");
 #ifndef FN_BROKEN_fuji_get_adapter_config_extended
   if (!fuji_get_adapter_config_extended(&g.adapter.ace))
     strcpy(g.adapter.ace.fn_version, "FAIL");
 #endif
-  printf("Test program: %s\n", test_program);
   print_id("FujiNet: ", g.adapter.ace.fn_version);
+
+  width = strlen(FNLIB_VERSION_FULL);
+  width2 = strlen(test_program);
+  if (width2 > width)
+    width = width2;
+
+  sprintf(label, "    lib: %-*s  ", width, FNLIB_VERSION_FULL);
+  print_id(label, GIT_VERSION);
+
+  printf("   test: %-*s  ", width, test_program);
 #ifdef BUILD_APPLE2
-  printf("Platform: %s\n", computer_model());
+  printf("%s\n", computer_model());
 #else
-  printf("Platform: %s\n", PLATFORM);
+  printf("%s\n", PLATFORM);
 #endif /* BUILD_APPLE2 */
 
-  strcpy((char *) g.clock_fmt, "BROKEN");
+  strcpy((char *) g.clock_fmt, "TIME BROKEN");
 #if !defined(FN_BROKEN_clock_get_time_UTC_ISO_STRING)
   if (clock_get_time(g.clock_fmt, UTC_ISO_STRING) != FN_ERR_OK)
-    strcpy((char *) g.clock_fmt, "FAIL");
+    strcpy((char *) g.clock_fmt, "TIME FAIL");
 #elif !defined(FN_BROKEN_fuji_get_time)
   if (fuji_get_time(g.clock_fmt)) {
     int year, month, day, hour, minute, second;
@@ -260,9 +270,9 @@ void print_versions()
             year, month, day, hour, minute, second);
   }
   else
-    strcpy((char *) g.clock_fmt, "FAIL");
+    strcpy((char *) g.clock_fmt, "TIME FAIL");
 #endif
-  printf("  UTC ISO: %s\n", (char *)g.clock_fmt);
+  printf("%s\n", (char *)g.clock_fmt);
 
   return;
 }
