@@ -15,7 +15,10 @@ PRODUCTS += netproto
 PRODUCTS += wifi
 PRODUCTS_DISK_NAME = fntests
 
-PLATFORMS := $(shell awk '/^PLATFORMS[ \t]*\+=/{print $$3}' ../Makefile)
+# atari5200 has no test harness yet: no tests/atari5200 and no BASIC_LINE_ENDING
+# in constants.h, and its crt0 and cart linker config are MekkoGX's, not
+# this repo's.
+PLATFORMS := $(filter-out atari5200,$(shell awk '/^PLATFORMS[ \t]*\+=/{print $$3}' ../Makefile))
 
 # You can run 'make <platform>' to build for a specific platform,
 # or 'make <platform>/<target>' for a platform-specific target.
