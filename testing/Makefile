@@ -12,6 +12,7 @@ PRODUCTS += qrcode
 PRODUCTS += html
 PRODUCTS += clipbord
 PRODUCTS += netproto
+PRODUCTS += wifi
 PRODUCTS_DISK_NAME = fntests
 
 PLATFORMS := $(shell awk '/^PLATFORMS[ \t]*\+=/{print $$3}' ../Makefile)
@@ -59,6 +60,7 @@ qrcode_SRC_DIRS = $(MAIN_SRC_DIRS)
 html_SRC_DIRS = $(MAIN_SRC_DIRS)
 clipbord_SRC_DIRS = $(MAIN_SRC_DIRS)
 netproto_SRC_DIRS = $(MAIN_SRC_DIRS)
+wifi_SRC_DIRS = $(MAIN_SRC_DIRS)
 
 fujidev_CFLAGS = -DFUJI_TESTS=1
 network_CFLAGS = -DNETWORK_TESTS=1
@@ -73,6 +75,7 @@ appkey_CFLAGS = -DAPPKEY_TESTS=1
 devlist_CFLAGS = -DDEVLIST_TESTS=1
 clipbord_CFLAGS = -DCLIPBOARD_TESTS=1
 netproto_CFLAGS = -DNETPROTO_TESTS=1
+wifi_CFLAGS = -DWIFI_TESTS=1
 
 include ../makefiles/toplevel-rules.mk
 

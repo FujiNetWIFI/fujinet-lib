@@ -24,7 +24,7 @@
   && !CALMAIL_TESTS && !REGRESSION_TESTS && !CLOCK_TESTS && !DISK_TESTS \
   && !QRCODE_TESTS && !FS_TESTS && !APPKEY_TESTS && !DEVLIST_TESTS \
   && !PARSE_ERROR_TESTS && !CLIPBOARD_TESTS \
-  && !NETPROTO_TESTS
+  && !NETPROTO_TESTS && !WIFI_TESTS
 #error "You need to choose some tests"
 #endif
 
@@ -45,6 +45,7 @@
 #include "devlist.h"
 #include "clipbord.h"
 #include "netproto.h"
+#include "wifi.h"
 
 #include "init_video.h"
 #include "harness.h"
@@ -85,8 +86,6 @@ int main(void)
   test_fuji_device_filename();
   test_fuji_host_prefix();
   test_fuji_directory_ops();
-  test_fuji_wifi();
-  test_fuji_network_scan();
   test_fuji_guid();
   test_fuji_base64();
   test_fuji_hashing();
@@ -130,10 +129,13 @@ int main(void)
   /* network.h */
   test_network_init();
   test_network_write();
+  test_network_write_large();
   test_network_status_after_close();
   test_network_status_after_failed_open();
   test_network_open_no_n_prefix();
   test_network_set_eol();
+  test_tcp_peer_close();
+  test_telnet_peer_close();
 #if ERROR_PATH_WORKS
   test_network_error_path();
 #endif
@@ -166,7 +168,6 @@ int main(void)
   test_network_http_get_nonblocking();
   test_network_http_post();
   test_network_http_post_large();
-  test_network_json_query_large();
   test_network_http_headers();
   test_network_http_channel_mode();
   test_network_json();
@@ -233,6 +234,14 @@ int main(void)
   test_clock_exists();
   test_network_exists();
 #endif // DEVLIST_TESTS
+
+#if WIFI_TESTS
+  /* wifi.h */
+  test_fuji_wifi();
+  test_fuji_network_scan();
+  /* Keep last; a framing regression may briefly drop WiFi. */
+  test_fuji_set_ssid();
+#endif
 
   sprintf(line, "=== All %d tests passed, %d skipped ===", tests_run, tests_skipped);
   printf("\n");

@@ -37,41 +37,6 @@ void test_fuji_status(void)
   END_OF_TEST();
 }
 
-void test_fuji_wifi(void)
-{
-  bool enabled;
-  uint8_t wifi_status;
-  bool ok;
-  NetConfig nc;
-
-  SECTION("fuji WiFi queries");
-
-#ifdef FN_BROKEN_fuji_get_wifi_enabled
-  SKIP(fuji_get_wifi_enabled);
-#endif
-  enabled = fuji_get_wifi_enabled();
-  TEST("fuji_get_wifi_enabled returns true", enabled);
-
-  wifi_status = 0;
-#ifdef FN_BROKEN_fuji_get_wifi_status
-  SKIP(fuji_get_wifi_status);
-#endif
-  ok = fuji_get_wifi_status(&wifi_status);
-  TEST("fuji_get_wifi_status succeeds", ok);
-  TEST("WiFi status is WL_CONNECTED (3)", wifi_status == 3);
-
-  memset(&nc, 0, sizeof(nc));
-#ifdef FN_BROKEN_fuji_get_ssid
-  SKIP(fuji_get_ssid);
-#endif
-  ok = fuji_get_ssid(&nc);
-  TEST("fuji_get_ssid succeeds", ok);
-  TEST("SSID string is non-empty", nc.ssid[0] != '\0');
-  printf("  Connected SSID: %s\n", nc.ssid);
-
-  END_OF_TEST();
-}
-
 void test_fuji_adapter_config(void)
 {
   bool ok;
@@ -110,37 +75,6 @@ void test_fuji_adapter_config(void)
   TEST("Extended config has sLocalIP string", g.adapter.ace.sLocalIP[0] != '\0');
   TEST("Extended config has sMacAddress string", g.adapter.ace.sMacAddress[0] != '\0');
   printf("  sLocalIP: %s  sMac: %s\n", g.adapter.ace.sLocalIP, g.adapter.ace.sMacAddress);
-
-  END_OF_TEST();
-}
-
-void test_fuji_network_scan(void)
-{
-  uint8_t count;
-  bool ok;
-  SSIDInfo info;
-
-  SECTION("fuji WiFi scan");
-
-  count = 0;
-#ifdef FN_BROKEN_fuji_scan_for_networks
-  SKIP(fuji_scan_for_networks);
-#endif
-  ok = fuji_scan_for_networks(&count);
-  TEST("fuji_scan_for_networks succeeds", ok);
-  TEST("At least one network visible", count > 0);
-  printf("  Networks found: %d\n", count);
-
-  if (count > 0) {
-    memset(&info, 0, sizeof(info));
-#ifdef FN_BROKEN_fuji_get_scan_result
-    SKIP(fuji_get_scan_result);
-#endif
-    ok = fuji_get_scan_result(0, &info);
-    TEST("fuji_get_scan_result(0) succeeds", ok);
-    TEST("First scan result SSID non-empty", info.ssid[0] != '\0');
-    printf("  First SSID: %s  RSSI: %d\n", info.ssid, (int)info.rssi);
-  }
 
   END_OF_TEST();
 }

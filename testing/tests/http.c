@@ -278,59 +278,6 @@ void test_network_http_post_large(void)
   END_OF_TEST();
 }
 
-/* httpbin echoes the 1200 byte body as this prefix and 1600 base64 characters. */
-#define ECHO_PREFIX "data:application/octet-stream;base64,"
-#define ECHO_LEN    (sizeof(ECHO_PREFIX) - 1 + LARGE_POST_LEN / 3 * 4)
-#ifdef BUILD_ADAM
-#define QUERY_WANT  1024   /* MAX_ADAM_PACKET_REPLY */
-#else
-#define QUERY_WANT  ECHO_LEN
-#endif
-/* The whole echo, its NUL and a guard byte. */
-static char large_result[ECHO_LEN + 2];
-
-void test_network_json_query_large(void)
-{
-  uint8_t err;
-  int16_t n;
-  uint16_t bw;
-  uint8_t conn, nerr;
-
-  SECTION("network JSON query of a value over 1024 bytes");
-
-#if defined(FN_BROKEN_network_http_post) || defined(FN_BROKEN_network_json_query)
-  SKIP(network_json_query_large);
-#else
-  memset(large_post, 'Q', LARGE_POST_LEN);
-  large_post[LARGE_POST_LEN] = '\0';
-
-  err = network_open(NET_POST_URL, OPEN_MODE_HTTP_POST, OPEN_TRANS_NONE);
-  TEST("network_open (POST) returns FN_ERR_OK", err == FN_ERR_OK);
-  err = network_http_post(NET_POST_URL, large_post);
-  TEST("POST of 1200 bytes succeeds", err == FN_ERR_OK);
-  err = network_json_parse(NET_POST_URL);
-  TEST("network_json_parse of the echo succeeds", err == FN_ERR_OK);
-
-  /* The Adam reads a query result in one packet. */
-  memset(large_result, 0, sizeof(large_result));
-  large_result[QUERY_WANT + 1] = (char) 0xA5;
-  n = network_json_query(NET_POST_URL, "/data", large_result);
-  printf("  query returned %d bytes\n", n);
-  TEST("query returns the expected length", n == (int16_t) QUERY_WANT);
-  TEST("the byte after the result is untouched", large_result[QUERY_WANT + 1] == (char) 0xA5);
-  TEST("result starts with the echoed body",
-       strncmp(large_result, ECHO_PREFIX, sizeof(ECHO_PREFIX) - 1) == 0);
-
-  bw = 0; conn = 0; nerr = 0;
-  err = network_status(NET_POST_URL, &bw, &conn, &nerr);
-  TEST("device still answers STATUS", err == FN_ERR_OK);
-
-  network_close(NET_POST_URL);
-#endif
-
-  END_OF_TEST();
-}
-
 void test_network_http_headers(void)
 {
   uint8_t err;

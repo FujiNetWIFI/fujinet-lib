@@ -10,6 +10,9 @@
 - fuji_open_directory_filter() no longer sends stale bytes after the path as the filter, and accepts a NULL filter
 - [adam][lynx][c64] network_write() splits a write that does not fit one bus packet instead of overrunning the packet
 - [h89] Each bus call drains stale reply bytes first, and the SLIP sync gives up after 4096 bytes with no END
+- [apple2][adam][lynx][c64][pmd85] Setting the WiFi network with fuji_set_ssid() works; it used to send a garbled network name and password, leaving the FujiNet unable to connect
+- [coco][msx] fuji_enable_user_rom() boots the FujiNet cartridge's user ROM
+- [h89] Port B is an input (mode word C2H), and every program sets up the 8255
 
 ## [5.0.0] 2026-10-09
 

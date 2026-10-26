@@ -49,5 +49,7 @@ extern void print_versions();
 extern void test_abort(void);
 extern void test_check(uint8_t ok, const char *name, int line);
 extern void tprint(uint8_t what, const char *s);
+/* Busy-waits jiffies sixtieths of a second; each platform has its own in tests/<platform>/ */
+extern void wait_jiffies(uint8_t jiffies);
 
 #endif /* HARNESS_H */
