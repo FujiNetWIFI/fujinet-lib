@@ -78,7 +78,7 @@ enum {
   FUJICMD_GET_DEVICE1_FULLPATH       = 0xA0,
   FUJICMD_UPDATE_FIRMWARE            = 0x90,
   FUJICMD_STATUS                     = 0x53, // S
-  FUJICMD_HSIO_INDEX                 = 0x3F, // ?
+  FUJICMD_HSIO_INDEX                 = 0x3F,
   FUJICMD_NAK                        = 0x15, // ASCII NAK
   FUJICMD_ACK                        = 0x06, // ASCII ACK
   FUJICMD_SEND_ERROR                 = 0x02,
