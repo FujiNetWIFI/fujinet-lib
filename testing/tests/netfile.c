@@ -255,6 +255,8 @@ void test_fs_prefix(void)
   strcat(g.fs.base, guid);
 #endif
 
+  // An aborted run may have left a prefix set
+  network_fs_cd("N1:");
   err = network_fs_cd(g.fs.base);
   TEST("change directory succeeds", err == FN_ERR_OK);
 
