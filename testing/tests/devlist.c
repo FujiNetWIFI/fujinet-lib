@@ -65,9 +65,12 @@ void test_network_exists(void)
 #if defined(FN_BROKEN_network_fs_cd) || defined(FN_BROKEN_network_fs_pwd)
   SKIP(network_exists);
 #else
-  // First set every network device to a unique prefix
+  // First set every network device to a unique prefix, clearing any left by
+  // an aborted run
   for (idx = 0; idx < MAX_NETWORK_DEVICES; idx++) {
     unit = idx + '1';
+    sprintf(buffer, "N%c:", unit);
+    network_fs_cd(buffer);
     sprintf(buffer, "N%c:/%c-check-%c", unit, unit, unit);
     err = network_fs_cd(buffer);
     if (err != FN_ERR_OK)
