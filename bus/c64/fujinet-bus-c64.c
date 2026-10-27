@@ -1,6 +1,5 @@
 #include "fujinet-fuji.h"
 #include "fujinet-cbm.h"
-#include <string.h>
 #include <stdarg.h>
 
 #include <stdio.h> // debug
@@ -8,7 +7,7 @@
 typedef struct {
   uint8_t opcode;
   uint8_t cmd;
-  uint8_t data[258]; // FIXME - aux1 + aux2 + 256 byte path
+  uint8_t aux[4];
 } fujibus_packet;
 
 static fujibus_packet fb_packet;
@@ -17,9 +16,11 @@ static fujibus_packet fb_packet;
 
 bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
 {
-  uint16_t wlen, rlen;
+  uint16_t rlen;
   uint16_t idx, numbytes;
   uint8_t cbm_chan, cbm_dev;
+  const uint8_t *data = NULL;
+  uint16_t data_length = 0;
   va_list ap;
   bool success = true;
 
@@ -32,24 +33,16 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
   idx = 0;
   numbytes = fuji_field_numbytes(fields);
   if (numbytes > 0)
-    fb_packet.data[idx++] = va_arg(ap, uint8_t);
+    fb_packet.aux[idx++] = va_arg(ap, uint8_t);
   if (numbytes > 1)
-    fb_packet.data[idx++] = va_arg(ap, uint8_t);
+    fb_packet.aux[idx++] = va_arg(ap, uint8_t);
   if (numbytes > 2)
-    fb_packet.data[idx++] = va_arg(ap, uint8_t);
+    fb_packet.aux[idx++] = va_arg(ap, uint8_t);
   if (numbytes > 3)
-    fb_packet.data[idx++] = va_arg(ap, uint8_t);
+    fb_packet.aux[idx++] = va_arg(ap, uint8_t);
   if (fields & FUJI_FIELD_DATA) {
-    const uint8_t *data = va_arg(ap, uint8_t *);
-    const uint16_t data_length = va_arg(ap, uint16_t);
-
-
-    if (idx + data_length > sizeof(fb_packet.data)) {
-      va_end(ap);
-      return false;
-    }
-    memcpy(&fb_packet.data[idx], data, data_length);
-    idx += data_length;
+    data = va_arg(ap, uint8_t *);
+    data_length = va_arg(ap, uint16_t);
   }
 
   if (device >= FUJI_DEVICEID_NETWORK && device <= FUJI_DEVICEID_NETWORK_LAST) {
@@ -62,7 +55,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
     cbm_dev = CBM_DEV_FUJI;
   }
 
-  if (idx)
+  if (idx || data_length)
     fb_packet.opcode = OPCODE_HAS_PAYLOAD;
 
   if (fuji_cbm_open(cbm_chan, cbm_dev, cbm_chan, 2, (unsigned char *) &fb_packet) != 0) {
@@ -70,10 +63,23 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
     return false;
   }
 
-  if (idx) {
-    wlen = cbm_write(cbm_chan, fb_packet.data, idx);
-    if (wlen != idx)
+  // The firmware runs the command when the payload's LISTEN ends, so the
+  // aux bytes and the data must go out in one output session.
+  if (fb_packet.opcode == OPCODE_HAS_PAYLOAD) {
+    if (cbm_k_ckout(cbm_chan))
       success = false;
+    else {
+      uint16_t pos;
+
+
+      for (pos = 0; pos < idx; pos++)
+        cbm_k_bsout(fb_packet.aux[pos]);
+      for (pos = 0; pos < data_length; pos++)
+        cbm_k_bsout(data[pos]);
+      if (cbm_k_readst())
+        success = false;
+    }
+    cbm_k_clrch();
   }
 
   if (success && (fields & FUJI_FIELD_REPLY)) {
@@ -94,33 +100,18 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
 
 uint16_t network_bus_read(uint8_t device, void *buffer, size_t length)
 {
-#if 0
-  uint16_t rlen;
-  printf("FUJI_BUS_READ %u\n", length);
-  rlen = cbm_read(device - FUJI_DEVICEID_NETWORK + 1 + CBM_DATA_CHANNEL_0, buffer, length);
-  printf("FBR GOT %u\n", rlen);
-  return rlen;
-#else
   if (!NETCALL_B12_RV(NETCMD_READ, device - FUJI_DEVICEID_NETWORK + 1 + CBM_DATA_CHANNEL_0,
                       length, buffer, length))
     return 0;
   return length;
-#endif // 0
 }
 
-/* network_write() sends what does not fit in one packet. */
 uint16_t network_bus_write(uint8_t device, const void *buffer, size_t length)
 {
-  if (length > sizeof(fb_packet.data))
-    length = sizeof(fb_packet.data);
-#if 0
-  return cbm_write(device - FUJI_DEVICEID_NETWORK + 1 + CBM_DATA_CHANNEL_0, buffer, length);
-#else
   if (!NETCALL_D(NETCMD_WRITE, device - FUJI_DEVICEID_NETWORK + 1 + CBM_DATA_CHANNEL_0,
                  buffer, length))
     return 0;
   return length;
-#endif // 0
 }
 
 /*
@@ -130,23 +121,10 @@ uint16_t network_bus_write(uint8_t device, const void *buffer, size_t length)
   length field, no block size, no padding.
 */
 
-#ifdef OBSOLETE
-bool fuji_bus_appkey_read(void *string, uint16_t *length)
-{
-  uint16_t rlen;
-
-
-  rlen = cbm_read(CBM_CMD_CHANNEL, string, MAX_APPKEY_LEN);
-  *length = rlen;
-  printf("appkey read %d\n", rlen);
-  return true;
-}
-#else
 bool fuji_bus_appkey_read(void *, uint16_t *)
 {
   return false;
 }
-#endif /* OBSOLETE */
 
 bool fuji_bus_appkey_write(void *string, uint16_t length)
 {
