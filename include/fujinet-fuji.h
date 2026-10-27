@@ -516,22 +516,22 @@ extern bool fuji_set_directory_position(uint16_t pos);
 
 #ifdef FUJI_PLATFORM_ATARI
 /**
- * @brief Fetch the current HSIO index value.
+ * @brief Fetch the current HSIO index value, 40 when high speed is off.
  * @return success status of request
  */
-bool fuji_get_hsio_index(uint8_t *index);
+#define fuji_get_hsio_index(index) FUJICALL_RV(FUJICMD_HSIO_INDEX, index, 1)
 
 /**
- * @brief Sets HSIO speed index
+ * @brief Sets HSIO speed index, also storing it in the config if save is true
  * @return success status of request.
  */
-bool fuji_set_hsio_index(bool save, uint8_t index);
+#define fuji_set_hsio_index(save, index) FUJICALL_A1_A2(FUJICMD_SET_HSIO_INDEX, index, save)
 
 /**
- * @brief Sets SIO external clock speed
+ * @brief Sets SIO external clock speed in kHz, 0 to turn it off
  * @return success status of request.
  */
-bool fuji_set_sio_external_clock(uint16_t rate);
+#define fuji_set_sio_external_clock(rate) FUJICALL_B12(FUJICMD_SET_SIO_EXTERNAL_CLOCK, rate)
 
 #endif
 
