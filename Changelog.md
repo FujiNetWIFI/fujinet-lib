@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased] (Place WIP changes in this section until a release is done)
+## [5.1.0] 2026-10-27
 
 - [msx] UNAPI works from a subslot and under MSX-DOS
 - [h89] Add Heathkit H89 targets (h89-cpm, h89-hdos) using FujiBus over the 8255 PPI, port routines from Jeff Tranter's bring-up
