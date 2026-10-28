@@ -12,6 +12,12 @@ enum {
   OPCODE_HAS_PAYLOAD = 0x02,
 };
 
+// First byte of every command response, followed by any reply data
+enum {
+  TRANSACTION_STATUS_OK    = 0x00,
+  TRANSACTION_STATUS_ERROR = 0x01,
+};
+
 #define CBM_DEV_FUJI          30
 #define CBM_DEV_NETWORK       16
 
@@ -22,5 +28,7 @@ enum {
 
 // Our custom cbm_open that works with binary data by not doing strlen on the name, but instead takes a length parameter
 uint8_t fuji_cbm_open(uint8_t lfn, uint8_t device, uint8_t sec_addr, uint8_t len, uint8_t* name);
+
+bool fuji_cbm_read_status(uint8_t lfn);
 
 #endif // FUJINET_CBM_H

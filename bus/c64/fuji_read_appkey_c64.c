@@ -9,19 +9,6 @@ extern uint8_t appkey[6];
 
 extern void init_appkey(uint8_t key_id, uint8_t mode);
 
-static bool fuji_check_status(void)
-{
-  uint8_t status_cmd[2] = { OPCODE_NO_PAYLOAD, FUJICMD_STATUS };
-  FNStatus status;
-
-
-  if (cbm_write(CBM_CMD_CHANNEL, status_cmd, 2) != 2)
-    return false;
-
-  cbm_read(CBM_CMD_CHANNEL, status.raw, sizeof(FNStatus));
-  return status.value.error == 0;
-}
-
 bool fuji_read_appkey_c64(uint8_t key_id, uint16_t *count, uint8_t *data)
 {
   uint8_t open_cmd[2] = { OPCODE_HAS_PAYLOAD, FUJICMD_OPEN_APPKEY };
@@ -44,16 +31,19 @@ bool fuji_read_appkey_c64(uint8_t key_id, uint16_t *count, uint8_t *data)
   if (cbm_write(CBM_CMD_CHANNEL, appkey, sizeof(appkey)) != sizeof(appkey))
     goto cleanup;
 
-  if (!fuji_check_status())
+  if (!fuji_cbm_read_status(CBM_CMD_CHANNEL))
     goto cleanup;
 
   if (cbm_write(CBM_CMD_CHANNEL, read_cmd, 2) != 2)
     goto cleanup;
 
+  if (!fuji_cbm_read_status(CBM_CMD_CHANNEL))
+    goto cleanup;
+
   bytes_read = cbm_read(CBM_CMD_CHANNEL, data, 64); // TODO: key sizes overhaul
   *count = (bytes_read >= 0) ? bytes_read : 0;
 
-  success = fuji_check_status();
+  success = true;
 
  cleanup:
   cbm_close(CBM_CMD_CHANNEL);
