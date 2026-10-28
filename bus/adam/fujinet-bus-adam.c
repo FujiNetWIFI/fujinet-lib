@@ -2,12 +2,16 @@
 #include "fujinet-bus.h"
 #include "fujinet-commands.h"
 #include "fujinet-const.h"
+#include "fujinet-fuji.h"
 #include <string.h>
 
 #define DCB_COUNT_ADDR ((uint8_t *) 0xFEC3)
 #define DCB_TABLE_ADDR ((DCB *) 0xFEC4)
 
 #define DCB_COMPLETE_MASK 0x80
+
+#define FIRMWARE_DEVICE_SLOTS 8
+#define DEVICE_SLOTS_PACKET (1 + FIRMWARE_DEVICE_SLOTS * sizeof(DeviceSlot))
 
 static uint8_t fb_packet[MAX_ADAM_PACKET_REPLY];
 
@@ -115,6 +119,14 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
       return false;
     memcpy(&fb_packet[idx], buf, buf_length);
     idx += buf_length;
+  }
+
+  /* FujiNet's WRITE DEVICE SLOTS takes all 8 slots and saves them, garbage
+     past what was sent included. The Adam uses only 4, so pad with empty ones. */
+  if (device == ADAM_ID_FUJINET && fuji_cmd == FUJICMD_WRITE_DEVICE_SLOTS
+      && idx < DEVICE_SLOTS_PACKET) {
+    memset(&fb_packet[idx], 0, DEVICE_SLOTS_PACKET - idx);
+    idx = DEVICE_SLOTS_PACKET;
   }
 
   dcb = dcb_find(device);
