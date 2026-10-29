@@ -573,11 +573,11 @@ static void fs_sd_filter_cleanup(void)
 static uint8_t fs_sd_host(void)
 {
   /* Not g.hslots: it overlays g.fs.base, which later sections still need. */
-  static HostSlot hosts[MAX_HOSTS];
+  static HostSlot hosts[FUJI_MAX_HOSTS];
   uint8_t i;
 
-  if (fuji_get_host_slots(&hosts[0], MAX_HOSTS)) {
-    for (i = 0; i < MAX_HOSTS; i++) {
+  if (fuji_get_host_slots(&hosts[0], FUJI_MAX_HOSTS)) {
+    for (i = 0; i < FUJI_MAX_HOSTS; i++) {
       if (strcmp((char *)hosts[i], "SD") == 0)
         return i;
     }

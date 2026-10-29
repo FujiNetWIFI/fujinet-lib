@@ -91,7 +91,7 @@ void test_fuji_host_device_slots(void)
 #ifdef FN_BROKEN_fuji_get_host_slots
   SKIP(fuji_get_host_slots);
 #else
-  ok = fuji_get_host_slots(&g.hslots.hosts[0], MAX_HOSTS);
+  ok = fuji_get_host_slots(&g.hslots.hosts[0], FUJI_MAX_HOSTS);
   TEST("fuji_get_host_slots succeeds", ok);
   printf("  Host slot 0: %s\n", (char *)g.hslots.hosts[0]);
 #endif
@@ -99,11 +99,11 @@ void test_fuji_host_device_slots(void)
 #ifdef FN_BROKEN_fuji_put_host_slots
   SKIP(fuji_put_host_slots);
 #else
-  write_ok = fuji_put_host_slots(&g.hslots.hosts[0], MAX_HOSTS);
+  write_ok = fuji_put_host_slots(&g.hslots.hosts[0], FUJI_MAX_HOSTS);
   TEST("fuji_put_host_slots round-trip succeeds", write_ok);
 
   memset(g.hslots.hosts2, 0, sizeof(g.hslots.hosts2));
-  ok = fuji_get_host_slots(&g.hslots.hosts2[0], MAX_HOSTS);
+  ok = fuji_get_host_slots(&g.hslots.hosts2[0], FUJI_MAX_HOSTS);
   TEST("Re-read host slots after write succeeds", ok);
   TEST("Host slot data unchanged after write-back",
        memcmp(g.hslots.hosts, g.hslots.hosts2, sizeof(g.hslots.hosts)) == 0);
@@ -114,18 +114,18 @@ void test_fuji_host_device_slots(void)
 #ifdef FN_BROKEN_fuji_get_device_slots
   SKIP(fuji_get_device_slots);
 #else
-  ok = fuji_get_device_slots(g.dslots.devices, MAX_DISKS);
+  ok = fuji_get_device_slots(g.dslots.devices, FUJI_MAX_DISKS);
   TEST("fuji_get_device_slots succeeds", ok);
 #endif
 
 #ifdef FN_BROKEN_fuji_put_device_slots
   SKIP(fuji_put_device_slots);
 #else
-  write_ok = fuji_put_device_slots(&g.dslots.devices[0], MAX_DISKS);
+  write_ok = fuji_put_device_slots(&g.dslots.devices[0], FUJI_MAX_DISKS);
   TEST("fuji_put_device_slots round-trip succeeds", write_ok);
 
   memset(g.dslots.devices2, 0, sizeof(g.dslots.devices2));
-  ok = fuji_get_device_slots(&g.dslots.devices2[0], MAX_DISKS);
+  ok = fuji_get_device_slots(&g.dslots.devices2[0], FUJI_MAX_DISKS);
   TEST("Re-read device slots after write succeeds", ok);
   TEST("Device slot data unchanged after write-back",
        memcmp(g.dslots.devices, g.dslots.devices2, sizeof(g.dslots.devices)) == 0);
@@ -140,7 +140,7 @@ void test_fuji_host_device_slots(void)
   END_OF_TEST();
 }
 
-#define HOST_TABLE_LEN (sizeof(HostSlot) * MAX_HOSTS)
+#define HOST_TABLE_LEN (sizeof(HostSlot) * FUJI_MAX_HOSTS)
 
 void test_fuji_host_slots_oversized(void)
 {
@@ -152,7 +152,7 @@ void test_fuji_host_slots_oversized(void)
 #if defined(FN_BROKEN_fuji_get_host_slots) || defined(FN_BROKEN_fuji_put_host_slots)
   SKIP(fuji_put_host_slots);
 #else
-  ok = fuji_get_host_slots((HostSlot *) buf, MAX_HOSTS);
+  ok = fuji_get_host_slots((HostSlot *) buf, FUJI_MAX_HOSTS);
   TEST("fuji_get_host_slots succeeds", ok);
 
   /* The table already there, then zeros. DriveWire runs the bytes past the
@@ -164,7 +164,7 @@ void test_fuji_host_slots_oversized(void)
        fuji_get_adapter_config(&g.adapter.ac));
 
   memset(g.hslots.hosts2, 0, sizeof(g.hslots.hosts2));
-  ok = fuji_get_host_slots(&g.hslots.hosts2[0], MAX_HOSTS);
+  ok = fuji_get_host_slots(&g.hslots.hosts2[0], FUJI_MAX_HOSTS);
   TEST("the host slots are unchanged",
        ok && memcmp(buf, g.hslots.hosts2, HOST_TABLE_LEN) == 0);
 #endif
@@ -185,7 +185,7 @@ void test_fuji_device_filename(void)
   SKIP(fuji_get_device_slots);
 #else
 
-  ok = fuji_get_device_slots(g.dslots.devices, MAX_DISKS);
+  ok = fuji_get_device_slots(g.dslots.devices, FUJI_MAX_DISKS);
   host_slot = g.dslots.devices[TEST_DEVICE_SLOT].hostSlot;
   mode = g.dslots.devices[TEST_DEVICE_SLOT].mode;
 
@@ -214,12 +214,12 @@ void test_fuji_device_filename(void)
 
   /* A mounted slot reads back with FUJI_DISK_MODE_MOUNTED set in its mode;
    * writing that mode back must leave the host slot alone. */
-  ok = fuji_get_device_slots(g.device_filename.devices, MAX_DISKS);
+  ok = fuji_get_device_slots(g.device_filename.devices, FUJI_MAX_DISKS);
   test_host = g.device_filename.devices[TEST_DEVICE_SLOT].hostSlot;
   test_mode = g.device_filename.devices[TEST_DEVICE_SLOT].mode;
   printf("  slot %d: host %u mode 0x%02x\n", TEST_DEVICE_SLOT, test_host, test_mode);
   fuji_set_device_filename(test_mode, test_host, TEST_DEVICE_SLOT, (char *) TEST_FILENAME);
-  ok = fuji_get_device_slots(g.device_filename.devices, MAX_DISKS) && ok;
+  ok = fuji_get_device_slots(g.device_filename.devices, FUJI_MAX_DISKS) && ok;
   TEST("writing back the mode as read keeps the host slot",
        ok && g.device_filename.devices[TEST_DEVICE_SLOT].hostSlot == test_host);
 
@@ -229,7 +229,7 @@ void test_fuji_device_filename(void)
   TEST("fuji_get_device_filename reads back original value", ok);
   TEST("Set filename matches read-back value", strcmp(g.device_filename.read_back, g.device_filename.filename) == 0);
 
-  ok = fuji_get_device_slots(g.dslots.devices, MAX_DISKS);
+  ok = fuji_get_device_slots(g.dslots.devices, FUJI_MAX_DISKS);
   TEST("restored host slot matches", host_slot == g.dslots.devices[TEST_DEVICE_SLOT].hostSlot);
 #endif
 

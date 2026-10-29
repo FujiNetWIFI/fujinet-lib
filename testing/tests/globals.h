@@ -48,13 +48,13 @@ typedef union {
   } adapter;
 
   struct {
-    HostSlot   hosts[MAX_HOSTS];
-    HostSlot   hosts2[MAX_HOSTS];
+    HostSlot   hosts[FUJI_MAX_HOSTS];
+    HostSlot   hosts2[FUJI_MAX_HOSTS];
   } hslots;
 
   struct {
-    DeviceSlot devices[MAX_DISKS];
-    DeviceSlot devices2[MAX_DISKS];
+    DeviceSlot devices[FUJI_MAX_DISKS];
+    DeviceSlot devices2[FUJI_MAX_DISKS];
   } dslots;
 
   struct {
@@ -106,7 +106,7 @@ typedef union {
   struct {
     char filename[MAX_FILENAME_LEN];
     char read_back[MAX_FILENAME_LEN];
-    DeviceSlot devices[MAX_DISKS];
+    DeviceSlot devices[FUJI_MAX_DISKS];
   } device_filename;
 
   char dir[258];
