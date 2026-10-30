@@ -13,6 +13,7 @@
 - [coco][msx] fuji_enable_user_rom() boots the FujiNet cartridge's user ROM
 - [h89] Port B is an input (mode word C2H), and every program sets up the 8255
 - [adam] Commands FujiNet refuses after accepting them, such as an open, close, seek or write, now report the failure (needs fujinet-firmware #2205)
+- [adam] The reply to a command that waits on the network, such as the status that sends an HTTP request, no longer times out
 
 ## [5.0.0] 2026-10-09
 

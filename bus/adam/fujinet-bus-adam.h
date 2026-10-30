@@ -5,7 +5,8 @@
 
 #define MAX_RETRIES 20
 
-/* A copy or scan answers nothing until it finishes; one ACK timeout per poll. */
+/* A copy, scan or HTTP request answers nothing until it finishes; one ACK
+   timeout per poll. */
 #define LONG_RETRIES 400
 
 #define MAX_ADAM_PACKET_REPLY 1024
