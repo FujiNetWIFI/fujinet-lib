@@ -128,7 +128,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 
   if (fields & FUJI_FIELD_REPLY) {
     ptr = buf_length < MAX_ADAM_PACKET_REPLY ? fb_packet : (void *) buf;
-    status = dcb_io(dcb, DCB_COMMAND_READ, ptr, buf_length, MAX_RETRIES);
+    status = dcb_io(dcb, DCB_COMMAND_READ, ptr, buf_length, LONG_RETRIES);
     if (status != DCB_STATUS_FINISH)
       return false;
     if (ptr != buf) {
