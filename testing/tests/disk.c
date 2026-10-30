@@ -33,7 +33,7 @@ void test_fuji_copy_file(void)
   uint8_t post_min;
   FujiDirEntry *e;
   /* Not g.dslots, which overlays g.hslots. */
-  static DeviceSlot dslots[MAX_DISKS];
+  static DeviceSlot dslots[FUJI_MAX_DISKS];
   uint8_t in_use;
 
   SECTION("fuji_copy_file (tnfs.fujinet.online COCO/lobby.dsk -> SD)");
@@ -60,10 +60,10 @@ void test_fuji_copy_file(void)
 #ifdef FN_BROKEN_fuji_get_host_slots
   SKIP(fuji_get_host_slots);
 #else
-  ok = fuji_get_host_slots(&g.hslots.hosts[0], MAX_HOSTS);
+  ok = fuji_get_host_slots(&g.hslots.hosts[0], FUJI_MAX_HOSTS);
   TEST("fuji_get_host_slots succeeds", ok);
 
-  for (i = 0; i < MAX_HOSTS; i++) {
+  for (i = 0; i < FUJI_MAX_HOSTS; i++) {
     slot = (uint8_t *)g.hslots.hosts[i];
     if (slot[0] == 'S' && slot[1] == 'D' && slot[2] == '\0') {
       sd_idx = i;
@@ -76,9 +76,9 @@ void test_fuji_copy_file(void)
   /* Host slots that mounted disks read from. Renaming one pulls the host
    * out from under the disk (fujinet-firmware#1983). */
   in_use = 0;
-  if (fuji_get_device_slots(dslots, MAX_DISKS)) {
-    for (i = 0; i < MAX_DISKS; i++)
-      if (dslots[i].file[0] && dslots[i].hostSlot < MAX_HOSTS)
+  if (fuji_get_device_slots(dslots, FUJI_MAX_DISKS)) {
+    for (i = 0; i < FUJI_MAX_DISKS; i++)
+      if (dslots[i].file[0] && dslots[i].hostSlot < FUJI_MAX_HOSTS)
         in_use |= (uint8_t)(1 << dslots[i].hostSlot);
   }
 
@@ -86,7 +86,7 @@ void test_fuji_copy_file(void)
    * Prefer a host slot already set to tnfs.fujinet.online, then an empty host
    * slot, then any other host slot no mounted disk reads from. A borrowed host
    * slot's name is put back afterward. */
-  for (i = 0; i < MAX_HOSTS; i++) {
+  for (i = 0; i < FUJI_MAX_HOSTS; i++) {
     slot = (uint8_t *)g.hslots.hosts[i];
     if (strncmp((char *)slot, TNFS_COPY_SOURCE_HOST, 32) == 0) {
       src_idx = i;
@@ -97,7 +97,7 @@ void test_fuji_copy_file(void)
   }
 
   if (!found_src) {
-    for (i = 0; i < MAX_HOSTS; i++) {
+    for (i = 0; i < FUJI_MAX_HOSTS; i++) {
       slot = (uint8_t *)g.hslots.hosts[i];
       if (slot[0] == '\0') {
         src_idx = i;
@@ -108,7 +108,7 @@ void test_fuji_copy_file(void)
   }
 
   if (!found_src) {
-    for (i = 0; i < MAX_HOSTS; i++) {
+    for (i = 0; i < FUJI_MAX_HOSTS; i++) {
       if (i != sd_idx && !(in_use & (1 << i))) {
         src_idx = i;
         found_src = true;
@@ -132,7 +132,7 @@ void test_fuji_copy_file(void)
     memset(slot, 0, 32);
     strcpy((char *)slot, TNFS_COPY_SOURCE_HOST);
 
-    ok = fuji_put_host_slots(&g.hslots.hosts[0], MAX_HOSTS);
+    ok = fuji_put_host_slots(&g.hslots.hosts[0], FUJI_MAX_HOSTS);
     TEST("fuji_put_host_slots (with source) succeeds", ok);
   }
 
@@ -168,12 +168,12 @@ void test_fuji_copy_file(void)
 
   if (!src_preexisting) {
     /* Put the borrowed host slot back as it was. */
-    ok = fuji_get_host_slots(&g.hslots.hosts[0], MAX_HOSTS);
+    ok = fuji_get_host_slots(&g.hslots.hosts[0], FUJI_MAX_HOSTS);
     TEST("fuji_get_host_slots (restore re-read) succeeds", ok);
     if (ok) {
       slot = (uint8_t *)g.hslots.hosts[src_idx];
       memcpy(slot, saved_src, 32);
-      fuji_put_host_slots(&g.hslots.hosts[0], MAX_HOSTS);
+      fuji_put_host_slots(&g.hslots.hosts[0], FUJI_MAX_HOSTS);
     }
   }
   fuji_mount_host_slot(sd_idx);
@@ -234,7 +234,7 @@ void test_fuji_create_new(void)
 #else
   static NewDisk nd;
   /* Not g.dslots, which overlays g.hslots. */
-  static DeviceSlot saved[MAX_DISKS];
+  static DeviceSlot saved[FUJI_MAX_DISKS];
   uint8_t i, sd_idx, ds;
   uint8_t *slot;
   bool ok, found_sd;
@@ -243,11 +243,11 @@ void test_fuji_create_new(void)
 
   SECTION("fuji_create_new");
 
-  ok = fuji_get_host_slots(&g.hslots.hosts[0], MAX_HOSTS);
+  ok = fuji_get_host_slots(&g.hslots.hosts[0], FUJI_MAX_HOSTS);
   TEST("fuji_get_host_slots succeeds", ok);
   found_sd = false;
   sd_idx = 0;
-  for (i = 0; i < MAX_HOSTS; i++) {
+  for (i = 0; i < FUJI_MAX_HOSTS; i++) {
     slot = (uint8_t *)g.hslots.hosts[i];
     if (slot[0] == 'S' && slot[1] == 'D' && slot[2] == '\0') {
       sd_idx = i;
@@ -257,11 +257,11 @@ void test_fuji_create_new(void)
   }
   TEST("SD host slot found", found_sd);
 
-  ok = fuji_get_device_slots(saved, MAX_DISKS);
+  ok = fuji_get_device_slots(saved, FUJI_MAX_DISKS);
   TEST("fuji_get_device_slots succeeds", ok);
-  for (ds = 0; ds < MAX_DISKS && saved[ds].file[0]; ds++)
+  for (ds = 0; ds < FUJI_MAX_DISKS && saved[ds].file[0]; ds++)
     ;
-  if (ds == MAX_DISKS) {
+  if (ds == FUJI_MAX_DISKS) {
     printf("  every drive slot is in use\n");
     SKIP(fuji_create_new);
   }

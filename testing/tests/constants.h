@@ -150,16 +150,6 @@
 #define DIR_FORMAT_LONG (0x80)
 #define DIR_FORMAT_RAW  (0x83)
 
-/* Constants that should be defined by fujinet-lib */
-#define MAX_HOSTS 8
-#if defined(BUILD_COCO) || defined(BUILD_PMD85)
-#define MAX_DISKS 4
-#elif defined(BUILD_APPLE2)
-#define MAX_DISKS 10
-#else
-#define MAX_DISKS 8
-#endif
-
 /* Not defined by old fujinet-lib */
 #if FNLIB_VERSION_MAJOR < 5
 #define NETWORK_SUCCESS 0
