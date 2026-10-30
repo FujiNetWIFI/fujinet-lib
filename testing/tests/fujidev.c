@@ -114,13 +114,28 @@ void test_fuji_host_device_slots(void)
 #ifdef FN_BROKEN_fuji_get_device_slots
   SKIP(fuji_get_device_slots);
 #else
+  memset(g.dslots.devices2, 0xA5, sizeof(g.dslots.devices2));
   ok = fuji_get_device_slots(g.dslots.devices, FUJI_MAX_DISKS);
   TEST("fuji_get_device_slots succeeds", ok);
+
+  // Use g.dslots.devices + g.dslots.devices2 as a double length
+  // buffer and make sure no extra data was returned
+  {
+    unsigned idx;
+    unsigned char *ptr = (unsigned char *) g.dslots.devices2;
+
+    for (idx = sizeof(g.dslots.devices2); idx; idx--, ptr++) {
+      if (*ptr != 0xA5)
+        break;
+    }
+    TEST("No extra devices returned", idx == 0);
+  }
 #endif
 
 #ifdef FN_BROKEN_fuji_put_device_slots
   SKIP(fuji_put_device_slots);
 #else
+
   write_ok = fuji_put_device_slots(&g.dslots.devices[0], FUJI_MAX_DISKS);
   TEST("fuji_put_device_slots round-trip succeeds", write_ok);
 

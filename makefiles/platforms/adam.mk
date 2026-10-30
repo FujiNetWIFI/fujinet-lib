@@ -15,3 +15,6 @@ endif
 
 r2r:: $(BUILD_EXEC) $(BUILD_LIB) $(R2R_EXTRA_DEPS)
 	make -f $(PLATFORM_MK) $(PLATFORM)/r2r-post
+
+adam/executable-post::
+	rm -f $(BUILD_EXEC:.ddp=_BOOTSTRAP.bin)
