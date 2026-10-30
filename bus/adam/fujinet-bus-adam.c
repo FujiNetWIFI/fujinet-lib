@@ -92,6 +92,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   DCB *dcb;
   uint16_t idx, numbytes;
   uint8_t status;
+  void *ptr;
 
 
   device = fuji_remap_device(device);
@@ -126,9 +127,14 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
     return false;
 
   if (fields & FUJI_FIELD_REPLY) {
-    status = dcb_io(dcb, DCB_COMMAND_READ, (void *) buf, buf_length, MAX_RETRIES);
+    ptr = buf_length < MAX_ADAM_PACKET_REPLY ? fb_packet : (void *) buf;
+    status = dcb_io(dcb, DCB_COMMAND_READ, ptr, buf_length, MAX_RETRIES);
     if (status != DCB_STATUS_FINISH)
       return false;
+    if (ptr != buf) {
+      numbytes = buf_length < dcb->len ? buf_length : dcb->len;
+      memcpy((void *) buf, ptr, numbytes);
+    }
   }
   // RESET reboots FujiNet, so nothing answers the STATUS.
   else if (!(device == ADAM_ID_FUJINET && fuji_cmd == FUJICMD_RESET)) {
