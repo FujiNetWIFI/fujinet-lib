@@ -84,7 +84,7 @@ include ../makefiles/toplevel-rules.mk
 # Undefined leaves that menu off. Pinned, because finding the latest release
 # goes through the GitHub API, whose rate limit CI runs hit.
 COCOMENU = 1.0.0
-ADAMMENU = 1.0.0
+ADAMMENU = 1.0.1
 MSDOSMENU = 1.0.0
 
 menu-on = $(filter-out undefined,$(origin $1))
