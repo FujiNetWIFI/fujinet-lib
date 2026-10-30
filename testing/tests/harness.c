@@ -11,6 +11,7 @@
 #include "harness.h"
 #include "globals.h"
 #include <fujinet-clock.h>
+#include <fujinet-network.h>
 
 #ifdef _CMOC_VERSION_
 #include <coco.h>
@@ -292,6 +293,17 @@ void test_check(uint8_t ok, const char *name, int line)
   }
 }
 
+/* FujiNet keeps an aborted test's open channels for the next program */
+static void close_network_units(void)
+{
+#ifndef FN_BROKEN_network_close
+  char spec[] = "N1:";
+
+  for (spec[1] = '1'; spec[1] <= '8'; spec[1]++)
+    network_close(spec);
+#endif
+}
+
 void test_abort(void)
 {
   printf("\n");
@@ -299,6 +311,7 @@ void test_abort(void)
   printf("\n");
   printf("=== Results: %d passed, %d skipped, %d failed, %d total ===\n",
          tests_passed, tests_skipped, tests_failed, tests_run);
+  close_network_units();
   print_versions();
   end_testing(1);
 }
