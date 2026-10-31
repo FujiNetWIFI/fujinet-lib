@@ -718,6 +718,6 @@ extern FujiDirEntry *fuji_file_stat(uint8_t host, const char *path);
 /**
  * @brief Busy-waits about jiffies sixtieths of a second
  */
-extern void wait_jiffies(uint8_t jiffies);
+extern void wait_jiffies(uint16_t jiffies);
 
 #endif /* FUJINET_FUJI_H */

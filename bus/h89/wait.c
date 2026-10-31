@@ -7,7 +7,7 @@
 #define TICKS (*(volatile uint16_t *) 0x000B)
 #endif
 
-void wait_jiffies(uint8_t jiffies)
+void wait_jiffies(uint16_t jiffies)
 {
   uint16_t start = TICKS;
   uint16_t ticks = (uint16_t) jiffies * 25 / 3;

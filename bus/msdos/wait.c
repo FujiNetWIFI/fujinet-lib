@@ -1,7 +1,7 @@
 #include <fujinet-fuji.h>
 #include <time.h>
 
-void wait_jiffies(uint8_t jiffies)
+void wait_jiffies(uint16_t jiffies)
 {
   clock_t start = clock();
   clock_t ticks = (clock_t) jiffies * CLOCKS_PER_SEC / 60;

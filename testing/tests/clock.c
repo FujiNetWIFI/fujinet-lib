@@ -18,6 +18,18 @@
 
 #define HUNDREDTHS_PER_DAY 8640000UL
 
+#define HUNDREDTHS_PER_SEC   100UL
+#define WAIT_SHORT_SECS      1UL
+#define WAIT_LONG_SECS       10UL
+#define TOLERANCE_HUNDREDTHS 5UL   /* 0.05 s */
+#define EXPECTED_SHORT       (WAIT_SHORT_SECS * HUNDREDTHS_PER_SEC)
+#define EXPECTED_LONG        (WAIT_LONG_SECS * HUNDREDTHS_PER_SEC)
+#define EXPECTED_DIFF        (EXPECTED_LONG - EXPECTED_SHORT)
+#ifdef UNUSED
+#define SECS_PER_MIN         60UL
+#define MINS_PER_HOUR        60UL
+#endif /* UNUSED */
+
 void test_clock_tz(void)
 {
   uint8_t err;
@@ -294,38 +306,56 @@ static unsigned long abs_diff(unsigned long a, unsigned long b)
 void test_sleep_wait(void)
 {
   uint8_t err;
-  unsigned long start, end, elapsed;
+  unsigned long start, end, elapsed, overhead, elapsed_short;
+  unsigned long tol_whole = TOLERANCE_HUNDREDTHS / HUNDREDTHS_PER_SEC;
+  unsigned long tol_frac  = TOLERANCE_HUNDREDTHS % HUNDREDTHS_PER_SEC;
 
   SECTION("wait_jiffies timing vs SIMPLE_BINARY_WITH_HUNDREDTHS");
 
 #ifdef FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
   SKIP(clock_get_time);
 #else
-  /* --- 1 second --- */
+  printf("  tolerance: +/- %lu.%02lu s\n", tol_whole, tol_frac);
+
+  /* Overhead: two back-to-back reads with no wait between them. */
   err = read_hundredths_since_midnight(&start);
-  TEST("1s: start time read succeeds", err == FN_ERR_OK);
-
-  wait_jiffies(1 * JIFFIES_PER_SEC);
-
+  TEST("overhead: start read succeeds", err == FN_ERR_OK);
   err = read_hundredths_since_midnight(&end);
-  TEST("1s: end time read succeeds", err == FN_ERR_OK);
+  TEST("overhead: end read succeeds", err == FN_ERR_OK);
+  overhead = elapsed_hundredths(start, end);
+  printf("  read overhead: %lu.%02lu s\n",
+         overhead / HUNDREDTHS_PER_SEC, overhead % HUNDREDTHS_PER_SEC);
 
-  elapsed = elapsed_hundredths(start, end);
-  printf("  1s wait:  elapsed %lu.%02lu s\n", elapsed / 100UL, elapsed % 100UL);
-  TEST("wait_jiffies(1s) within 0.1s of 1s", abs_diff(elapsed, 100UL) <= 10UL);
-
-  /* --- 10 seconds --- */
+  /* --- short wait --- */
   err = read_hundredths_since_midnight(&start);
-  TEST("10s: start time read succeeds", err == FN_ERR_OK);
-
-  wait_jiffies(10 * JIFFIES_PER_SEC);
-
+  TEST("short: start read succeeds", err == FN_ERR_OK);
+  wait_jiffies(WAIT_SHORT_SECS * JIFFIES_PER_SEC);
   err = read_hundredths_since_midnight(&end);
-  TEST("10s: end time read succeeds", err == FN_ERR_OK);
+  TEST("short: end read succeeds", err == FN_ERR_OK);
 
-  elapsed = elapsed_hundredths(start, end);
-  printf("  10s wait: elapsed %lu.%02lu s\n", elapsed / 100UL, elapsed % 100UL);
-  TEST("wait_jiffies(10s) within 0.1s of 10s", abs_diff(elapsed, 1000UL) <= 10UL);
+  elapsed = elapsed_hundredths(start, end) - overhead;
+  elapsed_short = elapsed;
+  printf("  short wait (%lu s): %lu.%02lu s\n", WAIT_SHORT_SECS,
+         elapsed / HUNDREDTHS_PER_SEC, elapsed % HUNDREDTHS_PER_SEC);
+  TEST("short wait within tolerance",
+       abs_diff(elapsed, EXPECTED_SHORT) <= TOLERANCE_HUNDREDTHS);
+
+  /* --- long wait --- */
+  err = read_hundredths_since_midnight(&start);
+  TEST("long: start read succeeds", err == FN_ERR_OK);
+  wait_jiffies(WAIT_LONG_SECS * JIFFIES_PER_SEC);
+  err = read_hundredths_since_midnight(&end);
+  TEST("long: end read succeeds", err == FN_ERR_OK);
+
+  elapsed = elapsed_hundredths(start, end) - overhead;
+  printf("  long wait (%lu s): %lu.%02lu s\n", WAIT_LONG_SECS,
+         elapsed / HUNDREDTHS_PER_SEC, elapsed % HUNDREDTHS_PER_SEC);
+  TEST("long wait within tolerance",
+       abs_diff(elapsed, EXPECTED_LONG) <= TOLERANCE_HUNDREDTHS);
+
+  /* Overhead cancels in this one, so it checks only the jiffy rate. */
+  TEST("long minus short within tolerance",
+       abs_diff(elapsed - elapsed_short, EXPECTED_DIFF) <= TOLERANCE_HUNDREDTHS);
 #endif
 
   END_OF_TEST();
