@@ -267,12 +267,12 @@ extern bool fuji_close_directory(void);
  * @brief Copies a file from given src to dst, with supplied path in copy_spec
  * @return Success status, true if all OK.
  */
-#if defined(FUJI_PLATFORM_ADAM) || defined(FUJI_PLATFORM_COCO)
+#if defined(FUJI_PLATFORM_COCO)
 #define fuji_copy_file(src_slot, dest_slot, copy_spec) FUJICALL_A1_A2_D(FUJICMD_COPY_FILE, src_slot, dest_slot, copy_spec, MAX_FILENAME_LEN)
-#else /* ! (ADAM || COCO) */
+#else /* ! COCO */
 extern bool fuji_copy_file_common(uint8_t src_slot, uint8_t dest_slot, const char *copy_spec);
 #define fuji_copy_file(src_slot, dest_slot, copy_spec) fuji_copy_file_common(src_slot, dest_slot, copy_spec)
-#endif /* FUJI_PLATFORM_ADAM */
+#endif /* FUJI_PLATFORM_COCO */
 
 /**
  * @brief Creates a new disk from the given structure.

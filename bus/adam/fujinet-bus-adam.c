@@ -85,6 +85,17 @@ uint8_t bus_ready(DCB *dcb, uint_fast16_t retries)
   return false;
 }
 
+bool fuji_bus_status(bool *failed)
+{
+  DCB *dcb = dcb_find(ADAM_ID_FUJINET);
+
+
+  if (!dcb || !bus_ready(dcb, 1))
+    return false;
+  *failed = (dcb->dev_status & ADAM_STATUS_CMD_FAILED) != 0;
+  return true;
+}
+
 bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
 		   const void *buf, size_t buf_length)
