@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <string.h>
 #else
+typedef uint8_t uint_fast8_t;
 typedef uint32_t time_t;
 struct stat {
   size_t st_size;
@@ -10,21 +11,39 @@ struct stat {
 };
 #endif /* _CMOC_VERSION_ */
 
-// FujiNet answers nothing until a copy ends. 10 s plus 0.5 s per KB
-// covers round trips up to ~150 ms.
-#define COPY_WAIT_SECONDS(size) ((uint16_t) (10 + (size) / 2048))
+#define MAX_COPY_RETRIES 100
 
 static char src[MAX_FILENAME_LEN];
 
 bool fuji_copy_file_common(uint8_t src_slot, uint8_t dest_slot, const char *copy_spec)
 {
+  bool success;
   const char *dest;
-  uint16_t src_len, seconds, waited;
+  uint16_t src_len;
   uint32_t size;
-  FujiDirEntry *entry;
+  uint_fast8_t retries;
   FNStatus fuji_status;
+  FujiDirEntry *entry;
 
 
+  success = FUJICALL_A1_A2_D(FUJICMD_COPY_FILE, src_slot, dest_slot, copy_spec,
+                             MAX_FILENAME_LEN);
+  if (success)
+    return success;
+
+  // Genuinely failed or it timed out because the copy took too
+  // long. Send a status command and see if FujiNet is responding.
+  for (retries = 0; retries < MAX_COPY_RETRIES; retries++) {
+    if (fuji_status(&fuji_status))
+      break;
+  }
+
+  // Either FujiNet responded on first retry so failure above was
+  // genuine failure or we're giving up
+  if (retries == 0 || retries >= MAX_COPY_RETRIES)
+    return false;
+
+  // Extract src and dest because we might need them later to validate copy succeeded
   dest = strchr(copy_spec, '|');
   if (!dest)
     return false;
@@ -33,27 +52,18 @@ bool fuji_copy_file_common(uint8_t src_slot, uint8_t dest_slot, const char *copy
   src[src_len] = 0;
   dest++;
 
-  // Stat now, while FujiNet still answers
+  // Check if file exists and is the same size as the source
   entry = fuji_file_stat(src_slot - 1, src);
   if (!entry)
     return false;
+
   size = entry->size;
-  seconds = COPY_WAIT_SECONDS(size);
-
-  if (FUJICALL_A1_A2_D(FUJICMD_COPY_FILE, src_slot, dest_slot, copy_spec,
-                       MAX_FILENAME_LEN))
-    return true;
-
-  for (waited = 0; waited < seconds; waited++) {
-    if (fuji_status(&fuji_status))
-      break;
-    wait_jiffies(60);
-  }
-
-  // Answering at once means the copy was refused
-  if (waited == 0 || waited >= seconds)
+  entry = fuji_file_stat(dest_slot - 1, dest);
+  if (!entry)
     return false;
 
-  entry = fuji_file_stat(dest_slot - 1, dest);
-  return entry && entry->size == size;
+  if (entry->size == size)
+    return true;
+
+  return false;
 }

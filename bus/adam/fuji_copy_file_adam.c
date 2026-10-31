@@ -4,7 +4,7 @@
 
 // FujiNet answers nothing until a copy ends. 10 s plus 0.5 s per KB
 // covers round trips up to ~150 ms.
-#define COPY_WAIT_SECONDS(size) ((uint16_t) (10 + (size) / 2048))
+#define COPY_WAIT_SECONDS(size) (10 + ((uint16_t) ((size) >> 8) >> 3))
 
 static char src[MAX_FILENAME_LEN];
 
