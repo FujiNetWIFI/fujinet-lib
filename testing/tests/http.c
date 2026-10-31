@@ -9,6 +9,7 @@
 #include "constants.h"
 #include "globals.h"
 #include <fujinet-network.h>
+#include <fujinet-clock.h>
 
 #ifndef _CMOC_VERSION_
 #include <stdio.h>
@@ -158,6 +159,116 @@ void test_network_http_304(void)
   TEST("HTTP 304 STATUS succeeds", err == FN_ERR_OK);
   TEST("HTTP 304 avail is zero", bw == 0);
   TEST("HTTP 304 completed", conn == 0);
+  END_OF_TEST();
+}
+
+/* Calendar time is not monotonic; undetected SNTP/TZ changes invalidate timing.
+ * Accept dates from 1900 through 2399 and at most one date transition. */
+static uint8_t http304_leap(uint16_t y)
+{
+  return y % 4 == 0 && (y % 100 != 0 || y % 400 == 0);
+}
+
+static uint8_t http304_day(const uint8_t *s, unsigned long *day)
+{
+  static const uint8_t months[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
+  uint16_t y, previous;
+  uint8_t m, limit;
+  if (s[0] < 19 || s[0] > 23 || s[1] > 99 || s[2] < 1 || s[2] > 12 ||
+      s[4] > 23 || s[5] > 59 || s[6] > 59 || s[7] > 99) return 0;
+  y = (uint16_t)s[0] * 100U + s[1];
+  limit = months[s[2] - 1];
+  if (s[2] == 2 && http304_leap(y)) ++limit;
+  if (s[3] < 1 || s[3] > limit) return 0;
+  previous = y - 1;
+  *day = 365UL * previous + previous / 4 - previous / 100 + previous / 400;
+  for (m = 1; m < s[2]; ++m) {
+    *day += months[m - 1];
+    if (m == 2 && http304_leap(y)) ++*day;
+  }
+  *day += s[3] - 1;
+  return 1;
+}
+
+static unsigned long http304_time(const uint8_t *s)
+{
+  return (s[4] * 3600UL + s[5] * 60UL + s[6]) * 100UL + s[7];
+}
+
+static uint8_t http304_elapsed(const uint8_t *a, const uint8_t *b,
+                              unsigned long *cs)
+{
+  unsigned long da, db, ta, tb;
+  *cs = 0;
+  if (!http304_day(a, &da) || !http304_day(b, &db) ||
+      db < da || db - da > 1UL) return 0;
+  ta = http304_time(a);
+  tb = http304_time(b) + (db - da) * 8640000UL;
+  if (tb <= ta) return 0; /* reversed or frozen; never a zero-time PASS */
+  *cs = tb - ta;
+  return 1;
+}
+
+/* Eight wire bytes plus the library's success terminator at index 8. */
+static uint8_t http304_clock(uint8_t *s)
+{
+  memset(s, 0xFF, 9);
+  return clock_get_time(s, SIMPLE_BINARY_WITH_HUNDREDTHS) == FN_ERR_OK && s[8] == 0;
+}
+
+/* Assumes the endpoint returns 304 and holds the peer open.
+ * STATUS cannot verify the response code or the peer's hold interval. */
+void test_network_http_304_completion(void)
+{
+  uint8_t start[9], now[9], last[9];
+  uint8_t open_err, status_err, close_err, conn, nerr, poll, result, clock_ok;
+  uint16_t bw;
+  unsigned long cs, step;
+  const char *url = (const char *) g.net;
+  const char *invalid = "endpoint/open unavailable";
+
+  SECTION("HTTP304 completion below 5 seconds");
+  memset(g.net, 0, MAX_FILENAME_LEN);
+  strcpy((char *) g.net, NET_HTTP_304_HELD_URL);
+  status_err = conn = nerr = 0xFF; bw = 0xFFFF;
+  result = 0; cs = 0;
+  open_err = network_open(url, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
+  if (open_err == FN_ERR_OK) {
+    clock_ok = http304_clock(start);
+    memcpy(last, start, sizeof(last));
+    invalid = "clock call/reply invalid";
+    if (clock_ok) {
+      for (poll = 0; poll < 100; ++poll) {
+        bw = 0xFFFF; conn = nerr = 0xFF;
+        nw_status.avail = 0xFFFF; nw_status.status = nw_status.errcode = 0xFF;
+        /* Keep one total budget, with no unrelated calls around STATUS. */
+        status_err = network_status(url, &bw, &conn, &nerr);
+        clock_ok = http304_clock(now);
+        invalid = "clock call/reply invalid";
+        if (!clock_ok) break;
+        invalid = "clock invalid/reversed/frozen";
+        if (!http304_elapsed(last, now, &step) ||
+            !http304_elapsed(start, now, &cs)) break;
+        invalid = "STATUS unavailable/malformed";
+        if (status_err != FN_ERR_OK || conn > 1) break;
+        if (cs >= 500UL) { result = 2; break; }
+        invalid = "ambiguous 5-second boundary";
+        if (cs + 1UL >= 500UL) break; /* reserve a centisecond */
+        if (conn == 0) { result = 1; break; }
+        memcpy(last, now, sizeof(last));
+        invalid = "pending observation cap reached";
+      }
+    }
+  }
+  /* Preserve local STATUS before cleanup; CLOSE may overwrite library state.
+   * Neither availability nor a particular network/CLOSE error decides timing. */
+  close_err = network_close(url);
+  printf("  OPEN=%u STATUS=%u avail=%u state=%u nerr=%u CLOSE=%u cs=%lu\n",
+         (unsigned)open_err, (unsigned)status_err, bw, (unsigned)conn,
+         (unsigned)nerr, (unsigned)close_err, cs);
+  if (!result) printf("  INVALID/INCONCLUSIVE: %s\n", invalid);
+  TEST("HTTP304 timing observation valid", result != 0);
+  TEST("HTTP304 terminal completion below 5 seconds", result == 1);
   END_OF_TEST();
 }
 
