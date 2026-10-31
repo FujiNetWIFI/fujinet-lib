@@ -1,5 +1,4 @@
 #include <fujinet-fuji.h>
-#include <fujinet-bus.h>
 #ifndef _CMOC_VERSION_
 #include <sys/stat.h>
 #include <string.h>
@@ -20,15 +19,10 @@ static char src[MAX_FILENAME_LEN];
 bool fuji_copy_file_common(uint8_t src_slot, uint8_t dest_slot, const char *copy_spec)
 {
   const char *dest;
-  uint16_t src_len, seconds;
+  uint16_t src_len, seconds, waited;
   uint32_t size;
   FujiDirEntry *entry;
-#ifdef FUJI_PLATFORM_ADAM
-  bool failed;
-#else
-  uint16_t waited;
   FNStatus fuji_status;
-#endif /* FUJI_PLATFORM_ADAM */
 
 
   dest = strchr(copy_spec, '|');
@@ -50,15 +44,6 @@ bool fuji_copy_file_common(uint8_t src_slot, uint8_t dest_slot, const char *copy
                        MAX_FILENAME_LEN))
     return true;
 
-#ifdef FUJI_PLATFORM_ADAM
-  // A STATUS keeps the failure bit until the next command
-  for (; seconds; seconds--) {
-    if (fuji_bus_status(&failed))
-      return !failed;
-    wait_jiffies(60);
-  }
-  return false;
-#else
   for (waited = 0; waited < seconds; waited++) {
     if (fuji_status(&fuji_status))
       break;
@@ -71,5 +56,4 @@ bool fuji_copy_file_common(uint8_t src_slot, uint8_t dest_slot, const char *copy
 
   entry = fuji_file_stat(dest_slot - 1, dest);
   return entry && entry->size == size;
-#endif /* FUJI_PLATFORM_ADAM */
 }

@@ -269,7 +269,10 @@ extern bool fuji_close_directory(void);
  */
 #if defined(FUJI_PLATFORM_COCO)
 #define fuji_copy_file(src_slot, dest_slot, copy_spec) FUJICALL_A1_A2_D(FUJICMD_COPY_FILE, src_slot, dest_slot, copy_spec, MAX_FILENAME_LEN)
-#else /* ! COCO */
+#elif defined(FUJI_PLATFORM_ADAM)
+extern bool fuji_copy_file_adam(uint8_t src_slot, uint8_t dest_slot, const char *copy_spec);
+#define fuji_copy_file(src_slot, dest_slot, copy_spec) fuji_copy_file_adam(src_slot, dest_slot, copy_spec)
+#else /* ! (COCO || ADAM) */
 extern bool fuji_copy_file_common(uint8_t src_slot, uint8_t dest_slot, const char *copy_spec);
 #define fuji_copy_file(src_slot, dest_slot, copy_spec) fuji_copy_file_common(src_slot, dest_slot, copy_spec)
 #endif /* FUJI_PLATFORM_COCO */

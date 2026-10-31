@@ -29,12 +29,6 @@ extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
                           const void *buf, size_t buf_length);
 #endif /* FUJI_PLATFORM_ATARI */
 
-#if defined(FUJI_PLATFORM_ADAM)
-/* False if FujiNet doesn't answer a STATUS; else *failed tells whether
-   its last command failed. */
-extern bool fuji_bus_status(bool *failed);
-#endif /* FUJI_PLATFORM_ADAM */
-
 // Convenience macros to fill in FujiDCB and make the call
 #include <fujinet-bus-ezcall.h>
 
