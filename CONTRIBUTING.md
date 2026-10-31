@@ -104,15 +104,15 @@ apple2, atari, c64 and coco against the PR. It runs no tests. So:
 
 1. `make clean`, then `make` for every platform, not just the one you changed.
 2. Build the test programs (`make testing/<platform>`) and run the ones that exercise your change on
-   an emulator or hardware connected to a FujiNet (FujiNet-PC works).
+   an emulator or hardware connected to a FujiNet (FujiNet-LWM works).
 3. `git diff` and re-read every comment in it: each must still be true of the code as changed.
 4. `git diff --stat` and confirm every file listed is one you meant to change.
 
 ## Tests
 
-`testing/` builds one test disk per platform holding a menu and one program per subject (`PRODUCTS`
-in `testing/Makefile`: FUJIDEV, DISK, NETFILE, NETWORK, and so on). They share the harness in
-`testing/tests/harness.c`.
+`testing/` builds one or more test disks per platform holding a menu and one program per subject
+(`PRODUCTS` in `testing/Makefile`: FUJIDEV, DISK, NETFILE, NETWORK, and so on). They share the
+harness in `testing/tests/harness.c`.
 
 - Put a test in the program whose subject it is, not the one with a convenient fixture. DISK is for
   disk and device-slot tests; filesystem behavior goes in NETFILE.
