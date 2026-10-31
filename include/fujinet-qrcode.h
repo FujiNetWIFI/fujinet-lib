@@ -3,6 +3,7 @@
 
 #include <fujinet-bus.h>
 #include <fujinet-commands.h>
+#include <fujinet-platform.h>
 
 // QR Code
 // ALL RETURN VALUES ARE SUCCESS STATUS VALUE, i.e. true == success
@@ -32,13 +33,13 @@ typedef enum QRCodeOutputMode
 
 // Generate the QR code from the data sent with fuji_qrcode_input.
 // version is 1-40 (0 auto), ecc is a qr_ecc_t, shorten runs the url through a shortener first.
-#ifdef __ATARI__
+#ifdef FUJI_PLATFORM_ATARI
 #define fuji_qrcode_encode(version, ecc, shorten) \
   FUJICALL_A1_A2(FUJICMD_QRCODE_ENCODE, version, (shorten << 4) | (ecc))
-#else
+#else /* ! FUJI_PLATFORM_ATARI */
 #define fuji_qrcode_encode(version, ecc, shorten) \
   FUJICALL_A1_A2_A3(FUJICMD_QRCODE_ENCODE, version, ecc, shorten)
-#endif /* __ATARI__ */
+#endif /* FUJI_PLATFORM_ATARI */
 
 // Re-render the code in output_mode (a qr_output_mode_t) and return its byte length in len.
 #define fuji_qrcode_length(mode, len) FUJICALL_A1_RV(FUJICMD_QRCODE_LENGTH, mode, \

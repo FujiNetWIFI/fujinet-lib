@@ -1,0 +1,38 @@
+{
+  "global_allow": [],
+  "directories": {
+    "include": {
+      "allow": ["FUJI_BUS_CALL_VARARGS", "FUJI_VARIABLE_LEN_PACKETS"],
+      "allow_regex": ["FUJI_PLATFORM_[A-Z0-9]+"]
+    }
+  },
+  "files": {
+    "include/fujinet-bus.h": {
+      "allow": ["FUJI_FIELD_LOOKUP_TABLE"]
+    },
+    "include/fujinet-endian.h": {
+      "allow": ["_CMOC_VERSION_"]
+    },
+    "include/fujinet-int.h": {
+      "allow": ["_CMOC_VERSION_"]
+    },
+    "include/fujinet-platform.h": {
+      "allow": [
+	"MSDOS",
+	"_CMOC_VERSION_",
+	"__ADAM__",
+	"__APPLE2__",
+	"__ATARI__",
+	"__C64__",
+	"__COLECOADAM__",
+	"__DOS__",
+	"__H89__",
+	"__HDOS__",
+	"__LYNX__",
+	"__MSX__",
+	"__PMD85__",
+	"__TRS80M2__"
+      ]
+    }
+  }
+}
