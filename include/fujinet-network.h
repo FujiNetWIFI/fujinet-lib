@@ -14,7 +14,7 @@
 #include <fujinet-platform.h>
 #include <fujinet-query.h>
 
-#ifdef __CBM__
+#ifdef FUJI_PLATFORM_C64
 
 // For DATA transfers, we want to undo some of the charmap settings in CC65.
 // So map the characters in the range 5b-60, 7b-7f back to themselves, as we want to send them as-is to FujiNet.
@@ -171,12 +171,12 @@ FN_ERR network_json_parse(const char *devicespec);
  *
  * Assumes an open and parsed json.
  */
-#if defined(__ADAM__) || defined(__COLECOADAM__)
+#if defined(FUJI_PLATFORM_ADAM)
 extern int16_t network_json_query_adam(const char *devicespec, const char *query, char *buffer);
 #define network_json_query(devspec, query, buffer) network_json_query_adam(devspec, query, buffer)
-#else /* ! (__ADAM__ || __COLECOADAM__) */
+#else /* ! FUJI_PLATFORM_ADAM */
 int16_t network_json_query(const char *devicespec, const char *query, char *buffer);
-#endif /* __ADAM__ || __COLECOADAM__ */
+#endif /* FUJI_PLATFORM_ADAM */
 
 /**
  * @brief  Sets the HTTP mode.

@@ -1,6 +1,8 @@
 #ifndef FUJINET_BUS_EZNET_H
 #define FUJINET_BUS_EZNET_H
 
+#include <fujinet-platform.h>
+
 #define NETCALL_A1_A2(cmd, unit, a1, a2)                                          \
   DEVCALL_A1_A2(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, a1, a2)
 
@@ -58,7 +60,7 @@
 #define NETCALL_C1234_RV(cmd, unit, c1234, reply, replylen)                       \
   DEVCALL_C1234_RV(FUJI_DEVICEID_NETWORK + (unit) - 1, cmd, c1234, reply, replylen)
 
-#if defined(_CMOC_VERSION_)
+#if defined(FUJI_PLATFORM_COCO)
 
 // On CoCo all network calls *must* have aux1 and aux2
 #define NETCALL(cmd, unit)                                                        \

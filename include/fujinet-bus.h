@@ -7,9 +7,6 @@
   || defined(FUJI_PLATFORM_PMD85)
 #define FUJI_VARIABLE_LEN_PACKETS 0
 #else
-#ifdef _CMOC_VERSION_
-#error "Why isn't FUJI_PLATFORM_COCO defined"
-#endif
 #define FUJI_VARIABLE_LEN_PACKETS 1
 #endif
 

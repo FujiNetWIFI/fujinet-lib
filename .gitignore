@@ -69,3 +69,4 @@ test.*
 _cache/
 build/
 r2r/
+/release/
