@@ -11,6 +11,13 @@
 #include <stdint.h>
 #endif /* _CMOC_VERSION_ */
 
+/* Jiffies per second: 60 on NTSC, 50 on PAL. Override from the build if needed. */
+#ifndef JIFFIES_PER_SEC
+#define JIFFIES_PER_SEC 60
+#endif
+
+#define HUNDREDTHS_PER_DAY 8640000UL
+
 void test_clock_tz(void)
 {
   uint8_t err;
@@ -246,6 +253,79 @@ void test_clock_get_time_tz(void)
   memset(g.clock_tz_call.sys_tz, 0, sizeof(g.clock_tz_call.sys_tz));
   clock_get_tz(g.clock_tz_call.sys_tz);
   TEST("clock_get_time_tz did not change system TZ to Tokyo", strcmp(g.clock_tz_call.sys_tz, "JST-9") != 0);
+#endif
+
+  END_OF_TEST();
+}
+
+/* Read SIMPLE_BINARY_WITH_HUNDREDTHS and convert to hundredths of a second
+ * since midnight. Returns FN_ERR_OK on success. */
+static uint8_t read_hundredths_since_midnight(unsigned long *out)
+{
+  uint8_t err;
+
+  memset(g.clock_fmt, 0, sizeof(g.clock_fmt));
+  err = clock_get_time(g.clock_fmt, SIMPLE_BINARY_WITH_HUNDREDTHS);
+  if (err != FN_ERR_OK)
+    return err;
+
+  /* [4]=hour [5]=min [6]=sec [7]=hundredths */
+  *out = ((((unsigned long)g.clock_fmt[4] * 60UL
+          + (unsigned long)g.clock_fmt[5]) * 60UL
+          + (unsigned long)g.clock_fmt[6]) * 100UL)
+          + (unsigned long)g.clock_fmt[7];
+  return FN_ERR_OK;
+}
+
+/* Elapsed hundredths between two readings, handling midnight rollover. */
+static unsigned long elapsed_hundredths(unsigned long start, unsigned long end)
+{
+  if (end < start)
+    end += HUNDREDTHS_PER_DAY;
+  return end - start;
+}
+
+/* Absolute difference between elapsed and expected, in hundredths. */
+static unsigned long abs_diff(unsigned long a, unsigned long b)
+{
+  return (a > b) ? (a - b) : (b - a);
+}
+
+void test_sleep_wait(void)
+{
+  uint8_t err;
+  unsigned long start, end, elapsed;
+
+  SECTION("wait_jiffies timing vs SIMPLE_BINARY_WITH_HUNDREDTHS");
+
+#ifdef FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
+  SKIP(clock_get_time);
+#else
+  /* --- 1 second --- */
+  err = read_hundredths_since_midnight(&start);
+  TEST("1s: start time read succeeds", err == FN_ERR_OK);
+
+  wait_jiffies(1 * JIFFIES_PER_SEC);
+
+  err = read_hundredths_since_midnight(&end);
+  TEST("1s: end time read succeeds", err == FN_ERR_OK);
+
+  elapsed = elapsed_hundredths(start, end);
+  printf("  1s wait:  elapsed %lu.%02lu s\n", elapsed / 100UL, elapsed % 100UL);
+  TEST("wait_jiffies(1s) within 0.1s of 1s", abs_diff(elapsed, 100UL) <= 10UL);
+
+  /* --- 10 seconds --- */
+  err = read_hundredths_since_midnight(&start);
+  TEST("10s: start time read succeeds", err == FN_ERR_OK);
+
+  wait_jiffies(10 * JIFFIES_PER_SEC);
+
+  err = read_hundredths_since_midnight(&end);
+  TEST("10s: end time read succeeds", err == FN_ERR_OK);
+
+  elapsed = elapsed_hundredths(start, end);
+  printf("  10s wait: elapsed %lu.%02lu s\n", elapsed / 100UL, elapsed % 100UL);
+  TEST("wait_jiffies(10s) within 0.1s of 10s", abs_diff(elapsed, 1000UL) <= 10UL);
 #endif
 
   END_OF_TEST();
