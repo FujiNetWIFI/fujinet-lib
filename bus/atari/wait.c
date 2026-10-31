@@ -1,4 +1,4 @@
-#include "harness.h"
+#include <fujinet-fuji.h>
 
 #define RTCLOK_LOW (*(volatile uint8_t *) 0x14)
 

@@ -1,4 +1,4 @@
-#include "harness.h"
+#include <fujinet-fuji.h>
 #include <time.h>
 
 void wait_jiffies(uint8_t jiffies)

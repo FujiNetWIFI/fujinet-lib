@@ -1,4 +1,4 @@
-#include "harness.h"
+#include <fujinet-fuji.h>
 
 /* P&T CP/M's clock, 1/100 s since boot (special function 14) */
 static uint16_t ticks_100hz(void) __naked

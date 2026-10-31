@@ -712,4 +712,9 @@ bool fuji_hash_calculate(hash_alg_t hash_type, bool as_hex, bool discard_data, u
 
 extern FujiDirEntry *fuji_file_stat(uint8_t host, const char *path);
 
+/**
+ * @brief Busy-waits about jiffies sixtieths of a second
+ */
+extern void wait_jiffies(uint8_t jiffies);
+
 #endif /* FUJINET_FUJI_H */

@@ -1,4 +1,4 @@
-#include "harness.h"
+#include <fujinet-fuji.h>
 
 /* The 2 ms tick counter, kept by HDOS or by the CP/M BIOS */
 #ifdef __HDOS__
