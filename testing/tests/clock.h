@@ -10,5 +10,6 @@ extern void test_clock_utc_iso_string(void);
 extern void test_clock_apple3_sos(void);
 extern void test_clock_simple_binary_with_hundredths(void);
 extern void test_clock_get_time_tz(void);
+extern void test_sleep_wait(void);
 
 #endif /* CLOCK_H */

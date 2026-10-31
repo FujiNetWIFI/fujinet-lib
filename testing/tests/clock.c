@@ -11,6 +11,25 @@
 #include <stdint.h>
 #endif /* _CMOC_VERSION_ */
 
+/* Jiffies per second: 60 on NTSC, 50 on PAL. Override from the build if needed. */
+#ifndef JIFFIES_PER_SEC
+#define JIFFIES_PER_SEC 60
+#endif
+
+#define HUNDREDTHS_PER_DAY 8640000UL
+
+#define HUNDREDTHS_PER_SEC   100UL
+#define WAIT_SHORT_SECS      1UL
+#define WAIT_LONG_SECS       10UL
+#define TOLERANCE_HUNDREDTHS 5UL   /* 0.05 s */
+#define EXPECTED_SHORT       (WAIT_SHORT_SECS * HUNDREDTHS_PER_SEC)
+#define EXPECTED_LONG        (WAIT_LONG_SECS * HUNDREDTHS_PER_SEC)
+#define EXPECTED_DIFF        (EXPECTED_LONG - EXPECTED_SHORT)
+#ifdef UNUSED
+#define SECS_PER_MIN         60UL
+#define MINS_PER_HOUR        60UL
+#endif /* UNUSED */
+
 void test_clock_tz(void)
 {
   uint8_t err;
@@ -246,6 +265,97 @@ void test_clock_get_time_tz(void)
   memset(g.clock_tz_call.sys_tz, 0, sizeof(g.clock_tz_call.sys_tz));
   clock_get_tz(g.clock_tz_call.sys_tz);
   TEST("clock_get_time_tz did not change system TZ to Tokyo", strcmp(g.clock_tz_call.sys_tz, "JST-9") != 0);
+#endif
+
+  END_OF_TEST();
+}
+
+/* Read SIMPLE_BINARY_WITH_HUNDREDTHS and convert to hundredths of a second
+ * since midnight. Returns FN_ERR_OK on success. */
+static uint8_t read_hundredths_since_midnight(unsigned long *out)
+{
+  uint8_t err;
+
+  memset(g.clock_fmt, 0, sizeof(g.clock_fmt));
+  err = clock_get_time(g.clock_fmt, SIMPLE_BINARY_WITH_HUNDREDTHS);
+  if (err != FN_ERR_OK)
+    return err;
+
+  /* [4]=hour [5]=min [6]=sec [7]=hundredths */
+  *out = ((((unsigned long)g.clock_fmt[4] * 60UL
+          + (unsigned long)g.clock_fmt[5]) * 60UL
+          + (unsigned long)g.clock_fmt[6]) * 100UL)
+          + (unsigned long)g.clock_fmt[7];
+  return FN_ERR_OK;
+}
+
+/* Elapsed hundredths between two readings, handling midnight rollover. */
+static unsigned long elapsed_hundredths(unsigned long start, unsigned long end)
+{
+  if (end < start)
+    end += HUNDREDTHS_PER_DAY;
+  return end - start;
+}
+
+/* Absolute difference between elapsed and expected, in hundredths. */
+static unsigned long abs_diff(unsigned long a, unsigned long b)
+{
+  return (a > b) ? (a - b) : (b - a);
+}
+
+void test_sleep_wait(void)
+{
+  uint8_t err;
+  unsigned long start, end, elapsed, overhead, elapsed_short;
+  unsigned long tol_whole = TOLERANCE_HUNDREDTHS / HUNDREDTHS_PER_SEC;
+  unsigned long tol_frac  = TOLERANCE_HUNDREDTHS % HUNDREDTHS_PER_SEC;
+
+  SECTION("wait_jiffies timing vs SIMPLE_BINARY_WITH_HUNDREDTHS");
+
+#ifdef FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
+  SKIP(clock_get_time);
+#else
+  printf("  tolerance: +/- %lu.%02lu s\n", tol_whole, tol_frac);
+
+  /* Overhead: two back-to-back reads with no wait between them. */
+  err = read_hundredths_since_midnight(&start);
+  TEST("overhead: start read succeeds", err == FN_ERR_OK);
+  err = read_hundredths_since_midnight(&end);
+  TEST("overhead: end read succeeds", err == FN_ERR_OK);
+  overhead = elapsed_hundredths(start, end);
+  printf("  read overhead: %lu.%02lu s\n",
+         overhead / HUNDREDTHS_PER_SEC, overhead % HUNDREDTHS_PER_SEC);
+
+  /* --- short wait --- */
+  err = read_hundredths_since_midnight(&start);
+  TEST("short: start read succeeds", err == FN_ERR_OK);
+  wait_jiffies(WAIT_SHORT_SECS * JIFFIES_PER_SEC);
+  err = read_hundredths_since_midnight(&end);
+  TEST("short: end read succeeds", err == FN_ERR_OK);
+
+  elapsed = elapsed_hundredths(start, end) - overhead;
+  elapsed_short = elapsed;
+  printf("  short wait (%lu s): %lu.%02lu s\n", WAIT_SHORT_SECS,
+         elapsed / HUNDREDTHS_PER_SEC, elapsed % HUNDREDTHS_PER_SEC);
+  TEST("short wait within tolerance",
+       abs_diff(elapsed, EXPECTED_SHORT) <= TOLERANCE_HUNDREDTHS);
+
+  /* --- long wait --- */
+  err = read_hundredths_since_midnight(&start);
+  TEST("long: start read succeeds", err == FN_ERR_OK);
+  wait_jiffies(WAIT_LONG_SECS * JIFFIES_PER_SEC);
+  err = read_hundredths_since_midnight(&end);
+  TEST("long: end read succeeds", err == FN_ERR_OK);
+
+  elapsed = elapsed_hundredths(start, end) - overhead;
+  printf("  long wait (%lu s): %lu.%02lu s\n", WAIT_LONG_SECS,
+         elapsed / HUNDREDTHS_PER_SEC, elapsed % HUNDREDTHS_PER_SEC);
+  TEST("long wait within tolerance",
+       abs_diff(elapsed, EXPECTED_LONG) <= TOLERANCE_HUNDREDTHS);
+
+  /* Overhead cancels in this one, so it checks only the jiffy rate. */
+  TEST("long minus short within tolerance",
+       abs_diff(elapsed - elapsed_short, EXPECTED_DIFF) <= TOLERANCE_HUNDREDTHS);
 #endif
 
   END_OF_TEST();

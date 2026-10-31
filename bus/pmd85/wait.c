@@ -15,7 +15,7 @@ static void one_jiffy(void)
   __endasm;
 }
 
-void wait_jiffies(uint8_t jiffies)
+void wait_jiffies(uint16_t jiffies)
 {
   while (jiffies--)
     one_jiffy();
