@@ -2,8 +2,9 @@
 #define FUJINET_APPKEY_H
 
 #include <fujinet-int.h>
+#include <fujinet-platform.h>
 
-#ifdef _CMOC_VERSION_
+#ifdef FUJI_PLATFORM_COCO
 #include <fujinet-const.h>
 typedef struct {
   uint16_t length;

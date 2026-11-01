@@ -1,4 +1,4 @@
-#include "harness.h"
+#include <fujinet-fuji.h>
 
 /* No timer to rely on, so count cycles: 18 x 3346 is about 1/60 s on the 3.58 MHz Z80 */
 static void one_jiffy(void)
@@ -14,7 +14,7 @@ static void one_jiffy(void)
   __endasm;
 }
 
-void wait_jiffies(uint8_t jiffies)
+void wait_jiffies(uint16_t jiffies)
 {
   while (jiffies--)
     one_jiffy();

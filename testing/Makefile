@@ -44,7 +44,7 @@ PLATFORM_COMBOS = \
   h89-cpm+=h89 \
   h89-hdos+=h89
 
-fnlib-test.lib_SRC_DIRS = tests tests/%PLATFORM%
+fnlib-test.lib_SRC_DIRS = tests
 
 MAIN_SRC_DIRS = src src/%PLATFORM%
 fujidev_SRC_DIRS = $(MAIN_SRC_DIRS)

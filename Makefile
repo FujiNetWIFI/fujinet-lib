@@ -40,7 +40,7 @@ include makefiles/toplevel-rules.mk
 
 RELEASE_VERSION ?= $(shell awk '/FNLIB_VERSION_FULL/{ gsub(/"/, "", $$3); print $$3 }' include/fujinet-version.h)
 
-.PHONY: testing tests
+.PHONY: testing tests ifdef-check
 
 # The tests link the library from r2r/, so build it first.
 testing tests: all
@@ -48,3 +48,6 @@ testing tests: all
 
 testing/%: %
 	$(MAKE) -C testing $*/clean $*
+
+ifdef-check:
+	python3 testing/check_no_build_ifdefs.py include common

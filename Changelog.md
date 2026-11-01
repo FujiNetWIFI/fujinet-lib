@@ -2,6 +2,8 @@
 
 ## [Unreleased] (Place WIP changes in this section until a release is done)
 
+## [5.1.0] 2026-10-27
+
 - [msx] UNAPI works from a subslot and under MSX-DOS
 - [h89] Add Heathkit H89 targets (h89-cpm, h89-hdos) using FujiBus over the 8255 PPI, port routines from Jeff Tranter's bring-up
 - [h89] Don't reboot the ESP32 when the card is already set up
@@ -15,6 +17,8 @@
 - [adam] Commands FujiNet refuses after accepting them, such as an open, close, seek or write, now report the failure (needs fujinet-firmware #2205)
 - [adam] The reply to a command that waits on the network, such as the status that sends an HTTP request, no longer times out
 - [h89] Port A runs straight to the ESP32 (the card's 74LVC245 is gone): the H89 no longer drives DIR and /OE (needs fujinet-firmware #2232)
+- [adam] fuji_copy_file() waits for a slow copy instead of reporting it failed after about 4 s
+- wait_jiffies() is part of the library
 
 ## [5.0.0] 2026-10-09
 
