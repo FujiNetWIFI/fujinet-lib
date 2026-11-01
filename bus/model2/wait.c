@@ -11,7 +11,7 @@ static uint16_t ticks_100hz(void) __naked
   __endasm;
 }
 
-void wait_jiffies(uint8_t jiffies)
+void wait_jiffies(uint16_t jiffies)
 {
   uint16_t start = ticks_100hz();
   uint16_t ticks = (uint16_t) jiffies * 5 / 3;

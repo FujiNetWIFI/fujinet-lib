@@ -2,7 +2,7 @@
 
 #define RTCLOK_LOW (*(volatile uint8_t *) 0x14)
 
-void wait_jiffies(uint8_t jiffies)
+void wait_jiffies(uint16_t jiffies)
 {
   uint8_t start = RTCLOK_LOW;
 

@@ -227,6 +227,7 @@ int main(void)
   test_clock_apple3_sos();
   test_clock_simple_binary_with_hundredths();
   test_clock_get_time_tz();
+  test_sleep_wait();
 #endif // CLOCK_TESTS
 
 #if DEVLIST_TESTS
