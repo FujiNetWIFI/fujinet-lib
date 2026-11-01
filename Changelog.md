@@ -16,6 +16,7 @@
 - [h89] Port B is an input (mode word C2H), and every program sets up the 8255
 - [adam] Commands FujiNet refuses after accepting them, such as an open, close, seek or write, now report the failure (needs fujinet-firmware #2205)
 - [adam] The reply to a command that waits on the network, such as the status that sends an HTTP request, no longer times out
+- [h89] Port A runs straight to the ESP32 (the card's 74LVC245 is gone): the H89 no longer drives DIR and /OE (needs fujinet-firmware #2232)
 - [adam] fuji_copy_file() waits for a slow copy instead of reporting it failed after about 4 s
 - wait_jiffies() is part of the library
 
