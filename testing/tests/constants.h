@@ -77,6 +77,9 @@
 #define NET_HTTP_FIXED_HELD_URL "N1:http://wpt.live/common/echo.py?content=ABC&pipe=header%28Content-Length%2C3%29%7Ctrickle%283%3Ad23%29"
 #define NET_HTTP_CHUNKED_HELD_URL "N1:http://wpt.live/common/echo.py?content=3%0D%0AABC%0D%0A0%0D%0A%0D%0A&pipe=header%28Transfer-Encoding%2Cchunked%29%7Ctrickle%2813%3Ad23%29"
 
+/* Complete 304 headers, no body, peer held open by a 23-second delay. */
+#define NET_HTTP_304_HELD_URL "N1:http://wpt.live/common/echo.py?content=&pipe=status%28304%29%7Cheader%28Content-Length%2C123%29%7Ctrickle%28d23%29"
+
 /* 304 representation length is 123, but the response has no body. */
 #define NET_HTTP_304_URL "N1:http://wpt.live/common/echo.py?content=&pipe=status%28304%29%7Cheader%28Content-Length%2C123%29"
 
