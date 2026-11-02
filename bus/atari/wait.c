@@ -4,8 +4,13 @@
 
 void wait_jiffies(uint16_t jiffies)
 {
-  uint8_t start = RTCLOK_LOW;
+  uint8_t last = RTCLOK_LOW;
 
-  while ((uint8_t) (RTCLOK_LOW - start) < jiffies)
-    ;
+  /* Count the low byte's ticks one at a time, so a wait can span its wrap */
+  while (jiffies) {
+    if (RTCLOK_LOW != last) {
+      ++last;
+      --jiffies;
+    }
+  }
 }
