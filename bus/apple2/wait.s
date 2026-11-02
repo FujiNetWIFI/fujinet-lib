@@ -2,10 +2,10 @@
 ; No timer on every model, so count cycles. One jiffy is padded to
 ; 17,030 cycles (262 lines x 65 cycles), the NTSC frame length.
 
-        .export _wait_jiffies
+        .export _fuji_wait_jiffies
         .importzp ptr1
 
-_wait_jiffies:
+_fuji_wait_jiffies:
         sta     ptr1
         stx     ptr1+1
         ora     ptr1+1          ; zero only if both bytes are zero

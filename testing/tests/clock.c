@@ -11,11 +11,6 @@
 #include <stdint.h>
 #endif /* _CMOC_VERSION_ */
 
-/* Jiffies per second: 60 on NTSC, 50 on PAL. Override from the build if needed. */
-#ifndef JIFFIES_PER_SEC
-#define JIFFIES_PER_SEC 60
-#endif
-
 #define HUNDREDTHS_PER_DAY 8640000UL
 
 #define HUNDREDTHS_PER_SEC   100UL
@@ -306,7 +301,7 @@ void test_sleep_wait(void)
   unsigned long tol_whole = TOLERANCE_HUNDREDTHS / HUNDREDTHS_PER_SEC;
   unsigned long tol_frac  = TOLERANCE_HUNDREDTHS % HUNDREDTHS_PER_SEC;
 
-  SECTION("wait_jiffies timing vs SIMPLE_BINARY_WITH_HUNDREDTHS");
+  SECTION("fuji_sleep_ms timing vs SIMPLE_BINARY_WITH_HUNDREDTHS");
 
 #ifdef FN_BROKEN_clock_get_time_SIMPLE_BINARY_WITH_HUNDREDTHS
   SKIP(clock_get_time);
@@ -325,7 +320,7 @@ void test_sleep_wait(void)
 
   /* --- short wait --- */
   err = read_hundredths_since_midnight(&start);
-  wait_jiffies(WAIT_SHORT_SECS * JIFFIES_PER_SEC);
+  fuji_sleep_ms(WAIT_SHORT_SECS * 1000);
   err2 = read_hundredths_since_midnight(&end);
   TEST("short: start read succeeds", err == FN_ERR_OK);
   TEST("short: end read succeeds", err2 == FN_ERR_OK);
@@ -339,7 +334,7 @@ void test_sleep_wait(void)
 
   /* --- long wait --- */
   err = read_hundredths_since_midnight(&start);
-  wait_jiffies(WAIT_LONG_SECS * JIFFIES_PER_SEC);
+  fuji_sleep_ms(WAIT_LONG_SECS * 1000);
   err2 = read_hundredths_since_midnight(&end);
   TEST("long: start read succeeds", err == FN_ERR_OK);
   TEST("long: end read succeeds", err2 == FN_ERR_OK);
@@ -350,7 +345,7 @@ void test_sleep_wait(void)
   TEST("long wait within tolerance",
        abs_diff(elapsed, EXPECTED_LONG) <= TOLERANCE_HUNDREDTHS);
 
-  /* Overhead cancels in this one, so it checks only the jiffy rate. */
+  /* Overhead cancels in this one, so it checks only the sleep rate. */
   TEST("long minus short within tolerance",
        abs_diff(elapsed - elapsed_short, EXPECTED_DIFF) <= TOLERANCE_HUNDREDTHS);
 #endif

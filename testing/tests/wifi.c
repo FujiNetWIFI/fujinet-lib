@@ -22,7 +22,7 @@ static bool wait_for_wifi(void)
     status = 0;
     if (fuji_get_wifi_status(&status) && status == WIFI_CONNECTED)
       return true;
-    wait_jiffies(150);
+    fuji_sleep_ms(9000);
   }
   return false;
 }

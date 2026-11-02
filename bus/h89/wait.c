@@ -14,7 +14,7 @@ static void wait_ticks(uint16_t *start, uint8_t ticks)
   *start += ticks;
 }
 
-void wait_jiffies(uint16_t jiffies)
+void fuji_wait_jiffies(uint16_t jiffies)
 {
   uint16_t start = TICKS;
 
