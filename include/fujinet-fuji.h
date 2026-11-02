@@ -715,16 +715,14 @@ extern FujiDirEntry *fuji_file_stat(uint8_t host, const char *path);
 extern void fuji_wait_jiffies(uint16_t jiffies);
 
 #if defined(FUJI_PLATFORM_MSX)
-#define fuji_is_ntsc() ((((unsigned char *) 0x002b) & 0x80) == 0x00)
+#define fuji_is_ntsc() (((*((unsigned char *) 0x002b)) & 0x80) == 0x00)
 #else
 #define fuji_is_ntsc() 1
 #endif
 
-#define fuji_sleep_ms(millis) \
-  if (fuji_is_ntsc()) {                                         \
-    fuji_wait_jiffies(((unsigned int) (millis) * 3 + 25 ) / 50);     \
-  } else {                                                      \
-    fuji_wait_jiffies(((unsigned int) (millis) + 10 ) / 20);         \
-  }
+#define fuji_sleep_ms(millis)                                                 \
+  (fuji_is_ntsc()                                                             \
+   ? fuji_wait_jiffies(((millis) / 50) * 3 + (((millis) % 50) * 3 + 25) / 50) \
+   : fuji_wait_jiffies(((millis) + 10 ) / 20))
 
 #endif /* FUJINET_FUJI_H */
