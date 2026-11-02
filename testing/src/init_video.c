@@ -26,10 +26,12 @@ void init_video()
      * from 8-15, so both ends have to be set to override the default. */
     palette(0, 0);
     palette(8, 63);
-    /* Yellow and red that read as such on RGB and composite alike; slot 9
-     * keeps the ROM's green for the monitor it booted with. */
-    palette(10, 0x34);
+    /* Red, and the yellow background and black foreground of inverse yellow,
+     * that read as such on RGB and composite alike; slot 9 keeps the ROM's
+     * green for the monitor it booted with. */
     palette(12, 0x26);
+    palette(2, 0x34);
+    palette(11, 0);
     setBorderColor(0);
     attr(0, 0, 0, 0);
     cls(0);
