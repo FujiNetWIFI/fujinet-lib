@@ -189,7 +189,8 @@ typedef struct
 #elif defined(FUJI_PLATFORM_MSDOS) \
   || defined(FUJI_PLATFORM_MSX)    \
   || defined(FUJI_PLATFORM_MODEL2) \
-  || defined(FUJI_PLATFORM_H89)
+  || defined(FUJI_PLATFORM_H89)    \
+  || defined(FUJI_PLATFORM_C64)
 typedef struct
 {
   FujiDirEntryTimestamp modified;
@@ -208,16 +209,6 @@ typedef struct
   uint32_t size;
   uint8_t is_dir;
   uint8_t is_trunc;
-  uint8_t mediatype;
-  char filename[MAX_FILENAME_LEN];
-} FujiDirEntry;
-
-#elif defined(FUJI_PLATFORM_C64)
-typedef struct
-{
-  FujiDirEntryTimestamp modified;
-  uint16_t size;
-  uint8_t flags;
   uint8_t mediatype;
   char filename[MAX_FILENAME_LEN];
 } FujiDirEntry;

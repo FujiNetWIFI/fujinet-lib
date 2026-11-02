@@ -2,6 +2,8 @@
 
 ## [Unreleased] (Place WIP changes in this section until a release is done)
 
+- [c64] FujiDirEntry.size is 32 bits, so fuji_file_stat() reports files of 64 KiB and up correctly (needs fujinet-firmware #2251)
+
 ## [5.1.0] 2026-10-27
 
 - [msx] UNAPI works from a subslot and under MSX-DOS
