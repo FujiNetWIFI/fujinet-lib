@@ -246,7 +246,6 @@ static void print_id(const char *label, const char *id)
 
 void print_versions()
 {
-  char label[20];
   int width, width2;
 
 
@@ -262,8 +261,8 @@ void print_versions()
   if (width2 > width)
     width = width2;
 
-  sprintf(label, "    lib: %-*s  ", width, FNLIB_VERSION_FULL);
-  print_id(label, GIT_VERSION);
+  printf("    lib: %-*s  ", width, FNLIB_VERSION_FULL);
+  print_id("", GIT_VERSION);
 
   printf("   test: %-*s  ", width, test_program);
 #ifdef BUILD_APPLE2
