@@ -317,11 +317,11 @@ bool fuji_get_device_enabled_status(uint8_t d);
 
 /**
  * @brief Sets ALL device slot information into pointer d.
- * `size` is the receiving array size, and the returned data size is checked against this before copying.
+ * `count` is the number of device slots, and the returned data size is checked against this multiple of DeviceSlot structs before copying.
  * If it doesn't match, no data is copied, and false is returned.
  * @return Success status, true if all OK.
  */
-#define fuji_get_device_slots(d, count) FUJICALL_RV(FUJICMD_READ_DEVICE_SLOTS, d, sizeof(DeviceSlot) * count)
+#define fuji_get_device_slots(d, count) FUJICALL_RV(FUJICMD_READ_DEVICE_SLOTS, d, sizeof(DeviceSlot) * (count))
 
 /**
  * @brief Fetch the current directory position for paging through directories into pos.
@@ -341,7 +341,7 @@ bool fuji_get_device_enabled_status(uint8_t d);
  * If it doesn't match, no data is copied, and false is returned.
  * @return Success status, true if all OK.
  */
-#define fuji_get_host_slots(d, count) FUJICALL_RV(FUJICMD_READ_HOST_SLOTS, d, sizeof(HostSlot) * count)
+#define fuji_get_host_slots(d, count) FUJICALL_RV(FUJICMD_READ_HOST_SLOTS, d, sizeof(HostSlot) * (count))
 
 /**
  * @brief Fills ssid_info with wifi scan results for bssid index n.
@@ -406,16 +406,16 @@ bool fuji_open_directory_filter(uint8_t hostSlot, const char *path, const char *
 #define fuji_open_directory2(hs, path, filter) fuji_open_directory_filter(hs, path, filter)
 
 /**
- * @brief Save `size` device slots to FN
+ * @brief Save `count` device slots to FN
  * @return true if successful, false if there was an error from FN
  */
-#define fuji_put_device_slots(d, count) FUJICALL_D(FUJICMD_WRITE_DEVICE_SLOTS, d, sizeof(DeviceSlot) * count)
+#define fuji_put_device_slots(d, count) FUJICALL_D(FUJICMD_WRITE_DEVICE_SLOTS, d, sizeof(DeviceSlot) * (count))
 
 /**
- * @brief Save `size` hosts slots to FN
+ * @brief Save `count` host slots to FN
  * @return true if successful, false if there was an error from FN
  */
-#define fuji_put_host_slots(d, count) FUJICALL_D(FUJICMD_WRITE_HOST_SLOTS, d, sizeof(HostSlot) * count)
+#define fuji_put_host_slots(d, count) FUJICALL_D(FUJICMD_WRITE_HOST_SLOTS, d, sizeof(HostSlot) * (count))
 
 /**
  * @brief Fill buffer with directory information.

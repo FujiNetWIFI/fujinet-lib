@@ -2,6 +2,7 @@
 
 ## [Unreleased] (Place WIP changes in this section until a release is done)
 
+- fuji_get_device_slots(), fuji_put_device_slots() and the host slot pair take a count that is an expression; CONFIG's `8+2` on Apple II transferred 306 bytes instead of 380
 - [c64] FujiDirEntry.size is 32 bits, so fuji_file_stat() reports files of 64 KiB and up correctly (needs fujinet-firmware #2251)
 - [atari][h89][model2] wait_jiffies() no longer hangs (Atari) or returns early (H89 past 44 s, Model II past 3.6 min) on long waits
 - [adam] wait_jiffies() counts display frames instead of CPU cycles; a 1 s wait took 1.2 s on hardware
