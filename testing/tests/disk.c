@@ -153,6 +153,10 @@ void test_fuji_copy_file(void)
   else
     printf("  lobby.dsk not found on SD (will be created by copy)\n");
 
+  /* A 17-character name reads a 31-byte entry on Adam */
+  e = fuji_file_stat(sd_idx, "/abcdefghijklm.dsk");
+  TEST("fuji_file_stat of a missing 17-character name returns NULL", e == NULL);
+
   e = fuji_file_stat(src_idx, "/COCO/lobby.dsk");
   TEST("lobby.dsk found on the TNFS source", e != NULL);
   if (e) {
