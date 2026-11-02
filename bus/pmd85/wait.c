@@ -1,17 +1,16 @@
 #include <fujinet-fuji.h>
 
-/* No timer to rely on, so count cycles: 9 x 3862 is about 1/60 s on the 2.048 MHz 8080 */
+/* No timer to rely on, so count cycles: 1420 x 24 + 10 is 34,090, and the call
+ * and loop around it bring one jiffy to about 34,133 at 2.048 MHz */
 static void one_jiffy(void)
 {
   __asm
-    ld   c, 9
-  pmd85_wait_outer:
-    ld   b, 0
-  pmd85_wait_inner:
-    dec  b
-    jp   nz, pmd85_wait_inner
-    dec  c
-    jp   nz, pmd85_wait_outer
+    ld   bc, 1420
+  pmd85_wait_loop:
+    dec  bc
+    ld   a, b
+    or   c
+    jp   nz, pmd85_wait_loop
   __endasm;
 }
 

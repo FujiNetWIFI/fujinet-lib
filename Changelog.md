@@ -4,6 +4,7 @@
 
 - [c64] FujiDirEntry.size is 32 bits, so fuji_file_stat() reports files of 64 KiB and up correctly (needs fujinet-firmware #2251)
 - [atari][h89][model2] wait_jiffies() no longer hangs (Atari) or returns early (H89 past 44 s, Model II past 3.6 min) on long waits
+- [adam] wait_jiffies() counts display frames instead of CPU cycles; a 1 s wait took 1.2 s on hardware
 
 ## [5.1.0] 2026-10-27
 
