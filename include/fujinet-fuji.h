@@ -715,7 +715,8 @@ extern FujiDirEntry *fuji_file_stat(uint8_t host, const char *path);
 extern void fuji_wait_jiffies(uint16_t jiffies);
 
 #if defined(FUJI_PLATFORM_MSX)
-#define fuji_is_ntsc() (((*((unsigned char *) 0x002b)) & 0x80) == 0x00)
+extern bool fuji_is_ntsc_msx(void);
+#define fuji_is_ntsc() fuji_is_ntsc_msx()
 #else
 #define fuji_is_ntsc() 1
 #endif
