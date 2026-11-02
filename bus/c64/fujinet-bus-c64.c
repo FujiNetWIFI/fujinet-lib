@@ -82,12 +82,15 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
     cbm_k_clrch();
   }
 
+  if (success && !fuji_cbm_read_status(cbm_chan))
+    success = false;
+
   if (success && (fields & FUJI_FIELD_REPLY)) {
     uint8_t *reply = va_arg(ap, uint8_t *);
     uint16_t reply_length = va_arg(ap, uint16_t);
 
 
-    rlen = cbm_read(CBM_CMD_CHANNEL, reply, reply_length);
+    rlen = cbm_read(cbm_chan, reply, reply_length);
   }
 
   va_end(ap);
@@ -96,6 +99,14 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
   cbm_close(CBM_CMD_CHANNEL);
 
   return success;
+}
+
+bool fuji_cbm_read_status(uint8_t lfn)
+{
+  uint8_t status;
+
+
+  return cbm_read(lfn, &status, 1) == 1 && status == TRANSACTION_STATUS_OK;
 }
 
 uint16_t network_bus_read(uint8_t device, void *buffer, size_t length)
