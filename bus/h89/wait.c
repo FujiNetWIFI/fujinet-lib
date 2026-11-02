@@ -7,18 +7,19 @@
 #define TICKS (*(volatile uint16_t *) 0x000B)
 #endif
 
-static void wait_until(uint16_t target)
+static void wait_ticks(uint16_t *start, uint8_t ticks)
 {
-  while ((int16_t) (TICKS - target) < 0)
+  while ((uint16_t) (TICKS - *start) < ticks)
     ;
+  *start += ticks;
 }
 
 void wait_jiffies(uint16_t jiffies)
 {
-  uint16_t target = TICKS;
+  uint16_t start = TICKS;
 
-  /* Three jiffies are 25 ticks exactly; stepping the target keeps the math 16-bit */
+  /* Three jiffies are 25 ticks exactly; stepping start keeps the math 16-bit */
   for (; jiffies >= 3; jiffies -= 3)
-    wait_until(target += 25);
-  wait_until(target + (uint8_t) jiffies * 25 / 3);
+    wait_ticks(&start, 25);
+  wait_ticks(&start, (uint8_t) jiffies * 25 / 3);
 }
