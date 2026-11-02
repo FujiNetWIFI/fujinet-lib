@@ -301,7 +301,7 @@ static unsigned long abs_diff(unsigned long a, unsigned long b)
 
 void test_sleep_wait(void)
 {
-  uint8_t err;
+  uint8_t err, err2;
   unsigned long start, end, elapsed, overhead, elapsed_short;
   unsigned long tol_whole = TOLERANCE_HUNDREDTHS / HUNDREDTHS_PER_SEC;
   unsigned long tol_frac  = TOLERANCE_HUNDREDTHS % HUNDREDTHS_PER_SEC;
@@ -313,21 +313,22 @@ void test_sleep_wait(void)
 #else
   printf("  tolerance: +/- %lu.%02lu s\n", tol_whole, tol_frac);
 
-  /* Overhead: two back-to-back reads with no wait between them. */
+  /* Overhead: two back-to-back reads with no wait between them. Nothing prints
+   * between a read and the wait it brackets: one wrapped line is 0.35 s on the Adam. */
   err = read_hundredths_since_midnight(&start);
+  err2 = read_hundredths_since_midnight(&end);
   TEST("overhead: start read succeeds", err == FN_ERR_OK);
-  err = read_hundredths_since_midnight(&end);
-  TEST("overhead: end read succeeds", err == FN_ERR_OK);
+  TEST("overhead: end read succeeds", err2 == FN_ERR_OK);
   overhead = elapsed_hundredths(start, end);
   printf("  read overhead: %lu.%02lu s\n",
          overhead / HUNDREDTHS_PER_SEC, overhead % HUNDREDTHS_PER_SEC);
 
   /* --- short wait --- */
   err = read_hundredths_since_midnight(&start);
-  TEST("short: start read succeeds", err == FN_ERR_OK);
   wait_jiffies(WAIT_SHORT_SECS * JIFFIES_PER_SEC);
-  err = read_hundredths_since_midnight(&end);
-  TEST("short: end read succeeds", err == FN_ERR_OK);
+  err2 = read_hundredths_since_midnight(&end);
+  TEST("short: start read succeeds", err == FN_ERR_OK);
+  TEST("short: end read succeeds", err2 == FN_ERR_OK);
 
   elapsed = elapsed_hundredths(start, end) - overhead;
   elapsed_short = elapsed;
@@ -338,10 +339,10 @@ void test_sleep_wait(void)
 
   /* --- long wait --- */
   err = read_hundredths_since_midnight(&start);
-  TEST("long: start read succeeds", err == FN_ERR_OK);
   wait_jiffies(WAIT_LONG_SECS * JIFFIES_PER_SEC);
-  err = read_hundredths_since_midnight(&end);
-  TEST("long: end read succeeds", err == FN_ERR_OK);
+  err2 = read_hundredths_since_midnight(&end);
+  TEST("long: start read succeeds", err == FN_ERR_OK);
+  TEST("long: end read succeeds", err2 == FN_ERR_OK);
 
   elapsed = elapsed_hundredths(start, end) - overhead;
   printf("  long wait (%lu s): %lu.%02lu s\n", WAIT_LONG_SECS,
