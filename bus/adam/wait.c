@@ -1,16 +1,16 @@
 #include <fujinet-fuji.h>
 
-/* No timer to rely on, so count cycles: 18 x 3346 is about 1/60 s on the 3.58 MHz Z80 */
+/* No timer to rely on, so count cycles: 2292 x 26 + 5 is 59,597, and the call
+ * and loop around it bring one jiffy to about 59,659 at 3.579545 MHz */
 static void one_jiffy(void)
 {
   __asm
-    ld   c, 18
-  adam_wait_outer:
-    ld   b, 0
-  adam_wait_inner:
-    djnz adam_wait_inner
-    dec  c
-    jr   nz, adam_wait_outer
+    ld   bc, 2292
+  adam_wait_loop:
+    dec  bc
+    ld   a, b
+    or   c
+    jr   nz, adam_wait_loop
   __endasm;
 }
 
