@@ -707,8 +707,23 @@ bool fuji_hash_calculate(hash_alg_t hash_type, bool as_hex, bool discard_data, u
 extern FujiDirEntry *fuji_file_stat(uint8_t host, const char *path);
 
 /**
- * @brief Busy-waits about jiffies sixtieths of a second
+ * @brief Busy-waits approximately specified number of jiffies,
+ *        length of single jiffy varies by regional TV standard:
+ *          NTSC: 1/60 second
+ *          PAL:  1/50 second
  */
-extern void wait_jiffies(uint16_t jiffies);
+extern void fuji_wait_jiffies(uint16_t jiffies);
+
+#if defined(FUJI_PLATFORM_MSX)
+extern bool fuji_is_ntsc_msx(void);
+#define fuji_is_ntsc() fuji_is_ntsc_msx()
+#else
+#define fuji_is_ntsc() 1
+#endif
+
+#define fuji_sleep_ms(millis)                                                 \
+  (fuji_is_ntsc()                                                             \
+   ? fuji_wait_jiffies(((millis) / 50) * 3 + (((millis) % 50) * 3 + 25) / 50) \
+   : fuji_wait_jiffies(((millis) + 10 ) / 20))
 
 #endif /* FUJINET_FUJI_H */

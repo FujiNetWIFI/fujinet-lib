@@ -41,7 +41,7 @@ bool fuji_copy_file_adam(uint8_t src_slot, uint8_t dest_slot, const char *copy_s
   for (; seconds; seconds--) {
     if (bus_ready(dcb, 1))
       return !(dcb->dev_status & ADAM_STATUS_CMD_FAILED);
-    wait_jiffies(60);
+    fuji_sleep_ms(1000);
   }
   return false;
 }
