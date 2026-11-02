@@ -11,11 +11,19 @@ static uint16_t ticks_100hz(void) __naked
   __endasm;
 }
 
+static void wait_ticks(uint16_t *start, uint8_t ticks)
+{
+  while ((uint16_t) (ticks_100hz() - *start) < ticks)
+    ;
+  *start += ticks;
+}
+
 void wait_jiffies(uint16_t jiffies)
 {
   uint16_t start = ticks_100hz();
-  uint16_t ticks = (uint16_t) jiffies * 5 / 3;
 
-  while ((uint16_t) (ticks_100hz() - start) < ticks)
-    ;
+  /* Three jiffies are 5 ticks exactly; stepping start keeps the math 16-bit */
+  for (; jiffies >= 3; jiffies -= 3)
+    wait_ticks(&start, 5);
+  wait_ticks(&start, (uint8_t) jiffies * 5 / 3);
 }
