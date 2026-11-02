@@ -86,9 +86,10 @@ void end_testing(int code)
 #endif /* BUILD_LYNX */
 
 #if defined(_CMOC_VERSION_)
-  /* Back to the ROM's black, which the menu expects in these slots */
+  /* Back to the ROM's colors, which the menu expects in these slots */
   if (isCoCo3) {
-    palette(10, 0);
+    palette(2, 9);
+    palette(11, 63);
     palette(12, 0);
   }
 #endif /* _CMOC_VERSION_ */
@@ -108,8 +109,10 @@ void end_testing(int code)
 #define HL_RED    3
 
 /* Pass, clean ID and the all-passed line green; dirty or missing ID yellow;
- * fail and the abort line red (#96). Atari, Apple II, the H89 terminal and
- * MS-DOS in the monochrome text mode show yellow and red as inverse video. */
+ * fail and the abort line red (#96). Yellow is also inverse wherever the
+ * screen can do it (#241): dark on yellow on the CoCo 3, C64, Adam and
+ * MS-DOS in color; Atari, Apple II, the H89 terminal and MS-DOS in the
+ * monochrome text mode show yellow and red as inverse video. */
 void tprint(uint8_t what, const char *s)
 {
   uint8_t hl;
@@ -126,8 +129,11 @@ void tprint(uint8_t what, const char *s)
   }
 #if defined(_CMOC_VERSION_)
   if (isCoCo3) {
-    /* Foreground slots 9, 10 and 12, set in init_video() */
-    attr(hl == HL_GREEN ? 1 : hl == HL_YELLOW ? 2 : 4, 0, 0, 0);
+    /* Foreground slots 9, 11 and 12, background slot 2, set in init_video() */
+    if (hl == HL_YELLOW)
+      attr(3, 2, 0, 0);
+    else
+      attr(hl == HL_GREEN ? 1 : 4, 0, 0, 0);
     printf("%s", s);
     attr(0, 0, 0, 0);
   } else
@@ -137,17 +143,26 @@ void tprint(uint8_t what, const char *s)
     unsigned char old = textcolor(hl == HL_GREEN ? COLOR_GREEN
                                   : hl == HL_YELLOW ? COLOR_YELLOW : COLOR_RED);
 
-    printf("%s", s);
+    /* PETSCII RVS ON/OFF: printf goes through the KERNAL, not conio */
+    if (hl == HL_YELLOW)
+      printf("\x12%s\x92", s);
+    else
+      printf("%s", s);
     textcolor(old);
   }
 #elif defined(FUJI_PLATFORM_ADAM)
-  /* conio's PC color numbers: 2 green, 14 yellow, 4 red, 15 white */
-  textcolor(hl == HL_GREEN ? 2 : hl == HL_YELLOW ? 14 : 4);
+  /* conio's PC color numbers: 0 black, 2 green, 14 yellow, 4 red, 15 white */
+  if (hl == HL_YELLOW) {
+    textbackground(14);
+    textcolor(0);
+  } else
+    textcolor(hl == HL_GREEN ? 2 : 4);
   printf("%s", s);
+  textbackground(0);
   textcolor(15);
 #elif defined(__WATCOMC__)
   {
-    union REGS r;
+    union REGS r, q;
     uint8_t row, col, attr, cols, bottom;
 
     fflush(stdout);
@@ -155,8 +170,12 @@ void tprint(uint8_t what, const char *s)
     int86(0x10, &r, &r);
     if (r.h.al == 7)
       attr = hl == HL_GREEN ? 0x07 : 0x70;
-    else
-      attr = hl == HL_GREEN ? 0x0A : hl == HL_YELLOW ? 0x0E : 0x0C;
+    else {
+      /* Bit 7 of an attribute selects a bright background, not blink */
+      q.x.ax = 0x1003; q.h.bl = 0;
+      int86(0x10, &q, &q);
+      attr = hl == HL_GREEN ? 0x0A : hl == HL_YELLOW ? 0xE0 : 0x0C;
+    }
     cols = r.h.ah;
     r.h.ah = 3; r.h.bh = 0;
     int86(0x10, &r, &r);
