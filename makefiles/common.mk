@@ -19,7 +19,8 @@ endef
 # Automatically figure out PLATFORM from the .mk file that included us
 PLATFORM_MK := $(call pop,$(MAKEFILE_LIST))
 PLATFORM := $(basename $(notdir $(lastword $(PLATFORM_MK))))
-PLATFORM_UC := $(shell echo "$(PLATFORM)" | tr '[:lower:]' '[:upper:]')
+# Usable in variable and macro names: h89-cpm -> H89_CPM
+PLATFORM_UC := $(shell echo "$(PLATFORM)" | tr '[:lower:]-' '[:upper:]_')
 $(info Building for PLATFORM=$(PLATFORM))
 
 MEKKO_CONFIG ?= Makefile
@@ -103,13 +104,20 @@ DISK_BOOT_EXEC ?= $(firstword $(DISK_EXECUTABLES))
 # PLATFORM_COMBOS is a flat list of entries like "dragon+=coco"
 # $1 = the platform to expand
 comma := ,
-define get_combos
+define get_direct_combos
 $(foreach e,$(PLATFORM_COMBOS), \
   $(if $(filter $1+=%,$(e)), \
     $(subst $(comma), ,$(lastword $(subst +=, ,$(e)))) \
   ) \
 )
 endef
+
+# Combos cascade: "h89-cpm+=h89 h89+=fujiversal" gives h89-cpm both.
+# $2 = platforms already collected, so cycles and repeats are skipped.
+_combos_walk = $(foreach c,$(call get_direct_combos,$1), \
+  $(if $(filter $c,$2),,$c $(call _combos_walk,$c,$2 $1 $c)))
+_uniq = $(if $1,$(firstword $1) $(call _uniq,$(filter-out $(firstword $1),$1)))
+get_combos = $(call _uniq,$(filter-out $1,$(strip $(call _combos_walk,$1,$1))))
 
 # Expands patterns with %PLATFORM% to the platform + its combos
 expand_platform_pattern = \
