@@ -4,6 +4,7 @@ PLATFORMS += apple2
 PLATFORMS += atari
 PLATFORMS += c64
 PLATFORMS += coco
+PLATFORMS += coleco
 PLATFORMS += h89-cpm
 PLATFORMS += h89-hdos
 PLATFORMS += lynx

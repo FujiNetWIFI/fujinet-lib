@@ -15,7 +15,8 @@ PRODUCTS += netproto
 PRODUCTS += wifi
 PRODUCTS_DISK_NAME = fntests
 
-PLATFORMS := $(shell awk '/^PLATFORMS[ \t]*\+=/{print $$3}' ../Makefile)
+# coleco has no test harness yet (no tests/coleco, no BASIC_LINE_ENDING).
+PLATFORMS := $(filter-out coleco,$(shell awk '/^PLATFORMS[ \t]*\+=/{print $$3}' ../Makefile))
 
 # You can run 'make <platform>' to build for a specific platform,
 # or 'make <platform>/<target>' for a platform-specific target.
