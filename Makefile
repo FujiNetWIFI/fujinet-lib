@@ -21,14 +21,17 @@ PLATFORMS += pmd85
 # SRC_DIRS may use the literal %PLATFORM% token.
 # It expands to the chosen PLATFORM plus any of its combos.
 SRC_DIRS = common bus/%PLATFORM% bus/%PLATFORM%/unapi
-INCLUDE_DIRS = include
+INCLUDE_DIRS = include bus/%PLATFORM%
 CFLAGS = -DBUILD_$(PLATFORM_UC)
 
 # Define extra dirs ("combos") that expand with a platform.
 # Format: platform+=combo1,combo2
 PLATFORM_COMBOS = \
   h89-cpm+=h89 \
-  h89-hdos+=h89
+  h89-hdos+=h89 \
+  h89+=fujiversal,fujiversal-call \
+  model2+=fujiversal,fujiversal-call \
+  msdos+=fujiversal
 
 include makefiles/toplevel-rules.mk
 
