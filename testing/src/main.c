@@ -157,6 +157,7 @@ int main(void)
   test_net2_close_client();
   test_net2_udp_set_destination();
   test_net2_udp_get_remote();
+  test_net2_udp_round_trip();
   test_net2_channel_mode();
 #endif // NETWORK2_TESTS
 

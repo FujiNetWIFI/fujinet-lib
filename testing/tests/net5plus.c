@@ -35,6 +35,7 @@
 #define LISTEN_SOCKET "N1:TCP://:5432"
 #define CLIENT_SOCKET "N2:TCP://localhost:5432"
 #define CLIENT2_SOCKET "N3:TCP://localhost:5432"
+#define UDP_CLIENT "N2:UDP://localhost:5004"
 #define MAX_SOCKET_RETRIES 10
 #define DISCONNECT_POLLS 500
 #define RELAY_POLLS 500
@@ -278,7 +279,7 @@ void test_net2_udp_set_destination(void)
 
   err = network_close(NET_UDP_SPEC);
   TEST("close UDP channel", err == FN_ERR_OK);
-#endif /* FN_BROKEN_network_udp */
+#endif /* FN_BROKEN_network_udp_set_destination */
 
   END_OF_TEST();
 }
@@ -305,6 +306,41 @@ void test_net2_udp_get_remote(void)
   err = network_close(NET_UDP_SPEC);
   TEST("close UDP channel", err == FN_ERR_OK);
 #endif /* FN_BROKEN_network_udp_get_remote */
+
+  END_OF_TEST();
+}
+
+void test_net2_udp_round_trip(void)
+{
+  uint8_t err, status, net_err;
+  uint16_t avail = 0, polls;
+
+  SECTION("network UDP round trip");
+
+  err = network_open(NET_UDP_SPEC, OPEN_MODE_RW, OPEN_TRANS_NONE);
+  TEST("open UDP listener", err == FN_ERR_OK);
+  err = network_open(UDP_CLIENT, OPEN_MODE_RW, OPEN_TRANS_NONE);
+  TEST("open UDP client", err == FN_ERR_OK);
+
+  err = network_write(UDP_CLIENT, "FUJI", 4);
+  TEST("client sends a datagram", err == FN_ERR_OK);
+
+  /* Before fujinet-firmware #2270 the first status moved the datagram into
+   * the firmware's buffer and every status reported the empty socket */
+  for (polls = 0; polls < RELAY_POLLS; polls++) {
+    err = network_status(NET_UDP_SPEC, &avail, &status, &net_err);
+    if (err != FN_ERR_OK || avail)
+      break;
+  }
+  TEST("status reports the datagram's bytes waiting",
+       err == FN_ERR_OK && avail == 4);
+
+  memset(g.net, 0, 4);
+  TEST("read returns the datagram",
+       network_read(NET_UDP_SPEC, g.net, 4) == 4 && memcmp(g.net, "FUJI", 4) == 0);
+
+  network_close(UDP_CLIENT);
+  network_close(NET_UDP_SPEC);
 
   END_OF_TEST();
 }

@@ -12,6 +12,7 @@ extern void test_net2_interrupt_rate(void);
 extern void test_net2_close_client(void);
 extern void test_net2_udp_set_destination(void);
 extern void test_net2_udp_get_remote(void);
+extern void test_net2_udp_round_trip(void);
 extern void test_net2_channel_mode(void);
 extern void test_net2_json_parameters(void);
 extern void test_net2_globals(void);
