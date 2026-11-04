@@ -131,8 +131,7 @@
 /* Page of four small <a> anchors ("1".."4") for HTML query iteration */
 #define NET_LINKS_URL   "N1:" HTTPBIN_BASE "/links/5/0"
 
-/* UDP channel and destination for the set-destination smoke test
- * (no traffic is actually exchanged) */
+/* UDP channel for the UDP tests; nothing is ever sent to NET_UDP_DEST */
 #define NET_UDP_SPEC    "N1:UDP://:5004/"
 #define NET_UDP_DEST    "N1:localhost:5005"
 
