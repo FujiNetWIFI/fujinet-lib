@@ -1,55 +1,11 @@
 #include <stdio.h> // debug
 
+#include "fujiversal.h"
 #include "portio.h"
 #include <fujinet-bus.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
-#undef DEBUG
-#define HEXDUMP 1
-
-static void hexdump(void *ptr, int count);
-
-#define TIMEOUT_SLOW	(15 * PORT_TICKS_PER_SECOND)
-
-// Yes, using SIO convention internally! Legacy FTW! ;-)
-typedef enum {
-    SIO_DIRECTION_NONE    = 0x00,
-    SIO_DIRECTION_READ    = 0x40,
-    SIO_DIRECTION_WRITE   = 0x80,
-    SIO_DIRECTION_INVALID = 0xFF,
-} AtariSIODirection;
-
-#define false 0
-#define true 1
-
-enum {
-  PACKET_ACK = 6, // ASCII ACK
-  PACKET_NAK = 21, // ASCII NAK
-};
-
-enum {
-  SLIP_END     = 0xC0,
-  SLIP_ESCAPE  = 0xDB,
-  SLIP_ESC_END = 0xDC,
-  SLIP_ESC_ESC = 0xDD,
-};
-
-typedef struct {
-  uint8_t device;   /* Destination Device */
-  uint8_t command;  /* Command */
-  uint16_t length;  /* Total length of packet including header */
-  uint8_t checksum; /* Checksum of entire packet */
-  uint8_t fields;   /* Describes the fields that follow */
-} fujibus_header;
-
-typedef struct {
-  fujibus_header header;
-  uint8_t data[4]; // max 4 aux bytes
-} fujibus_packet;
-
-static const uint8_t fuji_field_numbytes_table[] = {0, 1, 2, 3, 4, 2, 4, 4};
 
 static bool port_did_init = false;
 
@@ -214,37 +170,3 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   direction = fields & FUJI_FIELD_REPLY ? SIO_DIRECTION_READ : SIO_DIRECTION_WRITE;
   return fuji_packet_call(direction, &fb_packet, buf, buf_length);
 }
-
-#if defined(DEBUG) && defined(HEXDUMP)
-#define COLUMNS 16
-
-static void hexdump(void *ptr, int count)
-{
-  int outer, inner;
-  uint8_t c;
-  uint8_t *buffer = (uint8_t *) ptr;
-
-
-  for (outer = 0; outer < count; outer += COLUMNS) {
-    for (inner = 0; inner < COLUMNS; inner++) {
-      if (inner + outer < count) {
-	c = buffer[inner + outer];
-	printf("%02x ", c);
-      }
-      else
-	printf("   ");
-    }
-    printf(" |");
-    for (inner = 0; inner < COLUMNS && inner + outer < count; inner++) {
-      c = buffer[inner + outer];
-      if (c >= ' ' && c <= 0x7f)
-	printf("%c", c);
-      else
-	printf(".");
-    }
-    printf("|\n");
-  }
-
-  return;
-}
-#endif /* HEXDUMP */
