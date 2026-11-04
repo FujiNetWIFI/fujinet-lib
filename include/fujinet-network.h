@@ -175,7 +175,8 @@ FN_ERR network_json_parse(const char *devicespec);
 extern int16_t network_json_query_adam(const char *devicespec, const char *query, char *buffer);
 #define network_json_query(devspec, query, buffer) network_json_query_adam(devspec, query, buffer)
 #else /* ! FUJI_PLATFORM_ADAM */
-int16_t network_json_query(const char *devicespec, const char *query, char *buffer);
+extern int16_t network_json_query_common(const char *devicespec, const char *query, char *buffer);
+#define network_json_query(devspec, query, buffer) network_json_query_common(devspec, query, buffer)
 #endif /* FUJI_PLATFORM_ADAM */
 
 /**

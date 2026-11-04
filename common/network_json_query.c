@@ -1,7 +1,6 @@
 #include <fujinet-network.h>
 
-#if !defined(__ADAM__) && !defined(__COLECOADAM__)
-int16_t network_json_query(const char *devicespec, const char *query, char *buffer)
+int16_t network_json_query_common(const char *devicespec, const char *query, char *buffer)
 {
   int16_t total, read_len;
   FN_ERR err;
@@ -31,4 +30,3 @@ int16_t network_json_query(const char *devicespec, const char *query, char *buff
 
   return network_json_strip_newlines(buffer, total);
 }
-#endif /* ! (__ADAM__ || __COLECOADAM__) */

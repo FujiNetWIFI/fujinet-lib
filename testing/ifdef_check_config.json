@@ -4,6 +4,9 @@
     "include": {
       "allow": ["FUJI_BUS_CALL_VARARGS", "FUJI_VARIABLE_LEN_PACKETS"],
       "allow_regex": ["FUJI_PLATFORM_[A-Z0-9]+"]
+    },
+    "common": {
+      "allow": ["_CMOC_VERSION_"]
     }
   },
   "files": {
@@ -33,6 +36,12 @@
 	"__PMD85__",
 	"__TRS80M2__"
       ]
+    },
+    "common/fuji_devcall_vld.c": {
+      "allow": ["FUJI_VARIABLE_LEN_PACKETS"]
+    },
+    "common/network_seek.c": {
+      "allow": ["DEVCALL_C1234"]
     }
   }
 }
