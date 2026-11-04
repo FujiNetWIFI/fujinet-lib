@@ -365,7 +365,16 @@ class LibLocator:
       if platform not in comboDict:
         comboDict[platform] = []
       comboDict[platform].extend(others)
-    return comboDict
+
+    # Combos cascade: "h89-cpm+=h89 h89+=fujiversal" gives h89-cpm both.
+    def expand(platform, found):
+      for c in comboDict.get(platform, []):
+        if c not in found:
+          found.append(c)
+          expand(c, found)
+      return found
+
+    return {p: [c for c in expand(p, [p]) if c != p] for p in comboDict}
 
 # Print errors to stderr so that `make` doesn't try to interpret them in `$(eval)`
 def error_exit(*args):
