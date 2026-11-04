@@ -15,8 +15,7 @@ PRODUCTS += netproto
 PRODUCTS += wifi
 PRODUCTS_DISK_NAME = fntests
 
-# coleco has no test harness yet (no tests/coleco, no BASIC_LINE_ENDING).
-PLATFORMS := $(filter-out coleco,$(shell awk '/^PLATFORMS[ \t]*\+=/{print $$3}' ../Makefile))
+PLATFORMS := $(shell awk '/^PLATFORMS[ \t]*\+=/{print $$3}' ../Makefile)
 
 # You can run 'make <platform>' to build for a specific platform,
 # or 'make <platform>/<target>' for a platform-specific target.
@@ -121,6 +120,7 @@ LIBS_EXTRA_APPLE2 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_ATARI = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_C64 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_COCO = $(call library-flag,$(TESTS_LIB).$(PLATFORM))
+LIBS_EXTRA_COLECO = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_LYNX = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_MSDOS = $(call library-flag,$(TESTS_LIB_DIR)/lib$(TESTS_LIB).$(PLATFORM).a)
 LIBS_EXTRA_MODEL2 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
