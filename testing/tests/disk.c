@@ -219,12 +219,12 @@ void test_fuji_copy_file(void)
 
 static bool nd_ok, nd_left;
 
-static void try_create(NewDisk *nd, uint8_t sd_idx, DeviceSlot *saved)
+static void try_create(NewDisk *nd, uint8_t sd_idx)
 {
   nd_ok = fuji_create_new(nd);
   nd_left = fuji_file_stat(sd_idx, NEW_DISK_NAME) != NULL;
   /* Clean up before the checks, which stop the run when one fails */
-  fuji_set_device_filename(saved->mode, saved->hostSlot, nd->deviceSlot, (char *) saved->file);
+  fuji_unmount_disk_image(nd->deviceSlot);
   if (nd_left)
     network_fs_delete(NEW_DISK_URL);
 }
@@ -237,8 +237,6 @@ void test_fuji_create_new(void)
   SKIP(fuji_create_new);
 #else
   static NewDisk nd;
-  /* Not g.dslots, which overlays g.hslots. */
-  static DeviceSlot saved[FUJI_MAX_DISKS];
   uint8_t i, sd_idx, ds;
   uint8_t *slot;
   bool ok, found_sd;
@@ -261,9 +259,9 @@ void test_fuji_create_new(void)
   }
   TEST("SD host slot found", found_sd);
 
-  ok = fuji_get_device_slots(saved, FUJI_MAX_DISKS);
+  ok = fuji_get_device_slots(g.dslots.devices, FUJI_MAX_DISKS);
   TEST("fuji_get_device_slots succeeds", ok);
-  for (ds = 0; ds < FUJI_MAX_DISKS && saved[ds].file[0]; ds++)
+  for (ds = 0; ds < FUJI_MAX_DISKS && g.dslots.devices[ds].file[0]; ds++)
     ;
   if (ds == FUJI_MAX_DISKS) {
     printf("  every drive slot is in use\n");
@@ -309,21 +307,28 @@ void test_fuji_create_new(void)
     TEST("the new image is the size asked for", e->size == want);
   }
 
+  /* Only UNMOUNT empties a slot; a blank filename keeps the old name. */
+  fuji_unmount_disk_image(ds);
+
+  ok = fuji_create_new(&nd);
 #ifdef FN_BROKEN_fuji_create_new_error
   printf("SKIP  fuji_create_new_error (known broken)\n");
   tests_skipped++;
 #else
-  ok = fuji_create_new(&nd);
   TEST("creating it again over the existing file fails", !ok);
 #endif
 
-  /* NEW DISK points the drive slot at the image; put it back */
-  fuji_set_device_filename(saved[ds].mode, saved[ds].hostSlot, ds, (char *) saved[ds].file);
+  ok = fuji_get_device_slots(g.dslots.devices, FUJI_MAX_DISKS);
+  TEST("fuji_get_device_slots succeeds", ok);
+  /* Clean up before the check, which stops the run when it fails */
+  fuji_unmount_disk_image(ds);
+  TEST("a refused NEW DISK leaves the drive slot empty", g.dslots.devices[ds].file[0] == '\0');
+
   TEST("the image is deleted", network_fs_delete(NEW_DISK_URL) == FN_ERR_OK);
 
 #if defined(FUJI_PLATFORM_APPLE2) || defined(FUJI_PLATFORM_ADAM)
   nd.numBlocks = NEW_DISK_TOO_BIG;
-  try_create(&nd, sd_idx, &saved[ds]);
+  try_create(&nd, sd_idx);
 #ifdef FN_BROKEN_fuji_create_new_error
   printf("SKIP  fuji_create_new_error (known broken)\n");
   tests_skipped++;
@@ -333,7 +338,7 @@ void test_fuji_create_new(void)
   TEST("too many blocks leaves no file", !nd_left);
 
   nd.numBlocks = 0;
-  try_create(&nd, sd_idx, &saved[ds]);
+  try_create(&nd, sd_idx);
 #ifdef FN_BROKEN_fuji_create_new_error
   printf("SKIP  fuji_create_new_error (known broken)\n");
   tests_skipped++;
