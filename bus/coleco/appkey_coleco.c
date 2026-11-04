@@ -5,13 +5,7 @@
 
 #include <string.h>
 
-/*
-  appkeys are variable length strings. The cartridge brokers to the ESP32 over
-  the RS232 FujiBus path, and rs232Fuji::appkey_read() prepends a little-endian
-  uint16_t length to the key data before sending it -- so the reply carries a
-  header even though the bus itself has variable length packets. Read it into
-  our own buffer, because the caller only promised room for the key.
-*/
+/* The reply carries a little-endian length ahead of the key, so read into our own buffer. */
 
 typedef struct {
   uint16_t length;

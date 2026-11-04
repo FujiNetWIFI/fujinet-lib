@@ -5,8 +5,6 @@ MWD := $(realpath $(dir $(lastword $(MAKEFILE_LIST)))..)
 include $(MWD)/common.mk
 include $(MWD)/toolchains/z88dk.mk
 
-# The 32K cart image contract (code and data below $F800, the "FUJI" claim
-# at $FCFC) is cart layout, not bus; MekkoGX's coleco.mk carries it.
 COLECO_FLAGS = +coleco
 CFLAGS += $(COLECO_FLAGS)
 LDFLAGS += $(COLECO_FLAGS)

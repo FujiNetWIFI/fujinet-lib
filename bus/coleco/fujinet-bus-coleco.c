@@ -5,39 +5,15 @@
 volatile uint8_t fn_sink;
 uint16_t fuji_bus_call_rlen;
 
-/* The SIO-era globals other targets have, so clients compile unchanged.
-   fn_device_error is the cart's error, FN_EWAIT, or 144 on a NAK. */
-uint8_t fn_default_timeout = 15;
-uint8_t fn_device_error;
-
-/*
-  A register write is exactly two reads, back to back: one to arm the register
-  number, one to deliver the value. The cartridge disarms after a single use,
-  so a stray read of the data page on its own can never change anything --
-  which is what makes the vblank NMI harmless here. The NMI can land between
-  these two lines; the armed register simply waits.
-*/
+/* Two reads: arm the register, then deliver the value. The cart disarms after one use, so a vblank NMI between them is harmless. */
 void fn_regwr(uint8_t reg, uint8_t val)
 {
   FN_TOUCH(FN_REGSEL + reg);
   FN_TOUCH(FN_REGDAT + val);
 }
 
-/*
-  Launch the transaction and wait for the cartridge to publish a reply.
-
-  The sequence number comes from the cartridge's own ACKSEQ + 1, never from a
-  variable of ours. A console RESET restarts the program and re-zeroes
-  everything it owns but does NOT reset the cartridge, so a locally derived
-  sequence replays a number the cart has already acknowledged: no request is
-  sent, and the stale reply still sitting in the window looks like success.
-
-  The wait loop is deliberately dumb. The cart's own transaction budget is 5s,
-  and 60s for MOUNT_IMAGE, so we have to outlast that for a real timeout to
-  surface as the cart's error code rather than ours -- but we cannot use a
-  timer, because on this machine the timers ride the vblank NMI and a caller
-  that has not installed a handler would wait forever on them.
-*/
+/* The sequence comes from the cart's ACKSEQ, not a local: a console RESET does not reset the cart.
+   Budget outlasts the cart's longest (90 s network, 60 s MOUNT/COPY): ~142 T-states per pass. A timer would ride the NMI. */
 uint8_t fn_commit(void)
 {
   uint8_t want = (uint8_t) (FN_ACKSEQ + 1);
@@ -48,7 +24,7 @@ uint8_t fn_commit(void)
     want = 1;                   /* 0 means "never used" */
   fn_regwr(FNR_SEQ, want);
 
-  for (outer = 0; outer < 2400u; outer++) {
+  for (outer = 0; outer < 9200u; outer++) {
     for (inner = 0; inner < 250u; inner++) {
       if (FN_ACKSEQ == want)
         return FN_ERRCODE;
@@ -58,25 +34,8 @@ uint8_t fn_commit(void)
   return FN_EWAIT;
 }
 
-/*
-  The FUJI_FIELD_* descriptor maps straight onto the mailbox's parameter
-  stream. fuji_field_numbytes() gives the total aux bytes and
-  fuji_field_numfields() how many parameters they make up, so their quotient is
-  each parameter's size -- always 1, 2 or 4, which is exactly what the stream
-  accepts. The DEVCALL_* macros already split wider values low byte first on
-  this target (see NATIVE_SPLIT_U16 in fujinet-endian.h), so the aux bytes
-  stream through in argument order with no reordering.
-
-  This takes the four aux bytes explicitly rather than through varargs, as adam,
-  lynx and msdos do. sccz80 lays a variadic callee's named parameters out as if
-  only those had been pushed, but emits calls that push every argument left to
-  right, so with DEVCALL_RV's five arguments the callee reads `device` off the
-  slot the caller filled with `fields`. The mailbox faithfully forwarded the
-  resulting dev=0x10 cmd=0x2F to the ESP32.
-
-  `buf` is the outgoing payload when FUJI_FIELD_DATA is set and the reply
-  destination when FUJI_FIELD_REPLY is; no call sets both.
-*/
+/* Aux bytes are passed explicitly, not as varargs: sccz80 reads a variadic callee's named parameters from the wrong slots.
+   Parameter size is numbytes / numfields (1, 2 or 4). `buf` is the payload for FUJI_FIELD_DATA or the reply target for FUJI_FIELD_REPLY. */
 bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
                    uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
                    const void *buf, size_t buf_length)
@@ -85,7 +44,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   uint8_t numbytes, numfields, size;
   uint8_t idx, field, i;
   uint16_t rlen;
-
+  uint8_t err;
 
   fuji_bus_call_rlen = 0;
 
@@ -98,12 +57,9 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   numfields = fuji_field_numfields(fields);
   size = numfields ? (uint8_t) (numbytes / numfields) : 0;
 
-  /* Each parameter costs its size byte plus its value bytes. Refuse rather
-     than truncate: a short SET_DEVICE_FULLPATH is rejected on the ESP32 side
-     anyway, and silently dropping the tail would be far harder to see. */
+  /* Refuse rather than truncate an oversized payload. */
   if ((fields & FUJI_FIELD_DATA)
       && (uint16_t) (numfields + numbytes) + buf_length > FN_TX_MAX) {
-    fn_device_error = FN_ETOOBIG;
     return false;
   }
 
@@ -129,14 +85,12 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
       FN_TOUCH(FN_TXPAGE + *data++);
   }
 
-  fn_device_error = fn_commit();
-  if (fn_device_error != FN_OK)
+  err = fn_commit();
+  if (err != FN_OK)
     return false;
 
-  if (FN_REPLYCMD != FUJICMD_ACK) {
-    fn_device_error = 144;
+  if (FN_REPLYCMD != FUJICMD_ACK)
     return false;
-  }
 
   rlen = (uint16_t) FN_RXLEN_LO | ((uint16_t) FN_RXLEN_HI << 8);
   if (rlen > FN_REPLY_MAX)
@@ -144,10 +98,7 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 
   if (fields & FUJI_FIELD_REPLY) {
     uint8_t *reply = (uint8_t *) buf;
-    /* Index the window through a local pointer, never through the FN_REPLY
-       macro's cast constant: sccz80 indexes the two differently and gets the
-       macro form wrong -- the identical expression copies correctly through a
-       local and reads back zero through FN_REPLY[i]. */
+    /* A local pointer, not FN_REPLY[i]: sccz80 reads the macro form back as zero. */
     volatile uint8_t *src = FN_REPLY;
     uint16_t n;
 

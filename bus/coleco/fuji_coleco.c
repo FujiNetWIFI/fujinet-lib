@@ -23,24 +23,8 @@ uint8_t fuji_coleco_boot_error(void)
   return FN_BOOTERR;
 }
 
-/*
-  The swap stub, and why it is shaped like this.
-
-  The cartridge replaces every byte of $8000-$FFFF between one read and the
-  next, so whatever triggers it must not itself live in cartridge space. It
-  goes in our own BSS, which is in the console's RAM.
-
-  The vblank interrupt is on the Z80's /NMI and cannot be masked with DI, and
-  the BIOS vectors it straight to $8021 -- a byte that belongs to the NEXT
-  image the moment we swap. So the stub silences the VDP first, clears the flag
-  that is already latched, lets any in-flight NMI be taken while our own
-  handler is still there, and only then swaps.
-
-  It also resets the VDP registers before jumping. The BIOS's $55AA path is
-  LD HL,($800A) / JP (HL) with no VDP or RAM initialisation at all, so a game
-  that assumes a cold VDP would otherwise inherit whatever mode we left behind.
-  Silencing the sound chip is the same courtesy.
-*/
+/* Runs from console RAM: the swap replaces all of $8000-$FFFF. It silences the VDP and NMI first, since the NMI vectors
+   into the next image, and resets the VDP registers because the BIOS $55AA path does not. */
 static uint8_t stub[64];
 
 static const uint8_t stub_src[] = {
@@ -51,8 +35,7 @@ static const uint8_t stub_src[] = {
   0xD3, 0xBF,             /* out ($bf),a            */
   /* Clear the VDP's latched interrupt flag (and de-assert /NMI). */
   0xDB, 0xBF,             /* in  a,($bf)            */
-  /* Give any NMI already in flight a moment to be taken while OUR $8021
-     handler is still the live one. */
+  /* Let an in-flight NMI be taken while our handler is still live. */
   0x00, 0x00, 0x00, 0x00, /* nop x4                 */
   0x00, 0x00, 0x00, 0x00,
   /* Silence the SN76489: attenuate all four channels. */
@@ -60,11 +43,9 @@ static const uint8_t stub_src[] = {
   0x3E, 0xBF, 0xD3, 0xFF,
   0x3E, 0xDF, 0xD3, 0xFF,
   0x3E, 0xFF, 0xD3, 0xFF,
-  /* THE SWAP: one read of $FDFE. Every byte of cartridge space changes
-     between this instruction and the next. */
+  /* The swap: one read of $FDFE. */
   0x3A, 0xFE, 0xFD,       /* ld  a,($fdfe)          */
-  /* Registers 0..7 to a power-on-like state, so a $55AA game that skips the
-     BIOS title screen does not inherit our video mode. */
+  /* VDP registers 0..7 to power-on state. */
   0x21, 0x00, 0x80,       /* ld  hl,$8000           ; l=data, h=$80|reg */
   0x06, 0x08,             /* ld  b,8                */
   0x7D,                   /* vloop: ld a,l          */
@@ -72,9 +53,8 @@ static const uint8_t stub_src[] = {
   0x7C,                   /* ld  a,h                */
   0xD3, 0xBF,             /* out ($bf),a            ; $80|reg */
   0x24,                   /* inc h                  */
-  0x10, 0xF8,             /* djnz vloop             */
-  /* Cold start: the BIOS re-reads the new image's $8000 header, so $55AA and
-     $AA55 behave exactly as they would on a real cartridge. */
+  0x10, 0xF7,             /* djnz vloop             */
+  /* Cold start; the BIOS re-reads the new image header. */
   0xC3, 0x00, 0x00        /* jp  $0000              */
 };
 

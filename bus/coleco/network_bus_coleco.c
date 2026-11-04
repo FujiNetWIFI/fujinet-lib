@@ -1,12 +1,7 @@
 #include "fujinet-bus-coleco.h"
 #include "fujinet-commands.h"
 
-/*
-  Both directions are capped by the mailbox rather than by the caller. The
-  common network_read()/network_write() loops in common/ already drive these
-  by the count returned, so a short transfer here simply becomes another turn
-  around their loop.
-*/
+/* Transfers are capped by the mailbox; the common loops turn a short count into another pass. */
 
 size_t network_bus_read(uint8_t device, void *buffer, size_t length)
 {
@@ -22,8 +17,7 @@ size_t network_bus_read(uint8_t device, void *buffer, size_t length)
 
 size_t network_bus_write(uint8_t device, const void *buffer, size_t length)
 {
-  /* One 16-bit parameter costs three stream bytes, so this is the largest
-     payload that still fits inside FN_TX_MAX. */
+  /* One 16-bit parameter costs three stream bytes. */
   if (length > FN_TX_MAX - 3)
     length = FN_TX_MAX - 3;
 
