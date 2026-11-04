@@ -87,7 +87,7 @@ NON_IDENTIFIER_KEYWORDS = {
 IDENTIFIER_RE = re.compile(r"\b[A-Za-z_][A-Za-z0-9_]*\b")
 INTEGER_LITERAL_RE = re.compile(r"^(0[xX][0-9a-fA-F]+|[0-9]+)$")
 
-SOURCE_EXTENSIONS = {".h", ".hpp", ".cpp", ".cc", ".cxx"}
+SOURCE_EXTENSIONS = {".h", ".hpp", ".cpp", ".cc", ".cxx", ".c"}
 
 DEFAULT_CONFIG_NAME = "ifdef_check_config.json"
 
@@ -347,9 +347,10 @@ def main():
     parser.add_argument("roots", nargs="+", help="directories to scan")
     parser.add_argument(
         "--root",
-        default=".",
-        help="project root that config directory keys are relative to "
-             "(default: current directory)",
+        default=None,
+        help="project root that config directory/file keys are relative to "
+             "(default: the parent of the directory containing the config "
+             "file, i.e. the repo root when the config lives in tests/)",
     )
     parser.add_argument(
         "--config",
@@ -358,9 +359,34 @@ def main():
     )
     args = parser.parse_args()
 
-    project_root = Path(args.root).resolve()
-    config_path = Path(args.config) if args.config else Path(__file__).parent / DEFAULT_CONFIG_NAME
+    if args.config:
+        config_path = Path(args.config)
+        if not config_path.is_file():
+            config_error(f"config file not found: {config_path}")
+    else:
+        config_path = Path(__file__).resolve().parent / DEFAULT_CONFIG_NAME
+        if not config_path.is_file():
+            print(f"warning: no config at {config_path}; using built-in "
+                  f"defaults only", file=sys.stderr)
     config = load_config(config_path)
+
+    if args.root:
+        project_root = Path(args.root).resolve()
+    else:
+        project_root = config_path.resolve().parent.parent
+    if not project_root.is_dir():
+        config_error(f"--root {project_root} is not a directory")
+
+    # Catch typos / stale entries: a key that points at nothing can never
+    # take effect, which otherwise looks exactly like "the config is ignored".
+    for section in ("directories", "files"):
+        for key in config.get(section, {}):
+            if key.startswith("_"):
+                continue
+            if not (project_root / key).exists():
+                print(f"warning: {section} entry {key!r} does not exist under "
+                      f"{project_root}; it will have no effect (wrong --root?)",
+                      file=sys.stderr)
 
     any_violation = False
 
@@ -377,7 +403,11 @@ def main():
             try:
                 rel_path = path.resolve().relative_to(project_root)
             except ValueError:
-                rel_path = path  # outside project_root; match on given path as-is
+                # Silently falling back to the absolute path made every
+                # directory/file entry in the config quietly stop matching.
+                config_error(f"{path} is not under project root "
+                             f"{project_root}; pass the correct --root so "
+                             f"config paths can be matched")
 
             allowed = allowed_identifiers_for(rel_path, config)
 
