@@ -33,8 +33,9 @@ build you mean to trust. Releases are in `README.md`.
 
 ## Layout
 
-- `include/`: the public headers. `fujinet-platform.h` maps each compiler's predefined macro to
-  one `FUJI_PLATFORM_*`.
+- `include/`: the public headers, only for external programs that link with the library; a
+  bus-specific header never goes here. `fujinet-platform.h` maps each compiler's predefined macro
+  to one `FUJI_PLATFORM_*`.
 - `common/`: code shared by every platform. It knows nothing about any platform.
 - `bus/<platform>/`: each platform's bus code, and its own version of any function that has to
   differ there. `h89-cpm` and `h89-hdos` share `bus/h89/`.
@@ -82,7 +83,8 @@ So:
 - Don't copy a shared function into a platform directory to change two lines. If the difference is
   in how bytes reach the device, it belongs behind the bus interface instead.
 - Adding a platform means a `bus/<platform>/` directory, a line in `fujinet-platform.h` and the
-  capability flags, not edits scattered through `common/`.
+  capability flags, not edits scattered through `common/`. Don't add a platform until `testing/`
+  can build its tests.
 - `testing/check_no_build_ifdefs.py` checks `include/` and `common/` in CI. It covers only the
   macros it knows; reviewers hold the rest of the rule by hand.
 
@@ -120,6 +122,8 @@ harness in `testing/tests/harness.c`.
   `main`, then the fix. The test PR says `Refs #N`; only the fix PR says `Fixes #N`.
 - Run every test on every platform. `FN_BROKEN_<function>` in `testing/tests/broken-v5.h` skips a
   function that is broken on a platform and has an issue open; it is not for "doesn't apply here".
+- Never bypass building a platform's tests in `testing/Makefile`. It takes its platform list from
+  the library's `Makefile` for a reason.
 - Set up the state a test needs at the start of the test. The harness has no cleanup step after an
   abort, and a failed device may not take one anyway.
 - A run stops at its first failed check, so describe a failure by that check.
@@ -202,11 +206,13 @@ is a good answer.
   a capability flag.
 - **A copy of a shared function** in a platform directory, to change a few lines.
 - **Testing a compiler macro** instead of `FUJI_PLATFORM_*`.
+- **A bus-specific header in `include/`.**
 - **Growing shared code** without checking that CONFIG still fits.
 - **Building one platform** after a change to `common/` or `include/`.
 - **Assuming CI tests the library.** It only compiles it.
 - **A fix and its test in one PR.**
 - **A skipped test** where a form that runs everywhere would do.
+- **A platform filtered out of `testing/Makefile`,** or added before its tests build.
 - **A Changelog line** for a test, a build change or a refactor.
 - **Leaving a comment that the change made untrue.**
 - **A PR description that restates the diff.**
