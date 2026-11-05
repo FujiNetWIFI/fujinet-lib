@@ -717,6 +717,8 @@ extern void fuji_wait_jiffies(uint16_t jiffies);
 #if defined(FUJI_PLATFORM_MSX)
 extern bool fuji_is_ntsc_msx(void);
 #define fuji_is_ntsc() fuji_is_ntsc_msx()
+#elif defined(FUJI_PLATFORM_PMD85)
+#define fuji_is_ntsc() 0
 #else
 #define fuji_is_ntsc() 1
 #endif
