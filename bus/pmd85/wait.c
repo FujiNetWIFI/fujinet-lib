@@ -1,11 +1,12 @@
 #include <fujinet-fuji.h>
 
-/* No timer to rely on, so count cycles: 1420 x 24 + 10 is 34,090, and the call
- * and loop around it bring one jiffy to about 34,133 at 2.048 MHz */
+/* No timer to rely on, so count cycles. Video memory access slows the CPU so a
+ * cycle-counted loop runs about 18% long; 1458 x 24 is within 1% of 1/50 s on
+ * hardware and in the emulator. */
 static void one_jiffy(void)
 {
   __asm
-    ld   bc, 1420
+    ld   bc, 1458
   pmd85_wait_loop:
     dec  bc
     ld   a, b
