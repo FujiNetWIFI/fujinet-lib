@@ -7,6 +7,7 @@
 - [atari][h89][model2] wait_jiffies() no longer hangs (Atari) or returns early (H89 past 44 s, Model II past 3.6 min) on long waits
 - [adam] wait_jiffies() counts display frames instead of CPU cycles; a 1 s wait took 1.2 s on hardware
 - [all] fuji_sleep_ms() wraps the jiffy wait using milliseconds
+- [msx] Use bus/fujiversal for the app key and network bus calls, so fuji_read_appkey() and fuji_write_appkey() link
 
 ## [5.1.0] 2026-10-27
 
