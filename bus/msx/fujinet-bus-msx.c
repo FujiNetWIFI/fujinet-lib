@@ -71,17 +71,3 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
 #endif
   return fuji_unapi_call(FUJI_CALL_WRITE, &params);
 }
-
-uint16_t network_bus_read(uint8_t device, void *buffer, size_t length)
-{
-  if (!NETCALL_B12_RV(NETCMD_READ, device - FUJI_DEVICEID_NETWORK + 1,
-                      length, buffer, length))
-    return 0;
-  return length;
-}
-
-uint16_t network_bus_write(uint8_t device, const void *buffer, size_t length)
-{
-  NETCALL_B12_D(NETCMD_WRITE, device - FUJI_DEVICEID_NETWORK + 1, length, buffer, length);
-  return length;
-}

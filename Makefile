@@ -31,7 +31,8 @@ PLATFORM_COMBOS = \
   h89-hdos+=h89 \
   h89+=fujiversal,fujiversal-call \
   model2+=fujiversal,fujiversal-call \
-  msdos+=fujiversal
+  msdos+=fujiversal \
+  msx+=fujiversal
 
 include makefiles/toplevel-rules.mk
 
