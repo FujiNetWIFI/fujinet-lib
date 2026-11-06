@@ -10,7 +10,7 @@
 #define FUJI_VARIABLE_LEN_PACKETS 1
 #endif
 
-#if defined(FUJI_PLATFORM_COLECO)
+#if defined(FUJI_PLATFORM_COLECO) || defined(FUJI_PLATFORM_NES)
 /* Most bytes one network_bus_read()/network_bus_write() can move; the cart mailbox is smaller than a caller's buffer. */
 #define FUJI_NETWORK_READ_MAX  1024
 #define FUJI_NETWORK_WRITE_MAX 317

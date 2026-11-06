@@ -11,6 +11,7 @@ PLATFORMS += lynx
 PLATFORMS += model2
 PLATFORMS += msdos
 PLATFORMS += msx
+PLATFORMS += nes
 PLATFORMS += pmd85
 
 # You can run 'make <platform>' to build for a specific platform,
@@ -34,7 +35,8 @@ PLATFORM_COMBOS = \
   h89+=fujiversal,fujiversal-call \
   model2+=fujiversal,fujiversal-call \
   msdos+=fujiversal \
-  msx+=fujiversal
+  msx+=fujiversal \
+  nes+=fujiversal
 
 include makefiles/toplevel-rules.mk
 

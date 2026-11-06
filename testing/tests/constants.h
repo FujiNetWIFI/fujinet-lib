@@ -5,7 +5,8 @@
 // must match nativeEOL() for the platform's bus: CR LF on RS232, CR by default.
 // cc65's '\n' is already native on the Atari and C64.
 #if defined(FUJI_PLATFORM_MSDOS) || defined(FUJI_PLATFORM_MODEL2) \
-  || defined(FUJI_PLATFORM_MSX) || defined(FUJI_PLATFORM_COLECO)
+  || defined(FUJI_PLATFORM_MSX) || defined(FUJI_PLATFORM_COLECO) \
+  || defined(FUJI_PLATFORM_NES)
 #define BASIC_LINE_ENDING "\r\n"
 #elif defined(FUJI_PLATFORM_APPLE2) || defined(FUJI_PLATFORM_COCO) \
   || defined(FUJI_PLATFORM_ADAM) || defined(FUJI_PLATFORM_PMD85) \
