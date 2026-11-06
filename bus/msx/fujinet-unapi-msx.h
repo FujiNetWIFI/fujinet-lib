@@ -13,6 +13,10 @@
    identifiers are case insensitive. */
 #define FUJI_UNAPI_ID "FUJINET"
 
+/* A ROM implementation carries FUJI_UNAPI_ID here so a client can find and
+   INIT it when it ran before the BIOS scan reached that ROM. */
+#define FUJI_UNAPI_ROM_ID_ADDR 0x4010
+
 /* The block FUJI_CALL_WRITE and FUJI_CALL_READ take in HL.  The caller must
  * keep it, and the buffer it points at, out of page 1 and page 2: an
  * implementation is free to page itself in over either while the call runs.
