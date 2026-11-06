@@ -13,8 +13,8 @@
    identifiers are case insensitive. */
 #define FUJI_UNAPI_ID "FUJINET"
 
-/* A ROM implementation carries FUJI_UNAPI_ID here so a client can find and
-   INIT it when it ran before the BIOS scan reached that ROM. */
+/* Where a ROM implementation carries FUJI_UNAPI_ID, for clients that run
+   before the BIOS has called its INIT. */
 #define FUJI_UNAPI_ROM_ID_ADDR 0x4010
 
 /* The block FUJI_CALL_WRITE and FUJI_CALL_READ take in HL.  The caller must
@@ -49,12 +49,9 @@ enum {
  */
 extern uint8_t fuji_unapi_call(uint8_t func, FujiNetParams *params);
 
-/* The implementation's slot in MSX slot-id format, as EXTBIO returned it, or
- * 0xFF if none is installed (slot 0 is valid).
- */
+/* 0xFF if none is installed, as slot 0 is valid. */
 extern uint8_t fuji_unapi_slot(void);
 
-/* The implementation's entry point, or NULL if none is installed. */
 extern void *fuji_unapi_entry(void);
 
 #endif /* FUJINET_UNAPI_MSX_H */

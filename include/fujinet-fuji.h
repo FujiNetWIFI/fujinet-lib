@@ -483,12 +483,11 @@ extern void fuji_enable_user_rom(void);
 #endif
 
 #ifdef FUJI_PLATFORM_MSX
-#define FUJI_CART_MODE_UNAPI_USER_ROM 0x3D  /* UNAPI stays resident, user ROM replaces CONFIG */
-#define FUJI_CART_MODE_UNAPI_BASIC    0x1C  /* UNAPI alone; the machine boots to BASIC */
+#define FUJI_CART_MODE_UNAPI_USER_ROM 0x3D
+#define FUJI_CART_MODE_UNAPI_BASIC    0x1C  /* No user ROM or CONFIG; boots to BASIC */
 
 /**
- * @brief MSX only: switches the cartridge to mode (FUJI_CART_MODE_*) and restarts
- * the machine. Does not return.
+ * @brief MSX only: restarts the machine in a FUJI_CART_MODE_*. Does not return.
  */
 extern void fuji_set_cart_mode(uint8_t mode);
 #endif

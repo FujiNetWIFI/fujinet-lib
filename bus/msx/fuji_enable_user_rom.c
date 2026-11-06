@@ -7,9 +7,8 @@
 #define STUB_MODE       12
 #define STUB_NO_SLOT    8
 
-/* The write swaps out the ROM the caller may run from, so this runs from RAM.
- * ENASLT puts the UNAPI subslot in page 2, the only place the IO window is
- * decoded. */
+/* Runs from RAM because the write swaps out the ROM the caller may run from.
+ * The IO window is only decoded with the UNAPI subslot in page 2. */
 static const uint8_t cart_mode_stub[] = {
   0x3E, 0x00,                    /* LD A,slot */
   0x21, 0x00, 0x80,              /* LD HL,8000h */

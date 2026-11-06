@@ -1,7 +1,5 @@
-/* Finding a FujiNet implementation with EXTBIO.  Separate from the call back
- * end so that code which defines its own fuji_unapi_call() can still ask where
- * UNAPI is, as fuji_set_cart_mode() does, without linking that back end too.
- */
+/* Separate from fujinet-unapi-call.c so that code defining its own
+ * fuji_unapi_call() can use discovery without a duplicate symbol. */
 
 #include "fujinet-unapi-msx.h"
 
@@ -123,9 +121,8 @@ static uint8_t slot_has_rom(uint8_t slot)
   return 1;
 }
 
-/* The BIOS installs the EXTBIO hook from the ROM's INIT during its slot scan.
-   A user ROM in a lower slot runs first and may never return, so the scan
-   never reaches UNAPI.  Find the ROM here and run its INIT ourselves. */
+/* A user ROM in a lower slot runs first and may never return, so the BIOS
+   never reaches UNAPI's INIT and EXTBIO stays unhooked. */
 static uint8_t install_from_rom(void)
 {
   uint8_t p, s, slot;
