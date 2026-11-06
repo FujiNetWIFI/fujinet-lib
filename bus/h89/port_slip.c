@@ -10,6 +10,8 @@ enum {
   SLIP_ESC_ESC = 0xDD,
 };
 
+#define SYNC_MAX 4096
+
 uint16_t port_putbuf_slip(const void *buf, uint16_t len)
 {
   uint16_t idx, count;
@@ -41,7 +43,7 @@ uint16_t port_getbuf_slip_dual(void *hdr_buf, uint16_t hdr_len,
                                uint16_t timeout)
 {
   uint8_t *ptr = (uint8_t *) hdr_buf;
-  uint16_t remain = hdr_len, total = 0;
+  uint16_t remain = hdr_len, total = 0, skipped = 0;
   int c;
 
 
@@ -56,7 +58,7 @@ uint16_t port_getbuf_slip_dual(void *hdr_buf, uint16_t hdr_len,
   // Sync to frame: discard until SLIP_END
   do {
     c = port_getc_timeout(timeout);
-    if (c < 0)
+    if (c < 0 || ++skipped > SYNC_MAX)
       return 0;
   } while (c != SLIP_END);
 
