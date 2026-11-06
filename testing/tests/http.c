@@ -89,7 +89,7 @@ void test_network_http_fixed_completion(void)
   err = network_status(url, &bw, &conn, &nerr);
   close_err = network_close(url);
   TEST("decoded body has exactly 3 bytes", r == 3);
-  TEST("decoded body equals ABC", memcmp(body, "ABC", 3) == 0);
+  TEST("decoded body equals ABC", memcmp(body, NET_HTTP_HELD_BODY, 3) == 0);
   TEST("completion STATUS succeeds", err == FN_ERR_OK);
   TEST("no bytes remain", bw == 0);
   TEST("HTTP transaction completed", conn == 0);
@@ -116,7 +116,7 @@ void test_network_http_chunked_completion(void)
   err = network_status(url, &bw, &conn, &nerr);
   close_err = network_close(url);
   TEST("decoded body has exactly 3 bytes", r == 3);
-  TEST("decoded body equals ABC", memcmp(body, "ABC", 3) == 0);
+  TEST("decoded body equals ABC", memcmp(body, NET_HTTP_HELD_BODY, 3) == 0);
   TEST("completion STATUS succeeds", err == FN_ERR_OK);
   TEST("no bytes remain", bw == 0);
   TEST("HTTP transaction completed", conn == 0);

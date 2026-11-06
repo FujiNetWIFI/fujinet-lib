@@ -11,6 +11,22 @@
 #include <string.h>
 #endif /* _CMOC_VERSION_ */
 
+#ifdef FUJI_PLATFORM_C64
+/* FujiNet takes host names and paths, and lists directory entries, as ASCII.
+ * cc65 would compile these literals to PETSCII, so spell them out. */
+#define TNFS_HOST     "\x74\x6e\x66\x73\x2e\x66\x75\x6a\x69\x6e\x65\x74\x2e\x6f\x6e\x6c\x69\x6e\x65" /* tnfs.fujinet.online */
+#define SRC_DSK_PATH  "\x2f\x43\x4f\x43\x4f\x2f\x6c\x6f\x62\x62\x79\x2e\x64\x73\x6b" /* /COCO/lobby.dsk */
+#define SD_DSK_PATH   "\x2f\x6c\x6f\x62\x62\x79\x2e\x64\x73\x6b" /* /lobby.dsk */
+#define COPY_SPEC     "\x43\x4f\x43\x4f\x2f\x6c\x6f\x62\x62\x79\x2e\x64\x73\x6b\x7c\x6c\x6f\x62\x62\x79\x2e\x64\x73\x6b" /* COCO/lobby.dsk|lobby.dsk */
+#define NEW_DISK_PATH "\x2f\x66\x6e\x6e\x65\x77\x64\x69\x73\x6b\x2e\x69\x6d\x67" /* /fnnewdisk.img */
+#else
+#define TNFS_HOST     TNFS_COPY_SOURCE_HOST
+#define SRC_DSK_PATH  "/COCO/lobby.dsk"
+#define SD_DSK_PATH   "/lobby.dsk"
+#define COPY_SPEC     "COCO/lobby.dsk|lobby.dsk"
+#define NEW_DISK_PATH NEW_DISK_NAME
+#endif /* FUJI_PLATFORM_C64 */
+
 void test_fuji_copy_file(void)
 {
   bool ok;
@@ -65,7 +81,8 @@ void test_fuji_copy_file(void)
 
   for (i = 0; i < FUJI_MAX_HOSTS; i++) {
     slot = (uint8_t *)g.hslots.hosts[i];
-    if (slot[0] == 'S' && slot[1] == 'D' && slot[2] == '\0') {
+    /* ASCII "SD": cc65 makes 'S' and 'D' PETSCII on the C64 */
+    if (slot[0] == 0x53 && slot[1] == 0x44 && slot[2] == '\0') {
       sd_idx = i;
       found_sd = true;
       break;
@@ -88,7 +105,7 @@ void test_fuji_copy_file(void)
    * slot's name is put back afterward. */
   for (i = 0; i < FUJI_MAX_HOSTS; i++) {
     slot = (uint8_t *)g.hslots.hosts[i];
-    if (strncmp((char *)slot, TNFS_COPY_SOURCE_HOST, 32) == 0) {
+    if (strncmp((char *)slot, TNFS_HOST, 32) == 0) {
       src_idx = i;
       found_src = true;
       src_preexisting = true;
@@ -130,7 +147,7 @@ void test_fuji_copy_file(void)
     slot = (uint8_t *)g.hslots.hosts[src_idx];
     memcpy(saved_src, slot, 32);
     memset(slot, 0, 32);
-    strcpy((char *)slot, TNFS_COPY_SOURCE_HOST);
+    strcpy((char *)slot, TNFS_HOST);
 
     ok = fuji_put_host_slots(&g.hslots.hosts[0], FUJI_MAX_HOSTS);
     TEST("fuji_put_host_slots (with source) succeeds", ok);
@@ -143,7 +160,7 @@ void test_fuji_copy_file(void)
   TEST("fuji_mount_host_slot (SD) succeeds", ok);
 
   /* fuji_file_stat() decodes the directory entry for each platform. */
-  e = fuji_file_stat(sd_idx, "/lobby.dsk");
+  e = fuji_file_stat(sd_idx, SD_DSK_PATH);
   if (e) {
     file_existed = true;
     pre_day = e->modified.day;
@@ -157,7 +174,7 @@ void test_fuji_copy_file(void)
   e = fuji_file_stat(sd_idx, "/abcdefghijklm.dsk");
   TEST("fuji_file_stat of a missing 17-character name returns NULL", e == NULL);
 
-  e = fuji_file_stat(src_idx, "/COCO/lobby.dsk");
+  e = fuji_file_stat(src_idx, SRC_DSK_PATH);
   TEST("lobby.dsk found on the TNFS source", e != NULL);
   if (e) {
     src_size = e->size;
@@ -165,7 +182,7 @@ void test_fuji_copy_file(void)
   }
   TEST("lobby.dsk on the TNFS source is not empty", src_size > 0);
 
-  strcpy(copy_spec, "COCO/lobby.dsk|lobby.dsk");
+  strcpy(copy_spec, COPY_SPEC);
   printf("  fuji_copy_file(src=%u, dst=%u, \"%s\")\n",
          (unsigned)(src_idx + 1), (unsigned)(sd_idx + 1), copy_spec);
   copy_ok = fuji_copy_file(src_idx + 1, sd_idx + 1, copy_spec);
@@ -184,7 +201,7 @@ void test_fuji_copy_file(void)
 
   TEST("fuji_copy_file (COCO/lobby.dsk -> SD lobby.dsk) succeeds", copy_ok);
 
-  e = fuji_file_stat(sd_idx, "/lobby.dsk");
+  e = fuji_file_stat(sd_idx, SD_DSK_PATH);
   TEST("lobby.dsk found on SD after copy", e != NULL);
   if (e) {
     dest_size = e->size;
@@ -222,7 +239,7 @@ static bool nd_ok, nd_left;
 static void try_create(NewDisk *nd, uint8_t sd_idx)
 {
   nd_ok = fuji_create_new(nd);
-  nd_left = fuji_file_stat(sd_idx, NEW_DISK_NAME) != NULL;
+  nd_left = fuji_file_stat(sd_idx, NEW_DISK_PATH) != NULL;
   /* Clean up before the checks, which stop the run when one fails */
   fuji_unmount_disk_image(nd->deviceSlot);
   if (nd_left)
@@ -251,7 +268,8 @@ void test_fuji_create_new(void)
   sd_idx = 0;
   for (i = 0; i < FUJI_MAX_HOSTS; i++) {
     slot = (uint8_t *)g.hslots.hosts[i];
-    if (slot[0] == 'S' && slot[1] == 'D' && slot[2] == '\0') {
+    /* ASCII "SD": cc65 makes 'S' and 'D' PETSCII on the C64 */
+    if (slot[0] == 0x53 && slot[1] == 0x44 && slot[2] == '\0') {
       sd_idx = i;
       found_sd = true;
       break;
@@ -277,7 +295,7 @@ void test_fuji_create_new(void)
   memset(&nd, 0, sizeof(nd));
   nd.hostSlot = sd_idx;
   nd.deviceSlot = ds;
-  strcpy(nd.filename, NEW_DISK_NAME);
+  strcpy(nd.filename, NEW_DISK_PATH);
 #if defined(FUJI_PLATFORM_APPLE2)
   nd.createType = NEW_DISK_TYPE_PO;
   nd.numBlocks = 280;
@@ -300,7 +318,7 @@ void test_fuji_create_new(void)
   ok = fuji_create_new(&nd);
   TEST("fuji_create_new succeeds", ok);
 
-  e = fuji_file_stat(sd_idx, NEW_DISK_NAME);
+  e = fuji_file_stat(sd_idx, NEW_DISK_PATH);
   TEST("the new image is on the SD host", e != NULL);
   if (e) {
     printf("  size %lu, %lu expected\n", (unsigned long) e->size, want);
