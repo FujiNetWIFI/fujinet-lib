@@ -45,4 +45,9 @@ enum {
  */
 extern uint8_t fuji_unapi_call(uint8_t func, FujiNetParams *params);
 
+/* The implementation's slot in MSX slot-id format, as EXTBIO returned it, or
+ * 0xFF if none is installed (slot 0 is valid).
+ */
+extern uint8_t fuji_unapi_slot(void);
+
 #endif /* FUJINET_UNAPI_MSX_H */

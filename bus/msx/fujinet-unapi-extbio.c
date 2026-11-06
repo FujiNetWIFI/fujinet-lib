@@ -215,7 +215,7 @@ static uint8_t bounce_large(uint8_t func, FujiNetParams *params)
   return bounce_via(func, params, scratch);
 }
 
-uint8_t fuji_unapi_call(uint8_t func, FujiNetParams *params)
+static uint8_t discover(void)
 {
   if (!unapi_entry) {
     if (!UNAPIGetCount())
@@ -227,6 +227,18 @@ uint8_t fuji_unapi_call(uint8_t func, FujiNetParams *params)
     if (!unapi_entry)
       return 0;
   }
+  return 1;
+}
+
+uint8_t fuji_unapi_slot(void)
+{
+  return discover() ? unapi_slot : 0xFF;
+}
+
+uint8_t fuji_unapi_call(uint8_t func, FujiNetParams *params)
+{
+  if (!discover())
+    return 0;
 
   /* A buffer the implementation cannot see would have it read its own ROM
      instead, and the reply then looks like device nonsense rather than a
