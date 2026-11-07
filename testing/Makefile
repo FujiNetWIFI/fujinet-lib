@@ -15,10 +15,7 @@ PRODUCTS += netproto
 PRODUCTS += wifi
 PRODUCTS_DISK_NAME = fntests
 
-# atari5200 has no test harness yet: no tests/atari5200 and no BASIC_LINE_ENDING
-# in constants.h, and its crt0 and cart linker config are MekkoGX's, not
-# this repo's.
-PLATFORMS := $(filter-out atari5200,$(shell awk '/^PLATFORMS[ \t]*\+=/{print $$3}' ../Makefile))
+PLATFORMS := $(shell awk '/^PLATFORMS[ \t]*\+=/{print $$3}' ../Makefile)
 
 # You can run 'make <platform>' to build for a specific platform,
 # or 'make <platform>/<target>' for a platform-specific target.
@@ -121,6 +118,7 @@ LIBS_EXTRA_ADAM_CPM = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib) \
 	$(call library-flag,eos.lib) $(call library-flag,smartkeys.lib)
 LIBS_EXTRA_APPLE2 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_ATARI = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
+LIBS_EXTRA_ATARI5200 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_C64 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_COCO = $(call library-flag,$(TESTS_LIB).$(PLATFORM))
 LIBS_EXTRA_COLECO = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
