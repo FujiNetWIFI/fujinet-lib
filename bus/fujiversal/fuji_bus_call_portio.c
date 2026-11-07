@@ -1,3 +1,7 @@
+#include <fujinet-platform.h>
+
+#ifdef FUJI_BUS_CALL_PORTIO
+
 #include <stdio.h> // debug
 
 #include "fujiversal.h"
@@ -131,9 +135,9 @@ static uint8_t fuji_packet_call(AtariSIODirection direction, fujibus_packet *pac
   return success;
 }
 
-bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
-		   uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
-		   const void *buf, size_t buf_length)
+bool fuji_bus_call_portio(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
+                          uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
+                          const void *buf, size_t buf_length)
 {
   int code;
   uint8_t ck1, ck2;
@@ -174,3 +178,5 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
   direction = fields & FUJI_FIELD_REPLY ? SIO_DIRECTION_READ : SIO_DIRECTION_WRITE;
   return fuji_packet_call(direction, &fb_packet, buf, buf_length);
 }
+
+#endif /* FUJI_BUS_CALL_PORTIO */

@@ -6,10 +6,13 @@
 #define FUJI_BUS_CALL_ARGS_AUX4     2 /* aux1..aux4, buf, length */
 #define FUJI_BUS_CALL_ARGS_VARIADIC 3 /* only the fields named by the descriptor */
 
+/* FUJI_BUS_CALL_PORTIO: route fuji_bus_call() to fuji_bus_call_portio(), which needs the
+   platform's port_*() functions */
+
 /* FUJI_NETWORK_READ_MAX, FUJI_NETWORK_WRITE_MAX: most bytes one network_bus_read() or
    network_bus_write() can move, 0 for no limit */
 
-/* Every platform sets every switch; there are no defaults. */
+/* Every platform sets every switch except FUJI_BUS_CALL_PORTIO; there are no defaults. */
 #if defined(_CMOC_VERSION_)
 #define FUJI_PLATFORM_COCO
 #define FUJI_BUS_CALL_ARGS        FUJI_BUS_CALL_ARGS_VARIADIC
@@ -112,6 +115,7 @@
 #elif defined(__TRS80M2__)
 #define FUJI_PLATFORM_MODEL2
 #define FUJI_BUS_CALL_ARGS        FUJI_BUS_CALL_ARGS_AUX4
+#define FUJI_BUS_CALL_PORTIO
 #define FUJI_VARIABLE_LEN_PACKETS 1
 #define FUJI_MAX_DISKS            8
 #define MAX_PASSWORD_LEN          64
@@ -121,6 +125,7 @@
 #elif defined(__H89__) || defined(__HDOS__)
 #define FUJI_PLATFORM_H89
 #define FUJI_BUS_CALL_ARGS        FUJI_BUS_CALL_ARGS_AUX4
+#define FUJI_BUS_CALL_PORTIO
 #define FUJI_VARIABLE_LEN_PACKETS 1
 #define FUJI_MAX_DISKS            8
 #define MAX_PASSWORD_LEN          64
@@ -142,6 +147,9 @@
 
 #ifndef FUJI_BUS_CALL_ARGS
 #error "Platform did not set FUJI_BUS_CALL_ARGS"
+#endif
+#if defined(FUJI_BUS_CALL_PORTIO) && FUJI_BUS_CALL_ARGS != FUJI_BUS_CALL_ARGS_AUX4
+#error "FUJI_BUS_CALL_PORTIO needs FUJI_BUS_CALL_ARGS_AUX4"
 #endif
 #ifndef FUJI_VARIABLE_LEN_PACKETS
 #error "Platform did not set FUJI_VARIABLE_LEN_PACKETS"
