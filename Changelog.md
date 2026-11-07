@@ -15,6 +15,7 @@
 - [pmd85] fuji_sleep_ms() no longer runs about 18% long; a jiffy is now 1/50 s, matching the display
 - [h89][model2] Each bus call drains stale reply bytes first; [h89] the SLIP sync gives up after 4096 bytes with no END
 - [coleco] Add the ColecoVision target for the FujiNet Coleco cartridge: the cart mailbox bus and the RS232 NewDisk / FujiDirEntry layouts
+- [c64] The clock calls go to the clock, IEC device 29, instead of the FujiNet device, which refuses them (needs fujinet-firmware #2315)
 
 ## [5.1.0] 2026-10-27
 

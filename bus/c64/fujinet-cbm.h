@@ -20,6 +20,7 @@ enum {
 
 #define CBM_DEV_FUJI          30
 #define CBM_DEV_NETWORK       16
+#define CBM_DEV_CLOCK         29
 
 #define CBM_CMD_CHANNEL       15
 #define CBM_DATA_CHANNEL      2
