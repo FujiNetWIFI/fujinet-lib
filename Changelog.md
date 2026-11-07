@@ -9,12 +9,12 @@
 - [c64] FujiDirEntry.size is 32 bits, so fuji_file_stat() reports files of 64 KiB and up correctly (needs fujinet-firmware #2251)
 - [atari][h89][model2] wait_jiffies() no longer hangs (Atari) or returns early (H89 past 44 s, Model II past 3.6 min) on long waits
 - [adam] wait_jiffies() counts display frames instead of CPU cycles; a 1 s wait took 1.2 s on hardware
-- [all] fuji_sleep_ms() wraps the jiffy wait using milliseconds
-- [msx] Use bus/fujiversal for the app key and network bus calls, so fuji_read_appkey() and fuji_write_appkey() link
-- [h89][model2][msdos][msx] fuji_read_appkey() fails instead of copying past the caller's buffer when the reply is longer than MAX_APPKEY_LEN
+- fuji_sleep_ms() wraps the jiffy wait using milliseconds
+- [msx] fuji_read_appkey() and fuji_write_appkey() link
 - [pmd85] fuji_sleep_ms() no longer runs about 18% long; a jiffy is now 1/50 s, matching the display
 - [h89][model2] Each bus call drains stale reply bytes first; [h89] the SLIP sync gives up after 4096 bytes with no END
 - [coleco] Add the ColecoVision target for the FujiNet Coleco cartridge: the cart mailbox bus and the RS232 NewDisk / FujiDirEntry layouts
+- [atari5200] Add the Atari 5200 target for the FujiNet 5200 cartridge: the cart mailbox bus and the RS232 NewDisk / FujiDirEntry layouts
 
 ## [5.1.0] 2026-10-27
 
@@ -33,7 +33,6 @@
 - [h89] Port A runs straight to the ESP32 (the card's 74LVC245 is gone): the H89 no longer drives DIR and /OE (needs fujinet-firmware #2232)
 - [adam] fuji_copy_file() waits for a slow copy instead of reporting it failed after about 4 s
 - wait_jiffies() is part of the library
-- [atari5200] Add the Atari 5200 target for the FujiNet 5200 cartridge: the cart mailbox bus and the RS232 NewDisk / FujiDirEntry layouts
 
 ## [5.0.0] 2026-10-09
 
