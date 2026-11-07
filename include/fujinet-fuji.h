@@ -103,20 +103,10 @@ typedef struct
     uint8_t hour, minute, second;
 } FujiDirEntryTimestamp;
 
-#define FUJI_DIR_ENTRY_IS_TRUNC(x) ((x)->is_trunc)
-#define FUJI_DIR_ENTRY_IS_DIR(x) ((x)->is_dir)
 #define FUJI_DIR_FLAG_ADDITIONAL_DATA 0x80
 #define FUJI_DIR_EOF 0x7F
 
-#if defined(FUJI_PLATFORM_ATARI)   \
-  || defined(FUJI_PLATFORM_MSDOS)  \
-  || defined(FUJI_PLATFORM_MSX)    \
-  || defined(FUJI_PLATFORM_MODEL2) \
-  || defined(FUJI_PLATFORM_H89)    \
-  || defined(FUJI_PLATFORM_C64)    \
-  || defined(FUJI_PLATFORM_COLECO) \
-  || defined(FUJI_PLATFORM_NES) \
-  || defined(FUJI_PLATFORM_ATARI5200)
+/* The NEW DISK layouts; FUJI_NEW_DISK_FORMAT picks the platform's NewDisk */
 typedef struct
 {
   uint16_t numSectors;
@@ -124,14 +114,13 @@ typedef struct
   uint8_t hostSlot;
   uint8_t deviceSlot;
   char filename[MAX_FILENAME_LEN];
-} NewDisk;
+} NewDiskSectors;
 
-/* NewDisk.sectorSize */
+/* NewDiskSectors.sectorSize */
 #define NEW_DISK_SECTOR_SINGLE        128
 #define NEW_DISK_SECTOR_DOUBLE        256
 #define NEW_DISK_SECTOR_DOUBLE_DOUBLE 512
 
-#elif defined(FUJI_PLATFORM_APPLE2)
 typedef struct
 {
   uint8_t hostSlot;
@@ -139,46 +128,52 @@ typedef struct
   uint8_t createType;
   uint32_t numBlocks;
   char filename[MAX_FILENAME_LEN];
-} NewDisk;
+} NewDiskTypedBlocks;
 
-/* NewDisk.createType */
+/* NewDiskTypedBlocks.createType */
 #define NEW_DISK_TYPE_PO  0 /* ProDOS order */
 #define NEW_DISK_TYPE_2MG 1
 #define NEW_DISK_TYPE_DO  2 /* DOS 3.3 order */
 
-#elif defined(FUJI_PLATFORM_COCO) \
-  || defined(FUJI_PLATFORM_PMD85)
 typedef struct
 {
   uint8_t numDisks;
   uint8_t hostSlot;
   uint8_t deviceSlot;
   char filename[MAX_FILENAME_LEN];
-} NewDisk;
+} NewDiskCount;
 
-#elif defined(FUJI_PLATFORM_LYNX)
 typedef struct
 {
   uint16_t numBlocks;
   uint8_t hostSlot;
   uint8_t deviceSlot;
   char filename[MAX_FILENAME_LEN];
-} NewDisk;
+} NewDiskBlocks16;
 
-#elif defined(FUJI_PLATFORM_ADAM)
 typedef struct
 {
   uint8_t hostSlot;
   uint8_t deviceSlot;
   uint32_t numBlocks; /* 1K blocks */
   char filename[MAX_FILENAME_LEN];
-} NewDisk;
+} NewDiskBlocks32;
 
-#endif // End of NewDisk defs
+#if FUJI_NEW_DISK_FORMAT == FUJI_NEW_DISK_SECTORS
+typedef NewDiskSectors NewDisk;
+#elif FUJI_NEW_DISK_FORMAT == FUJI_NEW_DISK_TYPED_BLOCKS
+typedef NewDiskTypedBlocks NewDisk;
+#elif FUJI_NEW_DISK_FORMAT == FUJI_NEW_DISK_COUNT
+typedef NewDiskCount NewDisk;
+#elif FUJI_NEW_DISK_FORMAT == FUJI_NEW_DISK_BLOCKS16
+typedef NewDiskBlocks16 NewDisk;
+#elif FUJI_NEW_DISK_FORMAT == FUJI_NEW_DISK_BLOCKS32
+typedef NewDiskBlocks32 NewDisk;
+#else
+#error "Unknown FUJI_NEW_DISK_FORMAT"
+#endif /* FUJI_NEW_DISK_FORMAT */
 
-#if defined(FUJI_PLATFORM_ATARI)   \
-  || defined(FUJI_PLATFORM_APPLE2) \
-  || defined(FUJI_PLATFORM_ADAM)
+/* The directory entry layouts; FUJI_DIR_ENTRY_FORMAT picks the platform's FujiDirEntry */
 typedef struct
 {
   FujiDirEntryTimestamp modified;
@@ -187,16 +182,8 @@ typedef struct
   uint8_t is_trunc;
   uint8_t mediatype;
   char filename[MAX_FILENAME_LEN];
-} FujiDirEntry;
+} FujiDirEntryBools;
 
-#elif defined(FUJI_PLATFORM_MSDOS) \
-  || defined(FUJI_PLATFORM_MSX)    \
-  || defined(FUJI_PLATFORM_MODEL2) \
-  || defined(FUJI_PLATFORM_H89)    \
-  || defined(FUJI_PLATFORM_C64)    \
-  || defined(FUJI_PLATFORM_COLECO) \
-  || defined(FUJI_PLATFORM_NES) \
-  || defined(FUJI_PLATFORM_ATARI5200)
 typedef struct
 {
   FujiDirEntryTimestamp modified;
@@ -204,22 +191,23 @@ typedef struct
   uint8_t flags;
   uint8_t mediatype;
   char filename[MAX_FILENAME_LEN];
-} FujiDirEntry;
+} FujiDirEntryFlags;
 
-#elif defined(FUJI_PLATFORM_COCO) \
-  || defined(FUJI_PLATFORM_PMD85) \
-  || defined(FUJI_PLATFORM_LYNX)
-typedef struct
-{
-  FujiDirEntryTimestamp modified;
-  uint32_t size;
-  uint8_t is_dir;
-  uint8_t is_trunc;
-  uint8_t mediatype;
-  char filename[MAX_FILENAME_LEN];
-} FujiDirEntry;
+/* FujiDirEntryFlags.flags */
+#define FUJI_DIR_ENTRY_FLAG_DIR   0x01
+#define FUJI_DIR_ENTRY_FLAG_TRUNC 0x02
 
-#endif // End of FujiDirEntry defs
+#if FUJI_DIR_ENTRY_FORMAT == FUJI_DIR_ENTRY_BOOLS
+typedef FujiDirEntryBools FujiDirEntry;
+#define FUJI_DIR_ENTRY_IS_TRUNC(x) ((x)->is_trunc)
+#define FUJI_DIR_ENTRY_IS_DIR(x) ((x)->is_dir)
+#elif FUJI_DIR_ENTRY_FORMAT == FUJI_DIR_ENTRY_FLAGS
+typedef FujiDirEntryFlags FujiDirEntry;
+#define FUJI_DIR_ENTRY_IS_TRUNC(x) ((x)->flags & FUJI_DIR_ENTRY_FLAG_TRUNC)
+#define FUJI_DIR_ENTRY_IS_DIR(x) ((x)->flags & FUJI_DIR_ENTRY_FLAG_DIR)
+#else
+#error "Unknown FUJI_DIR_ENTRY_FORMAT"
+#endif /* FUJI_DIR_ENTRY_FORMAT */
 
 // WIP, only 64 fully supported at the moment.
 enum AppKeySize
@@ -228,12 +216,12 @@ enum AppKeySize
     // SIZE_256
 };
 
-#ifndef FUJI_PLATFORM_C64
+/* The STATUS reply layouts; FUJI_STATUS_FORMAT picks the platform's FNStatus */
 typedef struct
 {
     unsigned char value[4];
-} FNStatus;
-#else
+} FNStatusBytes;
+
 typedef struct
 {
     // needs some thought, at the moment it's just values from iecStatus, but could be made generic
@@ -248,9 +236,15 @@ typedef struct
         } value;
         uint8_t raw[45];
     };
-} FNStatus;
+} FNStatusIEC;
 
-#endif
+#if FUJI_STATUS_FORMAT == FUJI_STATUS_BYTES
+typedef FNStatusBytes FNStatus;
+#elif FUJI_STATUS_FORMAT == FUJI_STATUS_IEC
+typedef FNStatusIEC FNStatus;
+#else
+#error "Unknown FUJI_STATUS_FORMAT"
+#endif /* FUJI_STATUS_FORMAT */
 
 extern FNStatus _fuji_status;
 
