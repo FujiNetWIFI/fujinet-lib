@@ -152,8 +152,12 @@ you changed, and fix or delete any the change made untrue.
 ## Changelog
 
 Add a line under `## [Unreleased]` in `Changelog.md` for a significant feature or for a fix to
-something that didn't work in normal use, tagged by platform when it is one: `- [adam] ...`. Tests,
-CI, build plumbing, refactors and docs get no entry.
+something that didn't work in normal use, tagged by platform when it is one: `- [adam] ...`. An
+edge case few programs reach is not such a fix. Tests, CI, build plumbing (makefiles included),
+refactors and docs get no entry.
+
+After a rebase, check that your line is still under `## [Unreleased]`: a release cut while the PR
+was open can leave it in that release's section.
 
 ## Scope of a change
 
@@ -213,7 +217,7 @@ is a good answer.
 - **A fix and its test in one PR.**
 - **A skipped test** where a form that runs everywhere would do.
 - **A platform filtered out of `testing/Makefile`,** or added before its tests build.
-- **A Changelog line** for a test, a build change or a refactor.
+- **A Changelog line** for a test, a build change or a refactor, or under a released version.
 - **Leaving a comment that the change made untrue.**
 - **A PR description that restates the diff.**
 
