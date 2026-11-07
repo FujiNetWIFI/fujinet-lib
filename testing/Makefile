@@ -118,6 +118,7 @@ LIBS_EXTRA_ADAM_CPM = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib) \
 	$(call library-flag,eos.lib) $(call library-flag,smartkeys.lib)
 LIBS_EXTRA_APPLE2 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_ATARI = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
+LIBS_EXTRA_ATARI5200 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_C64 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_COCO = $(call library-flag,$(TESTS_LIB).$(PLATFORM))
 LIBS_EXTRA_COLECO = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
