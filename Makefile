@@ -2,6 +2,7 @@ PRODUCT = fujinet.lib
 PLATFORMS += adam
 PLATFORMS += apple2
 PLATFORMS += atari
+PLATFORMS += atari5200
 PLATFORMS += c64
 PLATFORMS += coco
 PLATFORMS += coleco
@@ -29,6 +30,7 @@ CFLAGS = -DBUILD_$(PLATFORM_UC)
 # Define extra dirs ("combos") that expand with a platform.
 # Format: platform+=combo1,combo2
 PLATFORM_COMBOS = \
+  atari5200+=fujiversal \
   coleco+=fujiversal \
   h89-cpm+=h89 \
   h89-hdos+=h89 \
