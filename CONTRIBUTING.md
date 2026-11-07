@@ -35,7 +35,7 @@ build you mean to trust. Releases are in `README.md`.
 
 - `include/`: the public headers, only for external programs that link with the library; a
   bus-specific header never goes here. `fujinet-platform.h` maps each compiler's predefined macro
-  to one `FUJI_PLATFORM_*`.
+  to one `FUJI_PLATFORM_*` and sets that platform's build switches.
 - `common/`: code shared by every platform. It knows nothing about any platform.
 - `bus/<platform>/`: each platform's bus code, and its own version of any function that has to
   differ there. `h89-cpm` and `h89-hdos` share `bus/h89/`.
@@ -68,10 +68,11 @@ no subclasses, but the library has three ways to get the same effect:
   ```
 
   `network_json_query_adam.c`, `network_seek_atari.c` and `fuji_read_appkey_c64.c` follow it.
-- **A capability, not a platform list.** When shared code depends on what a bus can do, the
-  platforms declare it once in `include/fujinet-bus.h` (`FUJI_VARIABLE_LEN_PACKETS`,
-  `FUJI_BUS_CALL_VARARGS`) and shared code tests the capability. A new platform sets the flag;
-  nothing in `common/` changes.
+- **A capability, not a platform list.** When shared code depends on what a bus can do, each
+  platform declares it in its block in `include/fujinet-platform.h` (`FUJI_VARIABLE_LEN_PACKETS`,
+  `FUJI_BUS_CALL_ARGS`) and shared code tests the capability. Every platform sets every switch,
+  and a missing one is an `#error`, so a new platform fills in its block and nothing in `common/`
+  changes.
 
 So:
 
