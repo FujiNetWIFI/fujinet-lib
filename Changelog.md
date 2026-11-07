@@ -10,6 +10,7 @@
 - [adam] wait_jiffies() counts display frames instead of CPU cycles; a 1 s wait took 1.2 s on hardware
 - [all] fuji_sleep_ms() wraps the jiffy wait using milliseconds
 - [msx] Use bus/fujiversal for the app key and network bus calls, so fuji_read_appkey() and fuji_write_appkey() link
+- [h89][model2][msdos][msx] fuji_read_appkey() fails instead of copying past the caller's buffer when the reply is longer than MAX_APPKEY_LEN
 - [pmd85] fuji_sleep_ms() no longer runs about 18% long; a jiffy is now 1/50 s, matching the display
 - [h89][model2] Each bus call drains stale reply bytes first; [h89] the SLIP sync gives up after 4096 bytes with no END
 
