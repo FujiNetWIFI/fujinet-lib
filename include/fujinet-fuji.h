@@ -114,7 +114,8 @@ typedef struct
   || defined(FUJI_PLATFORM_MODEL2) \
   || defined(FUJI_PLATFORM_H89)    \
   || defined(FUJI_PLATFORM_C64)    \
-  || defined(FUJI_PLATFORM_COLECO)
+  || defined(FUJI_PLATFORM_COLECO) \
+  || defined(FUJI_PLATFORM_NES)
 typedef struct
 {
   uint16_t numSectors;
@@ -192,7 +193,8 @@ typedef struct
   || defined(FUJI_PLATFORM_MODEL2) \
   || defined(FUJI_PLATFORM_H89)    \
   || defined(FUJI_PLATFORM_C64)    \
-  || defined(FUJI_PLATFORM_COLECO)
+  || defined(FUJI_PLATFORM_COLECO) \
+  || defined(FUJI_PLATFORM_NES)
 typedef struct
 {
   FujiDirEntryTimestamp modified;

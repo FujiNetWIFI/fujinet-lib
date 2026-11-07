@@ -2,6 +2,7 @@
 
 ## [Unreleased] (Place WIP changes in this section until a release is done)
 
+- [nes] Add the NES target for the FujiNet NES cartridge: the cart mailbox bus and boot handshake
 - [msx] fuji_enable_user_rom() keeps UNAPI resident, reaching the cartridge's IO window through its subslot; added fuji_set_cart_mode()
 - [msx] UNAPI discovery finds and initializes the FujiNet ROM itself if a ROM that ran first left EXTBIO unhooked
 - fuji_get_device_slots(), fuji_put_device_slots() and the host slot pair take a count that is an expression; CONFIG's `8+2` on Apple II transferred 306 bytes instead of 380

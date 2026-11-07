@@ -19,6 +19,8 @@
 #define FUJI_PLATFORM_ADAM
 #elif defined(__COLECO__)
 #define FUJI_PLATFORM_COLECO
+#elif defined(__NES__)
+#define FUJI_PLATFORM_NES
 #elif defined(__TRS80M2__)
 #define FUJI_PLATFORM_MODEL2
 #elif defined(__H89__) || defined(__HDOS__)

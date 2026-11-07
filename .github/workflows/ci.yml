@@ -28,6 +28,7 @@ jobs:
           - model2
           - msdos
           - msx
+          - nes
           - pmd85
 
     container:
