@@ -6,22 +6,19 @@ include $(MWD)/common.mk
 include $(MWD)/toolchains/cc65.mk
 
 # A 5200 FujiNet client is a 32K image at $4000-$BFFF around the cart's
-# mailbox at $B000, started by its own crt0 (cc65's relies on the
-# BIOS, which the client's header skips). The romstamp checks the claim and
-# the mailbox's rules; MAME's -cart takes the .bin as it is.
+# mailbox at $B000, started by cc65's own crt0 through the BIOS. The romstamp
+# writes the "FUJI" claim and checks the mailbox's rules; MAME's -cart takes
+# the .bin as it is.
 ATARI5200_CFG ?= $(MWD)/atari5200-fujinet.cfg
-ATARI5200_CRT0 ?= $(MWD)/atari5200-crt0.s
 ATARI5200_MAP ?= $(EXECUTABLE:.bin=.map)
 
 ifneq ($(IS_LIBRARY),1)
-  # The crt0 is named first on the link line, so it, not cc65's, supplies
-  # __STARTUP__.
-  LDFLAGS += -C $(ATARI5200_CFG) -m $(ATARI5200_MAP) $(ATARI5200_CRT0)
+  LDFLAGS += -C $(ATARI5200_CFG) -m $(ATARI5200_MAP)
 
 .DELETE_ON_ERROR:
 
 $(PLATFORM)/executable-post::
-	$(MWD)/atari5200-romstamp.py --map $(ATARI5200_MAP) $(EXECUTABLE)
+	$(MWD)/atari5200-romstamp.py --stamp --map $(ATARI5200_MAP) $(EXECUTABLE)
 endif
 
 r2r:: $(BUILD_EXEC) $(BUILD_LIB) $(R2R_EXTRA_DEPS)

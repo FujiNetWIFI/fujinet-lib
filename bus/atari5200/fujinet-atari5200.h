@@ -5,19 +5,14 @@
   Atari 5200 facilities the cross-platform API has no place for.
 
   A FujiNet client is a 32K image at $4000-$BFFF built through MekkoGX's
-  atari5200.mk, which supplies the crt0, the linker config (ROM around the
-  cart's mailbox at $B000-$B7FF; the console's 16K of RAM holds DATA, BSS,
-  the heap and the C stack) and atari5200-romstamp.py, which checks the
-  "FUJI" claim at $BFE0 and the mailbox's rules. None of that is in the
-  lib; the lib is the bus.
+  atari5200.mk: cc65's own crt0 starts it through the BIOS, the linker
+  config puts ROM around the cart's mailbox at $B000-$B7FF (the console's 16K
+  of RAM holds DATA, BSS, the heap and the C stack), and
+  atari5200-romstamp.py writes the "FUJI" claim at $BFE0 and checks the
+  mailbox's rules. None of that is in the lib; the lib is the bus.
 
   The 5200's cart edge has no R/W line: never store into $4000-$BFFF. The
   cart drives the bus on every access there, as a ROM would.
-
-  MekkoGX's crt0 does what the BIOS does at power-on (its header skips the BIOS's
-  title) and keeps the BIOS's zero page and vectors, so cc65's atari5200
-  library works; its VBI counts frames in OS.rtclok. The keypad's IRQ is on
-  and fuji_a5200_key holds the last key.
 */
 
 #include <fujinet-int.h>
@@ -37,16 +32,6 @@
 #define FUJI_A5200_STAGED_READY  0x01
 #define FUJI_A5200_STAGED_CLAIM  0x02   /* a FujiNet app */
 #define FUJI_A5200_STAGED_CONFIG 0x04   /* CONFIG, staged to go back to */
-
-/* fuji_a5200_key: the last keypad key + 1, 0 = none since the program
-   cleared it. */
-#define FUJI_A5200_KEY_STAR   (0x0A + 1)
-#define FUJI_A5200_KEY_HASH   (0x0B + 1)
-#define FUJI_A5200_KEY_START  (0x0C + 1)
-#define FUJI_A5200_KEY_PAUSE  (0x0D + 1)
-#define FUJI_A5200_KEY_RESET  (0x0E + 1)
-#define FUJI_A5200_KEY_DIGIT(d) ((d) + 1)
-extern volatile uint8_t fuji_a5200_key;
 
 /* Seconds before fn_commit() gives up (at least the cart's own budget for
    that call), and the last failed call's reason (the cart's error, 0xFF if

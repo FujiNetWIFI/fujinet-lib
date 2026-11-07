@@ -7,8 +7,8 @@ fails its build rather than a debugging session:
 
   - a flat 32K image, or 64K/128K for a Super Cart app;
   - an entry vector at $BFFE inside the cart window;
-  - "FUJI" at $BFE0, $02 at $BFE7 (the 2-port BIOS's PAL check) and $FF at
-    $BFFD (no BIOS title screen); --noclaim skips this for a plain cart;
+  - "FUJI" at $BFE0 and $02 at $BFE7 (the 2-port BIOS's PAL check), written
+    by --stamp and checked; --noclaim skips this for a plain cart;
   - no store into the cart window: the edge has no R/W, so the cart would
     drive the bus against the CPU, and an indexed store's dummy read of a
     hotspot page is an event;
@@ -20,7 +20,7 @@ fails its build rather than a debugging session:
 The scan walks the code segments named in the ld65 map (-m), so tables are
 never mistaken for instructions. (zp),Y reads cannot be checked here.
 
-Usage: atari5200-romstamp.py [--noclaim] [--map file.map] image.bin
+Usage: atari5200-romstamp.py [--stamp] [--noclaim] [--map file.map] image.bin
 """
 
 import re
@@ -101,6 +101,15 @@ def scan(code, stop, base, label):
     return bad
 
 
+def stamp(path):
+    """Write the claim into the last 32K: "FUJI", version 1, kind auto, and $02 at $BFE7."""
+    with open(path, "r+b") as f:
+        f.seek(0, 2)
+        base = f.tell() - 0x8000
+        f.seek(base + CLAIM - WIN_LO)
+        f.write(b"FUJI\x01\x00\x00\x02")
+
+
 def check_image(path, claim, mapfile):
     img = open(path, "rb").read()
     bad = []
@@ -116,8 +125,6 @@ def check_image(path, claim, mapfile):
             bad.append("no \"FUJI\" claim at $BFE0: the mailbox would go dead at boot")
         if mem(0xBFE7) != 0x02:
             bad.append("$BFE7 is $%02X, not $02: the 2-port BIOS hangs on a PAL GTIA" % mem(0xBFE7))
-        if mem(0xBFFD) != 0xFF:
-            bad.append("$BFFD is $%02X, not $FF: the BIOS would show its title" % mem(0xBFFD))
 
     banks = len(img) // 0x8000
     for lo, hi in code_ranges(mapfile) or [(WIN_LO, 0xAFFF), (0xB800, 0xBFDF)]:
@@ -136,12 +143,15 @@ def check_image(path, claim, mapfile):
 def main():
     args = sys.argv[1:]
     claim = True
+    do_stamp = False
     mapfile = None
     paths = []
     while args:
         a = args.pop(0)
         if a == "--claim":
             claim = True
+        elif a == "--stamp":
+            do_stamp = True
         elif a == "--noclaim":
             claim = False
         elif a == "--map":
@@ -150,6 +160,8 @@ def main():
             paths.append(a)
     rc = 0
     for p in paths:
+        if do_stamp and claim:
+            stamp(p)
         problems = check_image(p, claim, mapfile)
         for x in problems:
             print("romstamp: %s: %s" % (p, x), file=sys.stderr)

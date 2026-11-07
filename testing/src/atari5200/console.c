@@ -4,15 +4,16 @@
 
 /* cc65's atari5200 target has conio output but no stdout or keyboard: printf needs write(), the harness needs cgetc(). */
 
-extern volatile uint8_t fuji_a5200_key; /* the crt0's last keypad key, stored + 1 */
+#define SKSTAT   (*(volatile uint8_t *) 0xE80F)
+#define KEY_DOWN 0x04 /* clear while a keypad key is held */
 
-/* Any keypad key: returns '\r'. */
+/* Any keypad key: returns '\r', once the key was let go first. */
 char cgetc(void)
 {
-  fuji_a5200_key = 0;
-  while (!fuji_a5200_key)
+  while (!(SKSTAT & KEY_DOWN))
     ;
-  fuji_a5200_key = 0;
+  while (SKSTAT & KEY_DOWN)
+    ;
 
   return '\r';
 }
