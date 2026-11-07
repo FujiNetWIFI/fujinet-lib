@@ -4,6 +4,7 @@ PLATFORMS += apple2
 PLATFORMS += atari
 PLATFORMS += c64
 PLATFORMS += coco
+PLATFORMS += coleco
 PLATFORMS += h89-cpm
 PLATFORMS += h89-hdos
 PLATFORMS += lynx
@@ -27,6 +28,7 @@ CFLAGS = -DBUILD_$(PLATFORM_UC)
 # Define extra dirs ("combos") that expand with a platform.
 # Format: platform+=combo1,combo2
 PLATFORM_COMBOS = \
+  coleco+=fujiversal \
   h89-cpm+=h89 \
   h89-hdos+=h89 \
   h89+=fujiversal,fujiversal-call \

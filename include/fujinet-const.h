@@ -12,7 +12,7 @@
 #elif defined(FUJI_PLATFORM_ATARI) || defined(FUJI_PLATFORM_C64) \
   || defined(FUJI_PLATFORM_H89)  || defined(FUJI_PLATFORM_LYNX)  \
   || defined(FUJI_PLATFORM_MODEL2) || defined(FUJI_PLATFORM_MSDOS) \
-  || defined(FUJI_PLATFORM_MSX)
+  || defined(FUJI_PLATFORM_MSX) || defined(FUJI_PLATFORM_COLECO)
 #define FUJI_MAX_DISKS 8
 #else
 #error "Unknown number of disk slots"
