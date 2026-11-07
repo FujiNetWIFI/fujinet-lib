@@ -10,7 +10,7 @@
 
 /* The whole reply is read in place from cartridge ROM, saving a bounce buffer in scarce console RAM. */
 #define FN_REPLY     ((volatile uint8_t *) 0xF800)
-#define FN_REPLY_MAX 1024
+#define FN_REPLY_MAX FUJI_NETWORK_READ_MAX
 
 #define FN_ACKSEQ    (*(volatile uint8_t *) 0xFC00)
 #define FN_STATUS    (*(volatile uint8_t *) 0xFC01)
@@ -50,8 +50,9 @@ enum FnReg
 
 #define FN_BOOTLOCK_MAGIC 0xB5
 
-/* TX stream: NPARAM x { size byte (1|2|4), little-endian value }, then the raw payload. */
-#define FN_TX_MAX    320
+/* TX stream: NPARAM x { size byte (1|2|4), little-endian value }, then the raw payload.
+   A network write carries one 16-bit parameter, three stream bytes. */
+#define FN_TX_MAX    (FUJI_NETWORK_WRITE_MAX + 3)
 
 /* fn_commit() results: the cart's own error codes, plus FN_EWAIT when it never answered. */
 enum FnCartError

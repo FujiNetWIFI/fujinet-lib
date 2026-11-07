@@ -18,7 +18,7 @@ enum FujiColecoBoot
 /* True if a FujiNet cartridge with a protocol version we speak is present. */
 extern bool fuji_coleco_present(void);
 
-/* fuji_mount_image() only starts the transfer: poll boot_state until READY or FAILED (boot_error says why).
+/* fuji_mount_disk_image() only starts the transfer: poll boot_state until READY or FAILED (boot_error says why).
    boot_percent runs 0-100. */
 extern uint8_t fuji_coleco_boot_state(void);
 extern uint8_t fuji_coleco_boot_percent(void);
