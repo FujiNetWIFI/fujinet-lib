@@ -21,7 +21,7 @@
 
 /* ---- cart -> console: painted memory ---- */
 #define FN_REPLY     ((volatile uint8_t *) 0xB000)
-#define FN_REPLY_MAX 1024
+#define FN_REPLY_MAX FUJI_NETWORK_READ_MAX
 
 #define FN_ACKSEQ    (*(volatile uint8_t *) 0xB400)
 #define FN_STATUS    (*(volatile uint8_t *) 0xB401)
@@ -63,7 +63,7 @@
 #define FN_CONFIG_MAGIC   0xC5
 
 /* NPARAM x { size 1|2|4, value LE }, then the payload. */
-#define FN_TX_MAX    320
+#define FN_TX_MAX    (FUJI_NETWORK_WRITE_MAX + 3)
 
 /* fn_commit() results: the cart's own error codes, plus our own timeout. */
 #define FN_OK        0
