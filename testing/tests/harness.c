@@ -203,8 +203,10 @@ void tprint(uint8_t what, const char *s)
   }
 #elif defined(FUJI_PLATFORM_ATARI5200)
   {
+    /* cc65 has no yellow: slot 3 is its COLOR_BLACK, which init_video() sets to yellow */
+#define COLOR_YELLOW COLOR_BLACK
     unsigned char old = textcolor(hl == HL_GREEN ? COLOR_GREEN
-                                  : hl == HL_YELLOW ? 3 : COLOR_RED);
+                                  : hl == HL_YELLOW ? COLOR_YELLOW : COLOR_RED);
 
     printf("%s", s);
     textcolor(old);
