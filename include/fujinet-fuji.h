@@ -473,11 +473,40 @@ enum FujiCartControl
   FUJI_CART_AUTOSTART       = 0x02,  /* CoCo only: pulse RESET into the user ROM */
   FUJI_CART_ROM_MODE_CMD    = 0x04
 };
+#endif
 
+#if defined(FUJI_PLATFORM_NES) || defined(FUJI_PLATFORM_COLECO)
+/* fuji_user_rom_status() values */
+enum FujiUserRomState
+{
+  FUJI_USER_ROM_LOADING,  /* also before the transfer starts */
+  FUJI_USER_ROM_READY,
+  FUJI_USER_ROM_FAILED,
+  FUJI_USER_ROM_NO_CART
+};
+
+typedef struct
+{
+  uint8_t percent;  /* 0-100 */
+  uint8_t error;    /* the cartridge's code when FAILED */
+  uint32_t got;     /* bytes received; 0 on ColecoVision */
+  uint32_t total;   /* image size; 0 until the transfer starts, and on ColecoVision */
+} FujiUserRomProgress;
+
+/**
+ * @brief How far the cartridge has got loading the image mounted in device slot 0.
+ * @return a FujiUserRomState
+ */
+extern uint8_t fuji_user_rom_status(FujiUserRomProgress *progress);
+#endif
+
+#if defined(FUJI_PLATFORM_COCO) || defined(FUJI_PLATFORM_MSX) \
+ || defined(FUJI_PLATFORM_NES) || defined(FUJI_PLATFORM_COLECO)
 /**
  * @brief Switches the FujiNet cartridge to its user ROM, as CONFIG does to boot it.
  * CoCo: the cartridge then pulses RESET; without one (e.g. a Becker port) this
  * returns. MSX: jumps to 0 afterward, the way CONFIG does, so it never returns.
+ * NES, ColecoVision: starts the image once fuji_user_rom_status() is READY; never returns.
  */
 extern void fuji_enable_user_rom(void);
 #endif
