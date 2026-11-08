@@ -112,7 +112,8 @@ void end_testing(int code)
  * fail and the abort line red (#96). Yellow is also inverse wherever the
  * screen can do it (#241): dark on yellow on the CoCo 3, C64, Adam and
  * MS-DOS in color; Atari, Apple II, the H89 terminal and MS-DOS in the
- * monochrome text mode show yellow and red as inverse video. */
+ * monochrome text mode show yellow and red as inverse video. The Atari 5200
+ * has no inverse video: its yellow is palette slot 3 (init_video.c). */
 void tprint(uint8_t what, const char *s)
 {
   uint8_t hl;
@@ -199,6 +200,16 @@ void tprint(uint8_t what, const char *s)
     }
     r.h.ah = 2; r.h.bh = 0; r.h.dh = row; r.h.dl = col;
     int86(0x10, &r, &r);
+  }
+#elif defined(FUJI_PLATFORM_ATARI5200)
+  {
+    /* cc65 has no yellow: slot 3 is its COLOR_BLACK, which init_video() sets to yellow */
+#define COLOR_YELLOW COLOR_BLACK
+    unsigned char old = textcolor(hl == HL_GREEN ? COLOR_GREEN
+                                  : hl == HL_YELLOW ? COLOR_YELLOW : COLOR_RED);
+
+    printf("%s", s);
+    textcolor(old);
   }
 #elif defined(__ATARI__)
   for (; *s; s++)
