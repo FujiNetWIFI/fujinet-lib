@@ -721,11 +721,39 @@ void test_network_http_put_delete(void)
   TEST("network_open (PUT) succeeds", err == FN_ERR_OK);
 #endif
 
+#ifdef FN_BROKEN_network_http_add_header
+  SKIP(network_http_add_header);
+#else
+  err = network_http_start_add_headers(NET_PUT_URL);
+  TEST("network_http_start_add_headers succeeds", err == FN_ERR_OK);
+  err = network_http_add_header(NET_PUT_URL, "Content-Type: application/json");
+  TEST("network_http_add_header succeeds", err == FN_ERR_OK);
+  err = network_http_end_add_headers(NET_PUT_URL);
+  TEST("network_http_end_add_headers succeeds", err == FN_ERR_OK);
+#endif
+
 #ifdef FN_BROKEN_network_http_put
   SKIP(network_http_put);
 #else
-  err = network_http_put(NET_PUT_URL, "fujinet=put_test");
+  err = network_http_put(NET_PUT_URL, "{\"test\":\"fujinet_put\"}");
   TEST("network_http_put succeeds", err == FN_ERR_OK);
+#endif
+
+#ifdef FN_BROKEN_network_json_query
+  SKIP(network_json_query);
+#else
+  /* /put answers anything but a PUT with 405, so the echo proves the method
+   * (fujinet-firmware#999). httpbin.dev echoes headers as arrays. */
+  err = network_json_parse(NET_PUT_URL);
+  TEST("network_json_parse of the echo succeeds", err == FN_ERR_OK);
+  memset(g.net, 0, sizeof(g.net));
+  r = network_json_query(NET_PUT_URL, "/json/test", (char *)g.net);
+  TEST("server received the JSON body",
+       r > 0 && strcmp((char *)g.net, "fujinet_put") == 0);
+  memset(g.net, 0, sizeof(g.net));
+  r = network_json_query(NET_PUT_URL, "/headers/Content-Type/0", (char *)g.net);
+  TEST("server received the Content-Type header",
+       r > 0 && strcmp((char *)g.net, "application/json") == 0);
 #endif
 
 #ifdef FN_BROKEN_network_close
