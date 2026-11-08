@@ -3,7 +3,8 @@
   "directories": {
     "include": {
       "allow": ["FUJI_BUS_CALL_ARGS", "FUJI_BUS_CALL_ARGS_AUX2", "FUJI_BUS_CALL_ARGS_AUX4",
-                "FUJI_BUS_CALL_ARGS_VARIADIC", "FUJI_VARIABLE_LEN_PACKETS"],
+                "FUJI_BUS_CALL_ARGS_VARIADIC", "FUJI_BUS_CALL_PORTIO",
+                "FUJI_VARIABLE_LEN_PACKETS"],
       "allow_regex": ["FUJI_PLATFORM_[A-Z0-9]+"]
     },
     "common": {
