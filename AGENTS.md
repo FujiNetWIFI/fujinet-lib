@@ -8,8 +8,8 @@ it and repeats the few rules that cause the most damage when missed.
   `fozztexx/defoogi` container. After touching `common/` or `include/`, build every platform.
 - No platform conditional in `common/`. A platform that needs different behavior gets
   `bus/<platform>/<function>_<platform>.c`, routed from the public header, or a capability flag
-  in `include/fujinet-bus.h`. Test `FUJI_PLATFORM_*`, never a compiler macro, outside
-  `fujinet-platform.h`.
+  in its block in `include/fujinet-platform.h`. Test `FUJI_PLATFORM_*`, never a compiler macro,
+  outside `fujinet-platform.h`.
 - Shared code links into every program, CONFIG included, on 8-bit machines with bytes to spare.
   Keep arithmetic narrow and check that CONFIG still links.
 - CI only compiles. Run the test programs in `testing/` on an emulator or hardware with a FujiNet,
