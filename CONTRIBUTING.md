@@ -34,8 +34,9 @@ build you mean to trust. Releases are in `README.md`.
 ## Layout
 
 - `include/`: the public headers, only for external programs that link with the library; a
-  bus-specific header never goes here. `fujinet-platform.h` maps each compiler's predefined macro
-  to one `FUJI_PLATFORM_*` and sets that platform's build switches.
+  bus-specific header never goes here, and a release ships only these. `fujinet-platform.h` maps
+  each compiler's predefined macro to one `FUJI_PLATFORM_*` and sets that platform's build
+  switches.
 - `common/`: code shared by every platform. It knows nothing about any platform.
 - `bus/<platform>/`: each platform's bus code, and its own version of any function that has to
   differ there. `h89-cpm` and `h89-hdos` share `bus/h89/`.
