@@ -208,6 +208,7 @@ int main(void)
   test_fs_directory_modes();
   test_fs_long_listing();
   test_fs_read_files();
+  test_fs_put_body_writes();
   test_fs_rename_delete();
   test_fs_dir_lifecycle();
   test_fs_directory_filter();

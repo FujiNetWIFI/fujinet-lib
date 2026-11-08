@@ -457,6 +457,44 @@ void test_fs_read_files(void)
 #endif
 }
 
+/* Writes in BODY mode are one PUT, sent at the close; a STATUS between them
+ * must not send part of the body (fujinet-firmware#999). */
+void test_fs_put_body_writes(void)
+{
+  uint8_t err;
+  uint16_t bw;
+  uint8_t conn, nerr;
+
+  SECTION("network_fs: PUT body written in pieces");
+
+#ifdef FN_BROKEN_network_fs
+  SKIP(network_fs);
+  END_OF_TEST();
+#else
+  fs_path("sub/halves.txt");
+  err = network_open(g.fs.path, OPEN_MODE_HTTP_PUT, OPEN_TRANS_NONE);
+  TEST("network_open (PUT) succeeds", err == FN_ERR_OK);
+
+  err = network_write(g.fs.path, "first half,", 11);
+  TEST("first write succeeds", err == FN_ERR_OK);
+
+  bw = 0; conn = 0; nerr = 0;
+  network_status(g.fs.path, &bw, &conn, &nerr);
+
+  err = network_write(g.fs.path, "second half", 11);
+  TEST("second write succeeds", err == FN_ERR_OK);
+
+  err = network_close(g.fs.path);
+  TEST("network_close sends the PUT", err == FN_ERR_OK);
+
+  TEST("halves.txt reads back", fs_get(g.fs.path) == 22);
+  TEST("halves.txt holds both writes",
+       strcmp(g.fs.data, "first half,second half") == 0);
+
+  END_OF_TEST();
+#endif
+}
+
 void test_fs_rename_delete(void)
 {
   uint8_t err;
