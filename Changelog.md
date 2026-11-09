@@ -16,6 +16,7 @@
 - [h89][model2] Each bus call drains stale reply bytes first; [h89] the SLIP sync gives up after 4096 bytes with no END
 - [coleco] Add the ColecoVision target for the FujiNet Coleco cartridge: the cart mailbox bus and the RS232 NewDisk / FujiDirEntry layouts
 - [atari5200] Add the Atari 5200 target for the FujiNet 5200 cartridge: the cart mailbox bus and the RS232 NewDisk / FujiDirEntry layouts
+- [c64] The clock calls go to the clock, IEC device 29, instead of the FujiNet device, which refuses them (needs fujinet-firmware #2342)
 
 ## [5.1.0] 2026-10-27
 
