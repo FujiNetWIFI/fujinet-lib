@@ -6,10 +6,12 @@
 # for that version, e.g.
 #   make INTYBASIC=/path/to/intybasic LIBDIR=$HOME/Workspace/IntyBASIC/
 #
-#   make                 menu cart       -> build/intv/fnlib-test.bin + .cfg
-#   make PROG=appkey     auto-run cart   -> build/intv/fnlib-test-appkey.bin + .cfg
+#   make                 menu cart       -> $(BUILD_DIR)/intv/fnlib-test.bin + .cfg
+#   make PROG=appkey     auto-run cart   -> $(BUILD_DIR)/intv/fnlib-test-appkey.bin + .cfg
+# BUILD_DIR defaults to the repo's build/; override it to build elsewhere.
 #
-BUILD     := ../../build/intv
+BUILD_DIR ?= ../../build
+BUILD     := $(BUILD_DIR)/intv
 INTYBASIC ?= intybasic
 AS1600    ?= as1600
 LIBDIR    ?= $(HOME)/Workspace/IntyBASIC/
