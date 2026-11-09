@@ -1,9 +1,12 @@
 # Build the Intellivision test cart. IntyBASIC and as1600 are not part of
-# the fujinet-lib platform build; run this by hand.
+# the fujinet-lib platform build, but both are in defoogi:
 #
-# Needs IntyBASIC 1.5.0 or later (OPTION MAP) and as1600. LIBDIR is the
-# IntyBASIC checkout holding intybasic_prologue.asm / intybasic_epilogue.asm
-# for that version, e.g.
+#   defoogi make -C testing/intv
+#
+# Needs IntyBASIC 1.5.2 or later (OPTION MAP) and as1600. LIBDIR holds
+# intybasic_prologue.asm / intybasic_epilogue.asm for that version and
+# defaults to defoogi's copy. Outside defoogi, point it at an IntyBASIC
+# checkout:
 #   make INTYBASIC=/path/to/intybasic LIBDIR=$HOME/Workspace/IntyBASIC/
 #
 #   make                 menu cart       -> $(BUILD_DIR)/intv/fnlib-test.bin + .cfg
@@ -14,7 +17,7 @@ BUILD_DIR ?= ../../build
 BUILD     := $(BUILD_DIR)/intv
 INTYBASIC ?= intybasic
 AS1600    ?= as1600
-LIBDIR    ?= $(HOME)/Workspace/IntyBASIC/
+LIBDIR    ?= /usr/local/share/intybasic/
 
 # Order is the menu's: key 1..9, 0, then page 2.
 PROGRAMS = fujidev appkey clock devlist disk netfile net5plus network parserr qrcode html clipbord netproto wifi

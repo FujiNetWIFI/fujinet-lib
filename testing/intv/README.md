@@ -9,12 +9,17 @@ the check and the line of the C `TEST()` it came from.
 
 ## Build
 
-Needs IntyBASIC 1.5.0 or later (`OPTION MAP`) and `as1600`. `LIBDIR` is the
-IntyBASIC checkout that holds `intybasic_prologue.asm` and
-`intybasic_epilogue.asm` for that version.
+Needs IntyBASIC 1.5.2 or later (`OPTION MAP`) and `as1600`. Both are in
+defoogi, so from the repo root:
 
-    make INTYBASIC=/path/to/intybasic LIBDIR=/path/to/IntyBASIC/   # menu cart
-    make PROG=appkey ...                                           # one program
+    defoogi make -C testing/intv                  # menu cart
+    defoogi make -C testing/intv PROG=appkey      # one program
+
+`LIBDIR` holds `intybasic_prologue.asm` and `intybasic_epilogue.asm` and
+defaults to defoogi's copy. Outside defoogi, point `INTYBASIC` and `LIBDIR` at
+an IntyBASIC checkout:
+
+    make INTYBASIC=/path/to/intybasic LIBDIR=/path/to/IntyBASIC/
 
 The output is `build/intv/fnlib-test.bin` plus `.cfg`. The cart is banked
 (`OPTION MAP 4`, one 8K bank per program), so it cannot be an Intellicart
