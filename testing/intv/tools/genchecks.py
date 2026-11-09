@@ -12,7 +12,7 @@
   STR name "text"                  ROM string str_<name>(0) + CONST SL_<name>;
                                    \\r \\n \\xHH escapes allowed
 
-Writes build/<name>.bas for each source and build/names.bas, the packed
+Writes <dir>/<name>.bas for each source and <dir>/names.bas, the packed
 table of check names (two characters per word, 8 words per name).
 """
 import re

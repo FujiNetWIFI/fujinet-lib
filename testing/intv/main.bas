@@ -1,7 +1,7 @@
 ' main.bas -- fujinet-lib integration tests for the Intellivision.
 ' One cart, one menu entry per fujinet-lib test program.
     OPTION MAP 4
-    INCLUDE "build/config.bas"      ' CONST AUTORUN (0 = menu)
+    INCLUDE "../../build/intv/config.bas"      ' CONST AUTORUN (0 = menu)
     GOTO start
 
     INCLUDE "harness.bas"
@@ -11,39 +11,39 @@
 ' Test programs. Segments are the ROM regions of OPTION MAP 4; the tests
 ' fill them in turn and the check names go last.
     SEGMENT 3
-    INCLUDE "build/t_consts.bas"
+    INCLUDE "../../build/intv/t_consts.bas"
 
     BANK 0
-    INCLUDE "build/t_appkey.bas"
+    INCLUDE "../../build/intv/t_appkey.bas"
     BANK 1
-    INCLUDE "build/t_clock.bas"
+    INCLUDE "../../build/intv/t_clock.bas"
     BANK 2
-    INCLUDE "build/t_devlist.bas"
+    INCLUDE "../../build/intv/t_devlist.bas"
     BANK 3
-    INCLUDE "build/t_wifi.bas"
+    INCLUDE "../../build/intv/t_wifi.bas"
     BANK 4
-    INCLUDE "build/t_fujidev.bas"
+    INCLUDE "../../build/intv/t_fujidev.bas"
     BANK 5
-    INCLUDE "build/t_network.bas"
+    INCLUDE "../../build/intv/t_network.bas"
     BANK 6
-    INCLUDE "build/t_net5plus.bas"
+    INCLUDE "../../build/intv/t_net5plus.bas"
     BANK 7
-    INCLUDE "build/t_parserr.bas"
+    INCLUDE "../../build/intv/t_parserr.bas"
     BANK 8
-    INCLUDE "build/t_html.bas"
+    INCLUDE "../../build/intv/t_html.bas"
     BANK 9
-    INCLUDE "build/t_clipbord.bas"
+    INCLUDE "../../build/intv/t_clipbord.bas"
     BANK 10
-    INCLUDE "build/t_netproto.bas"
+    INCLUDE "../../build/intv/t_netproto.bas"
     BANK 11
-    INCLUDE "build/t_qrcode.bas"
+    INCLUDE "../../build/intv/t_qrcode.bas"
     BANK 12
-    INCLUDE "build/t_disk.bas"
+    INCLUDE "../../build/intv/t_disk.bas"
     BANK 13
-    INCLUDE "build/t_netfile.bas"
+    INCLUDE "../../build/intv/t_netfile.bas"
 
     SEGMENT 2
-    INCLUDE "build/names.bas"
+    INCLUDE "../../build/intv/names.bas"
 
     SEGMENT 0
 

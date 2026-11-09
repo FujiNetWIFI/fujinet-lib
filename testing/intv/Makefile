@@ -6,9 +6,10 @@
 # for that version, e.g.
 #   make INTYBASIC=/path/to/intybasic LIBDIR=$HOME/Workspace/IntyBASIC/
 #
-#   make                 menu cart       -> build/fnlib-test.bin + .cfg
-#   make PROG=appkey     auto-run cart   -> build/fnlib-test-appkey.bin + .cfg
+#   make                 menu cart       -> build/intv/fnlib-test.bin + .cfg
+#   make PROG=appkey     auto-run cart   -> build/intv/fnlib-test-appkey.bin + .cfg
 #
+BUILD     := ../../build/intv
 INTYBASIC ?= intybasic
 AS1600    ?= as1600
 LIBDIR    ?= $(HOME)/Workspace/IntyBASIC/
@@ -30,24 +31,24 @@ endif
 .DELETE_ON_ERROR:
 .PHONY: all clean
 
-all: build/$(NAME).bin
+all: $(BUILD)/$(NAME).bin
 
-build/config.bas: FORCE
-	@mkdir -p build
+$(BUILD)/config.bas: FORCE
+	@mkdir -p $(BUILD)
 	@echo "    CONST AUTORUN = $(AUTORUN)" > $@.new
 	@cmp -s $@.new $@ && rm $@.new || mv $@.new $@
 
-build/names.bas: $(TESTS) tools/genchecks.py
-	@mkdir -p build
-	python3 tools/genchecks.py build $(TESTS)
+$(BUILD)/names.bas: $(TESTS) tools/genchecks.py
+	@mkdir -p $(BUILD)
+	python3 tools/genchecks.py $(BUILD) $(TESTS)
 
-build/$(NAME).asm: main.bas harness.bas fnlib.bas build/names.bas build/config.bas
+$(BUILD)/$(NAME).asm: main.bas harness.bas fnlib.bas $(BUILD)/names.bas $(BUILD)/config.bas
 	$(INTYBASIC) main.bas $@ $(LIBDIR)
 
-build/$(NAME).bin: build/$(NAME).asm
-	$(AS1600) -o $@ -l build/$(NAME).lst -s build/$(NAME).sym $<
+$(BUILD)/$(NAME).bin: $(BUILD)/$(NAME).asm
+	$(AS1600) -o $@ -l $(BUILD)/$(NAME).lst -s $(BUILD)/$(NAME).sym $<
 
 FORCE:
 
 clean:
-	rm -rf build
+	rm -rf $(BUILD)

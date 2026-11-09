@@ -16,9 +16,9 @@ IntyBASIC checkout that holds `intybasic_prologue.asm` and
     make INTYBASIC=/path/to/intybasic LIBDIR=/path/to/IntyBASIC/   # menu cart
     make PROG=appkey ...                                           # one program
 
-The output is `build/fnlib-test.bin` plus `.cfg`. The cart is banked
+The output is `build/intv/fnlib-test.bin` plus `.cfg`. The cart is banked
 (`OPTION MAP 4`, one 8K bank per program), so it cannot be an Intellicart
-`.rom`; run it with `jzintv build/fnlib-test` (no extension) or load the
+`.rom`; run it with `jzintv build/intv/fnlib-test` (no extension) or load the
 `.bin`/`.cfg` pair on a cart that pages ROM.
 
 ## Run
@@ -57,13 +57,10 @@ internet hosts as the C suite.
 - A bank-only helper cannot be called from another bank; shared code lives in
   `fnlib.bas` and `fnnet.bas`.
 
-## Known failures against current firmware
+## Known firmware failures
 
 These are firmware behaviour; the C suite fails the same way.
 
-- `test_network_http_put_delete`: open mode `$0E` (PUT with headers) is sent
-  as a POST, so `/put` answers 405.
-- UDP round trip (`net5plus`): needs firmware #2282.
 - The held-peer HTTP checks (`html`) need a firmware whose first STATUS does
   not block until the peer closes.
 - `set_device_filename` and `set_host_prefix` ignore an empty name, so the
