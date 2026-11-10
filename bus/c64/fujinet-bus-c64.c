@@ -50,6 +50,10 @@ bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...)
     //cbm_chan = device - FUJI_DEVICEID_NETWORK + CBM_DATA_CHANNEL_0;
     cbm_dev = CBM_DEV_NETWORK;
   }
+  else if (device == FUJI_DEVICEID_CLOCK) {
+    cbm_chan = CBM_CMD_CHANNEL;
+    cbm_dev = CBM_DEV_CLOCK;
+  }
   else {
     cbm_chan = CBM_CMD_CHANNEL;
     cbm_dev = CBM_DEV_FUJI;
