@@ -125,6 +125,49 @@ void test_network_http_chunked_completion(void)
   END_OF_TEST();
 }
 
+/* The parse must not wait for the peer to close (fujinet-firmware#1416). */
+static void json_held(const char *spec)
+{
+  uint8_t err;
+  int16_t n;
+  char value[16];
+  const char *url = (const char *) g.net;
+
+  memset(g.net, 0, MAX_FILENAME_LEN);
+  strcpy((char *) g.net, spec);
+  err = network_open(url, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
+  TEST("held-peer GET opens", err == FN_ERR_OK);
+  err = network_json_parse(url);
+  TEST("JSON parse succeeds", err == FN_ERR_OK);
+  memset(value, 0, sizeof(value));
+  n = network_json_query(url, "/a", value);
+  TEST("query /a returns 1", n == 1 && strcmp(value, "1") == 0);
+  err = network_close(url);
+  TEST("held-peer GET closes", err == FN_ERR_OK);
+}
+
+void test_network_json_fixed_held(void)
+{
+  SECTION("JSON parse, fixed held-peer");
+#ifdef FN_BROKEN_network_json_query
+  SKIP(network_json_query);
+#else
+  json_held(NET_JSON_FIXED_HELD_URL);
+#endif
+  END_OF_TEST();
+}
+
+void test_network_json_chunked_held(void)
+{
+  SECTION("JSON parse, chunked held-peer");
+#ifdef FN_BROKEN_network_json_query
+  SKIP(network_json_query);
+#else
+  json_held(NET_JSON_CHUNKED_HELD_URL);
+#endif
+  END_OF_TEST();
+}
+
 /* STATUS alone must not mistake a 304 representation length for readable
  * body bytes. Poison both reply storage and outputs to reject stale zeros.
  * The poll cap bounds observations, not the duration of a bus call.

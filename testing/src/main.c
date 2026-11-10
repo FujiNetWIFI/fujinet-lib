@@ -167,6 +167,8 @@ int main(void)
   test_network_http_304_completion();
   test_network_http_fixed_completion();
   test_network_http_chunked_completion();
+  test_network_json_fixed_held();
+  test_network_json_chunked_held();
   test_network_http_304();
   test_network_http_get_nonblocking();
   test_network_http_post();
