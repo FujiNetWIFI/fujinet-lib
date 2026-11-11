@@ -25,6 +25,7 @@ PLATFORMS += pmd85
 # It expands to the chosen PLATFORM plus any of its combos.
 SRC_DIRS = common bus/%PLATFORM% bus/%PLATFORM%/unapi
 INCLUDE_DIRS = include bus/%PLATFORM%
+RELEASE_INCLUDES = $(wildcard include/*.h include/*.inc)
 CFLAGS = -DBUILD_$(PLATFORM_UC)
 
 # Define extra dirs ("combos") that expand with a platform.
