@@ -124,6 +124,7 @@ harness in `testing/tests/harness.c`.
   `main`, then the fix. The test PR says `Refs #N`; only the fix PR says `Fixes #N`.
 - Run every test on every platform. `FN_BROKEN_<function>` in `testing/tests/broken-v5.h` skips a
   function that is broken on a platform and has an issue open; it is not for "doesn't apply here".
+- `testing/intv` is an IntyBASIC copy of these tests, and CI doesn't build it. A PR that changes a C test makes the same change there.
 - Never bypass building a platform's tests in `testing/Makefile`. It takes its platform list from
   the library's `Makefile` for a reason.
 - Set up the state a test needs at the start of the test. The harness has no cleanup step after an
