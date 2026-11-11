@@ -1,5 +1,7 @@
 # Changelog
 
+## [Unreleased] (Place WIP changes in this section until a release is done)
+
 ## [5.1.1] 2026-11-11
 
 - [nes] Add the NES target for the FujiNet NES cartridge
