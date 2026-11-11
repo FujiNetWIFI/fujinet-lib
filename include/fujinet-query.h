@@ -10,7 +10,7 @@ typedef enum QueryFlags
 
   QUERY_OUTPUT_VERBATIM             = 0x00,
   QUERY_OUTPUT_ASCII                = 0x10, /* decode entities, strip non-ASCII */
-  QUERY_OUTPUT_RESERVED_0X20        = 0x20, /* rejected by the firmware */
+  QUERY_OUTPUT_TEXT                 = 0x20, /* HTML value as word-wrapped text */
   QUERY_OUTPUT_RESERVED_0X30        = 0x30  /* rejected by the firmware */
 } query_flags_t;
 

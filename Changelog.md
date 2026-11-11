@@ -9,6 +9,7 @@
 - [all] fuji_sleep_ms() wraps the jiffy wait using milliseconds
 - [msx] Use bus/fujiversal for the app key and network bus calls, so fuji_read_appkey() and fuji_write_appkey() link
 - [pmd85] fuji_sleep_ms() no longer runs about 18% long; a jiffy is now 1/50 s, matching the display
+- PARSER_PRETTY, QUERY_OUTPUT_TEXT (was QUERY_OUTPUT_RESERVED_0X20), and QUERY_OPTION_* names for network_set_parameter(), for the firmware's HTML text rendering
 
 ## [5.1.0] 2026-10-27
 
