@@ -99,6 +99,8 @@ void end_testing(int code)
   // the user can arrow up and push return instead of retyping it.
   if (c64_load_command[0])
     printf("  %s\n", c64_load_command);
+  else
+    c64_queue_menu();
 #endif /* BUILD_C64 */
 
   exit(code);
