@@ -354,8 +354,11 @@ extern FN_ERR network_set_eol(const char *devicespec, const char *eol);
  * @param  pos absolute byte position (24-bit on Atari SIO, 32-bit elsewhere)
  * @return fujinet-network error code (See FN_ERR_* values)
  *
- * Only supported when parser is NONE, and only by protocols that can
- * seek (TNFS/SD/SMB/NFS read+write; HTTP(S) read only via Range requests).
+ * With parser NONE, only protocols that can seek (TNFS/SD/SMB/NFS read+write;
+ * HTTP(S) read only via Range requests). With JSON/HTML/XML, seeks within the
+ * current query result; past its end (e.g. 0xFFFFFFFF) discards what is
+ * unread. Older firmware errors there, which also tells a client that the
+ * PRETTY hand-off in network_set_parser() is unavailable.
  */
 #ifdef FUJI_PLATFORM_ATARI
 FN_ERR network_seek_atari(const char *devicespec, uint32_t pos);
@@ -484,6 +487,10 @@ FN_ERR network_get_dstats(const char *devicespec, uint8_t cmd, uint8_t *dstats);
  * Assumes an open connection. network_json_parse and network_html_parse
  * set the mode themselves. Old firmware accepts any mode: check that a bogus
  * mode is rejected before trusting PARSER_PRETTY.
+ *
+ * PARSER_PRETTY right after a JSON/HTML/XML query renders that query's value
+ * instead of the document (PARSE, then read as a page). Setting the previous
+ * mode again restores its parsed document.
  */
 FN_ERR network_set_parser(const char *devicespec, uint8_t mode);
 
