@@ -65,5 +65,9 @@ so it stays at the top of the releases list and the current images are always at
 https://github.com/FujiNetWIFI/fujinet-lib/releases/download/tests-latest/fnlib-tests-latest.zip
 as `<platform>/<image>`.
 
-The CoCo test image holds two 157K disks, "FujiNet Lib Tests #1" and "#2". `DRIVE 1` then
-`RUNM"COCOMENU"` brings up the menu for the second.
+The CoCo test image holds two 157K disks, "FujiNet Lib Tests #1" and "#2"; left and right in
+the menu switch between them.
+
+The C64 tests are on two D64s: `fntests.d64` for disk slot 1 (drive 8) and `fntests2.d64` for
+slot 2 (drive 9). Each starts with CBM FileBrowser; `D` in it changes drives, and a test returns
+to it on exit.
