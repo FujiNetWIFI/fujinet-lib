@@ -19,6 +19,7 @@
 - [coleco] Add the ColecoVision target for the FujiNet Coleco cartridge
 - [atari5200] Add the Atari 5200 target for the FujiNet 5200 cartridge
 - [c64] The clock calls go to the clock, IEC device 29, instead of the FujiNet device, which refuses them (needs fujinet-firmware #2342)
+- PARSER_PRETTY, QUERY_OUTPUT_TEXT (was QUERY_OUTPUT_RESERVED_0X20), and QUERY_OPTION_* names for network_set_parameter(), for the firmware's HTML text rendering
 
 ## [5.1.0] 2026-10-27
 

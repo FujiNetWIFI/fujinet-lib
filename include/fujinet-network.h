@@ -41,6 +41,7 @@ enum {
   PARSER_JSON = 1,
   PARSER_HTML = 2,
   PARSER_XML = 3,
+  PARSER_PRETTY = 4, /* the page as word-wrapped text */
 };
 
 /**
@@ -353,8 +354,11 @@ extern FN_ERR network_set_eol(const char *devicespec, const char *eol);
  * @param  pos absolute byte position (24-bit on Atari SIO, 32-bit elsewhere)
  * @return fujinet-network error code (See FN_ERR_* values)
  *
- * Only supported when parser is NONE, and only by protocols that can
- * seek (TNFS/SD/SMB/NFS read+write; HTTP(S) read only via Range requests).
+ * With parser NONE, only protocols that can seek (TNFS/SD/SMB/NFS read+write;
+ * HTTP(S) read only via Range requests). With JSON/HTML/XML, seeks within the
+ * current query result; past its end (e.g. 0xFFFFFFFF) discards what is
+ * unread. Older firmware errors there, which also tells a client that the
+ * PRETTY hand-off in network_set_parser() is unavailable.
  */
 #ifdef FUJI_PLATFORM_ATARI
 FN_ERR network_seek_atari(const char *devicespec, uint32_t pos);
@@ -442,16 +446,26 @@ FN_ERR network_udp_set_destination(const char *dest_spec);
  */
 FN_ERR network_udp_get_remote(const char *devicespec, char *buf, uint16_t len);
 
+/* Parser parameters, for network_set_parameter(). WIDTH, GFX and LINKS
+   need firmware with PRETTY. */
+enum {
+  QUERY_OPTION_FLAGS = 0, /* query_flags_t */
+  QUERY_OPTION_EOL   = 1,
+  QUERY_OPTION_WIDTH = 2, /* columns; 0 = default (40) */
+  QUERY_OPTION_GFX   = 3, /* PRETTY: machine's own graphics (ATASCII, MouseText) */
+  QUERY_OPTION_LINKS = 4, /* PRETTY: number links "[n]" */
+};
+
 /**
  * @brief  Set a parser processing parameter
  * @param  devicespec pointer to device specification, e.g. "N1:"
- * @param  param 0 = query flags (query_flags_t), 1 = query line-ending character
+ * @param  param a QUERY_OPTION_* value
  * @param  value the value to set
  * @return fujinet-network error code (See FN_ERR_* values)
  */
 FN_ERR network_set_parameter(const char *devicespec, uint8_t param, uint8_t value);
-#define network_set_query_param(devicespec, flags) network_set_parameter(devicespec, 0, flags)
-#define network_set_line_ending(devicespec, ch) network_set_parameter(devicespec, 1, ch)
+#define network_set_query_param(devicespec, flags) network_set_parameter(devicespec, QUERY_OPTION_FLAGS, flags)
+#define network_set_line_ending(devicespec, ch) network_set_parameter(devicespec, QUERY_OPTION_EOL, ch)
 
 /**
  * @brief  Ask which direction a network command transfers data (Atari SIO only)
@@ -465,13 +479,18 @@ FN_ERR network_set_parameter(const char *devicespec, uint8_t param, uint8_t valu
 FN_ERR network_get_dstats(const char *devicespec, uint8_t cmd, uint8_t *dstats);
 
 /**
- * @brief  Set the parser: PARSER_NONE, _JSON, _HTML or _XML
+ * @brief  Set the parser: PARSER_NONE, _JSON, _HTML, _XML or _PRETTY
  * @param  devicespec pointer to device specification, e.g. "N1:HTTPS://fujinet.online/"
  * @param  parser to set
  * @return fujinet-network error code (See FN_ERR_* values)
  *
  * Assumes an open connection. network_json_parse and network_html_parse
- * set the mode themselves.
+ * set the mode themselves. Old firmware accepts any mode: check that a bogus
+ * mode is rejected before trusting PARSER_PRETTY.
+ *
+ * PARSER_PRETTY right after a JSON/HTML/XML query renders that query's value
+ * instead of the document (PARSE, then read as a page). Setting the previous
+ * mode again restores its parsed document.
  */
 FN_ERR network_set_parser(const char *devicespec, uint8_t mode);
 
