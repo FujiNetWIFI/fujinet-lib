@@ -7,7 +7,7 @@ out=$(realpath -m "$1")
 cd testing/r2r
 
 # Image extensions per platform, plus the Adam .ddp boot loaders.
-EXTS="atr po dsk img imd ddp prg lnx cas ptp mrm abs COM"
+EXTS="atr po dsk img imd ddp prg d64 lnx cas ptp mrm abs COM"
 set -- -name '*_BOOTSTRAP.bin'
 for ext in $EXTS; do
   set -- "$@" -o -name "*.$ext"

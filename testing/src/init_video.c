@@ -16,6 +16,11 @@
 #include <conio.h>
 #endif /* BUILD_PMD85 || BUILD_ADAM */
 
+#ifdef BUILD_ATARI5200
+#include <atari5200.h>
+#include <_gtia.h>
+#endif /* BUILD_ATARI5200 */
+
 void init_video()
 {
 #if defined(BUILD_COCO)
@@ -45,6 +50,9 @@ void init_video()
 #elif defined(BUILD_ADAM)
   /* The bitmap mode gives each character its own colors. */
   conio_set_screen_mode(2);
+#elif defined(BUILD_ATARI5200)
+  /* Palette slot 3 is black by default; the harness uses it for yellow. */
+  *(volatile unsigned char *) 0x0F = GTIA_COLOR_YELLOW;
 #endif
 
   return;

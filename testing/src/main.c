@@ -167,6 +167,8 @@ int main(void)
   test_network_http_304_completion();
   test_network_http_fixed_completion();
   test_network_http_chunked_completion();
+  test_network_json_fixed_held();
+  test_network_json_chunked_held();
   test_network_http_304();
   test_network_http_get_nonblocking();
   test_network_http_post();
@@ -208,6 +210,7 @@ int main(void)
   test_fs_directory_modes();
   test_fs_long_listing();
   test_fs_read_files();
+  test_fs_put_body_writes();
   test_fs_rename_delete();
   test_fs_dir_lifecycle();
   test_fs_directory_filter();

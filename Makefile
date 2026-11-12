@@ -2,14 +2,17 @@ PRODUCT = fujinet.lib
 PLATFORMS += adam
 PLATFORMS += apple2
 PLATFORMS += atari
+PLATFORMS += atari5200
 PLATFORMS += c64
 PLATFORMS += coco
+PLATFORMS += coleco
 PLATFORMS += h89-cpm
 PLATFORMS += h89-hdos
 PLATFORMS += lynx
 PLATFORMS += model2
 PLATFORMS += msdos
 PLATFORMS += msx
+PLATFORMS += nes
 PLATFORMS += pmd85
 
 # You can run 'make <platform>' to build for a specific platform,
@@ -22,17 +25,21 @@ PLATFORMS += pmd85
 # It expands to the chosen PLATFORM plus any of its combos.
 SRC_DIRS = common bus/%PLATFORM% bus/%PLATFORM%/unapi
 INCLUDE_DIRS = include bus/%PLATFORM%
+RELEASE_INCLUDES = $(wildcard include/*.h include/*.inc)
 CFLAGS = -DBUILD_$(PLATFORM_UC)
 
 # Define extra dirs ("combos") that expand with a platform.
 # Format: platform+=combo1,combo2
 PLATFORM_COMBOS = \
+  atari5200+=fujiversal \
+  coleco+=fujiversal \
   h89-cpm+=h89 \
   h89-hdos+=h89 \
-  h89+=fujiversal,fujiversal-call \
-  model2+=fujiversal,fujiversal-call \
+  h89+=fujiversal \
+  model2+=fujiversal \
   msdos+=fujiversal \
-  msx+=fujiversal
+  msx+=fujiversal \
+  nes+=fujiversal
 
 include makefiles/toplevel-rules.mk
 

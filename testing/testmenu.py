@@ -7,6 +7,7 @@ FUJINET_LIB, SPEC can be
   - a version number such as 1.0.0
   - a git URL, optionally with #branch, which is cloned and built
   - a directory, which is used as is if it holds the files, else built
+A menu with a download URL has no versions: empty fetches that one file.
 """
 
 import json
@@ -37,6 +38,11 @@ MENUS = {
         "targets": ("dosmenu.exe",),
         "out": "",
     },
+    # CBM FileBrowser, from FujiNet's assets rather than a release of its own
+    "fb64": {
+        "files": ("fb64.prg",),
+        "download": "https://github.com/FujiNetWIFI/assets/releases/download/picobin/fb64.prg",
+    },
 }
 
 VERSION_RE = re.compile(r"v?([0-9]+[.][0-9]+[.][0-9]+)$")
@@ -48,6 +54,8 @@ def fail(*args):
 
 
 class Menu:
+    download = None
+
     def __init__(self, name, cache):
         if name not in MENUS:
             fail(f"No test menu called {name!r}; known: {', '.join(MENUS)}")
@@ -107,6 +115,17 @@ class Menu:
             zf.extractall(path)
         return path
 
+    def fetch(self):
+        path = os.path.join(self.cache, self.name)
+        if self.has_files(path):
+            return path
+        os.makedirs(path, exist_ok=True)
+        try:
+            urllib.request.urlretrieve(self.download, os.path.join(path, self.files[0]))
+        except OSError as e:
+            fail(f"Can't download {self.download}: {e}")
+        return path
+
     def clone(self, url):
         branch = ""
         if "#" in url:
@@ -123,6 +142,8 @@ class Menu:
 
     def locate(self, spec):
         m = VERSION_RE.match(spec)
+        if self.download and not spec:
+            return self.fetch()
         if not spec:
             return self.release(self.latest())
         if m:

@@ -7,6 +7,7 @@ extern void test_fs_create_files(void);
 extern void test_fs_directory_modes(void);
 extern void test_fs_long_listing(void);
 extern void test_fs_read_files(void);
+extern void test_fs_put_body_writes(void);
 extern void test_fs_rename_delete(void);
 extern void test_fs_dir_lifecycle(void);
 extern void test_fs_directory_filter(void);

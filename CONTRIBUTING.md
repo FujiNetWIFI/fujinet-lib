@@ -34,8 +34,9 @@ build you mean to trust. Releases are in `README.md`.
 ## Layout
 
 - `include/`: the public headers, only for external programs that link with the library; a
-  bus-specific header never goes here. `fujinet-platform.h` maps each compiler's predefined macro
-  to one `FUJI_PLATFORM_*`.
+  bus-specific header never goes here, and a release ships only these. `fujinet-platform.h` maps
+  each compiler's predefined macro to one `FUJI_PLATFORM_*` and sets that platform's build
+  switches.
 - `common/`: code shared by every platform. It knows nothing about any platform.
 - `bus/<platform>/`: each platform's bus code, and its own version of any function that has to
   differ there. `h89-cpm` and `h89-hdos` share `bus/h89/`.
@@ -68,10 +69,11 @@ no subclasses, but the library has three ways to get the same effect:
   ```
 
   `network_json_query_adam.c`, `network_seek_atari.c` and `fuji_read_appkey_c64.c` follow it.
-- **A capability, not a platform list.** When shared code depends on what a bus can do, the
-  platforms declare it once in `include/fujinet-bus.h` (`FUJI_VARIABLE_LEN_PACKETS`,
-  `FUJI_BUS_CALL_VARARGS`) and shared code tests the capability. A new platform sets the flag;
-  nothing in `common/` changes.
+- **A capability, not a platform list.** When shared code depends on what a bus can do, each
+  platform declares it in its block in `include/fujinet-platform.h` (`FUJI_VARIABLE_LEN_PACKETS`,
+  `FUJI_BUS_CALL_ARGS`) and shared code tests the capability. Every platform sets every switch,
+  and a missing one is an `#error`, so a new platform fills in its block and nothing in `common/`
+  changes.
 
 So:
 
@@ -152,8 +154,12 @@ you changed, and fix or delete any the change made untrue.
 ## Changelog
 
 Add a line under `## [Unreleased]` in `Changelog.md` for a significant feature or for a fix to
-something that didn't work in normal use, tagged by platform when it is one: `- [adam] ...`. Tests,
-CI, build plumbing, refactors and docs get no entry.
+something that didn't work in normal use, tagged by platform when it is one: `- [adam] ...`. An
+edge case few programs reach is not such a fix. Tests, CI, build plumbing (makefiles included),
+refactors and docs get no entry.
+
+After a rebase, check that your line is still under `## [Unreleased]`: a release cut while the PR
+was open can leave it in that release's section.
 
 ## Scope of a change
 
@@ -213,7 +219,7 @@ is a good answer.
 - **A fix and its test in one PR.**
 - **A skipped test** where a form that runs everywhere would do.
 - **A platform filtered out of `testing/Makefile`,** or added before its tests build.
-- **A Changelog line** for a test, a build change or a refactor.
+- **A Changelog line** for a test, a build change or a refactor, or under a released version.
 - **Leaving a comment that the change made untrue.**
 - **A PR description that restates the diff.**
 

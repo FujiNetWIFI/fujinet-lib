@@ -5,7 +5,8 @@
 // must match nativeEOL() for the platform's bus: CR LF on RS232, CR by default.
 // cc65's '\n' is already native on the Atari and C64.
 #if defined(FUJI_PLATFORM_MSDOS) || defined(FUJI_PLATFORM_MODEL2) \
-  || defined(FUJI_PLATFORM_MSX)
+  || defined(FUJI_PLATFORM_MSX) || defined(FUJI_PLATFORM_COLECO) \
+  || defined(FUJI_PLATFORM_NES) || defined(FUJI_PLATFORM_ATARI5200)
 #define BASIC_LINE_ENDING "\r\n"
 #elif defined(FUJI_PLATFORM_APPLE2) || defined(FUJI_PLATFORM_COCO) \
   || defined(FUJI_PLATFORM_ADAM) || defined(FUJI_PLATFORM_PMD85) \
@@ -76,6 +77,9 @@
  * Keep the default reuse behavior: enabling keep-alive masks the regression. */
 #define NET_HTTP_FIXED_HELD_URL "N1:http://wpt.live/common/echo.py?content=ABC&pipe=header%28Content-Length%2C3%29%7Ctrickle%283%3Ad23%29"
 #define NET_HTTP_CHUNKED_HELD_URL "N1:http://wpt.live/common/echo.py?content=3%0D%0AABC%0D%0A0%0D%0A%0D%0A&pipe=header%28Transfer-Encoding%2Cchunked%29%7Ctrickle%2813%3Ad23%29"
+/* The same with the body {"a":1} */
+#define NET_JSON_FIXED_HELD_URL "N1:http://wpt.live/common/echo.py?content=%7B%22a%22%3A1%7D&pipe=header%28Content-Length%2C7%29%7Ctrickle%287%3Ad23%29"
+#define NET_JSON_CHUNKED_HELD_URL "N1:http://wpt.live/common/echo.py?content=7%0D%0A%7B%22a%22%3A1%7D%0D%0A0%0D%0A%0D%0A&pipe=header%28Transfer-Encoding%2Cchunked%29%7Ctrickle%2817%3Ad23%29"
 
 /* Complete 304 headers, no body, peer held open by a 23-second delay. */
 #define NET_HTTP_304_HELD_URL "N1:http://wpt.live/common/echo.py?content=&pipe=status%28304%29%7Cheader%28Content-Length%2C123%29%7Ctrickle%28d23%29"

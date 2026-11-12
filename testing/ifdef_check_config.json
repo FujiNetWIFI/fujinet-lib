@@ -2,7 +2,13 @@
   "global_allow": [],
   "directories": {
     "include": {
-      "allow": ["FUJI_BUS_CALL_VARARGS", "FUJI_VARIABLE_LEN_PACKETS"],
+      "allow": ["FUJI_BUS_CALL_ARGS", "FUJI_BUS_CALL_ARGS_AUX2", "FUJI_BUS_CALL_ARGS_AUX4",
+                "FUJI_BUS_CALL_ARGS_VARIADIC", "FUJI_BUS_CALL_PORTIO",
+                "FUJI_VARIABLE_LEN_PACKETS",
+                "FUJI_NEW_DISK_FORMAT", "FUJI_NEW_DISK_SECTORS", "FUJI_NEW_DISK_TYPED_BLOCKS",
+                "FUJI_NEW_DISK_COUNT", "FUJI_NEW_DISK_BLOCKS16", "FUJI_NEW_DISK_BLOCKS32",
+                "FUJI_DIR_ENTRY_FORMAT", "FUJI_DIR_ENTRY_BOOLS", "FUJI_DIR_ENTRY_FLAGS",
+                "FUJI_STATUS_FORMAT", "FUJI_STATUS_BYTES", "FUJI_STATUS_IEC"],
       "allow_regex": ["FUJI_PLATFORM_[A-Z0-9]+"]
     },
     "common": {
@@ -21,18 +27,25 @@
     },
     "include/fujinet-platform.h": {
       "allow": [
+	"FUJI_MAX_DISKS",
+	"FUJI_NETWORK_READ_MAX",
+	"FUJI_NETWORK_WRITE_MAX",
+	"MAX_PASSWORD_LEN",
 	"MSDOS",
 	"_CMOC_VERSION_",
 	"__ADAM__",
 	"__APPLE2__",
 	"__ATARI__",
+	"__ATARI5200__",
 	"__C64__",
+	"__COLECO__",
 	"__COLECOADAM__",
 	"__DOS__",
 	"__H89__",
 	"__HDOS__",
 	"__LYNX__",
 	"__MSX__",
+	"__NES__",
 	"__PMD85__",
 	"__TRS80M2__"
       ]

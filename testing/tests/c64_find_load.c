@@ -3,10 +3,16 @@
 #include <stdio.h>
 #include <conio.h>
 #include <string.h>
+#include <device.h>
+#include <peekpoke.h>
 
 #define CURSOR_Y         (*(volatile unsigned char*)0xD6)
 #define LINE_LINK_TABLE  ((volatile unsigned char*)0xD9)
 #define INPUT_BUFFER     ((volatile unsigned char*)0x0200)
+#define KEYBUF           0x0277
+#define KEYBUF_LEN       0x00C6
+#define VIC_MEMORY       0xD018
+#define VIC_UPPERCASE    0x15
 
 // Storage buffers for our forensic data
 static unsigned char fragment[64];
@@ -110,6 +116,31 @@ int c64_save_load_command()
   }
 
   return found_match;
+}
+
+/* Reload the first program on the drive this one came from, the menu on the
+ * test disks: leave the commands on screen and RETURN in the keyboard buffer,
+ * as CONFIG does to boot. */
+void c64_queue_menu()
+{
+  unsigned char unit = getcurrentdevice();
+
+
+  if (unit < 8)
+    return;
+
+  POKE(VIC_MEMORY, VIC_UPPERCASE);
+  clrscr();
+  // BASIC prints READY. on row 1 and reads row 2; LOAD's messages and the
+  // next READY. take rows 3-6.
+  gotoxy(0, 2);
+  cprintf("load\"*\",%d,1", unit);
+  gotoxy(0, 7);
+  cprintf("run");
+  gotoxy(0, 0);
+  POKE(KEYBUF, CH_ENTER);
+  POKE(KEYBUF + 1, CH_ENTER);
+  POKE(KEYBUF_LEN, 2);
 }
 
 #endif /* BUILD_C64 */

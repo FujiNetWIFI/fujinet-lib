@@ -3,28 +3,26 @@
 
 #include <fujinet-platform.h>
 
-#if defined(FUJI_PLATFORM_ATARI) || defined(FUJI_PLATFORM_COCO) \
-  || defined(FUJI_PLATFORM_PMD85)
-#define FUJI_VARIABLE_LEN_PACKETS 0
-#else
-#define FUJI_VARIABLE_LEN_PACKETS 1
-#endif
-
 #include <fujinet-int.h>
 
-#if defined(FUJI_PLATFORM_ATARI)
+#if FUJI_BUS_CALL_ARGS == FUJI_BUS_CALL_ARGS_VARIADIC
+extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...);
+#elif FUJI_BUS_CALL_ARGS == FUJI_BUS_CALL_ARGS_AUX2
 extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
                           uint8_t aux1, uint8_t aux2, const void *buf, size_t buf_length);
-#elif defined(FUJI_PLATFORM_COCO) || defined(FUJI_PLATFORM_APPLE2) \
-  || defined(FUJI_PLATFORM_C64)
-#define FUJI_BUS_CALL_VARARGS 1
-extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields, ...);
-#else /* everything else */
-#define FUJI_BUS_CALL_VARARGS 0
+#elif FUJI_BUS_CALL_ARGS == FUJI_BUS_CALL_ARGS_AUX4 && defined(FUJI_BUS_CALL_PORTIO)
+extern bool fuji_bus_call_portio(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
+                                 uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
+                                 const void *buf, size_t buf_length);
+/* Not a function-like () macro: that breaks when the ez-call macros expand */
+#define fuji_bus_call fuji_bus_call_portio
+#elif FUJI_BUS_CALL_ARGS == FUJI_BUS_CALL_ARGS_AUX4
 extern bool fuji_bus_call(uint8_t device, uint8_t fuji_cmd, uint8_t fields,
                           uint8_t aux1, uint8_t aux2, uint8_t aux3, uint8_t aux4,
                           const void *buf, size_t buf_length);
-#endif /* FUJI_PLATFORM_ATARI */
+#else
+#error "Unknown FUJI_BUS_CALL_ARGS"
+#endif /* FUJI_BUS_CALL_ARGS */
 
 // Convenience macros to fill in FujiDCB and make the call
 #include <fujinet-bus-ezcall.h>

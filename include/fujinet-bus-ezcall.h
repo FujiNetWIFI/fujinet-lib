@@ -45,15 +45,15 @@ enum {
  *     aux1/aux2 = u16, and data block included
  */
 
-#if defined(FUJI_PLATFORM_ATARI)
-#include <fujinet-bus-ezatari.h>
-#elif FUJI_BUS_CALL_VARARGS
+#if FUJI_BUS_CALL_ARGS == FUJI_BUS_CALL_ARGS_VARIADIC
 #include <fujinet-bus-ezvar.h>
-#elif !FUJI_BUS_CALL_VARARGS
+#elif FUJI_BUS_CALL_ARGS == FUJI_BUS_CALL_ARGS_AUX2
+#include <fujinet-bus-ezatari.h>
+#elif FUJI_BUS_CALL_ARGS == FUJI_BUS_CALL_ARGS_AUX4
 #include <fujinet-bus-ezfixed.h>
 #else
-#error "What type of fuji_bus_call is this"
-#endif /* ! FUJI_PLATFORM_ATARI */
+#error "Unknown FUJI_BUS_CALL_ARGS"
+#endif /* FUJI_BUS_CALL_ARGS */
 
 // Sends a variable length packet with data on systems that have
 // variable length packets, otherwise uses the aux1/aux2 bytes to

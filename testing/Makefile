@@ -86,6 +86,8 @@ include ../makefiles/toplevel-rules.mk
 COCOMENU = 1.0.0
 ADAMMENU = 1.0.1
 MSDOSMENU = 1.0.0
+# fb64 has no versions: empty fetches it from FujiNetWIFI/assets
+C64MENU =
 
 menu-on = $(filter-out undefined,$(origin $1))
 # A shell command printing the directory that holds menu $1's files
@@ -99,6 +101,8 @@ msdos/disk-post::
 DISK_TOOL_FLAGS_ATARI = -Q -m -b MyPicoDos406
 # Apple II: nor a 140kb ProDOS volume.
 DISK_SIZE = 800kb
+# C64: two D64s; see c64/disk-post.
+DISK_TYPE_C64 = d64
 
 CFLAGS += -DBUILD_$(PLATFORM_UC) -DPLATFORM=$(DSTRING_OPEN)$(PLATFORM)$(DSTRING_CLOSE)
 CFLAGS += -DTEST_PROGRAM=$(DSTRING_OPEN)$(shell echo "$(PRODUCT)" | tr '[:lower:]' '[:upper:]')$(DSTRING_CLOSE)
@@ -118,12 +122,15 @@ LIBS_EXTRA_ADAM_CPM = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib) \
 	$(call library-flag,eos.lib) $(call library-flag,smartkeys.lib)
 LIBS_EXTRA_APPLE2 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_ATARI = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
+LIBS_EXTRA_ATARI5200 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_C64 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_COCO = $(call library-flag,$(TESTS_LIB).$(PLATFORM))
+LIBS_EXTRA_COLECO = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_LYNX = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_MSDOS = $(call library-flag,$(TESTS_LIB_DIR)/lib$(TESTS_LIB).$(PLATFORM).a)
 LIBS_EXTRA_MODEL2 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_MSX = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
+LIBS_EXTRA_NES = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_PMD85 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_H89_CPM = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_H89_HDOS = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
@@ -168,6 +175,32 @@ coco/disk-post::
 	  $(call copy-to-disk,-b -2,$$f,$$name:$$n,$(DISK)) || exit 1; \
 	done
 
+# The tests fill more than a D64's 664 blocks, and FujiNet misreads the
+# directory of a D71 and, after a load, a D81. So the C64 gets two D64s,
+# fntests.d64 for drive 8 and fntests2.d64 for drive 9, each starting with the
+# menu, and the programs in alphabetical order on the first until it is full.
+C64_DISK2 = $(R2R_PD)/$(PRODUCTS_DISK_NAME)2.d64
+ifeq ($(PLATFORM),c64)
+DISK_EXECUTABLES =
+endif
+
+c64/disk-post::
+	$(RM) $(DISK) $(C64_DISK2)
+	boot="$(foreach b,$(DISK_BOOT_C64),-f $(call c64-name,$(b)) -w $(b))"; \
+	free=664; $(foreach b,$(DISK_BOOT_C64),free=$$((free - ($$(wc -c < $(b)) + 253) / 254));) \
+	one=""; two=""; full=0; \
+	for f in $(sort $(TEST_PROGRAMS)); do \
+	  name=$$(basename $$f $(EXEC_SUFFIX)); \
+	  need=$$(( ($$(wc -c < $$f) + 253) / 254 )); \
+	  if [ $$full = 0 ] && [ $$need -le $$free ]; then \
+	    one="$$one -f $$name -w $$f"; free=$$((free - need)); \
+	  else \
+	    full=1; two="$$two -f $$name -w $$f"; \
+	  fi; \
+	done; \
+	$(DISK_TOOL) -n "$(PRODUCTS_DISK_NAME)" $$boot $$one $(DISK) && \
+	$(DISK_TOOL) -n "$(PRODUCTS_DISK_NAME)2" $$boot $$two $(C64_DISK2)
+
 # One 8" disk is nearly full, so Model II also gets fntests2.imd for the
 # programs that no longer fit on fntests.imd.
 MODEL2_DISK2 = $(R2R_PD)/$(PRODUCTS_DISK_NAME)2.imd
@@ -193,6 +226,13 @@ model2/disk-post::
 adam/r2r-post::
 	$(if $(call menu-on,ADAMMENU),menu=$$($(call menu-dir,adam-menu,ADAMMENU)) && \
 	  cp $$menu/adam-menu.ddp $(R2R_PD)/)
+
+# C64: CBM FileBrowser goes first on the disk, so CONFIG's LOAD"*" boots into it.
+ifeq ($(PLATFORM),c64)
+ifneq ($(call menu-on,C64MENU),)
+DISK_BOOT_C64 := $(shell $(call menu-dir,fb64,C64MENU))/fb64.prg
+endif
+endif
 
 # On PMD 85 the menu can be prepared using MRM Manager utility, which is its own repo.
 ifeq ($(PLATFORM),pmd85)

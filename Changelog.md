@@ -2,13 +2,23 @@
 
 ## [Unreleased] (Place WIP changes in this section until a release is done)
 
+## [5.1.1] 2026-11-11
+
+- [nes] Add the NES target for the FujiNet NES cartridge
+- [nes][coleco] Boot a loaded ROM image with fuji_user_rom_status() and fuji_enable_user_rom(), as on CoCo and MSX
+- [msx] fuji_enable_user_rom() keeps UNAPI resident, reaching the cartridge's IO window through its subslot; added fuji_set_cart_mode()
+- [msx] UNAPI discovery finds and initializes the FujiNet ROM itself if a ROM that ran first left EXTBIO unhooked
 - fuji_get_device_slots(), fuji_put_device_slots() and the host slot pair take a count that is an expression; CONFIG's `8+2` on Apple II transferred 306 bytes instead of 380
 - [c64] FujiDirEntry.size is 32 bits, so fuji_file_stat() reports files of 64 KiB and up correctly (needs fujinet-firmware #2251)
-- [atari][h89][model2] wait_jiffies() no longer hangs (Atari) or returns early (H89 past 44 s, Model II past 3.6 min) on long waits
-- [adam] wait_jiffies() counts display frames instead of CPU cycles; a 1 s wait took 1.2 s on hardware
-- [all] fuji_sleep_ms() wraps the jiffy wait using milliseconds
-- [msx] Use bus/fujiversal for the app key and network bus calls, so fuji_read_appkey() and fuji_write_appkey() link
-- [pmd85] fuji_sleep_ms() no longer runs about 18% long; a jiffy is now 1/50 s, matching the display
+- [c64] Read the status byte that each IEC transaction now returns; without it every reply is misread (needs fujinet-firmware #2253)
+- [adam] fuji_wait_jiffies() counts display frames instead of CPU cycles; a 1 s wait took 1.2 s on hardware
+- wait_jiffies() is now fuji_wait_jiffies() and takes a 16-bit count; fuji_sleep_ms() wraps it in milliseconds
+- [msx] fuji_read_appkey() and fuji_write_appkey() link
+- [pmd85] A jiffy is 1/50 s, matching the display; waits ran about 18% long
+- [h89][model2] Each bus call drains stale reply bytes first; [h89] the SLIP sync gives up after 4096 bytes with no END
+- [coleco] Add the ColecoVision target for the FujiNet Coleco cartridge
+- [atari5200] Add the Atari 5200 target for the FujiNet 5200 cartridge
+- [c64] The clock calls go to the clock, IEC device 29, instead of the FujiNet device, which refuses them (needs fujinet-firmware #2342)
 - PARSER_PRETTY, QUERY_OUTPUT_TEXT (was QUERY_OUTPUT_RESERVED_0X20), and QUERY_OPTION_* names for network_set_parameter(), for the firmware's HTML text rendering
 
 ## [5.1.0] 2026-10-27

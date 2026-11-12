@@ -19,14 +19,17 @@ jobs:
           - adam
           - apple2
           - atari
+          - atari5200
           - c64
           - coco
+          - coleco
           - h89-cpm
           - h89-hdos
           - lynx
           - model2
           - msdos
           - msx
+          - nes
           - pmd85
 
     container:

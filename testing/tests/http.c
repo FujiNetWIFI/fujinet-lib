@@ -125,6 +125,49 @@ void test_network_http_chunked_completion(void)
   END_OF_TEST();
 }
 
+/* The parse must not wait for the peer to close (fujinet-firmware#1416). */
+static void json_held(const char *spec)
+{
+  uint8_t err;
+  int16_t n;
+  char value[16];
+  const char *url = (const char *) g.net;
+
+  memset(g.net, 0, MAX_FILENAME_LEN);
+  strcpy((char *) g.net, spec);
+  err = network_open(url, OPEN_MODE_HTTP_GET, OPEN_TRANS_NONE);
+  TEST("held-peer GET opens", err == FN_ERR_OK);
+  err = network_json_parse(url);
+  TEST("JSON parse succeeds", err == FN_ERR_OK);
+  memset(value, 0, sizeof(value));
+  n = network_json_query(url, "/a", value);
+  TEST("query /a returns 1", n == 1 && strcmp(value, "1") == 0);
+  err = network_close(url);
+  TEST("held-peer GET closes", err == FN_ERR_OK);
+}
+
+void test_network_json_fixed_held(void)
+{
+  SECTION("JSON parse, fixed held-peer");
+#ifdef FN_BROKEN_network_json_query
+  SKIP(network_json_query);
+#else
+  json_held(NET_JSON_FIXED_HELD_URL);
+#endif
+  END_OF_TEST();
+}
+
+void test_network_json_chunked_held(void)
+{
+  SECTION("JSON parse, chunked held-peer");
+#ifdef FN_BROKEN_network_json_query
+  SKIP(network_json_query);
+#else
+  json_held(NET_JSON_CHUNKED_HELD_URL);
+#endif
+  END_OF_TEST();
+}
+
 /* STATUS alone must not mistake a 304 representation length for readable
  * body bytes. Poison both reply storage and outputs to reject stale zeros.
  * The poll cap bounds observations, not the duration of a bus call.
@@ -721,11 +764,39 @@ void test_network_http_put_delete(void)
   TEST("network_open (PUT) succeeds", err == FN_ERR_OK);
 #endif
 
+#ifdef FN_BROKEN_network_http_add_header
+  SKIP(network_http_add_header);
+#else
+  err = network_http_start_add_headers(NET_PUT_URL);
+  TEST("network_http_start_add_headers succeeds", err == FN_ERR_OK);
+  err = network_http_add_header(NET_PUT_URL, "Content-Type: application/json");
+  TEST("network_http_add_header succeeds", err == FN_ERR_OK);
+  err = network_http_end_add_headers(NET_PUT_URL);
+  TEST("network_http_end_add_headers succeeds", err == FN_ERR_OK);
+#endif
+
 #ifdef FN_BROKEN_network_http_put
   SKIP(network_http_put);
 #else
-  err = network_http_put(NET_PUT_URL, "fujinet=put_test");
+  err = network_http_put(NET_PUT_URL, "{\"test\":\"fujinet_put\"}");
   TEST("network_http_put succeeds", err == FN_ERR_OK);
+#endif
+
+#ifdef FN_BROKEN_network_json_query
+  SKIP(network_json_query);
+#else
+  /* /put answers anything but a PUT with 405, so the echo proves the method
+   * (fujinet-firmware#999). httpbin.dev echoes headers as arrays. */
+  err = network_json_parse(NET_PUT_URL);
+  TEST("network_json_parse of the echo succeeds", err == FN_ERR_OK);
+  memset(g.net, 0, sizeof(g.net));
+  r = network_json_query(NET_PUT_URL, "/json/test", (char *)g.net);
+  TEST("server received the JSON body",
+       r > 0 && strcmp((char *)g.net, "fujinet_put") == 0);
+  memset(g.net, 0, sizeof(g.net));
+  r = network_json_query(NET_PUT_URL, "/headers/Content-Type/0", (char *)g.net);
+  TEST("server received the Content-Type header",
+       r > 0 && strcmp((char *)g.net, "application/json") == 0);
 #endif
 
 #ifdef FN_BROKEN_network_close
