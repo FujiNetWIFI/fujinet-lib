@@ -515,6 +515,13 @@ extern void fuji_enable_user_rom(void);
 #define FUJI_CART_MODE_UNAPI_USER_ROM 0x3D
 #define FUJI_CART_MODE_UNAPI_BASIC    0x1C  /* No user ROM or CONFIG; boots to BASIC */
 
+/* Expanded slot: subslot 0 is CONFIG (power-on) or user ROM A, 1 UNAPI,
+   2 Nextor, 3 user ROM B.  OR these into FUJI_CART_MODE_POWER_ON. */
+#define FUJI_CART_MODE_POWER_ON       0x3C
+#define FUJI_CART_MODE_USER_ROM_A     0x01
+#define FUJI_CART_MODE_NEXTOR         0x02
+#define FUJI_CART_MODE_USER_ROM_B     0x40
+
 /**
  * @brief MSX only: restarts the machine in a FUJI_CART_MODE_*. Does not return.
  */
