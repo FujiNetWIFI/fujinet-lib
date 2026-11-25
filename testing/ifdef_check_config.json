@@ -28,6 +28,7 @@
     "include/fujinet-platform.h": {
       "allow": [
 	"FUJI_MAX_DISKS",
+	"FUJI_NATIVE_EOL",
 	"FUJI_NETWORK_READ_MAX",
 	"FUJI_NETWORK_WRITE_MAX",
 	"MAX_PASSWORD_LEN",
@@ -47,6 +48,7 @@
 	"__MSX__",
 	"__NES__",
 	"__PMD85__",
+	"__TRS80M1__",
 	"__TRS80M2__"
       ]
     },

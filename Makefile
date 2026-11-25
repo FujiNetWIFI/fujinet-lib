@@ -14,6 +14,7 @@ PLATFORMS += msdos
 PLATFORMS += msx
 PLATFORMS += nes
 PLATFORMS += pmd85
+PLATFORMS += trs80m1
 
 # You can run 'make <platform>' to build for a specific platform,
 # or 'make <platform>/<target>' for a platform-specific target.
@@ -39,7 +40,8 @@ PLATFORM_COMBOS = \
   model2+=fujiversal \
   msdos+=fujiversal \
   msx+=fujiversal \
-  nes+=fujiversal
+  nes+=fujiversal \
+  trs80m1+=fujiversal,portslip
 
 include makefiles/toplevel-rules.mk
 

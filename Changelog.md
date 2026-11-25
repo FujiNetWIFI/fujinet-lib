@@ -2,6 +2,8 @@
 
 ## [Unreleased] (Place WIP changes in this section until a release is done)
 
+- [trs80m1] Add the TRS-80 Model I target for the FujiNet Model I card
+
 ## [5.1.1] 2026-11-11
 
 - [nes] Add the NES target for the FujiNet NES cartridge

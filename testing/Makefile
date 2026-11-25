@@ -109,6 +109,8 @@ CFLAGS += -DTEST_PROGRAM=$(DSTRING_OPEN)$(shell echo "$(PRODUCT)" | tr '[:lower:
 LDFLAGS_EXTRA_COCO = --org=0E00 --limit=7C00
 # Exit to EOS_START, which reboots from D1
 LDFLAGS_EXTRA_ADAM = -pragma-define:CRT_ON_EXIT=0xFC30
+# No DOS file calls, so the tests also run from a boot disk with no DOS loaded
+LDFLAGS_EXTRA_TRS80M1 = -lndos
 
 TESTS_DIR = tests
 TESTS_LIB = fnlib-test
@@ -134,6 +136,7 @@ LIBS_EXTRA_NES = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_PMD85 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_H89_CPM = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_H89_HDOS = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
+LIBS_EXTRA_TRS80M1 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 
 # If you need to add extra platform-specific steps, do it below:
 #   coco/r2r:: coco/custom-step1
