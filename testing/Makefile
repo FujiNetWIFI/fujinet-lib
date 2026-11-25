@@ -136,6 +136,7 @@ LIBS_EXTRA_NES = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_PMD85 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_H89_CPM = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_H89_HDOS = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
+LIBS_EXTRA_S100_CPM = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 LIBS_EXTRA_TRS80M1 = $(call library-flag,$(TESTS_LIB).$(PLATFORM).lib)
 
 # If you need to add extra platform-specific steps, do it below:

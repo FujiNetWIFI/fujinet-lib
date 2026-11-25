@@ -31,6 +31,7 @@ jobs:
           - msx
           - nes
           - pmd85
+          - s100-cpm
           - trs80m1
 
     container:

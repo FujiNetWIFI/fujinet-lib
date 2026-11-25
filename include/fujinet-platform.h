@@ -216,6 +216,20 @@
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
 #define FUJI_NATIVE_EOL           "\r\n"
 
+#elif defined(__S100__)
+#define FUJI_PLATFORM_S100
+#define FUJI_BUS_CALL_ARGS        FUJI_BUS_CALL_ARGS_AUX4
+#define FUJI_BUS_CALL_PORTIO
+#define FUJI_VARIABLE_LEN_PACKETS 1
+#define FUJI_MAX_DISKS            8
+#define MAX_PASSWORD_LEN          64
+#define FUJI_NETWORK_READ_MAX     0
+#define FUJI_NETWORK_WRITE_MAX    0
+#define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_SECTORS
+#define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_FLAGS
+#define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
+#define FUJI_NATIVE_EOL           "\r\n"
+
 #elif defined(__PMD85__)
 #define FUJI_PLATFORM_PMD85
 #define FUJI_BUS_CALL_ARGS        FUJI_BUS_CALL_ARGS_AUX4
