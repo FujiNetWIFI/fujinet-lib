@@ -6,10 +6,10 @@
 
 #define PIPE_BASE    0xD0
 #define PIPE_GETC    PIPE_BASE
+#define PIPE_PUTC    PIPE_BASE
 #define PIPE_STATUS  (PIPE_BASE + 1)
-#define PIPE_PUTC    (PIPE_BASE + 2)
-#define PIPE_CONTROL (PIPE_BASE + 3)
-#define PIPE_TICK    (PIPE_BASE + 3)
+#define PIPE_CONTROL (PIPE_BASE + 1)
+#define PIPE_TICK    (PIPE_BASE + 2)
 
 #define ST_AVAIL  0x80
 #define ST_TXFULL 0x01

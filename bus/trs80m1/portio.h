@@ -1,5 +1,5 @@
-// The FujiNet Model I card's FujiBus pipe: four ports at D0h, +0 GETC, +1 STATUS,
-// +2 PUTC, +3 CONTROL (write) or TICK (read, a free-running 1 kHz count).
+// The FujiNet Model I card's FujiBus pipe at D0h: +0 GETC (read) / PUTC (write),
+// +1 STATUS / CONTROL, +2 TICK (read, a free-running 1 kHz count).
 #include <stdint.h>
 
 #define PORT_INIT() port_init()
