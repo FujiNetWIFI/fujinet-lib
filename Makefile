@@ -41,8 +41,7 @@ PLATFORM_COMBOS = \
   msdos+=fujiversal \
   msx+=fujiversal \
   nes+=fujiversal \
-  trs80m1+=fujipipe \
-  fujipipe+=fujiversal,portslip
+  trs80m1+=fujiversal,portslip
 
 include makefiles/toplevel-rules.mk
 

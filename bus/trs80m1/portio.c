@@ -1,14 +1,15 @@
-// The pipe of a FujiNet I/O card (portio.h), polled. Its STATUS carries a
-// signature, AVAIL for a byte to read and TXFULL while the card's queue is full.
+// The Model I card's pipe (portio.h), polled. Its STATUS carries a signature,
+// AVAIL for a byte to read and TXFULL while the card's queue is full.
 
 #include "portio.h"
 #include <arch/z80.h>
 
-#define PIPE_GETC    FUJIPIPE_BASE
-#define PIPE_STATUS  (FUJIPIPE_BASE + 1)
-#define PIPE_PUTC    (FUJIPIPE_BASE + 2)
-#define PIPE_CONTROL (FUJIPIPE_BASE + 3)
-#define PIPE_TICK    (FUJIPIPE_BASE + 3)
+#define PIPE_BASE    0xD0
+#define PIPE_GETC    PIPE_BASE
+#define PIPE_STATUS  (PIPE_BASE + 1)
+#define PIPE_PUTC    (PIPE_BASE + 2)
+#define PIPE_CONTROL (PIPE_BASE + 3)
+#define PIPE_TICK    (PIPE_BASE + 3)
 
 #define ST_AVAIL  0x80
 #define ST_TXFULL 0x01

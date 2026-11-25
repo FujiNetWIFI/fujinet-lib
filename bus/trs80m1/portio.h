@@ -1,14 +1,9 @@
-// The FujiNet I/O cards' FujiBus pipe: four ports at a base, +0 GETC, +1 STATUS,
-// +2 PUTC, +3 CONTROL (write) or TICK (read, a free-running 1 kHz count). The
-// platform sets FUJIPIPE_BASE to its card's base.
+// The FujiNet Model I card's FujiBus pipe: four ports at D0h, +0 GETC, +1 STATUS,
+// +2 PUTC, +3 CONTROL (write) or TICK (read, a free-running 1 kHz count).
 #include <stdint.h>
 
 #define PORT_INIT() port_init()
 #define PORT_TICKS_PER_SECOND 1000
-
-#ifndef FUJIPIPE_BASE
-#error "Platform did not set FUJIPIPE_BASE"
-#endif
 
 extern void port_init(void);
 
