@@ -31,6 +31,7 @@ jobs:
           - msx
           - nes
           - pmd85
+          - trs80m1
 
     container:
       image: fozztexx/defoogi:1.4.8

@@ -7,6 +7,7 @@ Platforms with true bi-directional variable payload length:
 * MS-DOS (RS232)
 * MSX (RS232)
 * NES (FujiNet cartridge mailbox)
+* TRS-80 Model I (FujiNet card pipe)
 * C64
 * Lynx
 
