@@ -1,4 +1,4 @@
-// SLIP framing on top of the H89 port routines. Same behavior as the
+// SLIP framing on top of a bus's port routines (portio.h). Same behavior as the
 // assembly versions in bus/model2.
 
 #include "portio.h"
