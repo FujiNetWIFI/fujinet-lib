@@ -27,6 +27,9 @@
 #define FUJI_STATUS_BYTES 1 /* FNStatusBytes */
 #define FUJI_STATUS_IEC   2 /* FNStatusIEC */
 
+/* FUJI_NATIVE_EOL: the line ending of the FujiNet's bus, its nativeEOL(); cc65's "\n" is
+   already native on the Atari and C64 */
+
 /* Every platform sets every switch except FUJI_BUS_CALL_PORTIO; there are no defaults. */
 #if defined(_CMOC_VERSION_)
 #define FUJI_PLATFORM_COCO
@@ -39,6 +42,7 @@
 #define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_COUNT
 #define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_BOOLS
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
+#define FUJI_NATIVE_EOL           "\r"
 
 #elif defined(__APPLE2__)
 #define FUJI_PLATFORM_APPLE2
@@ -51,6 +55,7 @@
 #define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_TYPED_BLOCKS
 #define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_BOOLS
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
+#define FUJI_NATIVE_EOL           "\r"
 
 #elif defined(__ATARI__)
 #define FUJI_PLATFORM_ATARI
@@ -63,6 +68,7 @@
 #define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_SECTORS
 #define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_BOOLS
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
+#define FUJI_NATIVE_EOL           "\n"
 
 #elif defined(__ATARI5200__)
 #define FUJI_PLATFORM_ATARI5200
@@ -75,6 +81,7 @@
 #define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_SECTORS
 #define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_FLAGS
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
+#define FUJI_NATIVE_EOL           "\r\n"
 
 #elif defined(__C64__)
 #define FUJI_PLATFORM_C64
@@ -87,6 +94,7 @@
 #define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_SECTORS
 #define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_FLAGS
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_IEC
+#define FUJI_NATIVE_EOL           "\n"
 
 #elif defined(__MSX__)
 #define FUJI_PLATFORM_MSX
@@ -99,6 +107,7 @@
 #define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_SECTORS
 #define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_FLAGS
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
+#define FUJI_NATIVE_EOL           "\r\n"
 
 #elif defined(__LYNX__)
 #define FUJI_PLATFORM_LYNX
@@ -111,6 +120,7 @@
 #define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_BLOCKS16
 #define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_BOOLS
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
+#define FUJI_NATIVE_EOL           "\r"
 
 #elif defined(__DOS__) || defined(MSDOS)
 #define FUJI_PLATFORM_MSDOS
@@ -123,6 +133,7 @@
 #define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_SECTORS
 #define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_FLAGS
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
+#define FUJI_NATIVE_EOL           "\r\n"
 
 #elif defined(__ADAM__) || defined(__COLECOADAM__)
 #define FUJI_PLATFORM_ADAM
@@ -135,6 +146,7 @@
 #define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_BLOCKS32
 #define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_BOOLS
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
+#define FUJI_NATIVE_EOL           "\r"
 
 #elif defined(__COLECO__)
 #define FUJI_PLATFORM_COLECO
@@ -147,6 +159,7 @@
 #define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_SECTORS
 #define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_FLAGS
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
+#define FUJI_NATIVE_EOL           "\r\n"
 
 #elif defined(__NES__)
 #define FUJI_PLATFORM_NES
@@ -159,6 +172,7 @@
 #define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_SECTORS
 #define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_FLAGS
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
+#define FUJI_NATIVE_EOL           "\r\n"
 
 #elif defined(__TRS80M2__)
 #define FUJI_PLATFORM_MODEL2
@@ -172,6 +186,7 @@
 #define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_SECTORS
 #define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_FLAGS
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
+#define FUJI_NATIVE_EOL           "\r\n"
 
 #elif defined(__H89__) || defined(__HDOS__)
 #define FUJI_PLATFORM_H89
@@ -185,6 +200,7 @@
 #define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_SECTORS
 #define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_FLAGS
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
+#define FUJI_NATIVE_EOL           "\r"
 
 #elif defined(__TRS80M1__)
 #define FUJI_PLATFORM_TRS80M1
@@ -198,6 +214,7 @@
 #define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_SECTORS
 #define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_FLAGS
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
+#define FUJI_NATIVE_EOL           "\r\n"
 
 #elif defined(__PMD85__)
 #define FUJI_PLATFORM_PMD85
@@ -210,6 +227,7 @@
 #define FUJI_NEW_DISK_FORMAT      FUJI_NEW_DISK_COUNT
 #define FUJI_DIR_ENTRY_FORMAT     FUJI_DIR_ENTRY_BOOLS
 #define FUJI_STATUS_FORMAT        FUJI_STATUS_BYTES
+#define FUJI_NATIVE_EOL           "\r"
 
 #else
 #error "Building on unknown platform"
@@ -244,6 +262,9 @@
 #endif
 #ifndef FUJI_STATUS_FORMAT
 #error "Platform did not set FUJI_STATUS_FORMAT"
+#endif
+#ifndef FUJI_NATIVE_EOL
+#error "Platform did not set FUJI_NATIVE_EOL"
 #endif
 
 #endif /* FUJINET_PLATFORM_H */
