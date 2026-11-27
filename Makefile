@@ -14,6 +14,7 @@ PLATFORMS += msdos
 PLATFORMS += msx
 PLATFORMS += nes
 PLATFORMS += pmd85
+PLATFORMS += s100-cpm
 PLATFORMS += trs80m1
 
 # You can run 'make <platform>' to build for a specific platform,
@@ -41,6 +42,7 @@ PLATFORM_COMBOS = \
   msdos+=fujiversal \
   msx+=fujiversal \
   nes+=fujiversal \
+  s100-cpm+=s100,fujiversal,portslip \
   trs80m1+=fujiversal,portslip
 
 include makefiles/toplevel-rules.mk

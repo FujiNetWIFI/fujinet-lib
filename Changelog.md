@@ -3,6 +3,7 @@
 ## [Unreleased] (Place WIP changes in this section until a release is done)
 
 - [trs80m1] Add the TRS-80 Model I target for the FujiNet Model I card
+- [s100] Add the S-100 target (s100-cpm), 8080 code for the FujiNet S-100 card
 
 ## [5.1.1] 2026-11-11
 
