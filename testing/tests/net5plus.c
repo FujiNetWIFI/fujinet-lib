@@ -317,18 +317,17 @@ void test_net2_udp_round_trip(void)
 
   SECTION("network UDP round trip");
 
-  err = network_open(NET_UDP_SPEC, OPEN_MODE_RW, OPEN_TRANS_NONE);
-  TEST("open UDP listener", err == FN_ERR_OK);
+  /* A UDP channel also binds the port it sends to (fujinet-firmware #2537) */
   err = network_open(UDP_CLIENT, OPEN_MODE_RW, OPEN_TRANS_NONE);
-  TEST("open UDP client", err == FN_ERR_OK);
+  TEST("open UDP channel", err == FN_ERR_OK);
 
   err = network_write(UDP_CLIENT, "FUJI", 4);
-  TEST("client sends a datagram", err == FN_ERR_OK);
+  TEST("send a datagram to its own port", err == FN_ERR_OK);
 
   /* Before fujinet-firmware #2270 the first status moved the datagram into
    * the firmware's buffer and every status reported the empty socket */
   for (polls = 0; polls < RELAY_POLLS; polls++) {
-    err = network_status(NET_UDP_SPEC, &avail, &status, &net_err);
+    err = network_status(UDP_CLIENT, &avail, &status, &net_err);
     if (err != FN_ERR_OK || avail)
       break;
   }
@@ -337,10 +336,9 @@ void test_net2_udp_round_trip(void)
 
   memset(g.net, 0, 4);
   TEST("read returns the datagram",
-       network_read(NET_UDP_SPEC, g.net, 4) == 4 && memcmp(g.net, "FUJI", 4) == 0);
+       network_read(UDP_CLIENT, g.net, 4) == 4 && memcmp(g.net, "FUJI", 4) == 0);
 
   network_close(UDP_CLIENT);
-  network_close(NET_UDP_SPEC);
 
   END_OF_TEST();
 }
