@@ -80,6 +80,10 @@ So:
 - No `FUJI_PLATFORM_*` or compiler macro in a conditional anywhere in `common/`; don't add one, and
   remove the ones you touch. A header may test `FUJI_PLATFORM_*` to route a function or set a
   capability, as above.
+- Don't expose platform-specific functionality in `include/`. The library is cross-platform, and its
+  public API is not a place to add a function because one platform needed it. A header may route a
+  public function to a platform's version of it, but don't add a public function that only some
+  platforms have.
 - Test `FUJI_PLATFORM_*`, not the compiler's own macros (`__ATARI__`, `_CMOC_VERSION_`); only
   `fujinet-platform.h` reads those.
 - Don't copy a shared function into a platform directory to change two lines. If the difference is
@@ -190,8 +194,8 @@ description**, one keyword per issue. Use `Refs #NNN` for partial work.
 
 ## Write a short pull request description
 
-Say why the change exists, what to look at first, and what you did not verify. Aim for one screen:
-a sentence or two, a few bullets, then testing.
+Say why the change exists and what to look at first. Aim for one screen: a sentence or two and a
+few bullets.
 
 - One bullet per real change, not per file.
 - Don't paste build output or test logs; quote the one line that matters, if any does.
@@ -200,12 +204,6 @@ a sentence or two, a few bullets, then testing.
 This applies with particular force to descriptions written by an AI assistant, which by default run
 several times longer than a reviewer needs. Write the short version.
 
-## Say what you did not test
-
-Say which platforms you built and which you ran tests on, emulator or hardware (and which machine),
-and the FujiNet firmware version. "Builds everywhere, DISK passes in ADAMEm, not run on hardware"
-is a good answer.
-
 ## Common mistakes
 
 - **A platform `#if` in `common/`** instead of a `bus/<platform>/` file routed from the header, or
@@ -213,6 +211,7 @@ is a good answer.
 - **A copy of a shared function** in a platform directory, to change a few lines.
 - **Testing a compiler macro** instead of `FUJI_PLATFORM_*`.
 - **A bus-specific header in `include/`.**
+- **A public function only one platform has,** added to `include/` for that platform's needs.
 - **Growing shared code** without checking that CONFIG still fits.
 - **Building one platform** after a change to `common/` or `include/`.
 - **Assuming CI tests the library.** It only compiles it.
