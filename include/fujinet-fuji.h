@@ -135,6 +135,11 @@ typedef struct
 #define NEW_DISK_TYPE_2MG 1
 #define NEW_DISK_TYPE_DO  2 /* DOS 3.3 order */
 
+/* NewDiskTypedBlocks.createType on MSX: a formatted 360K or 720K FAT12 disk */
+#define NEW_DISK_TYPE_MSX_BLANK   0
+#define NEW_DISK_TYPE_MSX_MSXDOS1 1
+#define NEW_DISK_TYPE_MSX_NEXTOR  2
+
 typedef struct
 {
   uint8_t numDisks;

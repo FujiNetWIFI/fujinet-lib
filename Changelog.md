@@ -2,6 +2,7 @@
 
 ## [Unreleased] (Place WIP changes in this section until a release is done)
 
+- [msx] NewDisk is NewDiskTypedBlocks, so CONFIG can ask for a blank, MSX-DOS 1 or Nextor disk; needs the fujinet-firmware that creates MSX disks
 - [trs80m1] Add the TRS-80 Model I target for the FujiNet Model I card
 - [s100] Add the S-100 target (s100-cpm), 8080 code for the FujiNet S-100 card
 
